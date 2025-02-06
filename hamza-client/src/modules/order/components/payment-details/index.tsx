@@ -1,8 +1,7 @@
 import { Order } from '@medusajs/medusa';
 import { Container, Heading, Text } from '@medusajs/ui';
 import { formatAmount } from '@lib/util/prices';
-
-import { paymentInfoMap } from '@lib/constants';
+import { paymentInfoMap } from '@/lib/config/constants';
 import Divider from '@modules/common/components/divider';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 

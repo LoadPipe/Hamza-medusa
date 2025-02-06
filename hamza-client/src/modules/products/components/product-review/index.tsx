@@ -16,7 +16,11 @@ import {
     StackDivider,
     Box,
 } from '@chakra-ui/react';
-import { getAverageRatings, getAllProductReviews, getReviewCount } from '@lib/data';
+import {
+    getAverageRatings,
+    getAllProductReviews,
+    getReviewCount,
+} from '@/lib/server';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';

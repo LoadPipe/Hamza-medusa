@@ -5,13 +5,26 @@ import CartItems from '@modules/checkout/components/cart-items';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React from 'react';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
+import ForceWalletConnect from '@modules/common/components/force-wallet-connect';
+import { useDelayedAuthCheck } from '@modules/common/components/force-wallet-connect/components/useDelayedAuthCheck';
 
-const OrderSummary = ({
-    cart,
-}: {
-    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
-}) => {
-    const { preferred_currency_code } = useCustomerAuthStore();
+const OrderSummary = ({ cartId }: { cartId: string }) => {
+    const { preferred_currency_code, authData } = useCustomerAuthStore();
+    const { data: cart } = useQuery({
+        queryKey: ['cart', cartId],
+        queryFn: () => fetchCartForCheckout(cartId),
+        staleTime: 1000 * 60 * 5,
+        enabled: !!cartId,
+    });
+
+    // State to control delay for showing ForceWalletConnect
+    const { isAuthenticated, showAuthCheck } = useDelayedAuthCheck();
+    // If the delay has passed and the user is NOT logged in, show ForceWalletConnect
+    if (showAuthCheck && !isAuthenticated) {
+        return <ForceWalletConnect />;
+    }
 
     const isCartEmpty = !cart?.items || cart.items.length === 0;
     return (

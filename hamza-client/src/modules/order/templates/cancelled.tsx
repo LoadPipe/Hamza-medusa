@@ -14,8 +14,7 @@ import {
 } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import Spinner from '@modules/common/icons/spinner';
+import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
@@ -25,7 +24,10 @@ import { useOrderTabStore } from '@/zustand/order-tab-state';
 import OrderTimeline from '@modules/order/components/order-timeline';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { upperCase } from 'lodash';
-import { chainIdToName, getChainLogo } from '@modules/order/components/chain-enum/chain-enum';
+import {
+    chainIdToName,
+    getChainLogo,
+} from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
 
 const Cancelled = ({
@@ -260,25 +262,29 @@ const Cancelled = ({
                                                                 Contact Seller
                                                             </Button>
                                                         </a>
-                                                        {order.escrow_status && order.escrow_status !== 'released' && (
-                                                            <Box
-                                                                as="a"
-                                                                href={`/account/escrow/${order.id}`}
-                                                                border="1px solid"
-                                                                borderColor="white"
-                                                                borderRadius="37px"
-                                                                color="white"
-                                                                px="4"
-                                                                py="2"
-                                                                textAlign="center"
-                                                                _hover={{
-                                                                    textDecoration: 'none',
-                                                                    bg: 'primary.teal.600', // Adjust the hover color as needed
-                                                                }}
-                                                            >
-                                                                View Escrow Details
-                                                            </Box>
-                                                        )}
+                                                        {order.escrow_status &&
+                                                            order.escrow_status !==
+                                                                'released' && (
+                                                                <Box
+                                                                    as="a"
+                                                                    href={`/account/escrow/${order.id}`}
+                                                                    border="1px solid"
+                                                                    borderColor="white"
+                                                                    borderRadius="37px"
+                                                                    color="white"
+                                                                    px="4"
+                                                                    py="2"
+                                                                    textAlign="center"
+                                                                    _hover={{
+                                                                        textDecoration:
+                                                                            'none',
+                                                                        bg: 'primary.teal.600', // Adjust the hover color as needed
+                                                                    }}
+                                                                >
+                                                                    View Escrow
+                                                                    Details
+                                                                </Box>
+                                                            )}
                                                     </Flex>
                                                 ) : null}
                                             </Flex>
@@ -329,44 +335,126 @@ const Cancelled = ({
                                                                     borderRadius="lg"
                                                                     w="100%"
                                                                 >
-                                                                    <Flex direction={{ base: "column", md: "row" }} gap={6} w="100%">
+                                                                    <Flex
+                                                                        direction={{
+                                                                            base: 'column',
+                                                                            md: 'row',
+                                                                        }}
+                                                                        gap={6}
+                                                                        w="100%"
+                                                                    >
                                                                         {/* Left Column: Shipping Cost & Subtotal */}
-                                                                        <VStack align="start" spacing={2} flex="1">
-                                                                            {order?.shipping_methods[0]?.price && (
+                                                                        <VStack
+                                                                            align="start"
+                                                                            spacing={
+                                                                                2
+                                                                            }
+                                                                            flex="1"
+                                                                        >
+                                                                            {order
+                                                                                ?.shipping_methods[0]
+                                                                                ?.price && (
                                                                                 <Text fontSize="md">
-                                                                                    <strong>Order Shipping Cost:</strong>{' '}
-                                                                                    {formatCryptoPrice(Number(order?.shipping_methods[0]?.price), item.currency_code ?? 'usdc')}{' '}
-                                                                                    {upperCase(item.currency_code)}
+                                                                                    <strong>
+                                                                                        Order
+                                                                                        Shipping
+                                                                                        Cost:
+                                                                                    </strong>{' '}
+                                                                                    {formatCryptoPrice(
+                                                                                        Number(
+                                                                                            order
+                                                                                                ?.shipping_methods[0]
+                                                                                                ?.price
+                                                                                        ),
+                                                                                        item.currency_code ??
+                                                                                            'usdc'
+                                                                                    )}{' '}
+                                                                                    {upperCase(
+                                                                                        item.currency_code
+                                                                                    )}
                                                                                 </Text>
                                                                             )}
                                                                             <Text fontSize="md">
-                                                                                <strong>Subtotal:</strong>{' '}
-                                                                                {formatCryptoPrice(subTotal, item.currency_code)}{' '}
-                                                                                {upperCase(item.currency_code)}
+                                                                                <strong>
+                                                                                    Subtotal:
+                                                                                </strong>{' '}
+                                                                                {formatCryptoPrice(
+                                                                                    subTotal,
+                                                                                    item.currency_code
+                                                                                )}{' '}
+                                                                                {upperCase(
+                                                                                    item.currency_code
+                                                                                )}
                                                                             </Text>
                                                                         </VStack>
 
                                                                         {/* Right Column: Order ID & Chain Data */}
-                                                                        <VStack align="start" spacing={2} flex="1">
-                                                                            <Flex align="center" gap={2}>
+                                                                        <VStack
+                                                                            align="start"
+                                                                            spacing={
+                                                                                2
+                                                                            }
+                                                                            flex="1"
+                                                                        >
+                                                                            <Flex
+                                                                                align="center"
+                                                                                gap={
+                                                                                    2
+                                                                                }
+                                                                            >
                                                                                 <Text fontSize="md">
-                                                                                    <strong>Order ID:</strong>{' '}
-                                                                                    {order?.id && typeof order.id === 'string'
-                                                                                        ? order.id.replace(/^order_/, '') // Remove "order_" prefix
+                                                                                    <strong>
+                                                                                        Order
+                                                                                        ID:
+                                                                                    </strong>{' '}
+                                                                                    {order?.id &&
+                                                                                    typeof order.id ===
+                                                                                        'string'
+                                                                                        ? order.id.replace(
+                                                                                              /^order_/,
+                                                                                              ''
+                                                                                          ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>
 
-                                                                            <Flex align="center" gap={2}>
-                                                                                <strong>Order Chain:</strong>
+                                                                            <Flex
+                                                                                align="center"
+                                                                                gap={
+                                                                                    2
+                                                                                }
+                                                                            >
+                                                                                <strong>
+                                                                                    Order
+                                                                                    Chain:
+                                                                                </strong>
                                                                                 <Image
-                                                                                    src={getChainLogo(order?.payments[0]?.blockchain_data?.chain_id)}
-                                                                                    alt={chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
-                                                                                    width={25}
-                                                                                    height={25}
+                                                                                    src={getChainLogo(
+                                                                                        order
+                                                                                            ?.payments[0]
+                                                                                            ?.blockchain_data
+                                                                                            ?.chain_id
+                                                                                    )}
+                                                                                    alt={chainIdToName(
+                                                                                        order
+                                                                                            ?.payments[0]
+                                                                                            ?.blockchain_data
+                                                                                            ?.chain_id
+                                                                                    )}
+                                                                                    width={
+                                                                                        25
+                                                                                    }
+                                                                                    height={
+                                                                                        25
+                                                                                    }
                                                                                 />
                                                                                 <Text>
-                                                                                    {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                    {chainIdToName(
+                                                                                        order
+                                                                                            ?.payments[0]
+                                                                                            ?.blockchain_data
+                                                                                            ?.chain_id
+                                                                                    )}
                                                                                 </Text>
                                                                             </Flex>
                                                                         </VStack>

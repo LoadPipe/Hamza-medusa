@@ -1,12 +1,11 @@
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
-
 import { ProductCategoryWithChildren } from '@/types/global';
 import InteractiveLink from '@modules/common/components/interactive-link';
 import SkeletonProductGrid from '@modules/skeletons/templates/skeleton-product-grid';
 import RefinementList from '@modules/shop/components/refinement-list';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import PaginatedProducts from '@modules/shop/components/pagination/paginated-products';
+import PaginatedProducts from '@/modules/shop/components/pagination';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 export default function CategoryTemplate({

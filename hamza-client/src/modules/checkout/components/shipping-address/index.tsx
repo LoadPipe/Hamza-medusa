@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Address, Cart, Customer } from '@medusajs/medusa';
-import Checkbox from '@modules/common/components/checkbox';
+import { Cart, Customer } from '@medusajs/medusa';
 import Input from '@modules/common/components/input';
-import AddressSelect from '../address-select';
 import CountrySelect from '../country-select';
 import { Container } from '@medusajs/ui';
 

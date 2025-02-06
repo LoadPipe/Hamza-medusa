@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Box } from '@chakra-ui/react';
-import StoreContent from './components/store-content';
+import StoreContent from '@/modules/store/templates/store-content';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata({

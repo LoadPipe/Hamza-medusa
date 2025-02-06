@@ -1,45 +1,40 @@
-import { LineItem } from '@medusajs/medusa';
 import { Metadata } from 'next';
+import CartTemplate from '@/modules/cart/templates/cart-template';
+import { getHamzaCustomer } from '@/lib/server';
+import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 
-import CartTemplate from '@modules/cart/templates';
 
-import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
-import { getCheckoutStep } from '@lib/util/get-checkout-step';
-import { CartWithCheckoutStep } from '@/types/global';
-import { getHamzaCustomer } from '@lib/data';
-import Loading from './loading';
+// Single source of truth
+// Supports both: Checkout && Cart
+// Optional cartId - if provided, fetch a specific cart; otherwise, it fetches users active cart.
 
 export const metadata: Metadata = {
     title: 'Cart',
     description: 'View your cart',
 };
 
-const fetchCart = async () => {
-    const cart = await retrieveCart().then(
-        (cart) => cart as CartWithCheckoutStep
-    );
-
-    if (!cart) {
-        return null;
-    }
-
-    if (cart?.items?.length) {
-        const enrichedItems = await enrichLineItems(
-            cart?.items,
-            cart?.region_id
-        );
-        cart.items = enrichedItems as LineItem[];
-    }
-
-    cart.checkout_step = cart && getCheckoutStep(cart);
-
-    return cart;
-};
+// What: Streaming SSR with Suspense and React Query V5
+// 1. Improve perceived performance
 
 export default async function Cart() {
-    const cart = await fetchCart();
-    console.log('fetched cart', cart);
+    // SSR So make sure to create a new queryClient instance, so we don't share the same instance between multiple requests
+    const queryClient = new QueryClient();
+
+    // Prefetch cart with enrichment & checkout step
+    await queryClient.prefetchQuery({
+        queryKey: ['cart'],
+        queryFn: fetchCartForCart,
+        staleTime: 1000 * 60 * 5,
+    });
+
+    // Fetch customer details
     const customer = await getHamzaCustomer();
 
-    return <CartTemplate cart={cart} customer={customer} />;
+    return (
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <CartTemplate customer={customer} />
+        </HydrationBoundary>
+    );
 }
+

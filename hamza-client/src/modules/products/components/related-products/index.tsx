@@ -1,7 +1,7 @@
 import { StoreGetProductsParams } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
-import { getProductsList } from '@lib/data';
+import { getProductsList } from '@/lib/server';
 
 import { getRegion } from '@/app/actions';
 import ProductPreview from '../product-preview';

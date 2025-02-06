@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { cancelOrder, getSingleBucket } from '@lib/data';
-import {chainIdToName, getChainLogo} from '@modules/order/components/chain-enum/chain-enum';
+import React, { useState } from 'react';
+import { cancelOrder } from '@/lib/server';
+import {
+    chainIdToName,
+    getChainLogo,
+} from '@modules/order/components/chain-enum/chain-enum';
 import {
     Box,
     Button,
@@ -92,7 +95,6 @@ const Processing = ({
     const [expandViewOrder, setExpandViewOrder] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
 
-
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const queryClient = useQueryClient();
@@ -109,35 +111,26 @@ const Processing = ({
 
     const processingOrder = cachedData?.Processing || [];
 
-    const mutation = useMutation(
-        ({
-            order_id,
-            cancel_reason,
-        }: {
-            order_id: string;
-            cancel_reason: string;
-        }) => cancelOrder(order_id, cancel_reason),
-        {
-            onSuccess: async () => {
-                try {
-                    // Refetch orders after a successful cancellation
-                    await queryClient.invalidateQueries([
-                        'fetchAllOrders',
-                        customer,
-                    ]);
-                    // refetch();
+    const mutation = useMutation({
+        mutationFn: async ({ order_id, cancel_reason }: { order_id: string; cancel_reason: string }) => {
+            return cancelOrder(order_id, cancel_reason);
+        },
+        onSuccess: async () => {
+            try {
+                // Refetch orders after a successful cancellation
+                await queryClient.invalidateQueries({ queryKey: ['fetchAllOrders', customer] });
 
-                    setIsModalOpen(false);
-                    setSelectedOrderId(null);
-                } catch (error) {
-                    console.error('Error invalidating queries:', error);
-                }
-            },
-            onError: (error) => {
-                console.error('Error cancelling order: ', error);
-            },
-        }
-    );
+                setIsModalOpen(false);
+                setSelectedOrderId(null);
+            } catch (error) {
+                console.error('Error invalidating queries:', error);
+            }
+        },
+        onError: (error) => {
+            console.error('Error cancelling order: ', error);
+        },
+    });
+
 
     // Utility function to format status values
     const formatStatus = (prefix: string, status: any) => {
@@ -351,25 +344,29 @@ const Processing = ({
                                                         >
                                                             Request Cancellation
                                                         </Button>
-                                                        {order.escrow_status && order.escrow_status !== 'released' && (
-                                                            <Box
-                                                                as="a"
-                                                                href={`/account/escrow/${order.id}`}
-                                                                border="1px solid"
-                                                                borderColor="white"
-                                                                borderRadius="37px"
-                                                                color="white"
-                                                                px="4"
-                                                                py="2"
-                                                                textAlign="center"
-                                                                _hover={{
-                                                                    textDecoration: 'none',
-                                                                    bg: 'primary.teal.600', // Adjust the hover color as needed
-                                                                }}
-                                                            >
-                                                                View Escrow Details
-                                                            </Box>
-                                                        )}
+                                                        {order.escrow_status &&
+                                                            order.escrow_status !==
+                                                                'released' && (
+                                                                <Box
+                                                                    as="a"
+                                                                    href={`/account/escrow/${order.id}`}
+                                                                    border="1px solid"
+                                                                    borderColor="white"
+                                                                    borderRadius="37px"
+                                                                    color="white"
+                                                                    px="4"
+                                                                    py="2"
+                                                                    textAlign="center"
+                                                                    _hover={{
+                                                                        textDecoration:
+                                                                            'none',
+                                                                        bg: 'primary.teal.600', // Adjust the hover color as needed
+                                                                    }}
+                                                                >
+                                                                    View Escrow
+                                                                    Details
+                                                                </Box>
+                                                            )}
                                                     </Flex>
                                                 ) : null}
                                             </Flex>
@@ -380,7 +377,6 @@ const Processing = ({
                                                 animateOpacity
                                             >
                                                 <Box mt={4}>
-
                                                     <Tabs variant="unstyled">
                                                         <TabList>
                                                             <Tab
@@ -405,8 +401,6 @@ const Processing = ({
                                                             >
                                                                 Order Details
                                                             </Tab>
-
-
                                                         </TabList>
                                                         <TabPanels>
                                                             <TabPanel>
@@ -425,49 +419,130 @@ const Processing = ({
                                                                     borderRadius="lg"
                                                                     w="100%"
                                                                 >
-                                                                    <Flex direction={{ base: "column", md: "row" }} gap={6} w="100%">
+                                                                    <Flex
+                                                                        direction={{
+                                                                            base: 'column',
+                                                                            md: 'row',
+                                                                        }}
+                                                                        gap={6}
+                                                                        w="100%"
+                                                                    >
                                                                         {/* Left Column: Shipping Cost & Subtotal */}
-                                                                        <VStack align="start" spacing={2} flex="1">
-                                                                            {order?.shipping_methods[0]?.price && (
+                                                                        <VStack
+                                                                            align="start"
+                                                                            spacing={
+                                                                                2
+                                                                            }
+                                                                            flex="1"
+                                                                        >
+                                                                            {order
+                                                                                ?.shipping_methods[0]
+                                                                                ?.price && (
                                                                                 <Text fontSize="md">
-                                                                                    <strong>Order Shipping Cost:</strong>{' '}
-                                                                                    {formatCryptoPrice(Number(order?.shipping_methods[0]?.price), item.currency_code ?? 'usdc')}{' '}
-                                                                                    {upperCase(item.currency_code)}
+                                                                                    <strong>
+                                                                                        Order
+                                                                                        Shipping
+                                                                                        Cost:
+                                                                                    </strong>{' '}
+                                                                                    {formatCryptoPrice(
+                                                                                        Number(
+                                                                                            order
+                                                                                                ?.shipping_methods[0]
+                                                                                                ?.price
+                                                                                        ),
+                                                                                        item.currency_code ??
+                                                                                            'usdc'
+                                                                                    )}{' '}
+                                                                                    {upperCase(
+                                                                                        item.currency_code
+                                                                                    )}
                                                                                 </Text>
                                                                             )}
                                                                             <Text fontSize="md">
-                                                                                <strong>Subtotal:</strong>{' '}
-                                                                                {formatCryptoPrice(subTotal, item.currency_code)}{' '}
-                                                                                {upperCase(item.currency_code)}
+                                                                                <strong>
+                                                                                    Subtotal:
+                                                                                </strong>{' '}
+                                                                                {formatCryptoPrice(
+                                                                                    subTotal,
+                                                                                    item.currency_code
+                                                                                )}{' '}
+                                                                                {upperCase(
+                                                                                    item.currency_code
+                                                                                )}
                                                                             </Text>
                                                                         </VStack>
 
                                                                         {/* Right Column: Order ID & Chain Data */}
-                                                                        <VStack align="start" spacing={2} flex="1">
-                                                                            <Flex align="center" gap={2}>
+                                                                        <VStack
+                                                                            align="start"
+                                                                            spacing={
+                                                                                2
+                                                                            }
+                                                                            flex="1"
+                                                                        >
+                                                                            <Flex
+                                                                                align="center"
+                                                                                gap={
+                                                                                    2
+                                                                                }
+                                                                            >
                                                                                 <Text fontSize="md">
-                                                                                    <strong>Order ID:</strong>{' '}
-                                                                                    {order?.id && typeof order.id === 'string'
-                                                                                        ? order.id.replace(/^order_/, '') // Remove "order_" prefix
+                                                                                    <strong>
+                                                                                        Order
+                                                                                        ID:
+                                                                                    </strong>{' '}
+                                                                                    {order?.id &&
+                                                                                    typeof order.id ===
+                                                                                        'string'
+                                                                                        ? order.id.replace(
+                                                                                              /^order_/,
+                                                                                              ''
+                                                                                          ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>
 
-                                                                            <Flex align="center" gap={2}>
-                                                                                <strong>Order Chain:</strong>
+                                                                            <Flex
+                                                                                align="center"
+                                                                                gap={
+                                                                                    2
+                                                                                }
+                                                                            >
+                                                                                <strong>
+                                                                                    Order
+                                                                                    Chain:
+                                                                                </strong>
                                                                                 <Image
-                                                                                    src={getChainLogo(order?.payments[0]?.blockchain_data?.chain_id)}
-                                                                                    alt={chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
-                                                                                    width={25}
-                                                                                    height={25}
+                                                                                    src={getChainLogo(
+                                                                                        order
+                                                                                            ?.payments[0]
+                                                                                            ?.blockchain_data
+                                                                                            ?.chain_id
+                                                                                    )}
+                                                                                    alt={chainIdToName(
+                                                                                        order
+                                                                                            ?.payments[0]
+                                                                                            ?.blockchain_data
+                                                                                            ?.chain_id
+                                                                                    )}
+                                                                                    width={
+                                                                                        25
+                                                                                    }
+                                                                                    height={
+                                                                                        25
+                                                                                    }
                                                                                 />
                                                                                 <Text>
-                                                                                    {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                    {chainIdToName(
+                                                                                        order
+                                                                                            ?.payments[0]
+                                                                                            ?.blockchain_data
+                                                                                            ?.chain_id
+                                                                                    )}
                                                                                 </Text>
                                                                             </Flex>
                                                                         </VStack>
                                                                     </Flex>
-
                                                                 </VStack>
                                                             </TabPanel>
                                                         </TabPanels>

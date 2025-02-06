@@ -1,9 +1,8 @@
 import { LineItem, Region } from '@medusajs/medusa';
 import { Table, Text } from '@medusajs/ui';
-
-import LineItemOptions from '@modules/common/components/line-item-options';
-import LineItemPrice from '@modules/common/components/line-item-price';
-import LineItemUnitPrice from '@modules/common/components/line-item-unit-price';
+import LineItemOptions from '@/modules/common/components/line-item/line-item-options';
+import LineItemPrice from '@/modules/common/components/line-item/line-item-price';
+import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
 import Thumbnail from '@modules/products/components/thumbnail';
 
 type ExtendedLineItem = LineItem & {

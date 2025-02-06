@@ -5,7 +5,6 @@ import { Flex, Box, Text } from '@chakra-ui/react';
 import WishlistCard from './components/wishlist-card';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 interface AccountWishListProps {
     countryCode: string; // Accept region as a prop

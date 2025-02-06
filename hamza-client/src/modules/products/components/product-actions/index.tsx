@@ -6,21 +6,17 @@ import { Button } from '@medusajs/ui';
 import { isEqual } from 'lodash';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import axios from 'axios';
 import { useIntersection } from '@lib/hooks/use-in-view';
 import { addToCart } from '@modules/cart/actions';
 import Divider from '@modules/common/components/divider';
 import OptionSelect from '@modules/products/components/option-select';
-import BuyButton from '../buy-button';
+import ProductBuyButton from '../buttons/product-buy-button';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import MobileActions from '../mobile-actions';
+import MobileActions from './components/mobile-actions';
 import ProductPrice from '../product-price';
-import WishlistIcon from '@/components/wishlist-dropdown/icon/wishlist-icon';
-import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
-import Medusa from '@medusajs/medusa-js';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getInventoryCount, getStore } from '@lib/data';
+import { getInventoryCount, getStore } from '@/lib/server';
 
 type ProductActionsProps = {
     product: PricedProduct;
@@ -284,7 +280,7 @@ export default function ProductActions({
                     </Button>
                 )} */}
                 <LocalizedClientLink href="/checkout?step=address">
-                    <BuyButton
+                    <ProductBuyButton
                         styles={'w-full h-10 text-white'}
                         handleBuyNow={handleBuyNow}
                         loader={buyNowLoader}

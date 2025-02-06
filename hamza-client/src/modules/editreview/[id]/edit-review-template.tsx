@@ -14,7 +14,7 @@ import {
     Text,
     Flex,
 } from '@chakra-ui/react';
-import { updateProductReview } from '@lib/data';
+import { updateProductReview } from '@/lib/server';
 import toast from 'react-hot-toast';
 
 const EditReviewTemplate = ({

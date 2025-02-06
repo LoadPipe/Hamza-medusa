@@ -21,14 +21,15 @@ const FilterBar = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Fetching categories data
-    const { data, isLoading } = useQuery<Category[]>(
-        ['categories'],
-        async () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
-            const response = await axios.get(url);
-            return response.data;
-        }
-    );
+    const { data, isLoading } = useQuery<Category[]>({
+        queryKey: ['categories'],
+        queryFn: async() =>
+    {
+        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+        const response = await axios.get(url);
+        return response.data;
+    }
+});
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data

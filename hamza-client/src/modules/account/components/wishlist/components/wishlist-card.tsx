@@ -15,17 +15,16 @@ import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getStore } from '@lib/data';
+import { getStore } from '@/lib/server';
 import { addToCart } from '@modules/cart/actions';
 import CartPopup from '@modules/products/components/cart-popup';
 import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import { WishlistProduct } from '@/zustand/wishlist/wishlist-store';
-import { Spinner, Trash } from '@medusajs/icons';
+import { Trash } from '@medusajs/icons';
 import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { LuBadgeCheck } from 'react-icons/lu';
-import { string } from 'zod';
 
 type PriceDictionary = {
     eth?: string;
@@ -74,17 +73,15 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productVariantId,
     countryCode,
 }) => {
-    const { data, error, isLoading, isFetching } = useQuery(
-        ['wishlist', productVariantId], // Use the variant ID directly as part of the query key
-        async () => {
+    const { data, error, isLoading, isFetching } = useQuery({
+        queryKey: ['wishlist', productVariantId], // Use variant ID in query key
+        queryFn: async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVariantId}`;
             const response = await axios.get(url);
-            return response.data; // Return only the data part of the response
+            return response.data; // Return only the data
         },
-        {
-            enabled: !!productVariantId, // Ensure the query only runs if productVarientId is defined
-        }
-    );
+        enabled: !!productVariantId, // Ensure query only runs if productVariantId is defined
+    });
 
     console.log(`VARIANT THUMB ${productVariantImage}`);
 
@@ -96,7 +93,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 
     const resetCard = async () => {
         if (productVariantId !== null && isFetching)
-            await queryClient.resetQueries(['wishlist']);
+            await queryClient.resetQueries({queryKey: ['wishlist']});
     };
 
     // Get inventory data

@@ -11,7 +11,7 @@ import {
     Portal,
 } from '@chakra-ui/react';
 import Link from 'next/link';
-import NavLink from '@modules/layout/templates/nav/components/nav-link';
+import NavLink from '@/modules/nav/templates/nav/components/nav-link';
 
 import { GiHamburgerMenu } from 'react-icons/gi';
 import {
@@ -61,7 +61,6 @@ export default function ProductDetailsMobileMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
-
                     >
                         <MenuItem
                             fontWeight={'600'}
@@ -83,7 +82,6 @@ export default function ProductDetailsMobileMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
-
                     >
                         <MenuItem
                             fontWeight={'600'}
@@ -163,7 +161,10 @@ export default function ProductDetailsMobileMenu() {
                 <Box>
                     <MenuDivider opacity={'0.5'} borderColor={'white'} />
                 </Box>
-                <Link href={`https://blog.hamza.market/request-product/`} target="_blank">
+                <Link
+                    href={`https://blog.hamza.market/request-product/`}
+                    target="_blank"
+                >
                     <MenuItem
                         fontWeight={'600'}
                         mt="1rem"
@@ -182,7 +183,10 @@ export default function ProductDetailsMobileMenu() {
                         <Text ml="0.5rem">Request a Product</Text>
                     </MenuItem>
                 </Link>
-                <Link href={`https://blog.hamza.market/merchant/`} target="_blank">
+                <Link
+                    href={`https://blog.hamza.market/merchant/`}
+                    target="_blank"
+                >
                     <MenuItem
                         fontWeight={'600'}
                         mt="1rem"
@@ -212,7 +216,6 @@ export default function ProductDetailsMobileMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
-
                     >
                         <MenuItem
                             fontWeight={'600'}

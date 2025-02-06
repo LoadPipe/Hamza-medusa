@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React from 'react';
 import ProductCardGroup from '@/modules/products/components/product-group';
 import { Flex } from '@chakra-ui/react';
-import SearchBar from './components/SearchBar';
-import useHomeProductsPage from '@/zustand/home-page/product-layout/product-layout';
 import FilterBar from './components/filter-bar/FilterBar';
-import { Hydrate } from '@tanstack/react-query';
+import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
 
 const SearchAndFilterPanel = ({
     dehydratedState,
 }: {
     dehydratedState: any;
 }) => {
+    const queryClient = new QueryClient();
+
     return (
         <Flex
             mx={'auto'}
@@ -23,9 +23,9 @@ const SearchAndFilterPanel = ({
             alignItems={'center'}
         >
             <FilterBar />
-            <Hydrate state={dehydratedState}>
+            <HydrationBoundary state={dehydrate(queryClient)}>
                 <ProductCardGroup />
-            </Hydrate>
+            </HydrationBoundary>
         </Flex>
     );
 };

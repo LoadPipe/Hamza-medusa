@@ -1,19 +1,17 @@
 'use client';
-import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 import { LineItem, Region } from '@medusajs/medusa';
-import CartItemSelect from '@modules/cart/components/cart-item-select';
 import DeleteButton from '@modules/common/components/delete-button';
-import LineItemOptions from '@modules/common/components/line-item-options';
-import LineItemPrice from '@modules/common/components/line-item-price';
+import LineItemOptions from '@/modules/common/components/line-item/line-item-options';
+import LineItemPrice from '@/modules/common/components/line-item/line-item-price';
 import Thumbnail from '@modules/products/components/thumbnail';
 import { updateLineItem, deleteLineItem } from '@modules/cart/actions';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import { debounce } from 'lodash';
-import { addDefaultShippingMethod } from '@lib/data';
-import LineItemUnitPrice from '@/modules/common/components/line-item-unit-price';
+import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
 import ItemQuantityButton from './components/item-quantity-button';
 
 type ExtendedLineItem = LineItem & {

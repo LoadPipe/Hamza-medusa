@@ -4,18 +4,21 @@ import Image from 'next/image';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
-import { getCartShippingCost, updateShippingCost } from '@lib/data';
+import { getCartShippingCost, updateShippingCost } from '@lib/server';
 import { useCartShippingOptions } from 'medusa-react';
-import axios from 'axios';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
+import { CartWithCheckoutStep } from '@/types/global';
+import { useQuery } from '@tanstack/react-query';
 
 type CartTotalsProps = {
-    data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
+    cartId?: string // Option, cartId for checkout flow...
     useCartStyle: boolean;
 };
 
@@ -23,114 +26,65 @@ type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
 
-const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
-    const {
-        subtotal,
-        discount_total,
-        gift_card_total,
-        tax_total,
-        shipping_total,
-        total,
-    } = data;
-
+const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
-    const [shippingCost, setShippingCost] = useState<number>(0);
-    const [loading, setLoading] = useState<boolean>(false); // Added loading state
-    const [convertedPrice, setConvertedPrice] = React.useState<string | null>(
-        null
-    );
 
-    useEffect(() => {
-        let isMounted = true; // Prevent setting state if component unmounts
+    // Determine which fetch function to use based on cartId presence
+    const { data: cart } = useQuery<CartWithCheckoutStep | null>({
+        queryKey: cartId ? ['cart', cartId] : ['cart'],
+        queryFn: cartId ? () => fetchCartForCheckout(cartId) : fetchCartForCart,
+        staleTime: 1000 * 60 * 5,
+        enabled: true, // Always fetch
+    });
 
-        const fetchShippingCost = async () => {
-            setLoading(true); // Start loader
-            try {
-                console.log('Fetching shipping cost...');
-                const cost = await updateShippingCost(data.id);
-                if (isMounted) {
-                    console.log('Shipping cost updated:', cost);
-                    setShippingCost(cost);
-                }
-            } catch (error) {
-                if (isMounted) {
-                    console.error('Error fetching shipping cost:', error);
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false); // Stop loader
-                }
-            }
-        };
 
-        fetchShippingCost();
 
-        // Cleanup function to cancel updates if unmounted
-        return () => {
-            isMounted = false;
-        };
-    }, [data.id, preferred_currency_code]);
+    const { data: shippingCost, isLoading: loading } = useQuery({
+        queryKey: ['shippingCost', cart?.id, preferred_currency_code], // Unique key per cart
+        queryFn: () => updateShippingCost(cart!.id), // Only fetch when cart exists
+        enabled: !!cart?.id, // Prevents fetching if no cart ID is available
+        staleTime: 1000 * 60 * 5, // Cache shipping cost for 5 minutes
+    });
 
-    const getCartSubtotal = (cart: any, currencyCode: string) => {
-        const subtotals: { [key: string]: number } = {};
-        const itemCurrencyCode = currencyCode;
 
-        for (const item of cart.items) {
-            const itemPrice = getPriceByCurrency(
-                item.variant.prices,
-                itemCurrencyCode
-            );
+    // Refactor: Imperative code to Declarative subset (Functional) code
+    const getCartSubtotal = (cart: CartWithCheckoutStep | null, currencyCode: string) => {
+        if (!cart?.items) return { currency: currencyCode, amount: 0 };
 
-            if (itemCurrencyCode?.length) {
-                if (!subtotals[itemCurrencyCode]) {
-                    subtotals[itemCurrencyCode] = 0;
-                }
-                const itemTotal =
-                    Number(itemPrice) * item.quantity -
-                    (item.discount_total ?? 0);
-                subtotals[itemCurrencyCode] += itemTotal;
-            } else {
-                console.log('Currency is missing or invalid for item:', item);
-            }
-        }
-
-        return subtotals[itemCurrencyCode]
-            ? {
-                  currency: itemCurrencyCode,
-                  amount: subtotals[itemCurrencyCode],
-              }
-            : { currency: itemCurrencyCode, amount: 0 };
+        return cart.items.reduce(
+            (total, item) => {
+                const itemPrice = getPriceByCurrency(item.variant.prices, currencyCode);
+                return {
+                    currency: currencyCode,
+                    amount: total.amount + (Number(itemPrice) * item.quantity - (item.discount_total ?? 0)),
+                };
+            },
+            { currency: currencyCode, amount: 0 }
+        );
     };
 
-    const finalSubtotal = getCartSubtotal(
-        data,
-        preferred_currency_code ?? 'usdc'
-    );
-    const taxTotal = data.tax_total ?? 0;
+    const finalSubtotal = getCartSubtotal(cart ?? null, preferred_currency_code ?? 'usdc');
+    const taxTotal = cart?.tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
-    React.useEffect(() => {
-        const fetchConvertedPrice = async () => {
+    const { data: convertedPrice, isLoading: isConverting } = useQuery({
+        queryKey: ['convertedPrice', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
+        queryFn: async () => {
             const result = await convertPrice(
-                Number(
-                    formatCryptoPrice(
-                        grandTotal,
-                        preferred_currency_code ?? 'usdc'
-                    )
-                ),
+                Number(formatCryptoPrice(grandTotal, preferred_currency_code ?? 'usdc')),
                 'eth',
                 'usdc'
             );
-            const formattedResult = Number(result).toFixed(2);
-            setConvertedPrice(formattedResult);
-        };
+            return Number(result).toFixed(2);
+        },
+        enabled: preferred_currency_code === 'eth', //  Fetch only when preferred currency is ETH
+        staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
+    });
 
-        if (preferred_currency_code === 'eth') {
-            fetchConvertedPrice();
-        }
-    }, [grandTotal, preferred_currency_code]);
+
+    if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
 
     return (
         <>
@@ -162,12 +116,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     </Flex>
                 )}
 
-                {!!discount_total && (
+                {!!cart.discount_total && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
                         <span>Discount</span>
                     </Text>
                 )}
-                {!!gift_card_total && (
+                {!!cart.gift_card_total && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
                         Gift Card
                     </Text>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
 import ReviewCard from './review-card';
 
-import { allReviews } from '@lib/data';
+import { allReviews } from '@/lib/server';
 import { renderStars } from '../../review-stars';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 

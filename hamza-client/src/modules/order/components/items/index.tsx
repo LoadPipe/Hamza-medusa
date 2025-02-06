@@ -1,22 +1,17 @@
 import {
     Table,
-    Thead,
     Tbody,
     Tr,
-    Th,
     Td,
     Image,
     TableContainer,
-    Button,
     Box,
     Text,
 } from '@chakra-ui/react';
 
-import Divider from '@modules/common/components/divider';
-import React, { useState } from 'react';
+import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import itemStore, { Item } from '@/zustand/review/review-store';
-import axios from 'axios';
+import itemStore from '@/zustand/review/review-store';
 import { useRouter } from 'next/navigation';
 
 type ItemsProps = {

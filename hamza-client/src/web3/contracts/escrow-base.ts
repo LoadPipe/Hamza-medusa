@@ -1,6 +1,6 @@
 import { BigNumberish, ethers } from 'ethers';
 import { erc20abi } from '../abi/erc20-abi';
-import { ISwitchMultiPaymentInput, ITransactionOutput } from '..';
+import { ISwitchMultiPaymentInput } from '..';
 
 export abstract class EscrowBase {
     contractAddress: string;

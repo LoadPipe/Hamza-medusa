@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { retrieveOrder } from '@lib/data';
+import { retrieveOrder } from '@/lib/server';
 import ReviewTemplate from '@modules/review/[id]/review-template';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { XMark } from '@medusajs/icons';
