@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Flex, Box, Text, Image, Divider, Skeleton } from '@chakra-ui/react';
 import StoreProductDisplay from './store-product-display';
-import { getVendorStoreBySlug } from '@/lib/server';
+import { getStoreBySlug } from '@/lib/server';
 import {
     MdOutlineKeyboardArrowRight,
     MdOutlineKeyboardArrowUp,
@@ -29,16 +29,11 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
     const [storeName, setStoreName] = useState('');
     const router = useRouter();
 
-    useEffect(() => {
-        getVendorPage().then((r) => {
-            console.log(r);
-            if (r?.length) router.push(r);
-        });
-    }, [params.slug]);
 
-    const getVendorPage = async () => {
+
+    const getStorePage = async () => {
         try {
-            const response = await getVendorStoreBySlug(params.slug);
+            const response = await getStoreBySlug(params.slug);
 
             if (
                 response?.products &&
@@ -58,6 +53,13 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
 
         return '';
     };
+
+    if(params.slug){
+        getStorePage().then((r) => {
+            console.log(r);
+            if (r?.length) router.push(r);
+        });
+    }
 
     let readableDate = 'Invalid date';
     if (reviewStats.createdAt) {

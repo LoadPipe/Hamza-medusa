@@ -227,7 +227,7 @@ export async function getStores() {
 }
 
 // Get Vendor Store by slug
-export async function getVendorStoreBySlug(store_handle: string) {
+export async function getStoreBySlug(store_handle: string) {
     return get('/custom/store', {
         store_handle,
     });
