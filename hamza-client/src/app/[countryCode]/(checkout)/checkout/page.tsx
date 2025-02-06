@@ -6,6 +6,7 @@ import { Flex } from '@chakra-ui/react';
 import ForceWalletConnect from '@/modules/common/components/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -33,7 +34,7 @@ export default async function Checkout(params: any) {
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <Flex flexDir="row" maxW="1280px" width="100%">
-                {!cartId ? <ForceWalletConnect /> : <CheckoutTemplate cartId={cartId} />}
+                {<CheckoutTemplate cartId={cartId} />}
             </Flex>
         </HydrationBoundary>
     );
