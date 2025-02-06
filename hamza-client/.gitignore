@@ -13,6 +13,7 @@
 /coverage
 /cypress/videos
 /downloads
+/cypress/downloads
 
 # next.js
 /.next/
