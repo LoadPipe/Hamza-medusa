@@ -324,6 +324,33 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         fetchCart();
     }, [countryCode]);
 
+    const getValidValuesForOption = (optionId: string): string[] => {
+        const mainOptionId = productData.options[0]?.id;
+
+        // For the main variant, show all available values.
+        if (optionId === mainOptionId) {
+            const mainOption = productData.options.find((opt: any) => opt.id === optionId);
+            return mainOption ? mainOption.values.map((val: any) => val.value) : [];
+        }
+
+        // For sub variant options, filter based on the main variant selection.
+        const mainSelection = options[mainOptionId];
+        const validValues = new Set<string>();
+        productData.variants.forEach((variant: any) => {
+            // Only consider variants that match the main variant selection.
+            const mainVariantOption = variant.options.find((opt: any) => opt.option_id === mainOptionId);
+            if (mainVariantOption && mainVariantOption.value === mainSelection) {
+                // Find the value for the current sub variant option.
+                const subVariantOption = variant.options.find((opt: any) => opt.option_id === optionId);
+                if (subVariantOption) {
+                    validValues.add(subVariantOption.value);
+                }
+            }
+        });
+
+        return Array.from(validValues);
+    };
+
     return (
         <Flex
             padding={{ base: '0', md: '2rem' }}
@@ -539,6 +566,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             <div className="flex flex-col gap-y-4">
                                 {(productData.options || []).map(
                                     (option: any) => {
+                                        const validValues = getValidValuesForOption(option.id);
+
                                         const updatedValues = option.values.map(
                                             (val: any) => {
                                                 const matchingVariant =
@@ -554,8 +583,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                                         matchingVariant?.variant_rank ??
                                                         null,
                                                 };
-                                            }
-                                        );
+                                            })
+                                            .filter((val: any) => validValues.includes(val.value));
+
                                         const augmentedOption = {
                                             ...option,
                                             values: updatedValues,
