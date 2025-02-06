@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { getHamzaCustomer, listCustomerOrders } from '@lib/data';
+import { getHamzaCustomer, listCustomerOrders } from '@/lib/server';
 import Overview from '@modules/account/components/overview';
 import { notFound, redirect } from 'next/navigation';
 

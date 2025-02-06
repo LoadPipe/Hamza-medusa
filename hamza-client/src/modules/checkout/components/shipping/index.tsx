@@ -7,7 +7,6 @@ import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
 import { Heading, Text, clx, useToggleState } from '@medusajs/ui';
 import { Button } from '@chakra-ui/react';
 import { formatAmount } from '@lib/util/prices';
-
 import Divider from '@modules/common/components/divider';
 import Radio from '@modules/common/components/radio';
 import Spinner from '@modules/common/icons/spinner';
@@ -18,7 +17,7 @@ import { useEffect, useState } from 'react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { setPaymentMethod } from '@modules/checkout/actions';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { addDefaultShippingMethod } from '@lib/data';
+import { addDefaultShippingMethod } from '@/lib/server';
 
 type ShippingProps = {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllStoreNames } from '@lib/data';
+import { getAllStoreNames } from '@/lib/server';
 
 const useVendors = () => {
     const [stores, setStores] = useState([]);

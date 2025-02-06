@@ -7,7 +7,7 @@ import {
     createPaymentSessions,
     getHamzaCustomer,
     listShippingMethods,
-} from '@lib/data';
+} from '@/lib/server';
 import { redirect } from 'next/navigation';
 import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 

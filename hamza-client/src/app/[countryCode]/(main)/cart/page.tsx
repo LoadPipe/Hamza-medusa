@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
-import CartTemplate from '@modules/cart/templates';
-import { getHamzaCustomer } from '@lib/data';
+import CartTemplate from '@/modules/cart/templates/cart-template';
+import { getHamzaCustomer } from '@/lib/server';
 import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 

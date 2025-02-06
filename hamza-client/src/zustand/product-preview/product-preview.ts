@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { Region } from '@medusajs/medusa'; // Import the Region type
 
 // Define the state and associated actions in an interface
 interface ProductPreview {

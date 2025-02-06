@@ -1,10 +1,9 @@
 import { BigNumberish, ethers } from 'ethers';
 import { massMarketPaymentAbi } from '../abi/massmarket-payment-abi';
 import { erc20abi } from '../abi/erc20-abi';
-import { IMultiPaymentInput, ITransactionOutput } from '..';
+import { IMultiPaymentInput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 import { HexString } from 'ethers/lib.commonjs/utils/data';
-
 
 interface IPaymentRequest {
     chainId: number;

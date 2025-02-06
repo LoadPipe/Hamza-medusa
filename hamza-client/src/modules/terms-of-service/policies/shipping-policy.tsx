@@ -1,10 +1,4 @@
-import {
-    Flex,
-    Text,
-    UnorderedList,
-    ListItem,
-    TabPanel,
-} from '@chakra-ui/react';
+import { Flex, Text, TabPanel } from '@chakra-ui/react';
 import React from 'react';
 
 const ShippingPolicy = ({ is_checkout = false }: { is_checkout?: boolean }) => {

@@ -6,11 +6,11 @@ import {
     getHamzaCustomer,
     listRegions,
     getVerificationStatus,
-} from '@lib/data';
-import getQueryClient from '@/getQueryClient';
+} from '@/lib/server';
+import getQueryClient from '@/app/query-utils/getQueryClient';
 import { dehydrate } from '@tanstack/react-query';
-import ReviewTemplate from '@modules/account/components/reviews/reviews-template';
-import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
+import ReviewTemplate from '@/modules/account/templates/reviews-template';
+import { getAllProductReviews, getNotReviewedOrders } from '@/lib/server';
 import React from 'react';
 
 export const metadata: Metadata = {
@@ -55,10 +55,10 @@ export default async function Reviews() {
             p={'24px'}
             rounded="lg"
         >
-                <ReviewTemplate
-                    customer={customer}
-                    dehydratedState={dehydrateReviews}
-                />
+            <ReviewTemplate
+                customer={customer}
+                dehydratedState={dehydrateReviews}
+            />
         </Flex>
     );
 }

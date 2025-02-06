@@ -12,10 +12,10 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import ProductCard from '../product-card/product-card';
+import ProductCard from '../product-card';
 import useHomeProductsPage from '@/zustand/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
-import { getAllProducts } from '@lib/data';
+import { getAllProducts } from '@/lib/server';
 import useProductGroup from '@/zustand/products/product-group/product-group';
 import useProductFilterModal from '@/zustand/products/filter/product-filter';
 import { useSearchParams } from 'next/navigation';

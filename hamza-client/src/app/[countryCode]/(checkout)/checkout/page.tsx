@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 import { Flex } from '@chakra-ui/react';
-import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
+import ForceWalletConnect from '@/modules/common/components/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 

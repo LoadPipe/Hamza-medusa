@@ -1,10 +1,4 @@
-import {
-    Box,
-    Flex,
-    Skeleton,
-    SkeletonText,
-    SkeletonCircle,
-} from '@chakra-ui/react';
+import { Flex, Skeleton, SkeletonText } from '@chakra-ui/react';
 
 const SkeletonOrderSummary = () => {
     return (

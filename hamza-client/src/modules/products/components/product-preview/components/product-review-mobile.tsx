@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReviewCardMobile from './review-card-mobile';
 import { Text, Flex, Box } from '@chakra-ui/react';
 import axios from 'axios';
-import { getAllProductReviews } from '@lib/data';
+import { getAllProductReviews } from '@/lib/server';
 
 const fakeReviews = [
     {

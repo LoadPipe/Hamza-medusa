@@ -1,13 +1,9 @@
 import { Cart, Order } from '@medusajs/medusa';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { Box, Flex, Heading, VStack, Text, Divider } from '@chakra-ui/react';
-import Help from '@modules/order/components/help';
-import Items from '@modules/order/components/items';
+import { Box, Flex, Text, Divider } from '@chakra-ui/react';
 import OnboardingCta from '@modules/order/components/onboarding-cta';
 import OrderDetails from '@modules/order/components/order-details';
-import ShippingDetails from '@modules/order/components/shipping-details';
-import PaymentDetails from '@modules/order/components/payment-details';
 import Summary from '@modules/order/components/summary';
 import { MdOutlineCheckCircle } from 'react-icons/md';
 import TransactionDetails from '../components/transaction-details';

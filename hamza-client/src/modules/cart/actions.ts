@@ -14,7 +14,7 @@ import {
     removeItem,
     updateCart,
     updateItem,
-} from '@lib/data';
+} from '@/lib/server';
 import { getRegion } from '@/app/actions';
 
 /**

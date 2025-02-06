@@ -6,7 +6,7 @@ import { CartWithCheckoutStep } from '@/types/global';
 import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';
-import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
 import { useQuery } from '@tanstack/react-query'; // Import Zustand store
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 

@@ -3,10 +3,9 @@ import { Flex, Text } from '@chakra-ui/react';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import CartTotals from '@modules/common/components/cart-totals';
-import CryptoPaymentButton from '@modules/checkout/components/payment-button';
 import DiscountCode from '@modules/checkout/components/discount-code';
-import CheckoutTermsOfService from '@modules/terms-of-service/checkout-tos';
 import PaymentButton from '@modules/checkout/components/payment-button';
+import CheckoutTermsOfService from '@/modules/terms-of-service/templates/checkout-tos';
 
 const PaymentSummary = async ({ cartId }: { cartId: string }) => {
     const cart = await retrieveCart(cartId).then((cart) => cart);

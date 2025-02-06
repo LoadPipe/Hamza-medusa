@@ -2,14 +2,12 @@ import React from 'react';
 import { Suspense } from 'react';
 import SkeletonProductGrid from '@modules/skeletons/templates/skeleton-product-grid';
 import Thumbnail from '@modules/products/components/thumbnail';
-import { Text } from '@medusajs/ui';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import axios from 'axios';
 import { SimpleGrid } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getProductsByStoreName } from '@lib/data';
+import { getProductsByStoreName } from '@/lib/server';
 
 type Props = {
     storeName: string;

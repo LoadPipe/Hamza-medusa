@@ -15,17 +15,16 @@ import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getStore } from '@lib/data';
+import { getStore } from '@/lib/server';
 import { addToCart } from '@modules/cart/actions';
 import CartPopup from '@modules/products/components/cart-popup';
 import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import { WishlistProduct } from '@/zustand/wishlist/wishlist-store';
-import { Spinner, Trash } from '@medusajs/icons';
+import { Trash } from '@medusajs/icons';
 import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { LuBadgeCheck } from 'react-icons/lu';
-import { string } from 'zod';
 
 type PriceDictionary = {
     eth?: string;

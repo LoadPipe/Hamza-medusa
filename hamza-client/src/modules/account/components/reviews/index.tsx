@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Text,
-    Stack,
-    StackDivider,
     useDisclosure,
     ButtonGroup,
     Flex,
@@ -14,7 +12,7 @@ import {
     Divider,
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
+import { getAllProductReviews, getNotReviewedOrders } from '@/lib/server';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';

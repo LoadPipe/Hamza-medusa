@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
-import { getAllProducts } from '@lib/data';
+import { getAllProducts } from '@/lib/server';
 import { getRegion } from '@/app/actions';
 import SearchAndFilterPanel from '@modules/home/components/search-and-filter-panel';
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
-import getQueryClient from '@/getQueryClient';
+import getQueryClient from '@/app/query-utils/getQueryClient';
 import { dehydrate, useQueryClient } from '@tanstack/react-query';
 import HeroSlider from '@/modules/home/components/hero-slider';
 

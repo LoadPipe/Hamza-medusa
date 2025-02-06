@@ -2,7 +2,6 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
-
 import SortProducts, { SortOptions } from './sort-products';
 
 type RefinementListProps = {

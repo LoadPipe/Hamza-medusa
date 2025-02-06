@@ -1,4 +1,4 @@
-import { getHamzaCustomer } from '@lib/data';
+import { getHamzaCustomer } from '@/lib/server';
 import AccountLayout from '@modules/account/templates/account-layout';
 import Login from './@login/page';
 /*

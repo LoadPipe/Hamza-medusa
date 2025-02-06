@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { FaArrowRightLong } from 'react-icons/fa6';
+import { Flex, Text } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/react';
 
 const HeroBanner = () => {

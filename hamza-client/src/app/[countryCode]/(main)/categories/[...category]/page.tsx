@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { getCategoryByHandle, listCategories, listRegions } from '@lib/data';
+import { getCategoryByHandle, listCategories, listRegions } from '@/lib/server';
 import CategoryTemplate from '@modules/categories/templates';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
 

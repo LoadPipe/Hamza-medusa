@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 // import Input from '@modules/common/components/input';
-import { Button, Flex, Box, Input } from '@chakra-ui/react';
+import { Button, Flex, Input } from '@chakra-ui/react';
 import {
     removeDiscount,
     removeGiftCard,

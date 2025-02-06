@@ -5,7 +5,7 @@ import {
     getCollectionByHandle,
     getCollectionsList,
     listRegions,
-} from '@lib/data';
+} from '@/lib/server';
 import CollectionTemplate from '@modules/collections/templates';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
 

@@ -3,7 +3,6 @@ import { CgProfile } from 'react-icons/cg';
 import { LiaBoxOpenSolid } from 'react-icons/lia';
 import { FaRegHeart, FaRegBell } from 'react-icons/fa';
 import { PiNotePencilLight } from 'react-icons/pi';
-import { CiLogout } from 'react-icons/ci';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { Customer } from '@medusajs/medusa';
 import { MdOutlineRateReview } from 'react-icons/md';
@@ -17,31 +16,19 @@ import {
     Flex,
     Box,
     Text,
-    IconButton,
     Collapse,
     Menu,
     MenuButton,
     MenuList,
     MenuItem,
-    MenuItemOption,
-    MenuGroup,
-    MenuOptionGroup,
-    MenuDivider,
     Button,
     useDisclosure,
 } from '@chakra-ui/react';
-import {
-    ChevronDownIcon,
-    ChevronUpIcon,
-    ChevronRightIcon,
-} from '@chakra-ui/icons';
-import NextLink from 'next/link';
+import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
-
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import NavLink from '../components/nav-link';
 import NavLinkMobile from '../components/nav-link-mobile';
 import NavLinkMobileOrders from '../components/nav-link-mobile-orders';
 import { LogoutMobile } from '../components/logout-mobile';

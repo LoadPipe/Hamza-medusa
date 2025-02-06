@@ -1,35 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
-    getDefaultWallets,
-    darkTheme,
-    connectorsForWallets,
-} from '@rainbow-me/rainbowkit';
-import {
-    injectedWallet,
     rainbowWallet,
-    coinbaseWallet,
     metaMaskWallet,
     walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { WalletConnectButton } from '@/components/providers/rainbowkit/connect-button/connect-button';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-
-import {
-    configureChains,
-    createConfig,
-    useAccount,
-    useWalletClient,
-} from 'wagmi';
+import { configureChains, createConfig, useWalletClient } from 'wagmi';
 import {
     mainnet,
-    optimismSepolia,
     optimism,
     sepolia,
     polygon,
     arbitrum,
-    linea,
-    lineaTestnet,
-    goerli,
     base,
 } from 'wagmi/chains';
 import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
@@ -38,7 +21,6 @@ import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import {
     Flex,
-    Button,
     Modal,
     ModalOverlay,
     ModalContent,
