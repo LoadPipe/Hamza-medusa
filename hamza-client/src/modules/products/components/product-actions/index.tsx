@@ -285,7 +285,7 @@ export default function ProductActions({
                 )} */}
                 <LocalizedClientLink href="/checkout?step=address">
                     <BuyButton
-                        styles={'w-full h-10 text-white'}
+                        styles={'w-full h-10 text-white buy-now-button'}
                         handleBuyNow={handleBuyNow}
                         loader={buyNowLoader}
                         outOfStock={!inStock || !variant}

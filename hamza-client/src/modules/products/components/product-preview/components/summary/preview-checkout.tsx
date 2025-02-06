@@ -613,6 +613,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     backgroundColor={'primary.green.900'}
                     disabled={isLoading || !cart} // Disable button while loading or if cart doesn't exist
                     fontSize={{ base: '12px', md: '18px' }}
+                    className="buy-now-button"
                 >
                     {isLoading ? <Spinner /> : 'Buy Now'}{' '}
                     {/* Show spinner when loading */}
