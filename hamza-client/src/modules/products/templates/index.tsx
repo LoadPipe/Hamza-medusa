@@ -12,18 +12,29 @@ import PreviewCheckout from '../components/product-preview/components/summary/pr
 import ProductReview from '../components/product-preview/components/product-review';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import StoreBanner from '../components/product-preview/components/store-banner/store-banner';
-import { getStore } from '@/lib/server';
+import { getPricedProductByHandle, getStore } from '@/lib/server';
 import { FaArrowLeftLong } from 'react-icons/fa6';
+import { useQuery } from '@tanstack/react-query';
+import { Spinner } from '@medusajs/icons';
 
 type ProductTemplateProps = {
-    product: PricedProduct;
+    // product: PricedProduct;
     region: Region;
+    handle: string;
     countryCode: string;
 };
 
+/*
+* @Doom: This code needs to be ripped apart and put back together...
+* @Breakdown: let's break it down into component view. Get a nice herirachical overview of the components and how they interact with each other. This way we know what we are working with.
+* @useEffect: Currently the best way to deal with the zustand store, is to leave it as is. Let's not touch it for now.
+* @Pipeline: We want to control the data from root (product/[handle]/page.tsx) all the way down the leaf nodes. This way we can cache the data and control the flow of data.
+*/
+
 const ProductTemplate: React.FC<ProductTemplateProps> = ({
-    product,
+    // product,
     region,
+    handle,
     countryCode,
 }) => {
     const {
@@ -34,11 +45,21 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         setQuantity,
     } = useProductPreview();
 
-    const [store, setStore] = useState('');
-    const [icon, setIcon] = useState('');
     const [selectedVariantImage, setSelectedVariantImage] = useState('');
 
+    const { data: product, isError, isLoading } = useQuery({
+        queryKey: ['product', handle],
+        queryFn: () => getPricedProductByHandle(handle, region),
+    })
+
+    // If we hit these error states, product either doesn't exist or there was an error fetching it.
+    // Otherwise, the rest of the page will render. [OMIT**Banner**]
+    if(isError || !product || !product.id) {
+        notFound();
+    }
+
     // Only update product data when `product` changes
+    // useProductPreview is a custom hook that sets the product data in a global zustand state.
     useEffect(() => {
         if (product && product.id) {
             setProductData(product);
@@ -60,28 +81,18 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         setQuantity,
     ]);
 
-    // if (!product || !product.id) {
-    //     return null; // Return null or some error display components
-    // }
-    // console.log(
-    //     `Product Page, we have product ${product.id} ${product.handle}`
-    // );
+    // TODO: This can be grabbed in the service layer `getPricedProductByHandle` api, and we can useQuery to fetch this would be just product...
+    // Fetching store data, based off the product id, storeData.(handle|icon) is used in StoreBanner (navigation/icon)
+    // This is a separate query from the product query, as it fetches store data based off the product id.
+    // We're using isStoreLoading && isStoreError states to handle loading and error states for Banner.
+    const { data: storeData, isLoading: isStoreLoading, isError: isStoreError } = useQuery({
+        // Cache / Fetch data based off this unique product_id
+        queryKey: ['store_vendor', product?.id],
+        queryFn: () => getStore(product?.id as string),
+        // Only run this query when product
+        enabled: !!product.id,
+    });
 
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(product.id as string);
-                // console.log(`Vendor: ${data}`);
-                setStore(data.handle);
-                setIcon(data.icon);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [product]);
 
     return (
         <Flex
@@ -181,7 +192,13 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         />
                     </Flex>
                 </Flex>
-                <StoreBanner store={store} icon={icon} />
+                {isStoreLoading ? (
+                    <Spinner /> // Or some loading placeholder for StoreBanner
+                ) : isStoreError ? (
+                    <Text>Error loading store details</Text> // Handle error case gracefully
+                ) : (
+                    <StoreBanner store={storeData?.handle} icon={storeData?.icon} />
+                )}
                 <Divider
                     color="#555555"
                     display={{ base: 'block', md: 'none' }}

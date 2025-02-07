@@ -7,6 +7,22 @@ const store = require('./store.config.json');
 const nextConfig = withStoreConfig({
     features: store.features,
     reactStrictMode: true,
+    experimental: {
+        webpackMemoryOptimizations: true,
+        optimizePackageImports: ['react', 'next', 'lodash'],
+        turbo: {
+            resolveExtensions: [
+                '.mdx',
+                '.tsx',
+                '.ts',
+                '.jsx',
+                '.js',
+                '.mjs',
+                '.json',
+            ],
+            moduleIdStrategy: 'deterministic', // Improve caching
+        },
+    },
     images: {
         remotePatterns: [
             {
