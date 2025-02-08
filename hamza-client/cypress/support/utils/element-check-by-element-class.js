@@ -22,7 +22,13 @@ export function elementCheckByElementClass(
 
     // NOTE: since this is a class selector, if you retrieve many elements, you cannot use this.
     if (scrollIntoView) {
-        cyGet.scrollIntoView();
+        cyGet.then($elements => {
+            if ($elements.length === 1) {
+                cyGet.scrollIntoView();
+            } else {
+                cy.log('Multiple elements found, skipping scrollIntoView');
+            }
+        });
     }
 
     if (beVisible) {

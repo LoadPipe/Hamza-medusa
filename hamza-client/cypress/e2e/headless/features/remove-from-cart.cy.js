@@ -35,18 +35,22 @@ describe('Product page exist', () => {
 			cy.visit('/en/cart');
 
 			// check drone -------------------------------------------------------------
-			elementCheckByElementClass('.cart-item-container', true)
-				.contains('p', 'DJI Mini 3 Pro')
-				.parents('.cart-item-container')
-				.find('.delete-button')
-				.click();
+			elementCheckByElementClass('.cart-item-container', {
+                findByChild: 'DJI Mini 3 Pro',
+                scrollIntoView: true,
+            })
+                .parents('.cart-item-container')
+                .find('.delete-button')
+                .click();
 
 			// check hyperx mouse
-			elementCheckByElementClass('.cart-item-container', true)
-				.find('p')
-				.contains(/HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight/i)
-				.parents('.cart-item-container')
-				.find('.delete-button')
-				.click();
+			elementCheckByElementClass('.cart-item-container', {
+                findByChild:
+                    'HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight',
+                scrollIntoView: true,
+            })
+                .parents('.cart-item-container')
+                .find('.delete-button')
+                .click();
 	});
 });

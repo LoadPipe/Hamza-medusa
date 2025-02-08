@@ -27,19 +27,19 @@ export function buttonClickByElementText(
     }
 
     if (beVisible) {
-        cyContains.should('be.visible');
+        cyContains.should('be.visible', { timeout: timeout });
     }
 
     if (exist === true) {
-        cyContains.should('exist');
+        cyContains.should('exist', { timeout: timeout });
     } else if (exist === false) {
-        cyContains.should('not.exist');
+        cyContains.should('not.exist', { timeout: timeout });
     }
 
     if (disabled === true) {
-        cyContains.should('be.disabled');
+        cyContains.should('be.disabled', { timeout: timeout });
     } else if (disabled === false) {
-        cyContains.should('not.be.disabled');
+        cyContains.should('not.be.disabled', { timeout: timeout });
     }
 
     return forceClick ? cyContains.click({ force: true }) : cyContains.click();

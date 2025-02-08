@@ -24,23 +24,29 @@ export function buttonClickByElementClass(
 
     // NOTE: since this is a class selector, if you retrieve many elements, you cannot use this.
     if (scrollIntoView) {
-        cyGet.scrollIntoView();
+        cyGet.then($elements => {
+            if ($elements.length === 1) {
+                cyGet.scrollIntoView();
+            } else {
+                cy.log('Multiple elements found, skipping scrollIntoView');
+            }
+        });
     }
 
     if (beVisible) {
-        cyGet.should('be.visible');
+        cyGet.should('be.visible', { timeout: timeout });
     }
 
     if (exist === true) {
-        cyGet.should('exist');
+        cyGet.should('exist', { timeout: timeout });
     } else if (exist === false) {
-        cyGet.should('not.exist');
+        cyGet.should('not.exist', { timeout: timeout });
     }
 
     if (disabled === true) {
-        cyGet.should('be.disabled');
+        cyGet.should('be.disabled', { timeout: timeout });
     } else if (disabled === false) {
-        cyGet.should('not.be.disabled');
+        cyGet.should('not.be.disabled', { timeout: timeout });
     }
 
     return forceClick ? cyGet.click({ force: true }) : cyGet.click();

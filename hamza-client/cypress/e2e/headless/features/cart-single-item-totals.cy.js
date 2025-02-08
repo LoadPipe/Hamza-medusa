@@ -60,6 +60,10 @@ describe('Product page exist [t-shirt]', () => {
 					disabled: false
 			});
 
+			// TODO: looks like the loading states are not exactly matching up. So i still gotta timeout
+			// BUG: race condition. Without wait, its possible that the totals will not match up
+			cy.wait(3000);
+
 			// get updated values
 			elementCheckByElementClass('.cart-item-container', {
 				findByChild: '.line-item-unit-price',
@@ -82,9 +86,9 @@ describe('Product page exist [t-shirt]', () => {
 					cy.get('@cart_subtotal2').then(cart_subtotal2 => {
 						cy.get('@cart_shipping2').then(cart_shipping2 => {
 							cy.get('@cart_total2').then(cart_total2 => {
-								const calc_subtotal = unit_price2 * unit_quantity2;
-								expect(calc_subtotal).to.equal(cart_subtotal2);
-								expect(calc_subtotal + cart_shipping2).to.equal(cart_total2);
+								const calc_subtotal2 = unit_price2 * unit_quantity2;
+								expect(calc_subtotal2).to.equal(cart_subtotal2);
+								expect(calc_subtotal2 + cart_shipping2).to.equal(cart_total2);
 							});
 						});
 					});

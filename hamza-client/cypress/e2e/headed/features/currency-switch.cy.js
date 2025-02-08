@@ -23,6 +23,8 @@ describe('Metamask login then user profile', () => {
         buttonClickByElementClass('.currency-selector');
 
         // TODO: odd behavior, element has zero height, so it's not visible, but it's clickable with forceClick
+        // BUG: why does element have zero height?
+        // Proper way: buttonClickByElementClass('.currency-selector-item', { findByChild: 'USDC' });
         buttonClickByElementClass('.currency-selector-item', {
             findByChild: 'USDC',
             beVisible: false,
@@ -43,6 +45,9 @@ describe('Metamask login then user profile', () => {
         // //open currency selector and select ETH
         buttonClickByElementClass('.currency-selector');
 
+        // TODO: odd behavior, element has zero height, so it's not visible, but it's clickable with forceClick
+        // BUG: why does element have zero height?
+        // Proper way: buttonClickByElementClass('.currency-selector-item', { findByChild: 'ETH' });
         buttonClickByElementClass('.currency-selector-item', {
             findByChild: 'ETH',
             beVisible: false,
@@ -63,6 +68,9 @@ describe('Metamask login then user profile', () => {
         // //open currency selector and select USDT
         buttonClickByElementClass('.currency-selector');
 
+        // TODO: odd behavior, element has zero height, so it's not visible, but it's clickable with forceClick
+        // BUG: why does element have zero height?
+        // Proper way: buttonClickByElementClass('.currency-selector-item', { findByChild: 'USDT' });
         buttonClickByElementClass('.currency-selector-item', {
             findByChild: 'USDT',
             beVisible: false,
@@ -83,6 +91,9 @@ describe('Metamask login then user profile', () => {
         //open currency selector and select USDC
         buttonClickByElementClass('.currency-selector');
 
+        // TODO: odd behavior, element has zero height, so it's not visible, but it's clickable with forceClick
+        // BUG: why does element have zero height?
+        // Proper way: buttonClickByElementClass('.currency-selector-item', { findByChild: 'USDC' });
         buttonClickByElementClass('.currency-selector-item', {
             findByChild: 'USDC',
             beVisible: false,
