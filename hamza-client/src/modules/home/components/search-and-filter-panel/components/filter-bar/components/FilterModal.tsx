@@ -87,6 +87,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                 backgroundColor={'#121212'}
                 borderRadius={'12px'}
                 boxShadow="lg"
+                className="filter-modal"
             >
                 <ModalHeader
                     fontWeight={'600'}
