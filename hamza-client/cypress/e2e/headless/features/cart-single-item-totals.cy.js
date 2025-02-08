@@ -4,7 +4,7 @@ import { elementCheckByElementClass } from '../../../support/utils/element-check
 
 // Add these helper functions before the describe block
 
-describe('Product page exist [t-shirt]', () => {
+describe('Cart Calculations: single item totals', () => {
 	it('adds 1 item to cart and checks cart totals', () => {
 			// Tshirt
 			cy.visit('/en/products/t-shirt');

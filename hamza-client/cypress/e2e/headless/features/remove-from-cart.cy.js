@@ -2,7 +2,7 @@ import { elementCheckByElementText } from '../../../support/utils/element-check-
 import { elementCheckByElementClass } from '../../../support/utils/element-check-by-element-class';
 import { buttonClickByElementText } from '../../../support/utils/buttons/button-click-by-element-text';
 
-describe('Product page exist', () => {
+describe('Remove from cart', () => {
 	it('fetches product with handle [drone]', () => {
 			cy.visit('/en/products/drone');
 			elementCheckByElementText('DJI Mini 3 Pro');

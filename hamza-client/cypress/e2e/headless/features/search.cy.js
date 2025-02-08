@@ -1,5 +1,5 @@
 // test for header
-describe('Homepage', () => {
+describe('Search', () => {
 	beforeEach(() => {
 			cy.visit('/en');
 	});

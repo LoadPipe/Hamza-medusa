@@ -3,7 +3,7 @@ import { elementCheckByElementClass } from '../../../support/utils/element-check
 import { buttonClickByElementClass } from '../../../support/utils/buttons/button-click-by-element-class';
 import { buttonClickByElementText } from '../../../support/utils/buttons/button-click-by-element-text';
 
-describe('Product page', () => {
+describe('Add to cart multi variant type', () => {
 	it('fetches product with handle [t-shirt]', () => {
 			cy.visit('/en/products/t-shirt');
 			cy.wait(2000); // Wait for page to fully load

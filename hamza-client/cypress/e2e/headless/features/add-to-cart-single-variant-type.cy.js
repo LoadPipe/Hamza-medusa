@@ -2,7 +2,7 @@ import { buttonClickByElementText } from '../../../support/utils/buttons/button-
 import { elementCheckByElementText } from '../../../support/utils/element-check-by-element-text';
 import { elementCheckByElementClass } from '../../../support/utils/element-check-by-element-class';
 import { buttonClickByElementClass } from '../../../support/utils/buttons/button-click-by-element-class';
-describe('Product page', () => {
+describe('Add to cart single variant type', () => {
     it('fetches product with handle [t-shirt]', () => {
         cy.visit('/en/products/t-shirt');
         cy.wait(2000); // Wait for page to fully load
@@ -77,6 +77,8 @@ describe('Product page', () => {
         // cart check
         cy.visit('/en/cart');
 
+        cy.wait(3000);
+
         elementCheckByElementClass('.cart-item-container', {
 			findByChild: 'Medusa T-Shirt'
 		});
@@ -96,6 +98,9 @@ describe('Product page', () => {
             disabled: false
         });
 
+        // TODO: After checkout re-enables, the quantity still hasn't updated correctly.
+        // BUG: Race condition?
+        cy.wait(3000);
         elementCheckByElementClass('.cart-item-quantity-display', {
             findByChild: '2'
         });

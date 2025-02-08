@@ -1,7 +1,7 @@
 import { buttonClickByElementText } from '../../../support/utils/buttons/button-click-by-element-text';
 import { elementCheckByElementText } from '../../../support/utils/element-check-by-element-text';
 
-describe('Product page exist', () => {
+describe('Add to cart multi product', () => {
 	it('fetches product with handle [t-shirt]', () => {
 			cy.visit('/en/products/t-shirt');
 			cy.wait(2000); // Wait for page to fully load
