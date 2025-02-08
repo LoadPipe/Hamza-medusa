@@ -2,7 +2,6 @@ import { buttonClickByElementText } from '../../../support/utils/buttons/button-
 import { elementCheckByElementText } from '../../../support/utils/element-check-by-element-text';
 import { elementCheckByElementClass } from '../../../support/utils/element-check-by-element-class';
 import { buttonClickByElementClass } from '../../../support/utils/buttons/button-click-by-element-class';
-
 describe('Product page', () => {
     it('fetches product with handle [t-shirt]', () => {
         cy.visit('/en/products/t-shirt');
@@ -69,27 +68,51 @@ describe('Product page', () => {
         buttonClickByElementText('Continue Shopping');
             
         // checks cart quantity in nav
-        elementCheckByElementClass('.cart-quantity', true).should('have.text', '3');
+        elementCheckByElementClass('.cart-quantity', {
+			findByChild: '3'
+		});
 
         cy.wait(3000);
 
         // cart check
         cy.visit('/en/cart');
-        elementCheckByElementClass('.cart-item-container:contains(Medusa T-Shirt)');
-        elementCheckByElementClass('.cart-item-quantity-display:contains(3)');
+
+        elementCheckByElementClass('.cart-item-container', {
+			findByChild: 'Medusa T-Shirt'
+		});
+        
+        elementCheckByElementClass('.cart-item-quantity-display', {
+			findByChild: '3'
+		});
 
         // test cart increment and decrement
-        elementCheckByElementClass('.cart-item-container').find('.cart-item-quantity-button-decrement').scrollIntoView().click();
+        buttonClickByElementClass('.cart-item-container', {
+            findByChild: '.cart-item-quantity-button-decrement',
+            scrollIntoView: true,
+        });
         
-        elementCheckByElementClass('.checkout-now-button', true).should('be.visible').and('not.be.disabled');
+        elementCheckByElementClass('.checkout-now-button', {
+            beVisible: true,
+            disabled: false
+        });
 
-        elementCheckByElementClass('.cart-item-quantity-display:contains(2)');
+        elementCheckByElementClass('.cart-item-quantity-display', {
+            findByChild: '2'
+        });
 
-        elementCheckByElementClass('.cart-item-container').find('.cart-item-quantity-button-increment').scrollIntoView().click();
+        buttonClickByElementClass('.cart-item-container', {
+            findByChild: '.cart-item-quantity-button-increment',
+            scrollIntoView: true,
+        });
             
-        elementCheckByElementClass('.checkout-now-button', true).should('be.visible').and('not.be.disabled');;
+        elementCheckByElementClass('.checkout-now-button', {
+            beVisible: true,
+            disabled: false,
+        });
             
-        elementCheckByElementClass('.cart-item-quantity-display:contains(3)');
+        elementCheckByElementClass('.cart-item-quantity-display', {
+            findByChild: '3'
+        });
     });
 
     it('adds a product to the cart and checks cart', () => {

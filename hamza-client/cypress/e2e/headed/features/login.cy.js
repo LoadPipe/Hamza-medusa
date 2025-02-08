@@ -15,10 +15,10 @@ describe('Metamask login then user profile', () => {
 
     buttonClickByElementText('Sign message');
 
-    elementCheckByElementText('Verify your account', true).should('not.exist');
+    elementCheckByElementText('Verify your account', { exist: false, scrollIntoView: false, beVisible: false });
 
     //open user menu
-    buttonClickByElementClass('.account-menu-button', true);
+    buttonClickByElementClass('.account-menu-button');
 
     // cy.wait(3000); // Wait 3 seconds before continuing
 

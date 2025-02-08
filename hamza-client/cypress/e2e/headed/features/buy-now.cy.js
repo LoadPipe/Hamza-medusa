@@ -18,7 +18,7 @@ describe('Product page', () => {
 
 			buttonClickByElementText('Sign message');
 
-			elementCheckByElementText('Verify your account');
+			elementCheckByElementText('Verify your account', { exist: false, scrollIntoView: false, beVisible: false });
 
 			elementCheckByElementText('Medusa T-Shirt');
 	});

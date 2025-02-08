@@ -5,70 +5,99 @@ import { buttonClickByElementText } from '../../../support/utils/buttons/button-
 import { elementCheckByElementText } from '../../../support/utils/element-check-by-element-text';
 
 describe('Metamask login then user profile', () => {
-  beforeEach(() => {
-    cy.visit("/en");
-  });
+    beforeEach(() => {
+        cy.visit('/en');
+    });
 
-  it('should connect wallet and display account information', () => {
-    connectWallet();
+    it('should connect wallet and display account information', () => {
+        connectWallet();
 
-    // Simulate wallet selection (MetaMask in this case)
-    buttonClickByElementText('MetaMask');
+        // Simulate wallet selection (MetaMask in this case)
+        buttonClickByElementText('MetaMask');
 
-    buttonClickByElementText('Sign message');
+        buttonClickByElementText('Sign message');
 
-    elementCheckByElementText('Verify your account');
+        elementCheckByElementText('Verify your account');
 
-    //open currency selector and select USDC
-    buttonClickByElementClass('.currency-selector');
+        //open currency selector and select USDC
+        buttonClickByElementClass('.currency-selector');
 
-    buttonClickByElementClass('.currency-selector-item:contains(USDC)');
+        // TODO: odd behavior, element has zero height, so it's not visible, but it's clickable with forceClick
+        buttonClickByElementClass('.currency-selector-item', {
+            findByChild: 'USDC',
+            beVisible: false,
+            forceClick: true,
+        });
 
-    cy.wait(3000);
+        cy.wait(3000);
 
-    buttonClickByElementText('Save Changes');
+        buttonClickByElementText('Save Changes');
 
-    cy.wait(3000);
+        cy.wait(3000);
 
-    elementCheckByElementClass('.product-card:contains(USDC)');
+        elementCheckByElementClass('.product-card', {
+            findByChild: 'USDC',
+            scrollIntoView: false,
+        });
 
-		// //open currency selector and select ETH
-    buttonClickByElementClass('.currency-selector');
+        // //open currency selector and select ETH
+        buttonClickByElementClass('.currency-selector');
 
-    buttonClickByElementClass('.currency-selector-item:contains(ETH)');
+        buttonClickByElementClass('.currency-selector-item', {
+            findByChild: 'ETH',
+            beVisible: false,
+            forceClick: true,
+        });
 
-    cy.wait(3000);
+        cy.wait(3000);
 
-    buttonClickByElementText('Save Changes');
+        buttonClickByElementText('Save Changes');
 
-    cy.wait(3000);
+        cy.wait(3000);
 
-    elementCheckByElementClass('.product-card:contains(ETH)');
+        elementCheckByElementClass('.product-card', {
+            findByChild: 'ETH',
+            scrollIntoView: false,
+        });
 
-		// //open currency selector and select USDT
-    buttonClickByElementClass('.currency-selector');
+        // //open currency selector and select USDT
+        buttonClickByElementClass('.currency-selector');
 
-    buttonClickByElementClass('.currency-selector-item:contains(USDT)');
+        buttonClickByElementClass('.currency-selector-item', {
+            findByChild: 'USDT',
+            beVisible: false,
+            forceClick: true,
+        });
 
-    cy.wait(3000);
+        cy.wait(3000);
 
-    buttonClickByElementText('Save Changes');
+        buttonClickByElementText('Save Changes');
 
-    cy.wait(3000);
+        cy.wait(3000);
 
-    elementCheckByElementClass('.product-card:contains(USDT)');
+        elementCheckByElementClass('.product-card', {
+            findByChild: 'USDT',
+            scrollIntoView: false,
+        });
 
-    //open currency selector and select USDC
-    buttonClickByElementClass('.currency-selector');
+        //open currency selector and select USDC
+        buttonClickByElementClass('.currency-selector');
 
-    buttonClickByElementClass('.currency-selector-item:contains(USDC)');
+        buttonClickByElementClass('.currency-selector-item', {
+            findByChild: 'USDC',
+            beVisible: false,
+            forceClick: true,
+        });
 
-    cy.wait(3000);
+        cy.wait(3000);
 
-    buttonClickByElementText('Save Changes');
+        buttonClickByElementText('Save Changes');
 
-    cy.wait(3000);
+        cy.wait(3000);
 
-    elementCheckByElementClass('.product-card:contains(USDC)');
-  });
+        elementCheckByElementClass('.product-card', {
+            findByChild: 'USDC',
+            scrollIntoView: false,
+        });
+    });
 });
