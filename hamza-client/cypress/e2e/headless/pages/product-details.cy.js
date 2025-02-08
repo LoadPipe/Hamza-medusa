@@ -1,5 +1,6 @@
 import { buttonClickByElementClass } from '../../../support/utils/buttons/button-click-by-element-class';
 import { elementCheckByElementClass } from '../../../support/utils/element-check-by-element-class';
+import { buttonClickByElementText } from '../../../support/utils/buttons/button-click-by-element-text';
 
 describe('Product images', () => {
     beforeEach(() => {
@@ -44,7 +45,7 @@ describe('Store banner', () => {
     });
 });
 
-describe('Increment Quantity', () => {
+describe('Increment and decrement Quantity', () => {
     beforeEach(() => {
         cy.visit('/en/products/t-shirt');
     });
@@ -80,4 +81,108 @@ describe('Increment Quantity', () => {
             findByChild: '.quantity-display',
         }).should('have.text', '2');
     });
+});
+
+describe('Link checks', () => {
+	beforeEach(() => {
+		cy.visit('/en/products/t-shirt');
+	});
+
+	it('Shipping policies', () => {
+		// wait till preview checkout add to cart button is visible
+		elementCheckByElementClass('.preview-checkout', {
+				findByChild: '.preview-checkout-add-to-cart',
+				disabled: false,
+		});
+
+		buttonClickByElementText('See shipping policy');
+
+		// check for shipping policy modal title
+		elementCheckByElementClass('p', {
+			findByChild: 'Shipping & Delivery',
+			isVisible: true,
+		});
+	});
+
+	it('Returns policy', () => {
+		// wait till preview checkout add to cart button is visible
+		elementCheckByElementClass('.preview-checkout', {
+				findByChild: '.preview-checkout-add-to-cart',
+				disabled: false,
+		});
+		
+		buttonClickByElementText('See returns policy');
+
+		// check for shipping policy modal title
+		elementCheckByElementClass('p', {
+			findByChild: 'Return Policy',
+			isVisible: true,
+		});
+	});
+
+	it('Payment Policies and Cancellation', () => {
+		// wait till preview checkout add to cart button is visible
+		elementCheckByElementClass('.preview-checkout', {
+				findByChild: '.preview-checkout-add-to-cart',
+				disabled: false,
+		});
+		
+		buttonClickByElementText('See payment method policy');
+
+		// check for shipping policy modal title
+		elementCheckByElementClass('p', {
+			findByChild: 'Payment Policies and Cancellation',
+			isVisible: true,
+		});
+	});
+
+	it('Chat with them', () => {
+		// wait till preview checkout add to cart button is visible
+		elementCheckByElementClass('.preview-checkout', {
+				findByChild: '.preview-checkout-add-to-cart',
+				disabled: false,
+		});
+
+		// checks for external url
+		elementCheckByElementClass('a', {
+			findByChild: 'Chat with them',
+			isVisible: true,
+		}).parents('a').should('have.attr', 'href', 'https://support.hamza.market/help/1568263160');
+	});
+
+	it('Visit Store', () => {
+		// wait till preview checkout add to cart button is visible
+		elementCheckByElementClass('.preview-checkout', {
+				findByChild: '.preview-checkout-add-to-cart',
+				disabled: false,
+		});
+
+		cy.wait(3000);
+
+		// TODO: store link actually is not available until store has completely loaded.
+		// BUG: race condition related issue.
+		buttonClickByElementText('Visit Store');
+		
+		cy.url().should('include', '/en/store/medusa-merch');
+
+		elementCheckByElementClass('.store-name', {
+			findByChild: 'Medusa Merch',
+			isVisible: true,
+		});
+	});
+});
+
+describe('Link check: product details back', () => {
+	beforeEach(() => {
+		cy.visit('/en/');
+	});
+
+	it('back to results', () => {
+		cy.visit('/en/products/t-shirt');
+
+		buttonClickByElementText('Back to results');
+
+		// check if we're back to home page
+		cy.url().should('include', '/en');
+	});
 });
