@@ -8,6 +8,7 @@ interface ProfileInputProps {
     placeholder: string;
     value?: string;
     setValue: (value: string) => void;
+    className?: string;
 }
 
 const ProfileInput: React.FC<ProfileInputProps> = ({
@@ -15,6 +16,7 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
     placeholder,
     value,
     setValue,
+    className,
 }) => {
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -22,7 +24,7 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
     };
 
     return (
-        <Flex flexDirection={'column'} width={'100%'}>
+        <Flex flexDirection={'column'} width={'100%'} className={className}>
             <FormControl>
                 <FormLabel
                     textTransform={'uppercase'}
