@@ -7,16 +7,22 @@ import {
     RainbowKitProvider,
     AvatarComponent,
 } from '@rainbow-me/rainbowkit';
-import { createSiweMessage } from 'viem/siwe';
-import { WagmiProvider } from 'wagmi';
+import { WagmiConfig, WagmiProvider } from 'wagmi';
+import {
+    chains,
+    config,
+    darkThemeConfig,
+} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { HnsClient } from '@/web3/contracts/hns-client';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { SiweMessage } from 'siwe';
 import {
     clearAuthCookie,
     clearCartCookie,
     getCustomer,
     getHamzaCustomer,
+    getToken,
     recoverCart,
 } from '@/lib/server';
 import { signOut } from '@modules/account/actions';
@@ -27,12 +33,42 @@ import { useRouter } from 'next/navigation';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
 import { wagmiConfig } from './wagmi';
-import { chains } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
-import {
-    getNonce,
-    sendVerifyRequest,
-    getToken,
-} from '@/lib/util/authentication';
+
+const MEDUSA_SERVER_URL =
+    process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
+const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
+const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
+
+async function sendVerifyRequest(message: any, signature: any) {
+    return await axios.post(
+        VERIFY_MSG_URL,
+        {
+            message,
+            signature,
+        },
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-control': 'no-cache, no-store',
+                Accept: 'application/json',
+            },
+        }
+    );
+}
+
+async function getNonce() {
+    //const response = await fetch(GET_NONCE_URL);
+    //const data = await response.json();
+    const output = await axios.get(GET_NONCE_URL, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-control': 'no-cache, no-store',
+            Accept: 'application/json',
+        },
+    });
+
+    return output?.data?.nonce ?? '';
+}
 
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
@@ -52,7 +88,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
     const hnsClient = new HnsClient(10);
 
-    //GET HNS
     useEffect(() => {
         let retries = 0;
         const maxRetries = 2; // Set a max retry limit
@@ -105,7 +140,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         clearAuthCookie();
     };
 
-    // Prevents Ghost Logins
     useEffect(() => {
         console.log('Saved wallet address', clientWallet);
         if (clientWallet?.length) {
@@ -133,7 +167,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         createMessage: ({ nonce, address, chainId }) => {
-            return createSiweMessage({
+            const message = new SiweMessage({
                 domain: window.location.host,
                 address,
                 statement: 'Sign in with Ethereum to the app.',
@@ -142,16 +176,17 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 chainId,
                 nonce,
             });
+            return message.prepareMessage();
         },
 
         verify: async ({ message, signature }) => {
             try {
+                const parsedMessage = new SiweMessage(message);
                 const response = await sendVerifyRequest(message, signature);
-                let data = response.data;
 
-                console.log('data created', data);
+                let data = response.data;
+                //if just creating, then a second request is needed
                 if (data.status == true && data.data?.created == true) {
-                    //if just creating, then a second request is needed
                     const authResponse = await sendVerifyRequest(
                         message,
                         signature
@@ -159,17 +194,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     data = authResponse.data;
                 }
 
-                const lines = message.split('\n');
-                const walletAddress = lines[1]?.trim();
-
                 if (data.status == true) {
                     const tokenResponse = await getToken({
-                        wallet_address: walletAddress.toLowerCase(), // message.address
+                        wallet_address: parsedMessage.address.toLowerCase(),
                         email: data.data?.email?.trim()?.toLowerCase(),
                         password: '',
                     });
 
-                    //check that customer data and wallet address match
                     if (
                         data.data.wallet_address.trim().toLowerCase() ===
                         clientWallet?.trim()?.toLowerCase()
@@ -181,7 +212,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
                         setCustomerAuthData({
                             token: tokenResponse,
-                            wallet_address: '',
+                            wallet_address: parsedMessage.address.toLowerCase(),
                             customer_id: data.data?.customer_id,
                             is_verified: data.data?.is_verified,
                             status: 'authenticated',
@@ -204,9 +235,10 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         return true;
                     } else {
                         console.log('Wallet address mismatch on login');
+                        console.log('Wallet address mismatch on login');
                         console.log(data.data?.wallet_address);
                         console.log(clientWallet);
-                        // console.log(message?.address);
+                        console.log(parsedMessage.address.toLowerCase());
                         clearLogin();
                         clearCartCookie();
                         return false;
@@ -274,6 +306,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     >
                         <RainbowKitProvider
                             avatar={CustomAvatar}
+                            theme={darkThemeConfig}
                             modalSize="compact"
                         >
                             {children}
