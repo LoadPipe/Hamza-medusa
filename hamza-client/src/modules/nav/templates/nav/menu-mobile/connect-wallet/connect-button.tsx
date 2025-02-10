@@ -1,30 +1,10 @@
 'use client';
 
-import {
-    Button,
-    Flex,
-    Text,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalBody,
-} from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MobileAccountMenu from '../menu/mobile-account-menu';
-import {
-    getAllowedChainsFromConfig,
-    getBlockchainNetworkName,
-} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
-import { MdOutlineWallet } from 'react-icons/md';
-import { useSwitchNetwork } from 'wagmi';
 
 export const WalletConnectButton = () => {
-    const { error, isLoading, pendingChainId, switchNetwork } =
-        useSwitchNetwork();
-
-    const switchNetworkId = getAllowedChainsFromConfig()[0];
-    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
-
     return (
         <ConnectButton.Custom>
             {({
@@ -36,6 +16,8 @@ export const WalletConnectButton = () => {
                 authenticationStatus,
                 mounted,
             }) => {
+                // Note: If your app doesn't use authentication, you
+                // can remove all 'authenticationStatus' checks
                 const ready = mounted && authenticationStatus !== 'loading';
                 const connected =
                     ready &&
@@ -43,6 +25,10 @@ export const WalletConnectButton = () => {
                     chain &&
                     (!authenticationStatus ||
                         authenticationStatus === 'authenticated');
+
+                if (ready && connected && chain.unsupported) {
+                    openChainModal();
+                }
 
                 return (
                     <div
@@ -57,22 +43,24 @@ export const WalletConnectButton = () => {
                         {(() => {
                             if (!connected) {
                                 return (
-                                    <Flex
-                                        backgroundColor={'primary.green.900'}
+                                    <button
+                                        className="bg-[#94D42A] text-black font-semibold rounded-full"
                                         onClick={openConnectModal}
-                                        height="24px"
-                                        width="24px"
-                                        borderRadius={'3px'}
-                                        justifyContent={'center'}
-                                        alignItems={'center'}
+                                        type="button"
                                     >
-                                        <MdOutlineWallet />
-                                    </Flex>
+                                        Connect Wallet
+                                    </button>
                                 );
                             }
-
-                            if (ready && connected && chain.unsupported) {
-                                openChainModal();
+                            if (chain.unsupported) {
+                                return (
+                                    <button
+                                        onClick={openChainModal}
+                                        type="button"
+                                    >
+                                        Wrong network
+                                    </button>
+                                );
                             }
 
                             return (
