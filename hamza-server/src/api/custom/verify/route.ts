@@ -140,14 +140,35 @@ class NewCustomerNames {
         'Grundleplith',
     ];
 
-    public static getRandom(): { first_name: string, last_name: string } {
+    public static getRandom(): { first_name: string; last_name: string } {
         const fRand = Math.floor(Math.random() * this.firstNames.length);
         const lRand = Math.floor(Math.random() * this.firstNames.length);
 
         return {
             first_name: this.firstNames[fRand],
-            last_name: this.lastNames[lRand]
+            last_name: this.lastNames[lRand],
         };
+    }
+}
+
+function extractEthereumAddress(input: string): string | null {
+    const lines = input.split('\n'); // Split input by new lines
+    if (lines.length < 2) {
+        console.error('❌ Input does not contain enough lines.');
+        return null;
+    }
+
+    const secondLine = lines[1].trim(); // Get second line and trim spaces
+
+    // Validate if it's an Ethereum address (0x followed by 40 hex chars)
+    const ethAddressRegex = /^0x[a-fA-F0-9]{40}$/;
+
+    if (ethAddressRegex.test(secondLine)) {
+        console.log('✅ Extracted Ethereum Address:', secondLine);
+        return secondLine;
+    } else {
+        console.error('❌ No valid Ethereum address found on second line.');
+        return null;
     }
 }
 
@@ -169,7 +190,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const { message, signature } = handler.inputParams;
 
-        const wallet_address = message.address?.trim()?.toLowerCase();
+        const wallet_address = extractEthereumAddress(message);
 
         let checkCustomerWithWalletAddress =
             await CustomerWalletAddressRepository.findOne({
@@ -181,9 +202,13 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //create customer input data
         const email = (
-            checkCustomerWithWalletAddress && checkCustomerWithWalletAddress.customer ?
-                checkCustomerWithWalletAddress.customer.email :
-                `${wallet_address}@evm.blockchain`).trim().toLowerCase();
+            checkCustomerWithWalletAddress &&
+            checkCustomerWithWalletAddress.customer
+                ? checkCustomerWithWalletAddress.customer.email
+                : `${wallet_address}@evm.blockchain`
+        )
+            .trim()
+            .toLowerCase();
 
         const customerInputData = {
             email,
@@ -193,11 +218,17 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             wallet_address,
         };
 
-        handler.logger.debug('customer input is ' + JSON.stringify(customerInputData));
+        handler.logger.debug(
+            'customer input is ' + JSON.stringify(customerInputData)
+        );
         //verify the signature
         const siweMessage = new SiweMessage(message);
         let siweResponse = await siweMessage.verify({ signature });
-        handler.logger.debug('siwe response is ' + JSON.stringify(siweResponse));
+        handler.logger.debug(
+            'siwe response is ' + JSON.stringify(siweResponse)
+        );
+
+        console.log('siweResponse', siweResponse);
         if (!siweResponse.success) {
             throw new Error('Error in validating wallet address signature');
         }
@@ -214,11 +245,15 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 where: { email: email },
                 relations: { preferred_currency: true },
             });
-            created = (customer ? true : false);
+            created = customer ? true : false;
 
             if (!created) {
-                handler.logger.error(`Failure to create customer record with ${JSON.stringify(customerInputData)}`);
-                throw new Error(`Failure to create customer record for ${customerInputData.wallet_address}.`);
+                handler.logger.error(
+                    `Failure to create customer record with ${JSON.stringify(customerInputData)}`
+                );
+                throw new Error(
+                    `Failure to create customer record for ${customerInputData.wallet_address}.`
+                );
             }
         } else {
             //if customer record exists, authenticate the user
@@ -227,7 +262,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 customerInputData.password,
                 customerInputData.wallet_address
             );
-            handler.logger.debug('auth result is ' + JSON.stringify(authResult));
+            handler.logger.debug(
+                'auth result is ' + JSON.stringify(authResult)
+            );
             if (!authResult.success) {
                 throw new Error('Error in verifying email and password');
             }
