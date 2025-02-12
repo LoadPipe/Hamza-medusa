@@ -5,20 +5,7 @@ import {
 } from '@/lib/util/order-escrow';
 import { getChainId } from '@/web3';
 import { PaymentDefinition } from '@/web3/contracts/escrow';
-import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-    useDisclosure,
-    useToast,
-    Flex,
-    ModalCloseButton,
-    Text,
-} from '@chakra-ui/react';
+import { Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Order } from '@/web3/contracts/escrow';
 import { useSwitchNetwork } from 'wagmi';
@@ -112,12 +99,6 @@ export const ReleaseEscrowDialog = ({
                     ? error.info?.error?.message || error.message
                     : 'An unknown error occurred';
             setErrorMessage(message);
-
-            // toast({
-            //     title: 'Error during escrow release',
-            //     description: message,
-            //     status: 'error',
-            // });
         }
     };
 

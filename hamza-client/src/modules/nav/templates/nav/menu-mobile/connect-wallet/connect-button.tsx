@@ -5,7 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MobileAccountMenu from '../menu/mobile-account-menu';
 import { MdOutlineWallet } from 'react-icons/md';
 
-export const WalletConnectButton = () => {
+export const MobileWalletConnectButton = () => {
     return (
         <ConnectButton.Custom>
             {({
