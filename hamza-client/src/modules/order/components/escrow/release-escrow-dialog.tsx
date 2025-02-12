@@ -8,7 +8,7 @@ import { PaymentDefinition } from '@/web3/contracts/escrow';
 import { Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Order } from '@/web3/contracts/escrow';
-import { useSwitchNetwork } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 import { updateOrderEscrowStatus } from '@/lib/server';
 import { FaExclamationTriangle, FaQuestionCircle } from 'react-icons/fa';
 import { EscrowStatus } from '@/lib/server/enums';
@@ -36,11 +36,12 @@ export const ReleaseEscrowDialog = ({
     const [isLoading, setIsLoading] = useState(false);
     const [isReleased, setIsReleased] = useState(false);
     const toast = useToast();
-    const { switchNetwork } = useSwitchNetwork();
+    const currentChainId = useChainId();
+    const { switchChain } = useSwitchChain();
 
     const handleSwitchNetwork = (chainId: number) => {
-        if (switchNetwork) {
-            switchNetwork(chainId);
+        if (switchChain) {
+            switchChain({ chainId });
         } else {
             console.error(
                 'Network switching is not supported by the current provider.'
@@ -109,16 +110,11 @@ export const ReleaseEscrowDialog = ({
     }, [escrowPayment]);
 
     useEffect(() => {
-        const checkNetwork = async () => {
-            const chainId = await getChainId();
-            const paymentChainId = order.payments[0].blockchain_data.chain_id;
-
-            if (paymentChainId !== Number(chainId)) {
-                handleSwitchNetwork(paymentChainId);
-            }
-        };
-        checkNetwork();
-    }, [order]);
+        const paymentChainId = order.payments[0].blockchain_data.chain_id;
+        if (paymentChainId !== currentChainId) {
+            handleSwitchNetwork(paymentChainId);
+        }
+    }, [order, currentChainId]);
 
     return (
         <>
