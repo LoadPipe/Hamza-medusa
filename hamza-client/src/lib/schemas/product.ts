@@ -61,6 +61,7 @@ export const ProductSchema = z.object({
     variants: z.array(
         z.object({
             id: z.string(),
+            product: z.string().optional(),
             product_id: z.string(),
             title: z.string(),
             created_at: z.string(),
@@ -69,6 +70,8 @@ export const ProductSchema = z.object({
             variant_rank: z.number(),
             allow_backorder: z.boolean(),
             manage_inventory: z.boolean(),
+            inventory_items: z.array(z.any()).optional().default([]),
+            purchasable: z.boolean().optional(),
             options: z.array(z.object({
                 id: z.string(),
                 created_at: z.string(),
