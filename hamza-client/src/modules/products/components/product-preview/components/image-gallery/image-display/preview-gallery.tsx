@@ -63,16 +63,13 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     // Default fallback path to homepage if there is no history to go back to
     const fallbackPath = countryCode ? `${baseURL}/${countryCode}` : baseURL;
 
-    const handleClick = (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-        e.preventDefault(); // Prevent default button behavior
+    const goBackToShop = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
 
-        // Go back one step in history if possible, otherwise redirect to fallback
         if (window.history.length > 1) {
-            router.back(); // Go back in history
+            router.back();
         } else {
-            router.push(fallbackPath); // Navigate to fallback path if no history exists
+            router.push(fallbackPath);
         }
     };
 
@@ -165,7 +162,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                                 borderRadius={'full'}
                                 justifyContent={'center'}
                                 backgroundColor={'#3E3E3E80'}
-                                onClick={handleClick}
+                                onClick={goBackToShop}
                             >
                                 <Flex alignSelf={'center'}>
                                     <FaChevronLeft color="white" />
