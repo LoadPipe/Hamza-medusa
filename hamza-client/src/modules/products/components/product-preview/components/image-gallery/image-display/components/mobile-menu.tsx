@@ -24,6 +24,7 @@ import {
 } from 'react-icons/md';
 import { FaHome } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { RxHamburgerMenu } from 'react-icons/rx';
 
 export default function ProductDetailsMobileMenu() {
     return (
@@ -43,7 +44,7 @@ export default function ProductDetailsMobileMenu() {
                     justifyContent={'center'}
                     color={'white'}
                 >
-                    <BsThreeDotsVertical size={16} />
+                    <RxHamburgerMenu size={16} />
                 </Flex>
             </MenuButton>
 
