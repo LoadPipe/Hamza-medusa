@@ -1,7 +1,6 @@
 'use client';
 
 import { Region } from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import React, { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { notFound } from 'next/navigation';
@@ -16,6 +15,7 @@ import { getPricedProductByHandle, getStore } from '@/lib/server';
 import { FaArrowLeftLong } from 'react-icons/fa6';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@medusajs/icons';
+import { ProductSchema, Product } from '@/lib/schemas/product';
 
 type ProductTemplateProps = {
     // product: PricedProduct;
@@ -31,12 +31,12 @@ type ProductTemplateProps = {
 * @Pipeline: We want to control the data from root (product/[handle]/page.tsx) all the way down the leaf nodes. This way we can cache the data and control the flow of data.
 */
 
-const ProductTemplate: React.FC<ProductTemplateProps> = ({
-    // product,
-    region,
-    handle,
-    countryCode,
-}) => {
+const ProductTemplate: React.FC<ProductTemplateProps> =
+    ({
+     region,
+     handle,
+     countryCode,
+ }) => {
     const {
         setProductData,
         setCountryCode,
@@ -47,14 +47,23 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
     const [selectedVariantImage, setSelectedVariantImage] = useState('');
 
-    const { data: product, isError, isLoading } = useQuery({
-        queryKey: ['product', handle],
-        queryFn: () => getPricedProductByHandle(handle, region),
-    })
+        const { data: product, isError, isLoading } = useQuery<Product, Error>({
+            queryKey: ['product', handle],
+            queryFn: async () => {
+                const response = await getPricedProductByHandle(handle, region);
+                if (!response) {
+                    // If no product is found, throw an error
+                    throw new Error("Product not found");
+                }
+                // Parse the response using Zod to ensure it matches the Product schema
+                return ProductSchema.parse(response);
+            },
+        });
 
-    // If we hit these error states, product either doesn't exist or there was an error fetching it.
+
+        // If we hit these error states, product either doesn't exist or there was an error fetching it.
     // Otherwise, the rest of the page will render. [OMIT**Banner**]
-    if(isError || !product || !product.id) {
+    if (isError || !product || !product.id) {
         notFound();
     }
 
@@ -81,7 +90,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         setQuantity,
     ]);
 
-    // TODO: This can be grabbed in the service layer `getPricedProductByHandle` api, and we can useQuery to fetch this would be just product...
+    // TODO: This CAN'T be grabbed in relations unless we get rid of getPricedProductByHandle and use a full custom hook removing medusaClient... not really beneficial
     // Fetching store data, based off the product id, storeData.(handle|icon) is used in StoreBanner (navigation/icon)
     // This is a separate query from the product query, as it fetches store data based off the product id.
     // We're using isStoreLoading && isStoreError states to handle loading and error states for Banner.
@@ -155,6 +164,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     mb={{ base: '-1rem', md: '0' }}
                 >
                     <PreviewGallery
+                        handle={handle}
                         selectedVariantImage={selectedVariantImage}
                     />
                 </Flex>
@@ -168,7 +178,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 >
                     <Flex flex="1" order={{ base: 2, md: 1 }}>
                         <Flex flexDirection="column">
-                            <ProductInfo />
+                            <ProductInfo handle={handle} />
                             {/*<Box mt="1.5rem">*/}
                             {/*    <Tweet*/}
                             {/*        productHandle={product.handle as string}*/}
@@ -189,6 +199,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                             selectedVariantImage={selectedVariantImage}
                             setSelectedVariantImage={setSelectedVariantImage}
                             productId={product.id as string}
+                            handle={handle}
                         />
                     </Flex>
                 </Flex>
