@@ -13,7 +13,6 @@ import {
 import Link from 'next/link';
 import NavLink from '@modules/layout/templates/nav/components/nav-link';
 
-import { GiHamburgerMenu } from 'react-icons/gi';
 import {
     MdOutlinePeople,
     MdOutlineStorefront,
