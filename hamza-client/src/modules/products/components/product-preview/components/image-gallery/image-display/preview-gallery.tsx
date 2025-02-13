@@ -182,20 +182,6 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                                 <ProductDetailsMobileMenu />
                             </Flex>
                         </Flex>
-                        {/* <IconButton
-                            as="button"
-                            display={{ base: 'flex', md: 'none' }}
-                            icon={<ProductDetailsMobileMenu />}
-                            position="absolute"
-                            top="10px"
-                            right="10px"
-                            size="sm"
-                            aria-label="Open Menu"
-                            onClick={() => console.log('Menu Button Clicked')} // Replace with menu logic
-                            backgroundColor="rgba(0, 0, 0, 0.5)"
-                            color="white"
-                            borderRadius="full"
-                        /> */}
                     </Box>
                 </GridItem>
 

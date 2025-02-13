@@ -58,6 +58,7 @@ export default function ProductDetailsMobileMenu() {
                         <MenuItem
                             fontWeight={'600'}
                             color={'white'}
+                            mb="0.25rem"
                             backgroundColor={'transparent'}
                             _hover={{ color: 'primary.green.900' }}
                         >
@@ -69,6 +70,7 @@ export default function ProductDetailsMobileMenu() {
                         <MenuItem
                             fontWeight={'600'}
                             color={'white'}
+                            mb="0.25rem"
                             backgroundColor={'transparent'}
                             _hover={{ color: 'primary.green.900' }}
                         >
@@ -81,6 +83,7 @@ export default function ProductDetailsMobileMenu() {
                         <MenuItem
                             fontWeight={'600'}
                             color={'white'}
+                            mb="0.25rem"
                             backgroundColor={'transparent'}
                             _hover={{ color: 'primary.green.900' }}
                         >
@@ -99,6 +102,7 @@ export default function ProductDetailsMobileMenu() {
                         <MenuItem
                             fontWeight={'600'}
                             color={'white'}
+                            mb="0.25rem"
                             backgroundColor={'transparent'}
                             _hover={{ color: 'primary.green.900' }}
                         >
@@ -120,6 +124,7 @@ export default function ProductDetailsMobileMenu() {
                         <MenuItem
                             fontWeight={'600'}
                             color={'white'}
+                            mb="0.25rem"
                             backgroundColor={'transparent'}
                             _hover={{ color: 'primary.green.900' }}
                         >
@@ -144,6 +149,7 @@ export default function ProductDetailsMobileMenu() {
                         <MenuItem
                             fontWeight={'600'}
                             color={'white'}
+                            mb="0.25rem"
                             backgroundColor={'transparent'}
                             _hover={{ color: 'primary.green.900' }}
                         >
@@ -164,6 +170,7 @@ export default function ProductDetailsMobileMenu() {
                         <MenuItem
                             fontWeight={'600'}
                             color={'white'}
+                            mb="0.25rem"
                             backgroundColor={'transparent'}
                             _hover={{ color: 'primary.green.900' }}
                         >
