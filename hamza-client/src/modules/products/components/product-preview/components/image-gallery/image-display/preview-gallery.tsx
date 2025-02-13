@@ -154,28 +154,23 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                             flexDir={'row'}
                             flex={1}
                             width={'100%'}
-                            bgColor={'transparent'}
+                            height={'32px'}
                             position="absolute"
                             zIndex="1"
                             top="10px"
                         >
-                            <FaChevronLeft color="white" />
-
-                            {/* <IconButton
-                                as="button"
-                                display={{ base: 'flex', md: 'none' }}
-                                icon={<FaChevronLeft />}
-                                position="absolute"
-                                top="10px"
-                                left="10px"
-                                size="sm"
-                                aria-label="Go Back"
-                                onClick={handleClick} // Replace with actual back logic
-                                backgroundColor="rgba(0, 0, 0, 0.5)"
-                                color="white"
-                                borderRadius="full"
-                                zIndex="1" // Ensure button is on top of the image
-                            /> */}
+                            <Flex
+                                height={'32px'}
+                                width={'32px'}
+                                borderRadius={'full'}
+                                justifyContent={'center'}
+                                backgroundColor={'#3E3E3E80'}
+                                onClick={handleClick}
+                            >
+                                <Flex alignSelf={'center'}>
+                                    <FaChevronLeft color="white" />
+                                </Flex>
+                            </Flex>
 
                             {/* 3-Dot Menu Button (Top Right) */}
                             <Flex ml="auto">

@@ -32,7 +32,10 @@ export default function ProductDetailsMobileMenu() {
                 borderRadius={'full'}
                 borderColor={'transparent'}
                 borderWidth={'1px'}
+                backgroundColor={'#3E3E3E80'}
                 cursor={'pointer'}
+                height={'32px'}
+                width={'32px'}
             >
                 <Flex
                     className="menu-icon"
