@@ -12,6 +12,7 @@ import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
+import FreeScoutWidget from './components/scripts/chat-widget';
 
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
@@ -41,32 +42,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
                             })(window,document,'script','dataLayer','GTM-W9HPPFG3');
-                        `
-                    }}
-                />
-
-                {/* Chat Widget Script */}
-                <Script
-                    id="freescout-widget"
-                    strategy="lazyOnload"
-                    dangerouslySetInnerHTML={{
-                        __html: `
-                            window.FreeScoutW = {
-                                s: {
-                                    "color": "#5ab334",
-                                    "position": "br",
-                                    "id": 2009307235
-                                }
-                            };
-                            (function(d, e, s) {
-                                if (d.getElementById("freescout-w")) return;
-                                var a = d.createElement(e), m = d.getElementsByTagName(e)[0];
-                                a.async = 1;
-                                a.id = "freescout-w";
-                                a.src = "https://support.hamza.market/modules/chat/js/widget.js?v=4239";
-                                m.parentNode.insertBefore(a, m);
-                            })(document, "script");
-                        `
+                        `,
                     }}
                 />
 
@@ -100,6 +76,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     <div>
                         <Toaster position="top-right" />
                     </div>
+                    <FreeScoutWidget />
                 </div>
             </body>
         </html>
