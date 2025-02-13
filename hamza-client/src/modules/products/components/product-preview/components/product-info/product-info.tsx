@@ -47,9 +47,7 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
     const { authData } = useCustomerAuthStore();
 
     // LOCAL STATE
-    const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
-        null,
-    );
+    const [selectedVariant, setSelectedVariant] = useState<Product['variants'][number] | null>(null);
     const [selectedVariantImage, setSelectedVariantImage] = useState<
         null | string
     >(null);
@@ -73,7 +71,7 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
             const selectedProductVariant = product.variants.find(
                 (a: any) => a.id === newVariantId,
             );
-            setSelectedVariant(selectedProductVariant);
+            setSelectedVariant(selectedProductVariant ?? null);
 
             if (
                 selectedProductVariant?.metadata &&
