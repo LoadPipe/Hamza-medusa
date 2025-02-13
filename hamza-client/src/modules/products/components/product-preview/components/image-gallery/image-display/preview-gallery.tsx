@@ -150,24 +150,39 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                             </AspectRatio>
                         )}
                         {/* Back Button (Top Left) */}
-                        <IconButton
-                            as="button"
-                            display={{ base: 'flex', md: 'none' }}
-                            icon={<FaChevronLeft />}
+                        <Flex
+                            flexDir={'row'}
+                            flex={1}
+                            width={'100%'}
+                            bgColor={'transparent'}
                             position="absolute"
+                            zIndex="1"
                             top="10px"
-                            left="10px"
-                            size="sm"
-                            aria-label="Go Back"
-                            onClick={handleClick} // Replace with actual back logic
-                            backgroundColor="rgba(0, 0, 0, 0.5)"
-                            color="white"
-                            borderRadius="full"
-                            zIndex="1" // Ensure button is on top of the image
-                        />
+                        >
+                            <FaChevronLeft color="white" />
 
-                        {/* 3-Dot Menu Button (Top Right) */}
-                        <IconButton
+                            {/* <IconButton
+                                as="button"
+                                display={{ base: 'flex', md: 'none' }}
+                                icon={<FaChevronLeft />}
+                                position="absolute"
+                                top="10px"
+                                left="10px"
+                                size="sm"
+                                aria-label="Go Back"
+                                onClick={handleClick} // Replace with actual back logic
+                                backgroundColor="rgba(0, 0, 0, 0.5)"
+                                color="white"
+                                borderRadius="full"
+                                zIndex="1" // Ensure button is on top of the image
+                            /> */}
+
+                            {/* 3-Dot Menu Button (Top Right) */}
+                            <Flex ml="auto">
+                                <ProductDetailsMobileMenu />
+                            </Flex>
+                        </Flex>
+                        {/* <IconButton
                             as="button"
                             display={{ base: 'flex', md: 'none' }}
                             icon={<ProductDetailsMobileMenu />}
@@ -180,7 +195,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                             backgroundColor="rgba(0, 0, 0, 0.5)"
                             color="white"
                             borderRadius="full"
-                        />
+                        /> */}
                     </Box>
                 </GridItem>
 
