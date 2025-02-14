@@ -73,7 +73,7 @@ export default async function ProductPage({ params }: Props) {
     // const pricedProduct = await getPricedProductByHandle(params?.handle, region);
 
 
-    // Prefetch query for React Query Hydration (this doesn't actually fetch again, its sstoring data
+    // Prefetch query for React Query Hydration (this doesn't actually fetch again, its storing data
     // inside the React Query's cache so for when the client hydrates, it doesn't need to refetch..
     await queryClient.prefetchQuery({
         queryKey: ['product', params.handle],

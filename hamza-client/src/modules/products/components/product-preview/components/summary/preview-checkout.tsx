@@ -83,9 +83,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
     const [usdPrice, setUsdPrice] = useState<string | null>(null);
-    const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
-        null
-    );
+    const [selectedVariant, setSelectedVariant] = useState<Product['variants'][number] | null>(null);
+
 
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
@@ -280,7 +279,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData.id]);
 
-    const convertToPriceDictionary = (selectedVariant: Variant | null) => {
+    const convertToPriceDictionary = (selectedVariant: Product['variants'][number] | null) => {
         const output: { [key: string]: number } = {};
         if (selectedVariant) {
             for (let price of selectedVariant.prices) {

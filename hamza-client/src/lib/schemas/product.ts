@@ -75,22 +75,27 @@ export const ProductSchema = z.object({
             manage_inventory: z.boolean(),
             inventory_items: z.array(z.any()).optional().default([]),
             purchasable: z.boolean().optional(),
-            options: z.array(z.object({
-                id: z.string(),
-                created_at: z.string().transform((str) => new Date(str)),
-                updated_at: z.string().transform((str) => new Date(str)),
-                deleted_at: z.string().nullable().transform((str) => (str ? new Date(str) : null)),
-                value: z.string(),
-                option_id: z.string(),
-                variant_id: z.string(),
-                metadata: z.any().nullable(),
-            })).optional(),
+            options: z
+                .array(
+                    z.object({
+                        id: z.string(),
+                        created_at: z.string().transform((str) => new Date(str)),
+                        updated_at: z.string().transform((str) => new Date(str)),
+                        deleted_at: z.string().nullable().transform((str) => (str ? new Date(str) : null)),
+                        value: z.string(),
+                        option_id: z.string(),
+                        variant_id: z.string(),
+                        metadata: z.any().nullable(),
+                    })
+                )
+                .optional()
+                .default([]),
             prices: z
                 .array(
                     z.object({
                         id: z.string(),
                         currency_code: z.string(),
-                        amount: z.string(), // Assuming it's a string
+                        amount: z.number(), // Assuming it's a string
                         min_quantity: z.number().nullable(),
                         max_quantity: z.number().nullable(),
                         price_list_id: z.string().nullable(),

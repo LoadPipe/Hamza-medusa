@@ -52,7 +52,7 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
         null | string
     >(null);
 
-    const convertToPriceDictionary = (selectedVariant: Variant | null) => {
+    const convertToPriceDictionary = (selectedVariant: Product['variants'][number] | null) => {
         const output: { [key: string]: number } = {};
         if (selectedVariant) {
             for (let price of selectedVariant.prices) {
