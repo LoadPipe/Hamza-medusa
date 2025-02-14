@@ -82,7 +82,7 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
                 setSelectedVariantImage(null); // Reset to null if no imgUrl is found
             }
         }
-    }, [product, variantId]);
+    }, [product, variantId, setVariantId]);
 
 
     if (!product) {

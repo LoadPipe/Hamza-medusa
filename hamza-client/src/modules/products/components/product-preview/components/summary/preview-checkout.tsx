@@ -105,7 +105,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         setVariantId('');
         setSelectedVariant(null);
         setSelectedVariantImage('');
-    }, [product]);
+    }, [product, setVariantId, setSelectedVariantImage]);
 
     useEffect(() => {
         const fetchProductReview = async () => {
@@ -153,7 +153,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
             return map;
         }
-    }, [product, variantId]);
+    }, [product]);
 
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
@@ -167,7 +167,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         if (checkVariantId) {
             setVariantId(checkVariantId);
         }
-    }, [options]);
+    }, [options, variantRecord, setVariantId]);
 
     useEffect(() => {
         if (product && product.variants) {

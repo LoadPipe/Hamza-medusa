@@ -8,7 +8,6 @@ const nextConfig = withStoreConfig({
     features: store.features,
     reactStrictMode: true,
     experimental: {
-        webpackMemoryOptimizations: true,
         optimizePackageImports: ['react', 'next', 'lodash'],
         turbo: {
             resolveExtensions: [
