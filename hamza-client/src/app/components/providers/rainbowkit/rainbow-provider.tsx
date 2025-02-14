@@ -137,7 +137,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     };
 
     useEffect(() => {
-        console.log('Saved wallet address', clientWallet);
+        console.log('Saved wallet address', authData.wallet_address);
         if (clientWallet?.length) {
             getHamzaCustomer().then((hamzaCustomer) => {
                 getCustomer().then((customer) => {
@@ -163,6 +163,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         createMessage: ({ nonce, address, chainId }) => {
+            console.log('create message');
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
@@ -180,6 +181,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 const parsedMessage = new SiweMessage(message);
                 const response = await sendVerifyRequest(message, signature);
 
+                console.log('message', message);
+
                 let data = response.data;
                 //if just creating, then a second request is needed
                 if (data.status == true && data.data?.created == true) {
@@ -190,6 +193,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     data = authResponse.data;
                 }
 
+                console.log('data.status', data.status);
                 if (data.status == true) {
                     const tokenResponse = await getToken({
                         wallet_address: parsedMessage.address.toLowerCase(),
