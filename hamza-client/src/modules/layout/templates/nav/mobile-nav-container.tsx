@@ -7,8 +7,6 @@ import { Cart } from '@medusajs/medusa';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
-window.Buffer = window.Buffer || require('buffer').Buffer;
-
 export default function MobileNavContainer(props: {
     children: React.ReactNode;
     cart?: Cart;
@@ -17,6 +15,9 @@ export default function MobileNavContainer(props: {
     let countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY || 'en';
 
     useEffect(() => {
+        // Initialize Buffer on client-side only
+        window.Buffer = window.Buffer || require('buffer').Buffer;
+
         const handleCartClear = async () => {
             if (
                 (pathname.includes('/cart') ||
