@@ -7,6 +7,8 @@ import { Cart } from '@medusajs/medusa';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
+window.Buffer = window.Buffer || require('buffer').Buffer;
+
 export default function MobileNavContainer(props: {
     children: React.ReactNode;
     cart?: Cart;
