@@ -69,7 +69,7 @@ export default async function Nav() {
                     alignItems="center"
                 >
                     <Flex width={'100%'} alignItems="center" gap={'18px'}>
-                        <a href="/">
+                        <LocalizedClientLink href="/">
                             <Flex
                                 width={'190px'}
                                 height={'80px'}
@@ -84,7 +84,7 @@ export default async function Nav() {
                                     alt="Hamza"
                                 />
                             </Flex>
-                        </a>
+                        </LocalizedClientLink>
 
                         <NavSearchBar />
 
