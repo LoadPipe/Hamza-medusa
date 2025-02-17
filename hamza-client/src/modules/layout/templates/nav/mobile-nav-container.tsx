@@ -1,11 +1,17 @@
 'use client';
 
+// Add buffer polyfill for client-side
+import { Buffer } from 'buffer';
 import { clearCart } from '@/lib/data';
 import { getOrSetCart } from '@/modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
 import { Cart } from '@medusajs/medusa';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+
+if (typeof window !== 'undefined') {
+    window.Buffer = Buffer;
+}
 
 export default function MobileNavContainer(props: {
     children: React.ReactNode;
@@ -15,9 +21,6 @@ export default function MobileNavContainer(props: {
     let countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY || 'en';
 
     useEffect(() => {
-        // Initialize Buffer on client-side only
-        window.Buffer = window.Buffer || require('buffer').Buffer;
-
         const handleCartClear = async () => {
             if (
                 (pathname.includes('/cart') ||
