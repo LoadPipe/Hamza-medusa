@@ -12,7 +12,7 @@ import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
-import { GoogleTagManager } from '@next/third-parties/google';
+// import { GoogleTagManager } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
@@ -62,16 +62,16 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     strategy="afterInteractive"
                 />
             </head>
-            <GoogleTagManager gtmId="GTM-XYZ" />
+            {/*<GoogleTagManager gtmId="GTM-XYZ" />*/}
             <body>
-                <noscript>
-                    <iframe
-                        src="https://www.googletagmanager.com/ns.html?id=GTM-W9HPPFG3"
-                        height="0"
-                        width="0"
-                        style={{ display: 'none', visibility: 'hidden' }}
-                    ></iframe>
-                </noscript>
+                {/*<noscript>*/}
+                {/*    <iframe*/}
+                {/*        src="https://www.googletagmanager.com/ns.html?id=GTM-W9HPPFG3"*/}
+                {/*        height="0"*/}
+                {/*        width="0"*/}
+                {/*        style={{ display: 'none', visibility: 'hidden' }}*/}
+                {/*    ></iframe>*/}
+                {/*</noscript>*/}
 
                 <div>
                     <MedusaProvider token={token}>
