@@ -206,7 +206,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         data.data.wallet_address?.trim().toLowerCase() || '';
                     const clientWalletTrimmed = clientWallet?.trim()?.toLowerCase() || '';
 
-                    if (responseWallet === clientWalletTrimmed) {
+                    if (!responseWallet || !clientWalletTrimmed) {
 
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
