@@ -10,7 +10,7 @@ import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
 
-export const WalletConnectButton = () => {
+export const DesktopWalletConnectButton = () => {
     //Update zustand store with Wagmi hook when connected
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
@@ -33,6 +33,8 @@ export const WalletConnectButton = () => {
                 authenticationStatus,
                 mounted,
             }) => {
+                // Note: If your app doesn't use authentication, you
+                // can remove all 'authenticationStatus' checks
                 const ready = mounted && authenticationStatus !== 'loading';
                 const connected =
                     ready &&
@@ -67,6 +69,16 @@ export const WalletConnectButton = () => {
                                     >
                                         Connect Wallet
                                     </Button>
+                                );
+                            }
+                            if (chain.unsupported) {
+                                return (
+                                    <button
+                                        onClick={openChainModal}
+                                        type="button"
+                                    >
+                                        Wrong network
+                                    </button>
                                 );
                             }
 

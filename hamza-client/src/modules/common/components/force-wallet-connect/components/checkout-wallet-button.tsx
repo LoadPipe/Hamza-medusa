@@ -11,25 +11,12 @@ import {
     Box,
 } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useSwitchNetwork, useAccount } from 'wagmi';
-import {
-    getAllowedChainsFromConfig,
-    getBlockchainNetworkName,
-} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import HamzaLogoLoader from '../../../../../app/components/loaders/hamza-logo-loader';
 
 export const CheckoutWalletButton = () => {
-    const { error, isLoading, pendingChainId, switchNetwork } =
-        useSwitchNetwork();
-
-    //const isProduction = process.env.NODE_ENV === 'production';
-    //const networkName = isProduction ? 'Optimism' : 'Sepolia';
-    //const switchNetworkId = isProduction ? 10 : 11155111;
-    const switchNetworkId = getAllowedChainsFromConfig()[0];
-    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
-
     //Update zustand store with Wagmi hook when connected
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
@@ -179,94 +166,16 @@ export const CheckoutWalletButton = () => {
                                 );
                             }
 
-                            if (
-                                chain &&
-                                chain.id != getAllowedChainsFromConfig()[0]
-                            ) {
-                                console.log(chain);
-                                console.log('Network id is', switchNetworkId);
+                            if (chain.unsupported) {
                                 return (
-                                    <Modal
-                                        isOpen={true}
-                                        onClose={() => {}}
-                                        isCentered
+                                    <button
+                                        onClick={openChainModal}
+                                        type="button"
                                     >
-                                        <ModalOverlay />
-                                        <ModalContent
-                                            justifyContent={'center'}
-                                            alignItems={'center'}
-                                            borderRadius={'16px'}
-                                            backgroundColor={'#121212'}
-                                            border={'1px'}
-                                            borderColor={'white'}
-                                        >
-                                            <ModalBody
-                                                width={'100%'}
-                                                py="1.5rem"
-                                            >
-                                                <Flex
-                                                    flexDirection={'column'}
-                                                    gap={'16px'}
-                                                    alignItems={'center'}
-                                                >
-                                                    <Text
-                                                        fontSize={'2rem'}
-                                                        color={'white'}
-                                                        fontWeight={300}
-                                                    >
-                                                        Unsupported Network
-                                                    </Text>
-                                                    <Text color={'white'}>
-                                                        Hamza currently only
-                                                        supports {networkName}.
-                                                        Switch to {networkName}
-                                                        to continue using Hamza.
-                                                    </Text>
-                                                    <Button
-                                                        backgroundColor={
-                                                            'primary.indigo.900'
-                                                        }
-                                                        color={'white'}
-                                                        height={'38px'}
-                                                        borderRadius={'full'}
-                                                        width="100%"
-                                                        disabled={
-                                                            !switchNetwork ||
-                                                            isLoading
-                                                        }
-                                                        _hover={{
-                                                            backgroundColor:
-                                                                'primary.indigo.800',
-                                                            transition:
-                                                                'background-color 0.3s ease-in-out',
-                                                        }}
-                                                        _focus={{
-                                                            boxShadow: 'none',
-                                                            outline: 'none',
-                                                        }}
-                                                        onClick={() => {
-                                                            if (switchNetwork) {
-                                                                switchNetwork(
-                                                                    switchNetworkId
-                                                                );
-                                                            }
-                                                        }}
-                                                    >
-                                                        Switch to {networkName}
-                                                    </Button>
-                                                </Flex>
-                                                {error && (
-                                                    <p>
-                                                        Error: {error.message}
-                                                    </p>
-                                                )}
-                                            </ModalBody>
-                                        </ModalContent>
-                                    </Modal>
+                                        Wrong network
+                                    </button>
                                 );
                             }
-
-                            return null;
                         })()}
                     </div>
                 );

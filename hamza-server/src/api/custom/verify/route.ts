@@ -140,13 +140,13 @@ class NewCustomerNames {
         'Grundleplith',
     ];
 
-    public static getRandom(): { first_name: string, last_name: string } {
+    public static getRandom(): { first_name: string; last_name: string } {
         const fRand = Math.floor(Math.random() * this.firstNames.length);
         const lRand = Math.floor(Math.random() * this.firstNames.length);
 
         return {
             first_name: this.firstNames[fRand],
-            last_name: this.lastNames[lRand]
+            last_name: this.lastNames[lRand],
         };
     }
 }
@@ -168,8 +168,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         let created = false;
 
         const { message, signature } = handler.inputParams;
-
-        const wallet_address = message.address?.trim()?.toLowerCase();
+        const parsedMessage = new SiweMessage(message);
+        const wallet_address = parsedMessage.address.toLowerCase();
 
         let checkCustomerWithWalletAddress =
             await CustomerWalletAddressRepository.findOne({
@@ -181,9 +181,13 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //create customer input data
         const email = (
-            checkCustomerWithWalletAddress && checkCustomerWithWalletAddress.customer ?
-                checkCustomerWithWalletAddress.customer.email :
-                `${wallet_address}@evm.blockchain`).trim().toLowerCase();
+            checkCustomerWithWalletAddress &&
+            checkCustomerWithWalletAddress.customer
+                ? checkCustomerWithWalletAddress.customer.email
+                : `${wallet_address}@evm.blockchain`
+        )
+            .trim()
+            .toLowerCase();
 
         const customerInputData = {
             email,
@@ -193,11 +197,17 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             wallet_address,
         };
 
-        handler.logger.debug('customer input is ' + JSON.stringify(customerInputData));
+        handler.logger.debug(
+            'customer input is ' + JSON.stringify(customerInputData)
+        );
         //verify the signature
         const siweMessage = new SiweMessage(message);
         let siweResponse = await siweMessage.verify({ signature });
-        handler.logger.debug('siwe response is ' + JSON.stringify(siweResponse));
+        handler.logger.debug(
+            'siwe response is ' + JSON.stringify(siweResponse)
+        );
+
+        console.log('siweResponse', siweResponse);
         if (!siweResponse.success) {
             throw new Error('Error in validating wallet address signature');
         }
@@ -205,8 +215,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         handler.logger.debug(
             'customer data is ' + checkCustomerWithWalletAddress
         );
+
         let newCustomerData: Customer;
 
+        console.log('customerInputData', customerInputData);
         if (!checkCustomerWithWalletAddress) {
             handler.logger.debug('creating new customer ');
             const customer = await customerService.create(customerInputData);
@@ -214,11 +226,16 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 where: { email: email },
                 relations: { preferred_currency: true },
             });
-            created = (customer ? true : false);
+            created = customer ? true : false;
 
+            console.log('newCustomerData', newCustomerData);
             if (!created) {
-                handler.logger.error(`Failure to create customer record with ${JSON.stringify(customerInputData)}`);
-                throw new Error(`Failure to create customer record for ${customerInputData.wallet_address}.`);
+                handler.logger.error(
+                    `Failure to create customer record with ${JSON.stringify(customerInputData)}`
+                );
+                throw new Error(
+                    `Failure to create customer record for ${customerInputData.wallet_address}.`
+                );
             }
         } else {
             //if customer record exists, authenticate the user
@@ -227,7 +244,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 customerInputData.password,
                 customerInputData.wallet_address
             );
-            handler.logger.debug('auth result is ' + JSON.stringify(authResult));
+            handler.logger.debug(
+                'auth result is ' + JSON.stringify(authResult)
+            );
             if (!authResult.success) {
                 throw new Error('Error in verifying email and password');
             }
@@ -259,6 +278,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 whitelisted_stores: whitelistStatus.map((a) => a.store_id),
             },
         };
+
+        console.log('body', body);
 
         handler.returnStatus(200, { status: true, data: body });
     });

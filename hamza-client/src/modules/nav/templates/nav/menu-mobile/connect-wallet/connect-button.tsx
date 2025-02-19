@@ -1,30 +1,11 @@
 'use client';
 
-import {
-    Button,
-    Flex,
-    Text,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalBody,
-} from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MobileAccountMenu from '../menu/mobile-account-menu';
-import {
-    getAllowedChainsFromConfig,
-    getBlockchainNetworkName,
-} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { MdOutlineWallet } from 'react-icons/md';
-import { useSwitchNetwork } from 'wagmi';
 
-export const WalletConnectButton = () => {
-    const { error, isLoading, pendingChainId, switchNetwork } =
-        useSwitchNetwork();
-
-    const switchNetworkId = getAllowedChainsFromConfig()[0];
-    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
-
+export const MobileWalletConnectButton = () => {
     return (
         <ConnectButton.Custom>
             {({
@@ -43,6 +24,10 @@ export const WalletConnectButton = () => {
                     chain &&
                     (!authenticationStatus ||
                         authenticationStatus === 'authenticated');
+
+                if (ready && connected && chain.unsupported) {
+                    openChainModal();
+                }
 
                 return (
                     <div
@@ -71,8 +56,15 @@ export const WalletConnectButton = () => {
                                 );
                             }
 
-                            if (ready && connected && chain.unsupported) {
-                                openChainModal();
+                            if (chain.unsupported) {
+                                return (
+                                    <button
+                                        onClick={openChainModal}
+                                        type="button"
+                                    >
+                                        Wrong network
+                                    </button>
+                                );
                             }
 
                             return (

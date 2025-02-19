@@ -121,7 +121,7 @@ const nextConfig = withStoreConfig({
             {
                 protocol: 'https',
                 hostname: 'lh3.googleusercontent.com',
-            }
+            },
         ],
     },
     async redirects() {
