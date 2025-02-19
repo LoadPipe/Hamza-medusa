@@ -202,10 +202,12 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         password: '',
                     });
 
-                    if (
-                        data.data.wallet_address.trim().toLowerCase() ===
-                        clientWallet?.trim()?.toLowerCase()
-                    ) {
+                    const responseWallet =
+                        data.data.wallet_address?.trim().toLowerCase() || '';
+                    const clientWalletTrimmed = clientWallet?.trim()?.toLowerCase() || '';
+
+                    if (responseWallet === clientWalletTrimmed) {
+
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
