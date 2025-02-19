@@ -53,7 +53,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const queryClient = useQueryClient();
     const product = queryClient.getQueryData<Product>(['product', handle]);
 
-    console.log(`WTF IS THIS ${product}`)
 
     console.log(
         'PreviewCheckout component rendered with productId:',
