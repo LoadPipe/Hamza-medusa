@@ -102,9 +102,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             } catch (err) {
                 if (retries < maxRetries) {
                     retries++;
-                    // console.log(
-                    //     `Retrying to fetch HNS data. Retry count: ${retries}`
-                    // );
                     setTimeout(getHnsClient, 1000); // Retry after 1 second
                 } else {
                     console.error(
@@ -180,11 +177,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         verify: async ({ message, signature }) => {
             try {
                 const parsedMessage = new SiweMessage(message);
+                console.log('parsedMessage', parsedMessage);
                 const response = await sendVerifyRequest(message, signature);
 
                 console.log('message', message);
 
                 let data = response.data;
+                console.log('data', data);
                 //if just creating, then a second request is needed
                 if (data.status == true && data.data?.created == true) {
                     const authResponse = await sendVerifyRequest(
@@ -195,7 +194,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 }
 
                 console.log('data.status', data.status);
-                if (data.status == true) {
+                if (data.status === true) {
+                    console.log('HELLO WORLD?')
                     const tokenResponse = await getToken({
                         wallet_address: parsedMessage.address.toLowerCase(),
                         email: data.data?.email?.trim()?.toLowerCase(),
@@ -203,11 +203,20 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     });
 
                     const responseWallet =
-                        data.data.wallet_address?.trim().toLowerCase() || '';
+                        parsedMessage.address.toLowerCase() || '';
                     const clientWalletTrimmed = clientWallet?.trim()?.toLowerCase() || '';
 
+                    // If either wallet is missing, treat it as a failure.
                     if (!responseWallet || !clientWalletTrimmed) {
+                        console.log(`responseWallet: ${responseWallet} ${JSON.stringify(data)} clientWalletTrimmed: ${clientWalletTrimmed}`);
+                        console.error('One or both wallet addresses are missing');
+                        clearLogin();
+                        clearCartCookie();
+                        return false;
+                    }
 
+                    // Now check if they match.
+                    if (responseWallet || clientWalletTrimmed) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
