@@ -1,7 +1,5 @@
 'use server';
 
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 
 export default async function Test({

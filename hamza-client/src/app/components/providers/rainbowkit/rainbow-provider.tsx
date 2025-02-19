@@ -7,16 +7,14 @@ import {
     RainbowKitProvider,
     AvatarComponent,
 } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
-import {
-    chains,
-    config,
-    darkThemeConfig,
-} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { WagmiProvider } from 'wagmi';
+import { darkThemeConfig } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { HnsClient } from '@/web3/contracts/hns-client';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SiweMessage } from 'siwe';
+import { createSiweMessage } from 'viem/siwe';
+
 import {
     clearAuthCookie,
     clearCartCookie,
@@ -32,6 +30,7 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
+import { wagmiConfig } from './wagmi';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -103,9 +102,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             } catch (err) {
                 if (retries < maxRetries) {
                     retries++;
-                    // console.log(
-                    //     `Retrying to fetch HNS data. Retry count: ${retries}`
-                    // );
                     setTimeout(getHnsClient, 1000); // Retry after 1 second
                 } else {
                     console.error(
@@ -140,7 +136,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     };
 
     useEffect(() => {
-        console.log('Saved wallet address', clientWallet);
+        console.log('Saved wallet address', authData.wallet_address);
         if (clientWallet?.length) {
             getHamzaCustomer().then((hamzaCustomer) => {
                 getCustomer().then((customer) => {
@@ -166,7 +162,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         createMessage: ({ nonce, address, chainId }) => {
-            const message = new SiweMessage({
+            console.log(nonce, address, chainId);
+            return createSiweMessage({
                 domain: window.location.host,
                 address,
                 statement: 'Sign in with Ethereum to the app.',
@@ -175,27 +172,20 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 chainId,
                 nonce,
             });
-            console.log('Message Created', message);
-            return message;
-        },
-
-        getMessageBody: ({ message }) => {
-            const preparedMessage = message.prepareMessage();
-            return preparedMessage;
         },
 
         verify: async ({ message, signature }) => {
             try {
-                console.log(
-                    'Verifying message with signature:',
-                    message,
-                    signature
-                );
+                const parsedMessage = new SiweMessage(message);
+                console.log('parsedMessage', parsedMessage);
                 const response = await sendVerifyRequest(message, signature);
 
+                console.log('message', message);
+
                 let data = response.data;
+                console.log('data', data);
+                //if just creating, then a second request is needed
                 if (data.status == true && data.data?.created == true) {
-                    //if just creating, then a second request is needed
                     const authResponse = await sendVerifyRequest(
                         message,
                         signature
@@ -203,18 +193,30 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     data = authResponse.data;
                 }
 
-                if (data.status == true) {
+                console.log('data.status', data.status);
+                if (data.status === true) {
+                    console.log('HELLO WORLD?')
                     const tokenResponse = await getToken({
-                        wallet_address: message.address,
+                        wallet_address: parsedMessage.address.toLowerCase(),
                         email: data.data?.email?.trim()?.toLowerCase(),
                         password: '',
                     });
 
-                    //check that customer data and wallet address match
-                    if (
-                        data.data.wallet_address.trim().toLowerCase() ===
-                        clientWallet?.trim()?.toLowerCase()
-                    ) {
+                    const responseWallet =
+                        parsedMessage.address.toLowerCase() || '';
+                    const clientWalletTrimmed = clientWallet?.trim()?.toLowerCase() || '';
+
+                    // If either wallet is missing, treat it as a failure.
+                    if (!responseWallet || !clientWalletTrimmed) {
+                        console.log(`responseWallet: ${responseWallet} ${JSON.stringify(data)} clientWalletTrimmed: ${clientWalletTrimmed}`);
+                        console.error('One or both wallet addresses are missing');
+                        clearLogin();
+                        clearCartCookie();
+                        return false;
+                    }
+
+                    // Now check if they match.
+                    if (responseWallet || clientWalletTrimmed) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
@@ -222,7 +224,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
                         setCustomerAuthData({
                             token: tokenResponse,
-                            wallet_address: message?.address,
+                            wallet_address: parsedMessage.address.toLowerCase(),
                             customer_id: data.data?.customer_id,
                             is_verified: data.data?.is_verified,
                             status: 'authenticated',
@@ -245,9 +247,10 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         return true;
                     } else {
                         console.log('Wallet address mismatch on login');
+                        console.log('Wallet address mismatch on login');
                         console.log(data.data?.wallet_address);
                         console.log(clientWallet);
-                        console.log(message?.address);
+                        console.log(parsedMessage.address.toLowerCase());
                         clearLogin();
                         clearCartCookie();
                         return false;
@@ -257,8 +260,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     clearLogin();
                     throw new Error(data.message);
                 }
-
-                return false;
             } catch (e) {
                 console.error('Error in signing in:', e);
                 return false;
@@ -301,14 +302,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         });
     }
 
-
     const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
         return <ProfileImage centered={true} />;
     };
 
     return (
-        <div>
-            <WagmiConfig config={config}>
+        <>
+            <WagmiProvider config={wagmiConfig}>
                 <QueryClientProvider client={queryClientRef.current}>
                     <RainbowKitAuthenticationProvider
                         adapter={walletSignature}
@@ -317,7 +317,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         <RainbowKitProvider
                             avatar={CustomAvatar}
                             theme={darkThemeConfig}
-                            chains={chains}
                             modalSize="compact"
                         >
                             {children}
@@ -325,7 +324,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     </RainbowKitAuthenticationProvider>
                     <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
-            </WagmiConfig>
-        </div>
+            </WagmiProvider>
+        </>
     );
 }

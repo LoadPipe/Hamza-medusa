@@ -7,6 +7,21 @@ const store = require('./store.config.json');
 const nextConfig = withStoreConfig({
     features: store.features,
     reactStrictMode: true,
+    experimental: {
+        optimizePackageImports: ['react', 'next', 'lodash'],
+        turbo: {
+            resolveExtensions: [
+                '.mdx',
+                '.tsx',
+                '.ts',
+                '.jsx',
+                '.js',
+                '.mjs',
+                '.json',
+            ],
+            moduleIdStrategy: 'deterministic', // Improve caching
+        },
+    },
     images: {
         remotePatterns: [
             {
@@ -121,7 +136,7 @@ const nextConfig = withStoreConfig({
             {
                 protocol: 'https',
                 hostname: 'lh3.googleusercontent.com',
-            }
+            },
         ],
     },
     async redirects() {
