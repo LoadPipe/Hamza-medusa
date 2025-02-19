@@ -19,29 +19,40 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Variant } from '@/types/medusa';
 import ProductDescription from '../product-description';
 import { renderStars20px } from '@modules/products/components/review-stars';
+import { useQueryClient } from '@tanstack/react-query';
+import { Product } from '@/lib/schemas/product';
 
-const ProductInfo = () => {
+interface ProductProps {
+    handle: string;
+}
+
+const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
+    const queryClient = useQueryClient();
+    const product = queryClient.getQueryData<Product>(['product', handle]);
+
     // Zustand
     let {
-        productData,
         variantId,
-        quantity,
         setVariantId,
         ratingAverage,
         ratingCounter,
     } = useProductPreview();
+
+    // WISHLIST
     const { wishlist } = useWishlistStore();
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
+
+    // CUSTOMER AUTH
     const { authData } = useCustomerAuthStore();
-    const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
-        null
-    );
+
+    // LOCAL STATE
+    const [selectedVariant, setSelectedVariant] = useState<Product['variants'][number] | null>(null);
     const [selectedVariantImage, setSelectedVariantImage] = useState<
         null | string
     >(null);
 
-    const convertToPriceDictionary = (selectedVariant: Variant | null) => {
+    const convertToPriceDictionary = (selectedVariant: Product['variants'][number] | null) => {
         const output: { [key: string]: number } = {};
         if (selectedVariant) {
             for (let price of selectedVariant.prices) {
@@ -51,18 +62,16 @@ const ProductInfo = () => {
         return output;
     };
 
-    // Memoize the selected variant to avoid recalculating on every render
 
     useEffect(() => {
-        if (productData?.variants) {
-            variantId = variantId ?? productData?.variants[0]?.id;
-            setVariantId(variantId ?? '');
+        if (product?.variants) {
+            const newVariantId = variantId ?? product.variants[0]?.id;
+            setVariantId(newVariantId ?? '');
 
-            let selectedProductVariant = productData.variants.find(
-                (a: any) => a.id == variantId
+            const selectedProductVariant = product.variants.find(
+                (a: any) => a.id === newVariantId,
             );
-
-            setSelectedVariant(selectedProductVariant);
+            setSelectedVariant(selectedProductVariant ?? null);
 
             if (
                 selectedProductVariant?.metadata &&
@@ -73,11 +82,10 @@ const ProductInfo = () => {
                 setSelectedVariantImage(null); // Reset to null if no imgUrl is found
             }
         }
-    }, [productData, variantId]);
+    }, [product, variantId, setVariantId]);
 
-    const isLoading = !productData || Object.keys(productData).length === 0;
 
-    if (isLoading) {
+    if (!product) {
         return (
             <Flex
                 width="100%"
@@ -111,7 +119,7 @@ const ProductInfo = () => {
                         color="white"
                         className="product-info-title"
                     >
-                        {productData?.title ?? ''}
+                        {product?.title ?? ''}
                     </Heading>
 
                     {authData.status == 'authenticated' && (
@@ -121,28 +129,28 @@ const ProductInfo = () => {
                             mt="0.7rem"
                         >
                             {wishlist.products.find(
-                                (a) => a.id == productData?.id
+                                (a) => a.id == product?.id,
                             ) ? (
                                 <BiSolidHeart
                                     size={'26px'}
                                     onClick={() => {
                                         removeWishlistItemMutation.mutate({
-                                            id: productData?.id ?? '',
+                                            id: product?.id ?? '',
                                             description:
-                                                productData?.description ?? '',
-                                            handle: productData?.handle ?? '',
+                                                product?.description ?? '',
+                                            handle: product?.handle ?? '',
                                             thumbnail:
-                                                productData?.thumbnail ?? '',
+                                                product?.thumbnail ?? '',
                                             variantThumbnail:
-                                                selectedVariantImage,
-                                            title: productData?.title ?? '',
+                                            selectedVariantImage,
+                                            title: product?.title ?? '',
                                             price: convertToPriceDictionary(
-                                                selectedVariant
+                                                selectedVariant,
                                             ),
                                             productVariantId:
                                                 wishlist.products.find(
                                                     (i) =>
-                                                        i.id == productData?.id
+                                                        i.id == product?.id,
                                                 )?.productVariantId || null,
                                         });
                                     }}
@@ -153,17 +161,17 @@ const ProductInfo = () => {
                                     size={26}
                                     onClick={() => {
                                         addWishlistItemMutation.mutate({
-                                            id: productData?.id,
+                                            id: product?.id,
                                             description:
-                                                productData?.description ?? '',
-                                            handle: productData?.handle ?? '',
+                                                product?.description ?? '',
+                                            handle: product?.handle ?? '',
                                             thumbnail:
-                                                productData?.thumbnail ?? '',
+                                                product?.thumbnail ?? '',
                                             variantThumbnail:
-                                                selectedVariantImage,
-                                            title: productData?.title ?? '',
+                                            selectedVariantImage,
+                                            title: product?.title ?? '',
                                             price: convertToPriceDictionary(
-                                                selectedVariant
+                                                selectedVariant,
                                             ),
                                             productVariantId: variantId || null,
                                         });
@@ -213,23 +221,12 @@ const ProductInfo = () => {
                             </Flex>
                         </Flex>
                     ) : null
-                    // <Flex
-                    //     display={{ base: 'none', md: 'flex' }}
-                    //     gap="5px"
-                    //     height="20px"
-                    // >
-                    //     <Flex flexDirection={'row'}>
-                    //         <Flex flexDirection={'row'} alignSelf={'center'}>
-                    //             {renderStars20px(ratingAverage)}
-                    //         </Flex>
-                    //     </Flex>
-                    // </Flex>
                 }
             </Flex>
 
             <ProductDescription
-                description={productData?.description ?? ''}
-                subtitle={productData?.subtitle ?? ''}
+                description={product?.description ?? ''}
+                subtitle={product?.subtitle ?? ''}
             />
         </Flex>
     );

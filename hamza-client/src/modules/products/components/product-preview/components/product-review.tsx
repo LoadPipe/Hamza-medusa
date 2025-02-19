@@ -34,6 +34,7 @@ const ProductReview = () => {
         startIndex + reviewsToShow
     );
 
+    // TODO: This is an easy example to useQuery. We can refactor this to useQuery
     useEffect(() => {
         console.log('Product ID:', productId); // Check if productId is valid
 
