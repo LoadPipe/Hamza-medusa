@@ -9,6 +9,11 @@ import {
     ModalBody,
     Text,
     Box,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverArrow,
+    PopoverBody,
 } from '@chakra-ui/react';
 import { useSwitchChain } from 'wagmi';
 import { getChainId } from '@wagmi/core';
@@ -40,7 +45,48 @@ const CustomChainModal = () => {
                             >
                                 Switch Networks
                             </Text>
-                            <RxQuestionMarkCircled color="white" />
+                            {/* Popover wrapping the question mark icon */}
+                            <Popover
+                                trigger="hover"
+                                openDelay={100}
+                                closeDelay={300}
+                            >
+                                <PopoverTrigger>
+                                    <Box>
+                                        <RxQuestionMarkCircled color="white" />
+                                    </Box>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                    width="200px"
+                                    height="120px"
+                                    bg="gray.700"
+                                    color="white"
+                                    border="none"
+                                    justifyContent={'center'}
+                                    alignItems={'center'}
+                                >
+                                    <PopoverArrow bg="gray.700" />
+                                    <PopoverBody fontSize="12px">
+                                        <>
+                                            Switch networks to access different
+                                            tokens, dApps, and features that are
+                                            only available on specific
+                                            blockchains.{' '}
+                                            <a
+                                                href="https://example.com" // Your link here
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    color: 'cyan',
+                                                    pointerEvents: 'auto', // Ensures the link is clickable
+                                                }}
+                                            >
+                                                Learn more.
+                                            </a>
+                                        </>
+                                    </PopoverBody>
+                                </PopoverContent>
+                            </Popover>
                         </Flex>
                         <Text
                             color={'white'}
