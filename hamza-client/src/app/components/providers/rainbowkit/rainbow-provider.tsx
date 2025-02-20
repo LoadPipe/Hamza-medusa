@@ -135,6 +135,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         clearAuthCookie();
     };
 
+    // `getHamzaCustomer`
     useEffect(() => {
         console.log('Saved wallet address', authData.wallet_address);
         if (clientWallet?.length) {
@@ -201,6 +202,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         email: data.data?.email?.trim()?.toLowerCase(),
                         password: '',
                     });
+                    console.log(`tokenResponse: ${tokenResponse}`);
 
                     const responseWallet =
                         parsedMessage.address.toLowerCase() || '';
@@ -216,7 +218,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     }
 
                     // Now check if they match.
-                    if (responseWallet || clientWalletTrimmed) {
+                    if (responseWallet === clientWalletTrimmed) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
