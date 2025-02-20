@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
 import {
     createAuthenticationAdapter,
@@ -32,41 +32,77 @@ import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
 import { wagmiConfig } from './wagmi';
 
+// Constants
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
-const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
-const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
+const API_ENDPOINTS = {
+    verify: `${MEDUSA_SERVER_URL}/custom/verify`,
+    nonce: `${MEDUSA_SERVER_URL}/custom/nonce`,
+};
 
-async function sendVerifyRequest(message: any, signature: any) {
-    return await axios.post(
-        VERIFY_MSG_URL,
-        {
-            message,
-            signature,
-        },
-        {
+// API Helper Functions
+const apiClient = {
+    async verifyMessage(message: any, signature: any) {
+        return await axios.post(
+            API_ENDPOINTS.verify,
+            { message, signature },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-control': 'no-cache, no-store',
+                    Accept: 'application/json',
+                },
+            }
+        );
+    },
+
+    async getNonce() {
+        const response = await axios.get(API_ENDPOINTS.nonce, {
             headers: {
                 'Content-Type': 'application/json',
                 'Cache-control': 'no-cache, no-store',
                 Accept: 'application/json',
             },
-        }
-    );
-}
+        });
+        return response?.data?.nonce ?? '';
+    },
+};
 
-async function getNonce() {
-    //const response = await fetch(GET_NONCE_URL);
-    //const data = await response.json();
-    const output = await axios.get(GET_NONCE_URL, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Cache-control': 'no-cache, no-store',
-            Accept: 'application/json',
-        },
-    });
+// Custom Hook for HNS Integration
+const useHnsIntegration = (
+    walletAddress: string,
+    authStatus: string,
+    setHnsName: Function,
+    setHnsAvatar: Function
+) => {
+    useEffect(() => {
+        if (!walletAddress || authStatus !== 'authenticated') return;
 
-    return output?.data?.nonce ?? '';
-}
+        const hnsClient = new HnsClient(10);
+        let retries = 0;
+        const maxRetries = 2;
+
+        const getHnsData = async () => {
+            try {
+                const { name, avatar } =
+                    await hnsClient.getNameAndAvatar(walletAddress);
+                setHnsName(name);
+                setHnsAvatar(avatar);
+            } catch (err) {
+                if (retries < maxRetries) {
+                    retries++;
+                    setTimeout(getHnsData, 1000);
+                } else {
+                    console.error(
+                        'Max retries reached. Could not connect to RPC.'
+                    );
+                }
+            }
+        };
+
+        getHnsData();
+    }, [authStatus, walletAddress]);
+};
 
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
@@ -79,53 +115,23 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         setHnsAvatar,
         setHnsName,
     } = useCustomerAuthStore();
+
     const router = useRouter();
     const [customer_id, setCustomerId] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
+    const queryClientRef = useRef<QueryClient>();
 
-    let clientWallet = walletAddress;
+    useHnsIntegration(walletAddress, authData.status, setHnsName, setHnsAvatar);
 
-    const hnsClient = new HnsClient(10);
-
-    useEffect(() => {
-        let retries = 0;
-        const maxRetries = 2; // Set a max retry limit
-
-        const getHnsClient = async () => {
-            try {
-                console.log('attempting to retrieve HNS name & avatar');
-                const { name, avatar } =
-                    await hnsClient.getNameAndAvatar(walletAddress);
-                console.log('HNS name & avatar:', name, avatar);
-
-                setHnsName(name);
-                setHnsAvatar(avatar);
-            } catch (err) {
-                if (retries < maxRetries) {
-                    retries++;
-                    setTimeout(getHnsClient, 1000); // Retry after 1 second
-                } else {
-                    console.error(
-                        'Max retries reached. Could not connect to RPC.'
-                    );
-                }
-            }
-        };
-
-        if (walletAddress && authData.status === 'authenticated') {
-            getHnsClient();
-        }
-    }, [authData.status]);
-
+    // Handle wishlist loading
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
             loadWishlist(customer_id);
             router.refresh();
         }
-    }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
+    }, [authData.status, customer_id]);
 
     const clearLogin = () => {
-        console.log('CLEARING LOGIN');
         setCustomerAuthData({
             customer_id: '',
             is_verified: false,
@@ -136,38 +142,32 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         clearAuthCookie();
     };
 
-    // `getHamzaCustomer`
+    // Customer verification
     useEffect(() => {
-        // Wait until its fully hydrated first!
-        if (!isHydrated) return;
+        if (!isHydrated || !walletAddress?.length) return;
 
-        console.log('Saved wallet address', authData.wallet_address);
-        if (clientWallet?.length) {
-            getHamzaCustomer().then((hamzaCustomer) => {
-                getCustomer().then((customer) => {
-                    if (
-                        !customer ||
-                        !hamzaCustomer ||
-                        customer?.id !== hamzaCustomer?.id
-                    ) {
-                        console.log('Hamza Customer: ', hamzaCustomer);
-                        console.log('Medusa Customer: ', customer);
-                        clearLogin();
-                    }
-                });
-            });
-        }
-        console.log(authData.wallet_address);
+        const verifyCustomer = async () => {
+            const [hamzaCustomer, customer] = await Promise.all([
+                getHamzaCustomer(),
+                getCustomer(),
+            ]);
+
+            if (
+                !customer ||
+                !hamzaCustomer ||
+                customer?.id !== hamzaCustomer?.id
+            ) {
+                clearLogin();
+            }
+        };
+
+        verifyCustomer();
     }, [authData.wallet_address, isHydrated]);
 
     const walletSignature = createAuthenticationAdapter({
-        getNonce: async () => {
-            const nonce = await getNonce();
-            return nonce ?? '';
-        },
+        getNonce: apiClient.getNonce,
 
         createMessage: ({ nonce, address, chainId }) => {
-            console.log(nonce, address, chainId);
             return createSiweMessage({
                 domain: window.location.host,
                 address,
@@ -182,51 +182,42 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         verify: async ({ message, signature }) => {
             try {
                 const parsedMessage = new SiweMessage(message);
-                console.log('parsedMessage', parsedMessage);
-                const response = await sendVerifyRequest(message, signature);
-
-                console.log('message', message);
-
+                const response = await apiClient.verifyMessage(
+                    message,
+                    signature
+                );
                 let data = response.data;
-                console.log('data', data);
-                //if just creating, then a second request is needed
-                if (data.status == true && data.data?.created == true) {
-                    const authResponse = await sendVerifyRequest(
+
+                if (data.status === true && data.data?.created === true) {
+                    const authResponse = await apiClient.verifyMessage(
                         message,
                         signature
                     );
                     data = authResponse.data;
                 }
 
-                console.log('data.status', data.status);
                 if (data.status === true) {
-                    console.log('HELLO WORLD?')
                     const tokenResponse = await getToken({
                         wallet_address: parsedMessage.address.toLowerCase(),
                         email: data.data?.email?.trim()?.toLowerCase(),
                         password: '',
                     });
-                    console.log(`tokenResponse: ${tokenResponse}`);
 
-                    const responseWallet =
-                        parsedMessage.address.toLowerCase() || '';
-                    const clientWalletTrimmed = clientWallet?.trim()?.toLowerCase() || '';
+                    const responseWallet = parsedMessage.address.toLowerCase();
+                    const clientWalletTrimmed = walletAddress
+                        ?.trim()
+                        ?.toLowerCase();
 
-                    // If either wallet is missing, treat it as a failure.
                     if (!responseWallet || !clientWalletTrimmed) {
-                        console.log(`responseWallet: ${responseWallet} ${JSON.stringify(data)} clientWalletTrimmed: ${clientWalletTrimmed}`);
-                        console.error('One or both wallet addresses are missing');
                         clearLogin();
                         clearCartCookie();
                         return false;
                     }
 
-                    // Now check if they match.
                     if (responseWallet === clientWalletTrimmed) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
-                        //localStorage.setItem('_medusa_jwt', tokenResponse);
 
                         setCustomerAuthData({
                             token: tokenResponse,
@@ -239,33 +230,24 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         setCustomerPreferredCurrency(
                             data.data?.preferred_currency?.code
                         );
-
                         setWhitelistConfig(data.data?.whitelist_config);
 
                         try {
-                            console.log('recovering cart');
-                            recoverCart(customerId);
+                            await recoverCart(customerId);
                         } catch (e) {
-                            console.log('Error recovering cart');
-                            console.error(e);
+                            console.error('Error recovering cart:', e);
                         }
 
                         return true;
-                    } else {
-                        console.log('Wallet address mismatch on login');
-                        console.log('Wallet address mismatch on login');
-                        console.log(data.data?.wallet_address);
-                        console.log(clientWallet);
-                        console.log(parsedMessage.address.toLowerCase());
-                        clearLogin();
-                        clearCartCookie();
-                        return false;
                     }
-                } else {
-                    console.log('running verify unauthenticated');
+
                     clearLogin();
-                    throw new Error(data.message);
+                    clearCartCookie();
+                    return false;
                 }
+
+                clearLogin();
+                throw new Error(data.message);
             } catch (e) {
                 console.error('Error in signing in:', e);
                 return false;
@@ -273,7 +255,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         signOut: async () => {
-            alert('Signing out')
             setCustomerAuthData({
                 ...authData,
                 status: 'unauthenticated',
@@ -284,54 +265,47 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             });
             await signOut();
             router.replace('/');
-            return;
         },
     });
-
-    // ***Ensures data is not shared between different users and requests***
-    // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
-    const queryClientRef = React.useRef<QueryClient>();
 
     if (!queryClientRef.current) {
         queryClientRef.current = new QueryClient({
             defaultOptions: {
                 queries: {
-                    staleTime: 2 * 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
-                    refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
-                    refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
-                    refetchOnMount: false, // 🚀 Prevents redundant fetches when remounting components
-                    retry: 2, // 🔄 Retries failed queries twice before throwing an error
+                    staleTime: 2 * 60 * 1000,
+                    refetchOnWindowFocus: false,
+                    refetchOnReconnect: true,
+                    refetchOnMount: false,
+                    retry: 2,
                 },
                 mutations: {
-                    retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
+                    retry: 2,
                 },
             },
         });
     }
 
-    const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
-        return <ProfileImage centered={true} />;
-    };
+    const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => (
+        <ProfileImage centered={true} />
+    );
 
     return (
-        <>
-            <WagmiProvider config={wagmiConfig}>
-                <QueryClientProvider client={queryClientRef.current}>
-                    <RainbowKitAuthenticationProvider
-                        adapter={walletSignature}
-                        status={authData.status}
+        <WagmiProvider config={wagmiConfig}>
+            <QueryClientProvider client={queryClientRef.current}>
+                <RainbowKitAuthenticationProvider
+                    adapter={walletSignature}
+                    status={authData.status}
+                >
+                    <RainbowKitProvider
+                        avatar={CustomAvatar}
+                        theme={darkThemeConfig}
+                        modalSize="compact"
                     >
-                        <RainbowKitProvider
-                            avatar={CustomAvatar}
-                            theme={darkThemeConfig}
-                            modalSize="compact"
-                        >
-                            {children}
-                        </RainbowKitProvider>
-                    </RainbowKitAuthenticationProvider>
-                    <ReactQueryDevtools initialIsOpen={false} />
-                </QueryClientProvider>
-            </WagmiProvider>
-        </>
+                        {children}
+                    </RainbowKitProvider>
+                </RainbowKitAuthenticationProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+        </WagmiProvider>
     );
 }
