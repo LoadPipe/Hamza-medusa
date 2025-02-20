@@ -214,7 +214,8 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     <Text>Error loading store details</Text> // Handle error case gracefully
                 ) : (
                     <StoreBanner
-                        store={storeData?.handle}
+                        storeHandle={storeData?.handle}
+                        storeName={storeData?.name}
                         icon={storeData?.icon}
                     />
                 )}
