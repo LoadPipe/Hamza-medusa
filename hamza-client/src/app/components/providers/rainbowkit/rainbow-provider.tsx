@@ -72,6 +72,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
         walletAddress,
         authData,
+        isHydrated,
         setCustomerAuthData,
         setCustomerPreferredCurrency,
         setWhitelistConfig,
@@ -137,6 +138,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
     // `getHamzaCustomer`
     useEffect(() => {
+        // Wait until its fully hydrated first!
+        if (!isHydrated) return;
+
         console.log('Saved wallet address', authData.wallet_address);
         if (clientWallet?.length) {
             getHamzaCustomer().then((hamzaCustomer) => {
@@ -154,7 +158,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             });
         }
         console.log(authData.wallet_address);
-    }, [authData.wallet_address]);
+    }, [authData.wallet_address, isHydrated]);
 
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
@@ -269,6 +273,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         signOut: async () => {
+            alert('Signing out')
             setCustomerAuthData({
                 ...authData,
                 status: 'unauthenticated',

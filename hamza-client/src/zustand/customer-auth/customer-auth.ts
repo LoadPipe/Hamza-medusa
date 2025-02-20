@@ -18,6 +18,7 @@ type State = {
         whitelisted_stores: string[];
     };
     preferred_currency_code: string | null;
+    isHydrated: boolean;
 };
 
 type Actions = {
@@ -28,6 +29,7 @@ type Actions = {
     setCustomerPreferredCurrency: (currency: string) => void;
     setWhitelistConfig: (configData: State['whitelist_config']) => void;
     setIsVerified: (isVerified: boolean) => void;
+    setHydrated: (value: boolean) => void;
 };
 
 export const useCustomerAuthStore = create<State & Actions>()(
@@ -48,6 +50,7 @@ export const useCustomerAuthStore = create<State & Actions>()(
                 is_whitelisted: false,
                 whitelisted_stores: [],
             },
+            isHydrated: false, // default value
 
             // Correctly define setWalletAddress
             setWalletAddress: (walletAddress: string) => {
@@ -93,11 +96,17 @@ export const useCustomerAuthStore = create<State & Actions>()(
             setHnsName: (hnsName: string | null) => {
                 set({ hnsName });
             },
+
+            setHydrated: (value: boolean) => set({ isHydrated: value }),
+
         }),
 
         {
             name: '__hamza_customer', // name of the item in the storage (must be unique)
             storage: createJSONStorage(() => localStorage), // Use localStorage by default
+            onRehydrateStorage: () => (state) => {
+                state?.setHydrated(true);
+            },
         }
     )
 );
