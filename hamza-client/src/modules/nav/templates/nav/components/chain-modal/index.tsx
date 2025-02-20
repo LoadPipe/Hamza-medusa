@@ -52,7 +52,7 @@ const CustomChainModal = () => {
                                 closeDelay={300}
                             >
                                 <PopoverTrigger>
-                                    <Box>
+                                    <Box cursor={'pointer'}>
                                         <RxQuestionMarkCircled color="white" />
                                     </Box>
                                 </PopoverTrigger>
@@ -118,7 +118,10 @@ const CustomChainModal = () => {
                                     }
                                     cursor={'pointer'}
                                     _hover={{
-                                        opacity: 0.5,
+                                        backgroundColor:
+                                            chain.id === chainId
+                                                ? 'primary.indigo.900'
+                                                : '#52525b',
                                     }}
                                 >
                                     <Text marginRight={'auto'} color={'white'}>
