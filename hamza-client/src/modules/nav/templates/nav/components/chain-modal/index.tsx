@@ -8,6 +8,7 @@ import {
     ModalContent,
     ModalBody,
     Text,
+    Box,
 } from '@chakra-ui/react';
 import { useSwitchChain } from 'wagmi';
 import { getChainId } from '@wagmi/core';
@@ -25,7 +26,7 @@ const CustomChainModal = () => {
                 justifyContent={'center'}
                 alignItems={'center'}
                 borderRadius={'16px'}
-                backgroundColor={'#121212'}
+                backgroundColor={'rgb(26, 27, 31)'}
                 border={'1px'}
                 borderColor={'white'}
             >
@@ -46,6 +47,7 @@ const CustomChainModal = () => {
                             fontSize={'12px'}
                             mr={'auto'}
                             fontWeight={400}
+                            mb={'0.5rem'}
                         >
                             Easily switch blockchain networks to access specific
                             tokens.
@@ -53,11 +55,10 @@ const CustomChainModal = () => {
 
                         {chains.map((chain) => (
                             <Flex
-                                mt="1rem"
+                                mt="0.5rem"
                                 key={chain.id}
                                 flex={1}
                                 width={'100%'}
-                                gap={2}
                             >
                                 <Button
                                     width={'100%'}
@@ -78,12 +79,22 @@ const CustomChainModal = () => {
                                         {chain.name}
                                     </Text>
                                     {chain.id === chainId && (
-                                        <Text
-                                            marginLeft={'auto'}
-                                            color={'white'}
-                                        >
-                                            Connected
-                                        </Text>
+                                        <>
+                                            <Text
+                                                marginLeft={'auto'}
+                                                color={'white'}
+                                                fontSize={'14px'}
+                                            >
+                                                Connected
+                                            </Text>
+                                            <Box
+                                                ml="0.5rem"
+                                                borderRadius="full"
+                                                width="8px"
+                                                height="8px"
+                                                backgroundColor="rgb(48, 224, 0)"
+                                            />
+                                        </>
                                     )}
                                 </Button>
                             </Flex>
