@@ -72,32 +72,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 width={'100%'}
                 gap={'8px'}
             >
-                {subtotals[currencyCode] && (
-                    <Flex flexDir={'column'}>
-                        <Flex color={'white'} justifyContent={'space-between'}>
-                            <Text fontSize={{ base: '14px', md: '16px' }}>
-                                Subtotal
-                            </Text>
-                            <Flex>
-                                <Image
-                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                    src={currencyIcons[currencyCode ?? 'usdc']}
-                                    alt={currencyCode ?? 'usdc'}
-                                />
-                                <Text
-                                    ml="0.4rem"
-                                    fontSize={{ base: '14px', md: '16px' }}
-                                >
-                                    {formatCryptoPrice(
-                                        subtotals[currencyCode ?? 'usdc'],
-                                        currencyCode ?? 'usdc'
-                                    )}
-                                </Text>
-                            </Flex>
-                        </Flex>
-                        <Divider my="1rem" borderColor="#555555" />
-                    </Flex>
-                )}
+
                 {/* Discount */}
                 <Flex color="#555555" justifyContent={'space-between'}>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
@@ -109,29 +84,6 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     </Flex>
                 </Flex>
 
-                {/* Shipping Fee */}
-                <Flex color="#555555" justifyContent={'space-between'}>
-                    <Text fontSize={{ base: '14px', md: '16px' }}>
-                        Shipping Fee
-                    </Text>
-
-                    <Flex>
-                        <Image
-                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                            src={currencyIcons[currencyCode ?? 'usdc']}
-                            alt={currencyCode ?? 'usdc'}
-                        />
-                        <Text
-                            ml="0.4rem"
-                            fontSize={{ base: '14px', md: '16px' }}
-                        >
-                            {formatCryptoPrice(
-                                shippingCost!,
-                                currencyCode!
-                            ).toString()}
-                        </Text>
-                    </Flex>
-                </Flex>
 
                 {/* Taxes */}
                 <Flex color="#555555" justifyContent={'space-between'}>

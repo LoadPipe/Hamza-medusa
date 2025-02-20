@@ -25,18 +25,17 @@ type ProductTemplateProps = {
 };
 
 /*
-* @Doom: This code needs to be ripped apart and put back together...
-* @Breakdown: let's break it down into component view. Get a nice herirachical overview of the components and how they interact with each other. This way we know what we are working with.
-* @useEffect: Currently the best way to deal with the zustand store, is to leave it as is. Let's not touch it for now.
-* @Pipeline: We want to control the data from root (product/[handle]/page.tsx) all the way down the leaf nodes. This way we can cache the data and control the flow of data.
-*/
+ * @Doom: This code needs to be ripped apart and put back together...
+ * @Breakdown: let's break it down into component view. Get a nice herirachical overview of the components and how they interact with each other. This way we know what we are working with.
+ * @useEffect: Currently the best way to deal with the zustand store, is to leave it as is. Let's not touch it for now.
+ * @Pipeline: We want to control the data from root (product/[handle]/page.tsx) all the way down the leaf nodes. This way we can cache the data and control the flow of data.
+ */
 
-const ProductTemplate: React.FC<ProductTemplateProps> =
-    ({
-     region,
-     handle,
-     countryCode,
- }) => {
+const ProductTemplate: React.FC<ProductTemplateProps> = ({
+    region,
+    handle,
+    countryCode,
+}) => {
     const {
         setProductData,
         setCountryCode,
@@ -47,21 +46,24 @@ const ProductTemplate: React.FC<ProductTemplateProps> =
 
     const [selectedVariantImage, setSelectedVariantImage] = useState('');
 
-        const { data: product, isError, isLoading } = useQuery<Product, Error>({
-            queryKey: ['product', handle],
-            queryFn: async () => {
-                const response = await getPricedProductByHandle(handle, region);
-                if (!response) {
-                    // If no product is found, throw an error
-                    throw new Error("Product not found");
-                }
-                // Parse the response using Zod to ensure it matches the Product schema
-                return ProductSchema.parse(response);
-            },
-        });
+    const {
+        data: product,
+        isError,
+        isLoading,
+    } = useQuery<Product, Error>({
+        queryKey: ['product', handle],
+        queryFn: async () => {
+            const response = await getPricedProductByHandle(handle, region);
+            if (!response) {
+                // If no product is found, throw an error
+                throw new Error('Product not found');
+            }
+            // Parse the response using Zod to ensure it matches the Product schema
+            return ProductSchema.parse(response);
+        },
+    });
 
-
-        // If we hit these error states, product either doesn't exist or there was an error fetching it.
+    // If we hit these error states, product either doesn't exist or there was an error fetching it.
     // Otherwise, the rest of the page will render. [OMIT**Banner**]
     if (isError || !product || !product.id) {
         notFound();
@@ -94,14 +96,17 @@ const ProductTemplate: React.FC<ProductTemplateProps> =
     // Fetching store data, based off the product id, storeData.(handle|icon) is used in StoreBanner (navigation/icon)
     // This is a separate query from the product query, as it fetches store data based off the product id.
     // We're using isStoreLoading && isStoreError states to handle loading and error states for Banner.
-    const { data: storeData, isLoading: isStoreLoading, isError: isStoreError } = useQuery({
+    const {
+        data: storeData,
+        isLoading: isStoreLoading,
+        isError: isStoreError,
+    } = useQuery({
         // Cache / Fetch data based off this unique product_id
         queryKey: ['store_vendor', product?.id],
         queryFn: () => getStore(product?.id as string),
         // Only run this query when product
         enabled: !!product.id,
     });
-
 
     return (
         <Flex
@@ -208,7 +213,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> =
                 ) : isStoreError ? (
                     <Text>Error loading store details</Text> // Handle error case gracefully
                 ) : (
-                    <StoreBanner store={storeData?.handle} icon={storeData?.icon} />
+                    <StoreBanner
+                        store={storeData?.handle}
+                        icon={storeData?.icon}
+                    />
                 )}
                 <Divider
                     color="#555555"
