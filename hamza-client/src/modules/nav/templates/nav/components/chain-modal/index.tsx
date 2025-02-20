@@ -14,11 +14,13 @@ import {
     PopoverContent,
     PopoverArrow,
     PopoverBody,
+    IconButton,
 } from '@chakra-ui/react';
 import { useSwitchChain } from 'wagmi';
 import { getChainId } from '@wagmi/core';
 import { wagmiConfig } from '@/app/components/providers/rainbowkit/wagmi';
 import { RxQuestionMarkCircled } from 'react-icons/rx';
+import { MdClose } from 'react-icons/md'; // Import the Close Icon from react-icons
 
 const CustomChainModal = () => {
     const { chains, switchChain } = useSwitchChain();
@@ -37,7 +39,12 @@ const CustomChainModal = () => {
             >
                 <ModalBody width={'100%'} py="1.5rem">
                     <Flex flexDirection={'column'} alignItems={'center'}>
-                        <Flex mr={'auto'} alignItems={'center'} gap={2}>
+                        <Flex
+                            mr={'auto'}
+                            alignItems={'center'}
+                            gap={3}
+                            width={'100%'}
+                        >
                             <Text
                                 fontSize={'18px'}
                                 color={'white'}
@@ -87,6 +94,19 @@ const CustomChainModal = () => {
                                     </PopoverBody>
                                 </PopoverContent>
                             </Popover>
+
+                            {/* Close Button with Grey Circle */}
+                            <IconButton
+                                aria-label="Close modal"
+                                icon={<MdClose />}
+                                isRound
+                                size="sm"
+                                variant="ghost"
+                                color="white"
+                                ml="auto"
+                                backgroundColor={'gray.600'}
+                                _hover={{ backgroundColor: 'gray.600' }}
+                            />
                         </Flex>
                         <Text
                             color={'white'}
