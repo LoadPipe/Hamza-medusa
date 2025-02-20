@@ -5,7 +5,11 @@ import SearchAndFilterPanel from '@modules/home/components/search-and-filter-pan
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
 import getQueryClient from '@/app/query-utils/getQueryClient';
-import { dehydrate, useQueryClient } from '@tanstack/react-query';
+import {
+    QueryClient,
+    dehydrate,
+    HydrationBoundary,
+} from '@tanstack/react-query';
 import HeroSlider from '@/modules/home/components/hero-slider';
 
 /**
@@ -32,6 +36,9 @@ import HeroSlider from '@/modules/home/components/hero-slider';
  *
  * This setup optimizes performance by ensuring that data is fetched server-side and
  * reused client-side, improving both user experience and load times.
+ *
+ *
+ * REFACTOR TO USE TANSTACK QUERY V5
  */
 
 export const metadata: Metadata = {
@@ -44,9 +51,10 @@ export default async function Home({
 }: {
     params: { countryCode: string };
 }) {
+    const queryClient = new QueryClient();
+
     const region = await getRegion(countryCode);
 
-    const queryClient = getQueryClient();
     await queryClient.prefetchQuery({
         queryKey: ['homeProducts'],
         queryFn: () => {
@@ -61,10 +69,14 @@ export default async function Home({
     }
 
     return (
+        <HydrationBoundary state={dehydrate(queryClient)}>
+
         <Box backgroundColor={'transparent'}>
             <HeroBanner />
             <HeroSlider />
-            <SearchAndFilterPanel dehydratedState={dehydratedHomeProducts} />
+            <SearchAndFilterPanel />
         </Box>
+        </HydrationBoundary>
+
     );
 }
