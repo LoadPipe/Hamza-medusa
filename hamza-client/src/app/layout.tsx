@@ -30,7 +30,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <html lang="en" data-mode="dark">
             <head>
                 {/* Google Tag Manager Script */}
-                {/* <Script
+                <Script
                     id="gtm-script"
                     strategy="afterInteractive"
                     dangerouslySetInnerHTML={{
@@ -43,7 +43,8 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                             })(window,document,'script','dataLayer','GTM-W9HPPFG3');
                         `,
                     }}
-                /> */}
+                />
+
                 {/* Chat Widget Script */}
                 <Script
                     id="freescout-widget"
@@ -68,11 +69,12 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                         `,
                     }}
                 />
-                {/* Klaviyo Script */}
+
+                {/* Klaviyo Script
                 <Script
                     src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4Nw9L"
                     strategy="afterInteractive"
-                />
+                /> */}
             </head>
             <body>
                 <div>

@@ -13,8 +13,6 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { HnsClient } from '@/web3/contracts/hns-client';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SiweMessage } from 'siwe';
-import { createSiweMessage } from 'viem/siwe';
-
 import {
     clearAuthCookie,
     clearCartCookie,
@@ -163,8 +161,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         createMessage: ({ nonce, address, chainId }) => {
-            console.log(nonce, address, chainId);
-            return createSiweMessage({
+            console.log('create message');
+            const message = new SiweMessage({
                 domain: window.location.host,
                 address,
                 statement: 'Sign in with Ethereum to the app.',
@@ -173,6 +171,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 chainId,
                 nonce,
             });
+            return message.prepareMessage();
         },
 
         verify: async ({ message, signature }) => {
@@ -262,6 +261,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     clearLogin();
                     throw new Error(data.message);
                 }
+
+                return false;
             } catch (e) {
                 console.error('Error in signing in:', e);
                 return false;
