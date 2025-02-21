@@ -53,14 +53,7 @@ const CustomChainModal = () => {
     const { chain } = useNetwork(); // Get the currently connected network
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
-
-    // In your configuration, chains is an array of network names.
-    // For example: ['Sepolia', 'OP Mainnet']
     const allowedChainNames = chains;
-
-    console.log('Allowed chain names:', allowedChainNames);
-    console.log('Current chain:', chain);
-    console.log('Pending chainId:', pendingChainId);
 
     return (
         <Modal isOpen={true} onClose={() => {}} isCentered>
