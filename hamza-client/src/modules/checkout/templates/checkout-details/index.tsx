@@ -8,6 +8,8 @@ import {
     getHamzaCustomer,
     listShippingMethods,
 } from '@/lib/server';
+import { redirect } from 'next/navigation';
+import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 export default async function CheckoutDetails(params: any) {
     const cartId = params.cartId;
