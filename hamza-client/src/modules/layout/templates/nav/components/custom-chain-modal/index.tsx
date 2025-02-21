@@ -26,6 +26,11 @@ import {
     getBlockchainNetworkName,
     chains,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import Image from 'next/image';
+import arbLogo from '@/images/chains/arbitrum-arb-logo.png';
+import ethLogo from '@/images/chains/ethereum-eth-logo.png';
+import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
+import polygonLogo from '@/images/chains/polygon-matic-logo.png';
 
 /**
  * Mapping from network names to their chain IDs.
@@ -35,6 +40,16 @@ const chainNameToIdMap: Record<string, number> = {
     'OP Mainnet': 10,
     base: 8453,
     'Arbitrum One': 42161,
+};
+
+/**
+ * Mapping from network names to their logos.
+ */
+const chainLogoMap: Record<string, StaticImageData> = {
+    Sepolia: ethLogo,
+    'OP Mainnet': optimismLogo,
+    'Arbitrum One': arbLogo,
+    Polygon: polygonLogo, // Use this if your chains array includes "Polygon"
 };
 
 /**
@@ -57,7 +72,6 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    console.log('chains', chains);
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
@@ -191,7 +205,19 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
                                                     : '#52525b',
                                         }}
                                     >
-                                        <Text marginRight="auto" color="white">
+                                        {chainLogoMap[network.name] && (
+                                            <Image
+                                                src={chainLogoMap[network.name]}
+                                                alt={`${network.name} logo`}
+                                                width={24}
+                                                height={24}
+                                            />
+                                        )}
+                                        <Text
+                                            ml="0.5rem"
+                                            marginRight="auto"
+                                            color="white"
+                                        >
                                             {network.name}
                                         </Text>
                                         {chain?.id === chainId && (
