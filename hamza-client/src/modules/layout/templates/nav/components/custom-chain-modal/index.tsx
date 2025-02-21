@@ -33,6 +33,8 @@ import {
 const chainNameToIdMap: Record<string, number> = {
     Sepolia: 11155111,
     'OP Mainnet': 10,
+    base: 8453,
+    'Arbitrum One': 42161,
 };
 
 /**
@@ -55,6 +57,7 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
+    console.log('chains', chains);
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
