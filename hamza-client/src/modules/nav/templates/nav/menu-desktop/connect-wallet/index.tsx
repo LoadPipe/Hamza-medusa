@@ -11,17 +11,6 @@ import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
 
 export const WalletConnectButton = () => {
-    //Update zustand store with Wagmi hook when connected
-    const account = useAccount();
-    const { setWalletAddress } = useCustomerAuthStore();
-    // useEffect to update Zustand state when the account is connected
-
-    useEffect(() => {
-        if (account?.address) {
-            setWalletAddress(account.address); // Update Zustand store
-        }
-    }, [account?.address, setWalletAddress]);
-
     return (
         <ConnectButton.Custom>
             {({
@@ -60,15 +49,13 @@ export const WalletConnectButton = () => {
                         {(() => {
                             if (!connected) {
                                 return (
-                                    <Button
-                                        borderRadius={'30px'}
-                                        backgroundColor={'primary.green.900'}
+                                    <button
+                                        className="bg-[#94D42A] text-black font-semibold rounded-full"
                                         onClick={openConnectModal}
-                                        height="48px"
-                                        fontSize={'16px'}
+                                        type="button"
                                     >
                                         Connect Wallet
-                                    </Button>
+                                    </button>
                                 );
                             }
                             if (chain.unsupported) {
