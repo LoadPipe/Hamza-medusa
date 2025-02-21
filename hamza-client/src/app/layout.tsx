@@ -30,15 +30,12 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     return (
         <html lang="en" data-mode="dark">
             <head>
-                {/* Google Tag Manager Script */}
-
-                {/* Klaviyo Script
+                {/* Klaviyo Script */}
                 <Script
                     src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4Nw9L"
                     strategy="afterInteractive"
                 />
             </head>
-            <GoogleTagManager gtmId="GTM-XYZ" />
             <body>
                 <noscript>
                     <iframe
