@@ -12,8 +12,6 @@ import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
-import { GoogleTagManager } from '@next/third-parties/google';
-import FreeScoutWidget from './components/scripts/chat-widget';
 
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
@@ -32,7 +30,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <html lang="en" data-mode="dark">
             <head>
                 {/* Google Tag Manager Script */}
-                <Script
+                {/* <Script
                     id="gtm-script"
                     strategy="afterInteractive"
                     dangerouslySetInnerHTML={{
@@ -45,6 +43,30 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                             })(window,document,'script','dataLayer','GTM-W9HPPFG3');
                         `,
                     }}
+                /> */}
+                {/* Chat Widget Script */}
+                <Script
+                    id="freescout-widget"
+                    strategy="lazyOnload"
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            window.FreeScoutW = {
+                                s: {
+                                    "color": "#5ab334",
+                                    "position": "br",
+                                    "id": 2009307235
+                                }
+                            };
+                            (function(d, e, s) {
+                                if (d.getElementById("freescout-w")) return;
+                                var a = d.createElement(e), m = d.getElementsByTagName(e)[0];
+                                a.async = 1;
+                                a.id = "freescout-w";
+                                a.src = "https://support.hamza.market/modules/chat/js/widget.js?v=4239";
+                                m.parentNode.insertBefore(a, m);
+                            })(document, "script");
+                        `,
+                    }}
                 />
                 {/* Klaviyo Script */}
                 <Script
@@ -52,7 +74,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     strategy="afterInteractive"
                 />
             </head>
-            <GoogleTagManager gtmId="GTM-XYZ" />
             <body>
                 <div>
                     <MedusaProvider token={token}>
@@ -68,7 +89,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     <div>
                         <Toaster position="top-right" />
                     </div>
-                    <FreeScoutWidget />
                 </div>
             </body>
         </html>

@@ -21,13 +21,22 @@ interface EscrowProps {
 // TODO: API call to release escrow
 // TODO: When escrow completes, api should be made to sync with the order table escrow_status
 export const Escrow = ({ order }: EscrowProps) => {
-    const [orderExist, setOrderExist] = useState<true | false | null>(null);
+    const { id } = useParams();
 
+    const [customerExist, setCustomerExist] = useState<true | false | null>(
+        null
+    );
+    const [orderExist, setOrderExist] = useState<true | false | null>(null);
     const [escrowPaymentExist, setEscrowPaymentExist] = useState<
         true | false | null
     >(null);
     const [escrowPayment, setEscrowPayment] =
         useState<PaymentDefinition | null>(null);
+    const [isClient, setIsClient] = useState(false); // New state to track client-side rendering
+
+    useEffect(() => {
+        setIsClient(true); // Set to true when the component is mounted on the client
+    }, []);
 
     useEffect(() => {
         const fetchCustomerAndOrder = async () => {
