@@ -7,8 +7,12 @@ import {
     RainbowKitProvider,
     AvatarComponent,
 } from '@rainbow-me/rainbowkit';
-import { WagmiProvider } from 'wagmi';
-import { darkThemeConfig } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { WagmiConfig, WagmiProvider } from 'wagmi';
+import {
+    chains,
+    config,
+    darkThemeConfig,
+} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { HnsClient } from '@/web3/contracts/hns-client';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
