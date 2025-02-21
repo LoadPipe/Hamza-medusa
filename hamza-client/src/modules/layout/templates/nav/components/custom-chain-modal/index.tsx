@@ -18,21 +18,17 @@ import {
 } from '@chakra-ui/react';
 
 import { RxQuestionMarkCircled } from 'react-icons/rx';
-import { MdClose } from 'react-icons/md'; // Import the Close Icon from react-icons
-
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { MdClose } from 'react-icons/md';
+import { useNetwork, useSwitchNetwork } from 'wagmi';
 
 import {
     getAllowedChainsFromConfig,
     getBlockchainNetworkName,
+    chains,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
-import { MdOutlineWallet } from 'react-icons/md';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
-import { chains } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 /**
  * Mapping from network names to their chain IDs.
- * Update this mapping if you have more networks.
  */
 const chainNameToIdMap: Record<string, number> = {
     Sepolia: 11155111,
@@ -41,22 +37,26 @@ const chainNameToIdMap: Record<string, number> = {
 
 /**
  * Returns the chain ID for a given network name.
- *
- * @param networkName The network name to lookup
- * @returns The chain ID or null if not found
  */
 const getChainIdFromName = (networkName: string): number | null => {
     return chainNameToIdMap[networkName] ?? null;
 };
 
-const CustomChainModal = () => {
-    const { chain } = useNetwork(); // Get the currently connected network
+interface CustomChainModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const CustomChainModal: React.FC<CustomChainModalProps> = ({
+    isOpen,
+    onClose,
+}) => {
+    const { chain } = useNetwork();
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
-    const allowedChainNames = chains;
 
     return (
-        <Modal isOpen={true} onClose={() => {}} isCentered>
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent="center"
@@ -114,7 +114,7 @@ const CustomChainModal = () => {
                                                 rel="noopener noreferrer"
                                                 style={{
                                                     color: 'cyan',
-                                                    pointerEvents: 'auto', // Ensures the link is clickable
+                                                    pointerEvents: 'auto',
                                                 }}
                                             >
                                                 Learn more.
@@ -134,6 +134,7 @@ const CustomChainModal = () => {
                                 ml="auto"
                                 backgroundColor="gray.600"
                                 _hover={{ backgroundColor: 'gray.600' }}
+                                onClick={onClose}
                             />
                         </Flex>
                         <Text
@@ -147,10 +148,9 @@ const CustomChainModal = () => {
                             tokens.
                         </Text>
 
-                        {allowedChainNames.map((networkName, index) => {
-                            const chainId = getChainIdFromName(
-                                networkName.name
-                            );
+                        {chains.map((network, index) => {
+                            // network is assumed to be an object with a .name property
+                            const chainId = getChainIdFromName(network.name);
                             return (
                                 <Flex
                                     mt="0.5rem"
@@ -159,11 +159,19 @@ const CustomChainModal = () => {
                                     width="100%"
                                 >
                                     <Button
-                                        width={'100%'}
-                                        onClick={() =>
-                                            chainId !== null &&
-                                            switchNetwork?.(chainId)
-                                        }
+                                        width="100%"
+                                        onClick={async () => {
+                                            if (chainId !== null) {
+                                                // Optionally, you might want to handle errors separately if needed.
+                                                switchNetwork?.(chainId);
+
+                                                // Wait for 2 seconds before closing
+                                                await new Promise((resolve) =>
+                                                    setTimeout(resolve, 1000)
+                                                );
+                                                onClose();
+                                            }
+                                        }}
                                         backgroundColor={
                                             chain?.id === chainId
                                                 ? 'primary.indigo.900'
@@ -181,10 +189,10 @@ const CustomChainModal = () => {
                                         }}
                                     >
                                         <Text marginRight="auto" color="white">
-                                            {networkName.name}
+                                            {network.name}
                                         </Text>
                                         {chain?.id === chainId && (
-                                            <Flex marginLeft={'auto'}>
+                                            <Flex marginLeft="auto">
                                                 <Text
                                                     marginLeft="auto"
                                                     color="white"
@@ -193,7 +201,7 @@ const CustomChainModal = () => {
                                                     Connected
                                                 </Text>
                                                 <Box
-                                                    alignSelf={'center'}
+                                                    alignSelf="center"
                                                     ml="0.5rem"
                                                     borderRadius="full"
                                                     width="8px"
@@ -218,4 +226,5 @@ const CustomChainModal = () => {
         </Modal>
     );
 };
+
 export default CustomChainModal;

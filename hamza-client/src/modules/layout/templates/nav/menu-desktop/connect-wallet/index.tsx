@@ -1,27 +1,29 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Button, Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
 import { useWalletClient, useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useEffect } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
 import CustomChainModal from '../../components/custom-chain-modal';
 
 export const WalletConnectButton = () => {
-    //Update zustand store with Wagmi hook when connected
+    // Update zustand store with Wagmi hook when connected
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
-    // useEffect to update Zustand state when the account is connected
 
     useEffect(() => {
         if (account?.address) {
             setWalletAddress(account.address); // Update Zustand store
         }
     }, [account?.address, setWalletAddress]);
+
+    // Local state to control CustomChainModal visibility
+    const [isChainModalOpen, setChainModalOpen] = useState(false);
 
     return (
         <ConnectButton.Custom>
@@ -60,11 +62,11 @@ export const WalletConnectButton = () => {
                             if (!connected) {
                                 return (
                                     <Button
-                                        borderRadius={'30px'}
-                                        backgroundColor={'primary.green.900'}
+                                        borderRadius="30px"
+                                        backgroundColor="primary.green.900"
                                         onClick={openConnectModal}
                                         height="48px"
-                                        fontSize={'16px'}
+                                        fontSize="16px"
                                     >
                                         Connect Wallet
                                     </Button>
@@ -73,19 +75,22 @@ export const WalletConnectButton = () => {
 
                             return (
                                 <Flex
-                                    gap={'18px'}
-                                    flexDirection={'row'}
-                                    alignItems={'center'}
+                                    gap="18px"
+                                    flexDirection="row"
+                                    alignItems="center"
                                 >
-                                    <CustomChainModal />
+                                    <CustomChainModal
+                                        isOpen={isChainModalOpen}
+                                        onClose={() => setChainModalOpen(false)}
+                                    />
                                     <HnsDisplay />
                                     <CurrencySelector network={chain.name} />
                                     <button
-                                        onClick={openChainModal}
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
                                         }}
+                                        onClick={() => setChainModalOpen(true)}
                                         type="button"
                                     >
                                         {chain.hasIcon && (
