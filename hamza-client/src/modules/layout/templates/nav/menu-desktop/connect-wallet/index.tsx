@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
+import CustomChainModal from '../../components/custom-chain-modal';
 
 export const WalletConnectButton = () => {
     //Update zustand store with Wagmi hook when connected
@@ -76,6 +77,7 @@ export const WalletConnectButton = () => {
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
+                                    <CustomChainModal />
                                     <HnsDisplay />
                                     <CurrencySelector network={chain.name} />
                                     <button
