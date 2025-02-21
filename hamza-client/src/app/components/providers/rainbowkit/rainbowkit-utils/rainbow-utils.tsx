@@ -6,7 +6,7 @@ import {
     walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { WalletConnectButton } from '@/components/providers/rainbowkit/connect-button/connect-button';
-import { createConfig, useWalletClient } from 'wagmi';
+import { configureChains, createConfig, useWalletClient } from 'wagmi';
 import {
     mainnet,
     optimism,
@@ -15,10 +15,10 @@ import {
     arbitrum,
     base,
 } from 'wagmi/chains';
-// import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
-// import { alchemyProvider } from 'wagmi/providers/alchemy';
-// import { publicProvider } from 'wagmi/providers/public';
-// import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import {
     Flex,
     Modal,
@@ -44,79 +44,99 @@ export const darkThemeConfig = darkTheme({
 const EXTRA_LOGGING = false;
 
 //import Polygon testnet
-// const amoy: Chain = {
-//     id: 80002,
-//     name: 'Polygon Amoy',
-//     network: 'Polygon Amoy',
-//     nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
-//     rpcUrls: {
-//         default: {
-//             http: ['https://rpc-amoy.polygon.technology'],
-//         },
-//         public: { http: ['https://rpc-amoy.polygon.technology/'] },
-//     },
-//     blockExplorers: {
-//         default: {
-//             name: 'PolygonScan',
-//             url: 'https://amoy.polygonscan.com',
-//         },
-//     },
-//     contracts: {
-//         multicall3: {
-//             address: '0xca11bde05977b3631167028862be2a173976ca11',
-//             blockCreated: 3127388,
-//         },
-//     },
-//     testnet: true,
-// };
+const amoy: Chain = {
+    id: 80002,
+    name: 'Polygon Amoy',
+    network: 'Polygon Amoy',
+    nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+    rpcUrls: {
+        default: {
+            http: ['https://rpc-amoy.polygon.technology'],
+        },
+        public: { http: ['https://rpc-amoy.polygon.technology/'] },
+    },
+    blockExplorers: {
+        default: {
+            name: 'PolygonScan',
+            url: 'https://amoy.polygonscan.com',
+        },
+    },
+    contracts: {
+        multicall3: {
+            address: '0xca11bde05977b3631167028862be2a173976ca11',
+            blockCreated: 3127388,
+        },
+    },
+    testnet: true,
+};
 
-// let wagmiChains: Chain[] = [];
+let wagmiChains: Chain[] = [];
 
-// const allowedChains = (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS ?? '').split(
-//     ','
-// );
+const allowedChains = (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS ?? '').split(
+    ','
+);
 
-// if (allowedChains.length === 0) {
-//     allowedChains.push('sepolia');
-// } else {
-//     const chainConfig = {
-//         optimism: optimism,
-//         10: optimism,
-//         polygon: polygon,
-//         137: polygon,
-//         mainnet: mainnet,
-//         1: mainnet,
-//         sepolia: sepolia,
-//         11155111: sepolia,
-//         amoy: amoy,
-//         80002: amoy,
-//         base: base,
-//         8453: base,
-//         arbitrum: arbitrum,
-//         42161: arbitrum,
-//     };
+if (allowedChains.length === 0) {
+    allowedChains.push('sepolia');
+} else {
+    const chainConfig = {
+        optimism: optimism,
+        10: optimism,
+        polygon: polygon,
+        137: polygon,
+        mainnet: mainnet,
+        1: mainnet,
+        sepolia: sepolia,
+        11155111: sepolia,
+        amoy: amoy,
+        80002: amoy,
+        base: base,
+        8453: base,
+        arbitrum: arbitrum,
+        42161: arbitrum,
+    };
 
-//     wagmiChains = allowedChains.map(
-//         (c) => chainConfig[c as keyof typeof chainConfig]
-//     );
-// }
+    wagmiChains = allowedChains.map(
+        (c) => chainConfig[c as keyof typeof chainConfig]
+    );
+}
 
-// export const { chains, publicClient, webSocketPublicClient } = configureChains(
-//     wagmiChains,
-//     [
-//         alchemyProvider({
-//             apiKey: ALCHEMY_API_KEY,
-//         }),
-//         jsonRpcProvider({
-//             rpc: () => {
-//                 return {
-//                     http: `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
-//                 };
-//             },
-//         }),
-//         publicProvider(),
-//     ]
-// );
+export const { chains, publicClient, webSocketPublicClient } = configureChains(
+    wagmiChains,
+    [
+        alchemyProvider({
+            apiKey: ALCHEMY_API_KEY,
+        }),
+        jsonRpcProvider({
+            rpc: () => {
+                return {
+                    http: `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+                };
+            },
+        }),
+        publicProvider(),
+    ]
+);
+
+export function getAllowedChainsFromConfig() {
+    if (EXTRA_LOGGING) console.log('RB: getAllowedChainsFromConfig');
+    let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
+    if (!chains?.length) chains = '10'; ///default to mainnet
+
+    const split: any[] = chains.split(',');
+    split.forEach((v, i) => (split[i] = parseInt(v.trim())));
+    if (EXTRA_LOGGING) console.log('RB: allowed blockchains: ', split);
+    if (!split.length) split.push(10);
+    return split;
+}
+
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve();
+        }, ms);
+    });
+}
 
 async function tryAndRetry(
     input: any,
@@ -156,6 +176,36 @@ export async function getChainId(walletClient: any) {
     );
 }
 
+type Props = {
+    enabled: boolean;
+};
+
+export function getBlockchainNetworkName(chainId: number | string) {
+    if (EXTRA_LOGGING) console.log('RB: getBlockchainNetworkName', chainId);
+
+    //ensure number
+    try {
+        chainId = chainId ? parseInt(chainId.toString()) : 10;
+    } catch {}
+
+    switch (chainId) {
+        case 10:
+            return 'Optimism';
+        case 11155111:
+            // Sepolia
+            return 'Sepolia';
+        case 11155420:
+            //  Op-Sepolia
+            return 'Op-Sepolia';
+        case 1:
+            //  Eth Main
+            return 'Ethereum Mainnet';
+        default:
+            //  Sepolia
+            return 'Unknown';
+    }
+}
+
 /**
  * The SwitchNetwork component is designed to ensure that the user's wallet is connected to the correct blockchain network.
  * If the user's current network does not match the preferred network settings, the component prompts them to switch.
@@ -172,151 +222,151 @@ export async function getChainId(walletClient: any) {
  * Usage:
  * Should be placed in parts of the application where network-specific interactions occur, ensuring compliance before any transaction.
  */
-// export const SwitchNetwork = ({ enabled }: Props) => {
-//     if (EXTRA_LOGGING) console.log('RB: SwitchNetwork');
-//     // Modal Hook
-//     const [openModal, setOpenModal] = useState(false);
-//     const [preferredChainName, setPreferredChainName] = useState('');
-//     const [preferredChainID, setPreferredChainID] = useState(
-//         getAllowedChainsFromConfig()[0]
-//     );
+export const SwitchNetwork = ({ enabled }: Props) => {
+    if (EXTRA_LOGGING) console.log('RB: SwitchNetwork');
+    // Modal Hook
+    const [openModal, setOpenModal] = useState(false);
+    const [preferredChainName, setPreferredChainName] = useState('');
+    const [preferredChainID, setPreferredChainID] = useState(
+        getAllowedChainsFromConfig()[0]
+    );
 
-//     const { data: walletClient, isError } = useWalletClient();
+    const { data: walletClient, isError } = useWalletClient();
 
-//     const { chain } = useNetwork();
-//     if (EXTRA_LOGGING) console.log('CHAIN:', chain);
+    const { chain } = useNetwork();
+    if (EXTRA_LOGGING) console.log('CHAIN:', chain);
 
-//     const { error, isLoading, pendingChainId, switchNetwork } =
-//         useSwitchNetwork();
+    const { error, isLoading, pendingChainId, switchNetwork } =
+        useSwitchNetwork();
 
-//     console.log('pendingChainID;', pendingChainId);
+    console.log('pendingChainID;', pendingChainId);
 
-//     const voidFunction = () => {};
+    const voidFunction = () => {};
 
-//     const setSwitchNetwork = () => {
-//         if (EXTRA_LOGGING) console.log('RB: setSwitchNetwork');
-//         let allowed = getAllowedChainsFromConfig()[0];
-//         setPreferredChainID(allowed);
-//         setPreferredChainName(getBlockchainNetworkName(allowed));
-//     };
+    const setSwitchNetwork = () => {
+        if (EXTRA_LOGGING) console.log('RB: setSwitchNetwork');
+        let allowed = getAllowedChainsFromConfig()[0];
+        setPreferredChainID(allowed);
+        setPreferredChainName(getBlockchainNetworkName(allowed));
+    };
 
-//     useEffect(() => {
-//         setSwitchNetwork();
-//     }, []);
+    useEffect(() => {
+        setSwitchNetwork();
+    }, []);
 
-//     useEffect(() => {
-//         const fetchChainId = async () => {
-//             setSwitchNetwork();
-//             if (EXTRA_LOGGING) console.log('RB: fetchChainId');
-//             if (walletClient && enabled) {
-//                 try {
-//                     if (EXTRA_LOGGING) console.log('RB: calling getChainId');
-//                     const chainId =
-//                         chain?.id ?? (await getChainId(walletClient));
-//                     if (EXTRA_LOGGING)
-//                         console.log(
-//                             `RB: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
-//                         );
+    useEffect(() => {
+        const fetchChainId = async () => {
+            setSwitchNetwork();
+            if (EXTRA_LOGGING) console.log('RB: fetchChainId');
+            if (walletClient && enabled) {
+                try {
+                    if (EXTRA_LOGGING) console.log('RB: calling getChainId');
+                    const chainId =
+                        chain?.id ?? (await getChainId(walletClient));
+                    if (EXTRA_LOGGING)
+                        console.log(
+                            `RB: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
+                        );
 
-//                     if (chainId === preferredChainID) {
-//                         setOpenModal(false);
-//                     } else {
-//                         setOpenModal(true);
-//                     }
-//                 } catch (error) {
-//                     console.error('RB: Error fetching chain ID:', error);
-//                 }
-//             }
-//         };
-//         fetchChainId();
-//     }, [walletClient]);
+                    if (chainId === preferredChainID) {
+                        setOpenModal(false);
+                    } else {
+                        setOpenModal(true);
+                    }
+                } catch (error) {
+                    console.error('RB: Error fetching chain ID:', error);
+                }
+            }
+        };
+        fetchChainId();
+    }, [walletClient]);
 
-//     return (
-//         <Modal isOpen={enabled} onClose={() => {}} isCentered>
-//             <ModalOverlay />
-//             <ModalContent
-//                 justifyContent={'center'}
-//                 alignItems={'center'}
-//                 borderRadius={'16px'}
-//                 backgroundColor={'#121212'}
-//                 border={'1px'}
-//                 borderColor={'white'}
-//             >
-//                 <ModalBody width={'100%'} py="1.5rem">
-//                     <Flex
-//                         flexDirection={'column'}
-//                         gap={'16px'}
-//                         alignItems={'center'}
-//                     >
-//                         <Text
-//                             fontSize={'2rem'}
-//                             color={'white'}
-//                             fontWeight={300}
-//                         >
-//                             Not Logged In
-//                         </Text>
-//                         <Text color={'white'}>
-//                             Please connect your wallet to continue using Hamza.
-//                         </Text>
-//                         {/*<Button*/}
-//                         {/*    backgroundColor={'primary.indigo.900'}*/}
-//                         {/*    color={'white'}*/}
-//                         {/*    height={'38px'}*/}
-//                         {/*    borderRadius={'full'}*/}
-//                         {/*    width="100%"*/}
-//                         {/*    disabled={!switchNetwork || isLoading}*/}
-//                         {/*    _hover={{*/}
-//                         {/*        backgroundColor: 'primary.indigo.800',*/}
-//                         {/*        transition: 'background-color 0.3s ease-in-out',*/}
-//                         {/*    }}*/}
-//                         {/*    _focus={{*/}
-//                         {/*        boxShadow: 'none',*/}
-//                         {/*        outline: 'none',*/}
-//                         {/*    }}*/}
-//                         {/*    onClick={() =>*/}
-//                         {/*        switchNetwork*/}
-//                         {/*            ? switchNetwork(preferredChainID)*/}
-//                         {/*            : voidFunction()*/}
-//                         {/*    }*/}
-//                         {/*>*/}
-//                         {/*    Switch to {preferredChainName}*/}
-//                         {/*</Button>*/}
-//                         <WalletConnectButton />
-//                     </Flex>
-//                     {/* {error && <p>Error: {error.message}</p>}
-//                     {isLoading && pendingChainId && (
-//                         <p>Switching to chain ID {pendingChainId}...</p>
-//                     )} */}
-//                 </ModalBody>
-//             </ModalContent>
-//         </Modal>
-//     );
-// };
+    return (
+        <Modal isOpen={enabled} onClose={() => {}} isCentered>
+            <ModalOverlay />
+            <ModalContent
+                justifyContent={'center'}
+                alignItems={'center'}
+                borderRadius={'16px'}
+                backgroundColor={'#121212'}
+                border={'1px'}
+                borderColor={'white'}
+            >
+                <ModalBody width={'100%'} py="1.5rem">
+                    <Flex
+                        flexDirection={'column'}
+                        gap={'16px'}
+                        alignItems={'center'}
+                    >
+                        <Text
+                            fontSize={'2rem'}
+                            color={'white'}
+                            fontWeight={300}
+                        >
+                            Not Logged In
+                        </Text>
+                        <Text color={'white'}>
+                            Please connect your wallet to continue using Hamza.
+                        </Text>
+                        {/*<Button*/}
+                        {/*    backgroundColor={'primary.indigo.900'}*/}
+                        {/*    color={'white'}*/}
+                        {/*    height={'38px'}*/}
+                        {/*    borderRadius={'full'}*/}
+                        {/*    width="100%"*/}
+                        {/*    disabled={!switchNetwork || isLoading}*/}
+                        {/*    _hover={{*/}
+                        {/*        backgroundColor: 'primary.indigo.800',*/}
+                        {/*        transition: 'background-color 0.3s ease-in-out',*/}
+                        {/*    }}*/}
+                        {/*    _focus={{*/}
+                        {/*        boxShadow: 'none',*/}
+                        {/*        outline: 'none',*/}
+                        {/*    }}*/}
+                        {/*    onClick={() =>*/}
+                        {/*        switchNetwork*/}
+                        {/*            ? switchNetwork(preferredChainID)*/}
+                        {/*            : voidFunction()*/}
+                        {/*    }*/}
+                        {/*>*/}
+                        {/*    Switch to {preferredChainName}*/}
+                        {/*</Button>*/}
+                        <WalletConnectButton />
+                    </Flex>
+                    {/* {error && <p>Error: {error.message}</p>}
+                    {isLoading && pendingChainId && (
+                        <p>Switching to chain ID {pendingChainId}...</p>
+                    )} */}
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    );
+};
 // const { connectors } = getDefaultWallets({
 //     appName: 'op_sep',
 //     projectId: WALLETCONNECT_ID,
 //     chains,
 // });
 
-// const connectors = connectorsForWallets([
-//     {
-//         groupName: 'Recommended',
-//         wallets: [
-//             rainbowWallet({ projectId: WALLETCONNECT_ID, chains }),
-//             // coinbaseWallet({ appName: WALLETCONNECT_ID, chains }),
-//             metaMaskWallet({
-//                 projectId: WALLETCONNECT_ID,
-//                 chains,
-//             }),
-//             walletConnectWallet({ projectId: WALLETCONNECT_ID, chains }),
-//         ],
-//     },
-// ]);
+const connectors = connectorsForWallets([
+    {
+        groupName: 'Recommended',
+        wallets: [
+            rainbowWallet({ projectId: WALLETCONNECT_ID, chains }),
+            // coinbaseWallet({ appName: WALLETCONNECT_ID, chains }),
+            metaMaskWallet({
+                projectId: WALLETCONNECT_ID,
+                chains,
+            }),
+            walletConnectWallet({ projectId: WALLETCONNECT_ID, chains }),
+        ],
+    },
+]);
 
 // Config in v1.x.wagmi Client in 2.x.wagmi?
-// export const config = createConfig({
-//     autoConnect: true,
-//     connectors,
-//     publicClient,
-//     webSocketPublicClient,
-// });
+export const config = createConfig({
+    autoConnect: true,
+    connectors,
+    publicClient,
+    webSocketPublicClient,
+});
