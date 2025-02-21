@@ -118,43 +118,43 @@ const EXTRA_LOGGING = false;
 //     ]
 // );
 
-// async function tryAndRetry(
-//     input: any,
-//     action: (arg: any) => any,
-//     message: string,
-//     maxTries: number = 3,
-//     delayMs: number = 100
-// ): Promise<any> {
-//     for (let n = 0; n < maxTries; n++) {
-//         console.log(`${message} attempt number ${n + 1}...`);
-//         try {
-//             const output = await action(input);
-//             if (output) {
-//                 console.log(`${message} succeeded, returning ${output}`);
-//                 return output;
-//             }
+async function tryAndRetry(
+    input: any,
+    action: (arg: any) => any,
+    message: string,
+    maxTries: number = 3,
+    delayMs: number = 100
+): Promise<any> {
+    for (let n = 0; n < maxTries; n++) {
+        console.log(`${message} attempt number ${n + 1}...`);
+        try {
+            const output = await action(input);
+            if (output) {
+                console.log(`${message} succeeded, returning ${output}`);
+                return output;
+            }
 
-//             if (delayMs) {
-//                 await delay(delayMs);
-//             }
-//         } catch (e: any) {
-//             console.error('RB: Error fetching chain ID:', e);
-//         }
-//     }
+            if (delayMs) {
+                await delay(delayMs);
+            }
+        } catch (e: any) {
+            console.error('RB: Error fetching chain ID:', e);
+        }
+    }
 
-//     console.log(`${message} max retries exceeded`);
-//     return null;
-// }
+    console.log(`${message} max retries exceeded`);
+    return null;
+}
 
-// export async function getChainId(walletClient: any) {
-//     return await tryAndRetry(
-//         walletClient,
-//         async (wc) => {
-//             return await wc.getChainId();
-//         },
-//         'getChainId'
-//     );
-// }
+export async function getChainId(walletClient: any) {
+    return await tryAndRetry(
+        walletClient,
+        async (wc) => {
+            return await wc.getChainId();
+        },
+        'getChainId'
+    );
+}
 
 /**
  * The SwitchNetwork component is designed to ensure that the user's wallet is connected to the correct blockchain network.

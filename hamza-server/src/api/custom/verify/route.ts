@@ -151,6 +151,27 @@ class NewCustomerNames {
     }
 }
 
+function extractEthereumAddress(input: string): string | null {
+    const lines = input.split('\n'); // Split input by new lines
+    if (lines.length < 2) {
+        console.error('❌ Input does not contain enough lines.');
+        return null;
+    }
+
+    const secondLine = lines[1].trim(); // Get second line and trim spaces
+
+    // Validate if it's an Ethereum address (0x followed by 40 hex chars)
+    const ethAddressRegex = /^0x[a-fA-F0-9]{40}$/;
+
+    if (ethAddressRegex.test(secondLine)) {
+        console.log('✅ Extracted Ethereum Address:', secondLine);
+        return secondLine;
+    } else {
+        console.error('❌ No valid Ethereum address found on second line.');
+        return null;
+    }
+}
+
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService: CustomerService =
         req.scope.resolve('customerService');
@@ -168,8 +189,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         let created = false;
 
         const { message, signature } = handler.inputParams;
-        const parsedMessage = new SiweMessage(message);
-        const wallet_address = parsedMessage.address.toLowerCase();
+
+        const wallet_address = extractEthereumAddress(message);
 
         let checkCustomerWithWalletAddress =
             await CustomerWalletAddressRepository.findOne({
@@ -215,10 +236,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         handler.logger.debug(
             'customer data is ' + checkCustomerWithWalletAddress
         );
-
         let newCustomerData: Customer;
 
-        console.log('customerInputData', customerInputData);
         if (!checkCustomerWithWalletAddress) {
             handler.logger.debug('creating new customer ');
             const customer = await customerService.create(customerInputData);
@@ -228,7 +247,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             });
             created = customer ? true : false;
 
-            console.log('newCustomerData', newCustomerData);
             if (!created) {
                 handler.logger.error(
                     `Failure to create customer record with ${JSON.stringify(customerInputData)}`
@@ -278,8 +296,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 whitelisted_stores: whitelistStatus.map((a) => a.store_id),
             },
         };
-
-        console.log('body', body);
 
         handler.returnStatus(200, { status: true, data: body });
     });
