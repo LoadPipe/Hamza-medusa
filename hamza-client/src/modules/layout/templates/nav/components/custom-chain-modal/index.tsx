@@ -31,6 +31,7 @@ import arbLogo from '@/images/chains/arbitrum-arb-logo.png';
 import ethLogo from '@/images/chains/ethereum-eth-logo.png';
 import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
 import polygonLogo from '@/images/chains/polygon-matic-logo.png';
+import baseLogo from '@/images/chains/base-logo-in-blue.png';
 
 /**
  * Mapping from network names to their chain IDs.
@@ -49,6 +50,7 @@ const chainLogoMap: Record<string, StaticImageData> = {
     Sepolia: ethLogo,
     'OP Mainnet': optimismLogo,
     'Arbitrum One': arbLogo,
+    Base: baseLogo,
     Polygon: polygonLogo, // Use this if your chains array includes "Polygon"
 };
 
