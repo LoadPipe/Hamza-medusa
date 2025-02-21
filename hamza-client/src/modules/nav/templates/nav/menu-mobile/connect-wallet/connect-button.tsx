@@ -3,7 +3,6 @@
 import { Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MobileAccountMenu from '../menu/mobile-account-menu';
-import { MdOutlineWallet } from 'react-icons/md';
 
 export const WalletConnectButton = () => {
     return (
@@ -17,6 +16,8 @@ export const WalletConnectButton = () => {
                 authenticationStatus,
                 mounted,
             }) => {
+                // Note: If your app doesn't use authentication, you
+                // can remove all 'authenticationStatus' checks
                 const ready = mounted && authenticationStatus !== 'loading';
                 const connected =
                     ready &&
@@ -42,20 +43,15 @@ export const WalletConnectButton = () => {
                         {(() => {
                             if (!connected) {
                                 return (
-                                    <Flex
-                                        backgroundColor={'primary.green.900'}
+                                    <button
+                                        className="bg-[#94D42A] text-black font-semibold rounded-full"
                                         onClick={openConnectModal}
-                                        height="24px"
-                                        width="24px"
-                                        borderRadius={'3px'}
-                                        justifyContent={'center'}
-                                        alignItems={'center'}
+                                        type="button"
                                     >
-                                        <MdOutlineWallet />
-                                    </Flex>
+                                        Connect Wallet
+                                    </button>
                                 );
                             }
-
                             if (chain.unsupported) {
                                 return (
                                     <button
