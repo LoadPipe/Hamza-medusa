@@ -12,6 +12,8 @@ import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
+import { GoogleTagManager } from '@next/third-parties/google';
+import FreeScoutWidget from './components/scripts/chat-widget';
 
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
@@ -46,7 +48,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 /> */}
 
                 {/* Chat Widget Script */}
-                <Script
+                {/* <Script
                     id="freescout-widget"
                     strategy="lazyOnload"
                     dangerouslySetInnerHTML={{
@@ -68,14 +70,22 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                             })(document, "script");
                         `,
                     }}
-                />
+                /> */}
 
-                {/* Klaviyo Script
+                {/* Klaviyo Script */}
                 <Script
                     src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4Nw9L"
                     strategy="afterInteractive"
-                /> */}
+                />
             </head>
+            {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TAG === 'true' &&
+                process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+                    <GoogleTagManager
+                        gtmId={
+                            process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''
+                        }
+                    />
+                )}
             <body>
                 <div>
                     <MedusaProvider token={token}>
@@ -91,6 +101,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     <div>
                         <Toaster position="top-right" />
                     </div>
+                    <FreeScoutWidget />
                 </div>
             </body>
         </html>
