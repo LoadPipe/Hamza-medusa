@@ -166,6 +166,7 @@ const CustomChainModal = () => {
                                     width="100%"
                                 >
                                     <Button
+                                        width={'100%'}
                                         onClick={() =>
                                             chainId !== null &&
                                             switchNetwork?.(chainId)
@@ -184,7 +185,7 @@ const CustomChainModal = () => {
                                             {networkName.name}
                                         </Text>
                                         {chain?.id === chainId && (
-                                            <>
+                                            <Flex marginLeft={'auto'}>
                                                 <Text
                                                     marginLeft="auto"
                                                     color="white"
@@ -193,13 +194,14 @@ const CustomChainModal = () => {
                                                     Connected
                                                 </Text>
                                                 <Box
+                                                    alignSelf={'center'}
                                                     ml="0.5rem"
                                                     borderRadius="full"
                                                     width="8px"
                                                     height="8px"
                                                     backgroundColor="rgb(48, 224, 0)"
                                                 />
-                                            </>
+                                            </Flex>
                                         )}
                                     </Button>
                                 </Flex>
