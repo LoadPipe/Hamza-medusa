@@ -171,15 +171,21 @@ const CustomChainModal = () => {
                                             chainId !== null &&
                                             switchNetwork?.(chainId)
                                         }
-                                        backgroundColor="transparent"
-                                        isDisabled={
-                                            chain?.id === chainId ||
-                                            !switchNetwork
+                                        backgroundColor={
+                                            chain?.id === chainId
+                                                ? 'primary.indigo.900'
+                                                : 'transparent'
                                         }
                                         isLoading={
                                             isLoading &&
                                             pendingChainId === chainId
                                         }
+                                        _hover={{
+                                            backgroundColor:
+                                                chain?.id === chainId
+                                                    ? 'primary.indigo.900'
+                                                    : '#52525b',
+                                        }}
                                     >
                                         <Text marginRight="auto" color="white">
                                             {networkName.name}
