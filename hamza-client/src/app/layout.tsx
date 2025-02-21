@@ -13,7 +13,7 @@ import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
 import FreeScoutWidget from './components/scripts/chat-widget';
-
+import { GoogleTagManager } from '@next/third-parties/google';
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
 };
@@ -36,8 +36,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 <Script
                     src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4Nw9L"
                     strategy="afterInteractive"
-                /> */}
+                />
             </head>
+            <GoogleTagManager gtmId="GTM-XYZ" />
             <body>
                 <noscript>
                     <iframe
