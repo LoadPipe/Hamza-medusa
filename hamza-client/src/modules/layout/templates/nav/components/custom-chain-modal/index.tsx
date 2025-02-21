@@ -128,7 +128,7 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
                                             tokens, dApps, and features that are
                                             only available on specific
                                             blockchains.{' '}
-                                            <a
+                                            {/* <a
                                                 href="https://example.com" // Your link here
                                                 target="_blank"
                                                 rel="noopener noreferrer"
@@ -138,7 +138,7 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
                                                 }}
                                             >
                                                 Learn more.
-                                            </a>
+                                            </a> */}
                                         </>
                                     </PopoverBody>
                                 </PopoverContent>
@@ -179,6 +179,7 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
                                     width="100%"
                                 >
                                     <Button
+                                        px={'0.5rem'}
                                         width="100%"
                                         onClick={async () => {
                                             if (chainId !== null) {
