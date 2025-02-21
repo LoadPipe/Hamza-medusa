@@ -135,7 +135,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
     // `getHamzaCustomer`
     useEffect(() => {
-        console.log('Saved wallet address', authData.wallet_address);
+        console.log('Saved wallet address', clientWallet);
         if (clientWallet?.length) {
             getHamzaCustomer().then((hamzaCustomer) => {
                 getCustomer().then((customer) => {
@@ -161,7 +161,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         createMessage: ({ nonce, address, chainId }) => {
-            console.log('create message');
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
@@ -180,8 +179,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 console.log('parsedMessage', parsedMessage);
                 const response = await sendVerifyRequest(message, signature);
 
-                console.log('message', message);
-
                 let data = response.data;
                 console.log('data', data);
                 //if just creating, then a second request is needed
@@ -193,31 +190,17 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     data = authResponse.data;
                 }
 
-                console.log('data.status', data.status);
-                if (data.status === true) {
-                    console.log('HELLO WORLD?')
+                if (data.status == true) {
                     const tokenResponse = await getToken({
                         wallet_address: parsedMessage.address.toLowerCase(),
                         email: data.data?.email?.trim()?.toLowerCase(),
                         password: '',
                     });
-                    console.log(`tokenResponse: ${tokenResponse}`);
 
-                    const responseWallet =
-                        parsedMessage.address.toLowerCase() || '';
-                    const clientWalletTrimmed = clientWallet?.trim()?.toLowerCase() || '';
-
-                    // If either wallet is missing, treat it as a failure.
-                    if (!responseWallet || !clientWalletTrimmed) {
-                        console.log(`responseWallet: ${responseWallet} ${JSON.stringify(data)} clientWalletTrimmed: ${clientWalletTrimmed}`);
-                        console.error('One or both wallet addresses are missing');
-                        clearLogin();
-                        clearCartCookie();
-                        return false;
-                    }
-
-                    // Now check if they match.
-                    if (responseWallet === clientWalletTrimmed) {
+                    if (
+                        data.data.wallet_address.trim().toLowerCase() ===
+                        clientWallet?.trim()?.toLowerCase()
+                    ) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
