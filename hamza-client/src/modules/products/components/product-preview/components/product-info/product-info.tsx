@@ -31,12 +31,8 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
     const product = queryClient.getQueryData<Product>(['product', handle]);
 
     // Zustand
-    let {
-        variantId,
-        setVariantId,
-        ratingAverage,
-        ratingCounter,
-    } = useProductPreview();
+    let { variantId, setVariantId, ratingAverage, ratingCounter } =
+        useProductPreview();
 
     // WISHLIST
     const { wishlist } = useWishlistStore();
@@ -47,12 +43,16 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
     const { authData } = useCustomerAuthStore();
 
     // LOCAL STATE
-    const [selectedVariant, setSelectedVariant] = useState<Product['variants'][number] | null>(null);
+    const [selectedVariant, setSelectedVariant] = useState<
+        Product['variants'][number] | null
+    >(null);
     const [selectedVariantImage, setSelectedVariantImage] = useState<
         null | string
     >(null);
 
-    const convertToPriceDictionary = (selectedVariant: Product['variants'][number] | null) => {
+    const convertToPriceDictionary = (
+        selectedVariant: Product['variants'][number] | null
+    ) => {
         const output: { [key: string]: number } = {};
         if (selectedVariant) {
             for (let price of selectedVariant.prices) {
@@ -62,14 +62,13 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
         return output;
     };
 
-
     useEffect(() => {
         if (product?.variants) {
             const newVariantId = variantId ?? product.variants[0]?.id;
             setVariantId(newVariantId ?? '');
 
             const selectedProductVariant = product.variants.find(
-                (a: any) => a.id === newVariantId,
+                (a: any) => a.id === newVariantId
             );
             setSelectedVariant(selectedProductVariant ?? null);
 
@@ -83,7 +82,6 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
             }
         }
     }, [product, variantId, setVariantId]);
-
 
     if (!product) {
         return (
@@ -118,6 +116,7 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
                         fontSize={'32px'}
                         color="white"
                         className="product-info-title"
+                        maxWidth={'550px'}
                     >
                         {product?.title ?? ''}
                     </Heading>
@@ -129,7 +128,7 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
                             mt="0.7rem"
                         >
                             {wishlist.products.find(
-                                (a) => a.id == product?.id,
+                                (a) => a.id == product?.id
                             ) ? (
                                 <BiSolidHeart
                                     size={'26px'}
@@ -139,18 +138,16 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
                                             description:
                                                 product?.description ?? '',
                                             handle: product?.handle ?? '',
-                                            thumbnail:
-                                                product?.thumbnail ?? '',
+                                            thumbnail: product?.thumbnail ?? '',
                                             variantThumbnail:
-                                            selectedVariantImage,
+                                                selectedVariantImage,
                                             title: product?.title ?? '',
                                             price: convertToPriceDictionary(
-                                                selectedVariant,
+                                                selectedVariant
                                             ),
                                             productVariantId:
                                                 wishlist.products.find(
-                                                    (i) =>
-                                                        i.id == product?.id,
+                                                    (i) => i.id == product?.id
                                                 )?.productVariantId || null,
                                         });
                                     }}
@@ -165,13 +162,12 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
                                             description:
                                                 product?.description ?? '',
                                             handle: product?.handle ?? '',
-                                            thumbnail:
-                                                product?.thumbnail ?? '',
+                                            thumbnail: product?.thumbnail ?? '',
                                             variantThumbnail:
-                                            selectedVariantImage,
+                                                selectedVariantImage,
                                             title: product?.title ?? '',
                                             price: convertToPriceDictionary(
-                                                selectedVariant,
+                                                selectedVariant
                                             ),
                                             productVariantId: variantId || null,
                                         });
@@ -183,45 +179,39 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
                     )}
                 </Flex>
 
-                {
-                    ratingCounter > 0 ? (
-                        <Flex
-                            display={{ base: 'none', md: 'flex' }}
-                            gap="5px"
-                            height="20px"
-                        >
-                            <Flex flexDirection={'row'}>
-                                <Flex
-                                    flexDirection={'row'}
-                                    alignSelf={'center'}
-                                >
-                                    {renderStars20px(ratingAverage)}
-                                </Flex>
-                                <Text
-                                    ml="2"
-                                    fontWeight="600"
-                                    fontSize={'20px'}
-                                    color={'white'}
-                                    alignSelf={'center'}
-                                    mt="2px"
-                                >
-                                    {ratingAverage}
-                                </Text>
-                                <Text
-                                    ml="2"
-                                    fontWeight="600"
-                                    fontSize={'14px'}
-                                    color={'white'}
-                                    mt="2px"
-                                >
-                                    ({ratingCounter}{' '}
-                                    {ratingCounter === 1 ? 'review' : 'reviews'}
-                                    )
-                                </Text>
+                {ratingCounter > 0 ? (
+                    <Flex
+                        display={{ base: 'none', md: 'flex' }}
+                        gap="5px"
+                        height="20px"
+                    >
+                        <Flex flexDirection={'row'}>
+                            <Flex flexDirection={'row'} alignSelf={'center'}>
+                                {renderStars20px(ratingAverage)}
                             </Flex>
+                            <Text
+                                ml="2"
+                                fontWeight="600"
+                                fontSize={'20px'}
+                                color={'white'}
+                                alignSelf={'center'}
+                                mt="2px"
+                            >
+                                {ratingAverage}
+                            </Text>
+                            <Text
+                                ml="2"
+                                fontWeight="600"
+                                fontSize={'14px'}
+                                color={'white'}
+                                mt="2px"
+                            >
+                                ({ratingCounter}{' '}
+                                {ratingCounter === 1 ? 'review' : 'reviews'})
+                            </Text>
                         </Flex>
-                    ) : null
-                }
+                    </Flex>
+                ) : null}
             </Flex>
 
             <ProductDescription

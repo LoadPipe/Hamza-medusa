@@ -75,7 +75,10 @@ export default async function Nav() {
                                 />
                             </Flex>
                         </LocalizedClientLink>
+<<<<<<< HEAD:hamza-client/src/modules/nav/templates/nav/index.tsx
 
+=======
+>>>>>>> staging:hamza-client/src/modules/layout/templates/nav/index.tsx
 
                         <NavSearchBar />
 

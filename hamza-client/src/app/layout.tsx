@@ -12,8 +12,8 @@ import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
+import FreeScoutWidget from './components/scripts/chat-widget';
 import { GoogleTagManager } from '@next/third-parties/google';
-
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
 };
@@ -62,7 +62,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     strategy="afterInteractive"
                 />
             </head>
-            <GoogleTagManager gtmId="GTM-XYZ" />
             <body>
                 <div>
                     <MedusaProvider token={token}>
@@ -78,6 +77,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     <div>
                         <Toaster position="top-right" />
                     </div>
+                    <FreeScoutWidget />
                 </div>
             </body>
         </html>

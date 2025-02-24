@@ -48,11 +48,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     productId,
     selectedVariantImage,
     setSelectedVariantImage,
-    handle
+    handle,
 }) => {
     const queryClient = useQueryClient();
     const product = queryClient.getQueryData<Product>(['product', handle]);
-
 
     console.log(
         'PreviewCheckout component rendered with productId:',
@@ -82,8 +81,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
     const [usdPrice, setUsdPrice] = useState<string | null>(null);
-    const [selectedVariant, setSelectedVariant] = useState<Product['variants'][number] | null>(null);
-
+    const [selectedVariant, setSelectedVariant] = useState<
+        Product['variants'][number] | null
+    >(null);
 
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
@@ -201,7 +201,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : (preferred_currency_code ?? 'usdc')
+                            : preferred_currency_code ?? 'usdc'
                     );
 
                     // Update USD price if the preferred currency is 'eth'
@@ -278,7 +278,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData.id]);
 
-    const convertToPriceDictionary = (selectedVariant: Product['variants'][number] | null) => {
+    const convertToPriceDictionary = (
+        selectedVariant: Product['variants'][number] | null
+    ) => {
         const output: { [key: string]: number } = {};
         if (selectedVariant) {
             for (let price of selectedVariant.prices) {
@@ -314,7 +316,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         return <Spinner />;
     }
 
-
     const whitelistedProductHandler = async () => {
         let data = await getStore(product?.id);
         // console.log(data);
@@ -339,8 +340,43 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             ? true
             : false;
 
+    const getValidValuesForOption = (optionId: string): string[] => {
+        const mainOptionId = productData.options[0]?.id;
 
+        // For the main variant, show all available values.
+        if (optionId === mainOptionId) {
+            const mainOption = productData.options.find(
+                (opt: any) => opt.id === optionId
+            );
+            return mainOption
+                ? mainOption.values.map((val: any) => val.value)
+                : [];
+        }
 
+        // For sub variant options, filter based on the main variant selection.
+        const mainSelection = options[mainOptionId];
+        const validValues = new Set<string>();
+        productData.variants.forEach((variant: any) => {
+            // Only consider variants that match the main variant selection.
+            const mainVariantOption = variant.options.find(
+                (opt: any) => opt.option_id === mainOptionId
+            );
+            if (
+                mainVariantOption &&
+                mainVariantOption.value === mainSelection
+            ) {
+                // Find the value for the current sub variant option.
+                const subVariantOption = variant.options.find(
+                    (opt: any) => opt.option_id === optionId
+                );
+                if (subVariantOption) {
+                    validValues.add(subVariantOption.value);
+                }
+            }
+        });
+
+        return Array.from(validValues);
+    };
 
     return (
         <Flex
@@ -405,8 +441,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                             description:
                                                 product?.description ?? '',
                                             handle: product?.handle ?? '',
-                                            thumbnail:
-                                                product?.thumbnail ?? '',
+                                            thumbnail: product?.thumbnail ?? '',
                                             variantThumbnail:
                                                 selectedVariantImage,
                                             title: product?.title ?? '',
@@ -415,8 +450,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                             ),
                                             productVariantId:
                                                 wishlist.products.find(
-                                                    (i) =>
-                                                        i.id == product?.id
+                                                    (i) => i.id == product?.id
                                                 )?.productVariantId || null,
                                         });
                                     }}
@@ -431,8 +465,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                             description:
                                                 product?.description ?? '',
                                             handle: product?.handle ?? '',
-                                            thumbnail:
-                                                product?.thumbnail ?? '',
+                                            thumbnail: product?.thumbnail ?? '',
                                             variantThumbnail:
                                                 selectedVariantImage,
                                             title: product?.title ?? '',
@@ -558,8 +591,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             <div className="flex flex-col gap-y-4">
                                 {(productData.options || []).map(
                                     (option: any) => {
-                                        const updatedValues = option.values.map(
-                                            (val: any) => {
+                                        const validValues =
+                                            getValidValuesForOption(option.id);
+
+                                        const updatedValues = option.values
+                                            .map((val: any) => {
                                                 const matchingVariant =
                                                     productData.variants.find(
                                                         (v: any) =>
@@ -573,8 +609,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                                         matchingVariant?.variant_rank ??
                                                         null,
                                                 };
-                                            }
-                                        );
+                                            })
+                                            .filter((val: any) =>
+                                                validValues.includes(val.value)
+                                            );
+
                                         const augmentedOption = {
                                             ...option,
                                             values: updatedValues,
