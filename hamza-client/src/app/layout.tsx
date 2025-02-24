@@ -13,7 +13,7 @@ import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
 import FreeScoutWidget from './components/scripts/chat-widget';
-import { GoogleTagManager } from '@next/third-parties/google';
+// import { GoogleTagManager } from '@next/third-parties/google';
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
 };

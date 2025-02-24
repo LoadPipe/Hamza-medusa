@@ -21,11 +21,11 @@ import { RxQuestionMarkCircled } from 'react-icons/rx';
 import { MdClose } from 'react-icons/md';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
 
-import {
-    getAllowedChainsFromConfig,
-    getBlockchainNetworkName,
-    chains,
-} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+// import {
+//     getAllowedChainsFromConfig,
+//     getBlockchainNetworkName,
+//     chains,
+// } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import Image, { StaticImageData } from 'next/image';
 import arbLogo from '@/images/chains/arbitrum-arb-logo.png';
 import ethLogo from '@/images/chains/ethereum-eth-logo.png';
@@ -74,7 +74,6 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    console.log(chains);
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />

@@ -196,7 +196,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
                 console.log('data.status', data.status);
                 if (data.status === true) {
-                    console.log('HELLO WORLD?')
+                    console.log('HELLO WORLD?');
                     const tokenResponse = await getToken({
                         wallet_address: parsedMessage.address.toLowerCase(),
                         email: data.data?.email?.trim()?.toLowerCase(),
@@ -206,12 +206,17 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
                     const responseWallet =
                         parsedMessage.address.toLowerCase() || '';
-                    const clientWalletTrimmed = clientWallet?.trim()?.toLowerCase() || '';
+                    const clientWalletTrimmed =
+                        clientWallet?.trim()?.toLowerCase() || '';
 
                     // If either wallet is missing, treat it as a failure.
                     if (!responseWallet || !clientWalletTrimmed) {
-                        console.log(`responseWallet: ${responseWallet} ${JSON.stringify(data)} clientWalletTrimmed: ${clientWalletTrimmed}`);
-                        console.error('One or both wallet addresses are missing');
+                        console.log(
+                            `responseWallet: ${responseWallet} ${JSON.stringify(data)} clientWalletTrimmed: ${clientWalletTrimmed}`
+                        );
+                        console.error(
+                            'One or both wallet addresses are missing'
+                        );
                         clearLogin();
                         clearCartCookie();
                         return false;

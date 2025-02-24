@@ -9,15 +9,9 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
-import CustomChainModal from '../../components/custom-chain-modal';
 
-<<<<<<< HEAD:hamza-client/src/modules/nav/templates/nav/menu-desktop/connect-wallet/index.tsx
 export const DesktopWalletConnectButton = () => {
-    //Update zustand store with Wagmi hook when connected
-=======
-export const WalletConnectButton = () => {
     // Update zustand store with Wagmi hook when connected
->>>>>>> staging:hamza-client/src/modules/layout/templates/nav/menu-desktop/connect-wallet/index.tsx
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
 
@@ -96,10 +90,6 @@ export const WalletConnectButton = () => {
                                     flexDirection="row"
                                     alignItems="center"
                                 >
-                                    <CustomChainModal
-                                        isOpen={isChainModalOpen}
-                                        onClose={() => setChainModalOpen(false)}
-                                    />
                                     <HnsDisplay />
                                     <CurrencySelector network={chain.name} />
                                     <button
