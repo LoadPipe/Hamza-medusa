@@ -15,7 +15,12 @@ import toast from 'react-hot-toast';
 import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
 import CartPopup from '../../../cart-popup';
-import { getAverageRatings, getStore, getReviewCount, clearCart } from '@lib/data';
+import {
+    getAverageRatings,
+    getStore,
+    getReviewCount,
+    clearCart,
+} from '@lib/data';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '@/modules/terms-of-service/product-details-tos';
@@ -189,7 +194,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : (preferred_currency_code ?? 'usdc')
+                            : preferred_currency_code ?? 'usdc'
                     );
 
                     // Update USD price if the preferred currency is 'eth'
@@ -300,7 +305,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
         return output;
     };
-    
 
     useEffect(() => {
         const fetchCart = async () => {
@@ -329,8 +333,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
         // For the main variant, show all available values.
         if (optionId === mainOptionId) {
-            const mainOption = productData.options.find((opt: any) => opt.id === optionId);
-            return mainOption ? mainOption.values.map((val: any) => val.value) : [];
+            const mainOption = productData.options.find(
+                (opt: any) => opt.id === optionId
+            );
+            return mainOption
+                ? mainOption.values.map((val: any) => val.value)
+                : [];
         }
 
         // For sub variant options, filter based on the main variant selection.
@@ -338,10 +346,17 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         const validValues = new Set<string>();
         productData.variants.forEach((variant: any) => {
             // Only consider variants that match the main variant selection.
-            const mainVariantOption = variant.options.find((opt: any) => opt.option_id === mainOptionId);
-            if (mainVariantOption && mainVariantOption.value === mainSelection) {
+            const mainVariantOption = variant.options.find(
+                (opt: any) => opt.option_id === mainOptionId
+            );
+            if (
+                mainVariantOption &&
+                mainVariantOption.value === mainSelection
+            ) {
                 // Find the value for the current sub variant option.
-                const subVariantOption = variant.options.find((opt: any) => opt.option_id === optionId);
+                const subVariantOption = variant.options.find(
+                    (opt: any) => opt.option_id === optionId
+                );
                 if (subVariantOption) {
                     validValues.add(subVariantOption.value);
                 }
@@ -566,10 +581,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             <div className="flex flex-col gap-y-4">
                                 {(productData.options || []).map(
                                     (option: any) => {
-                                        const validValues = getValidValuesForOption(option.id);
+                                        const validValues =
+                                            getValidValuesForOption(option.id);
 
-                                        const updatedValues = option.values.map(
-                                            (val: any) => {
+                                        const updatedValues = option.values
+                                            .map((val: any) => {
                                                 const matchingVariant =
                                                     productData.variants.find(
                                                         (v: any) =>
@@ -584,7 +600,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                                         null,
                                                 };
                                             })
-                                            .filter((val: any) => validValues.includes(val.value));
+                                            .filter((val: any) =>
+                                                validValues.includes(val.value)
+                                            );
 
                                         const augmentedOption = {
                                             ...option,

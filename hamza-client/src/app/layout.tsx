@@ -30,11 +30,11 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     return (
         <html lang="en" data-mode="dark">
             <head>
-                {/* Klaviyo Script */}
+                {/* Klaviyo Script
                 <Script
                     src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4Nw9L"
                     strategy="afterInteractive"
-                />
+                /> */}
             </head>
             <body>
                 <noscript>

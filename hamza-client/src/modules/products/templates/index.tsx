@@ -191,7 +191,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         />
                     </Flex>
                 </Flex>
-                <StoreBanner storeName={storeName} storeHandle={storeHandle} icon={icon} />
+                <StoreBanner
+                    storeName={storeName}
+                    storeHandle={storeHandle}
+                    icon={icon}
+                />
                 <Divider
                     color="#555555"
                     display={{ base: 'block', md: 'none' }}

@@ -39,7 +39,7 @@ const debouncedChangeQuantity = debounce(
 const Item = ({ item, region, cart_id }: ItemProps) => {
     const [quantity, setQuantity] = useState(item.quantity);
     const setIsUpdating = useCartStore((state) => state.setIsUpdating);
-    const [isMobile] = useMediaQuery("(max-width: 768px)");
+    const [isMobile] = useMediaQuery('(max-width: 768px)');
 
     const { handle } = item.variant.product;
     // console.log('item quantity: ', item.quantity);
@@ -156,8 +156,8 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             <Flex width="100%">
                                 <LineItemOptions variant={item?.variant} />
                             </Flex>
-                            {!isMobile && 
-                                (<Flex display={{ base: 'none', md: 'flex' }}>
+                            {!isMobile && (
+                                <Flex display={{ base: 'none', md: 'flex' }}>
                                     <ItemQuantityButton
                                         value={quantity}
                                         onChange={(newQuantity) =>
@@ -165,8 +165,10 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                         }
                                         min={1}
                                         max={Math.min(
-                                            item?.variant?.inventory_quantity > 0
-                                                ? item?.variant?.inventory_quantity
+                                            item?.variant?.inventory_quantity >
+                                                0
+                                                ? item?.variant
+                                                      ?.inventory_quantity
                                                 : 100,
                                             100
                                         )}
