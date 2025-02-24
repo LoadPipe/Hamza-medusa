@@ -18,7 +18,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'POST',
         '/admin/custom/setup/giftcards',
-        ['currency', 'behavior', 'sales_channel']
+        ['currency', 'behavior', 'sales_channel', 'delete']
     );
 
     await handler.handle(async () => {
@@ -30,6 +30,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         */
         let behavior = handler.inputParams.behavior;
         let salesChannelId = handler.inputParams.sales_channel;
+        let deleteFlag = handler.inputParams.delete === true;
+
         if (!behavior?.length) behavior = 'combined';
 
         if (!salesChannelId?.length) {
@@ -58,7 +60,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             salesChannelId,
             handler.hasParam('currency') //if currency is provided; otherwise use default
                 ? handler.inputParams('currency')
-                : undefined
+                : undefined,
+            deleteFlag
         );
 
         return res.json({ products });

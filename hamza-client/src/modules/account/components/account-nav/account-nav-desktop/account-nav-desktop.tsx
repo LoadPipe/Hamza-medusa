@@ -87,7 +87,7 @@ const AccountNavDesktop = ({
         ) {
             router.push(`/${countryCode}/account/profile`);
         }
-    }, [authData.is_verified]);
+    }, [authData.is_verified, countryCode, route, router, searchParams]);
 
     return (
         <Flex flexDirection={'column'} style={{ width: '300px' }}>

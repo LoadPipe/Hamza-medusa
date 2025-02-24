@@ -42,7 +42,8 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         setQuantity,
     } = useProductPreview();
 
-    const [store, setStore] = useState('');
+    const [storeName, setstoreName] = useState('');
+    const [storeHandle, setstorehandle] = useState('');
     const [icon, setIcon] = useState('');
     const [selectedVariantImage, setSelectedVariantImage] = useState('');
 
@@ -81,7 +82,8 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             try {
                 const data = await getStore(product.id as string);
                 // console.log(`Vendor: ${data}`);
-                setStore(data.handle);
+                setstoreName(data.name);
+                setstorehandle(data.handle);
                 setIcon(data.icon);
             } catch (error) {
                 console.error('Error fetching vendor: ', error);
@@ -189,7 +191,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         />
                     </Flex>
                 </Flex>
-                <StoreBanner store={store} icon={icon} />
+                <StoreBanner
+                    storeName={storeName}
+                    storeHandle={storeHandle}
+                    icon={icon}
+                />
                 <Divider
                     color="#555555"
                     display={{ base: 'block', md: 'none' }}

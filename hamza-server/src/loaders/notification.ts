@@ -6,4 +6,5 @@ export default async (container: MedusaContainer): Promise<void> => {
     );
 
     notificationService.subscribe('order.placed', 'smtp-notification');
+    notificationService.subscribe('giftcard.order', 'smtp-notification');
 };

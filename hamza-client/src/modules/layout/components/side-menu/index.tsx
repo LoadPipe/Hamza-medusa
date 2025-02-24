@@ -29,7 +29,7 @@ const SideMenu = ({ regions }: { regions: Region[] | null }) => {
             (authData.is_verified == true
                 ? (SideMenuItems['Account'] = '/account')
                 : (SideMenuItems['Account'] = '/account/profile'));
-    }, [authData.status]);
+    }, [authData.is_verified, authData.status]);
 
     return (
         <div className="h-full">
