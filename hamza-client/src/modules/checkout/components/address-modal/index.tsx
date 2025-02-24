@@ -418,7 +418,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 gap="4"
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
-                                <FormControl>
+                                <FormControl isRequired>
                                     <Input
                                         placeholder="Phone Number"
                                         height={'50px'}
