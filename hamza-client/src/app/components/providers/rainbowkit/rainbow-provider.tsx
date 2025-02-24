@@ -75,7 +75,6 @@ async function getNonce() {
             Accept: 'application/json',
         },
     });
-
     return output?.data?.nonce ?? '';
 }
 
@@ -107,58 +106,58 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
     const hnsClient = new HnsClient(10);
 
-    // useEffect(() => {
-    //     alert("USE EFFECT 1")
-    //     let retries = 0;
-    //     const maxRetries = 2; // Set a max retry limit
-    //
-    //     const getHnsClient = async () => {
-    //         try {
-    //             console.log('attempting to retrieve HNS name & avatar');
-    //             const { name, avatar } =
-    //                 await hnsClient.getNameAndAvatar(walletAddress);
-    //             console.log('HNS name & avatar:', name, avatar);
-    //
-    //             setHnsName(name);
-    //             setHnsAvatar(avatar);
-    //         } catch (err) {
-    //             if (retries < maxRetries) {
-    //                 retries++;
-    //                 setTimeout(getHnsClient, 1000); // Retry after 1 second
-    //             } else {
-    //                 console.error(
-    //                     'Max retries reached. Could not connect to RPC.'
-    //                 );
-    //             }
-    //         }
-    //     };
-    //
-    //     if (walletAddress && authData.status === 'authenticated') {
-    //         getHnsClient();
-    //     }
-    // }, [authData.status, isHydrated]);
+    useEffect(() => {
+        // alert("USE EFFECT 1")
+        let retries = 0;
+        const maxRetries = 2; // Set a max retry limit
 
-    // useEffect(() => {
-    //     if (!isHydrated) return;
-    //
-    //     alert(`USE EFFECT 2 ${authData.status} ${customer_id} ${isHydrated}`)
-    //     if (authData.status === 'authenticated' && customer_id) {
-    //         loadWishlist(customer_id);
-    //         router.refresh();
-    //     }
-    // }, [authData.status, customer_id, isHydrated]); // Dependency array includes any state variables that trigger a reload
+        const getHnsClient = async () => {
+            try {
+                console.log('attempting to retrieve HNS name & avatar');
+                const { name, avatar } =
+                    await hnsClient.getNameAndAvatar(walletAddress);
+                console.log('HNS name & avatar:', name, avatar);
 
-    // const clearLogin = () => {
-    //     alert('CLEARING LOGIN');
-    //     setCustomerAuthData({
-    //         customer_id: '',
-    //         is_verified: false,
-    //         status: 'unauthenticated',
-    //         token: '',
-    //         wallet_address: '',
-    //     });
-    //     clearAuthCookie();
-    // };
+                setHnsName(name);
+                setHnsAvatar(avatar);
+            } catch (err) {
+                if (retries < maxRetries) {
+                    retries++;
+                    setTimeout(getHnsClient, 1000); // Retry after 1 second
+                } else {
+                    console.error(
+                        'Max retries reached. Could not connect to RPC.'
+                    );
+                }
+            }
+        };
+
+        if (walletAddress && authData.status === 'authenticated') {
+            getHnsClient();
+        }
+    }, [authData.status, isHydrated]);
+
+    useEffect(() => {
+        if (!isHydrated) return;
+
+        // alert(`USE EFFECT 2 ${authData.status} ${customer_id} ${isHydrated}`)
+        if (authData.status === 'authenticated' && customer_id) {
+            loadWishlist(customer_id);
+            router.refresh();
+        }
+    }, [authData.status, customer_id, isHydrated]); // Dependency array includes any state variables that trigger a reload
+
+    const clearLogin = () => {
+        alert('CLEARING LOGIN');
+        setCustomerAuthData({
+            customer_id: '',
+            is_verified: false,
+            status: 'unauthenticated',
+            token: '',
+            wallet_address: '',
+        });
+        clearAuthCookie();
+    };
 
     // `getHamzaCustomer`
     const {
@@ -169,7 +168,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     } = useQuery({
         queryKey: ['combinedCustomers', authData.wallet_address],
         queryFn: getCombinedCustomer,
-        enabled: Boolean(clientWallet?.length > 0) && isHydrated,
+        enabled: Boolean(authData.wallet_address?.length > 0) && isHydrated,
         staleTime: 2 * 60 * 1000,
     });
 
@@ -181,7 +180,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
         if (!hamzaCustomer || !medusaCustomer || hamzaCustomer.id !== medusaCustomer.id){
             console.log('Mismatch found.... Clearing Login')
-            // clearLogin()
+            clearLogin()
         }
         
     }, [hamzaCustomerSuccess, getHamzaCustomerData])
@@ -243,7 +242,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                     if (!responseWallet || !clientWalletTrimmed) {
                         console.log(`responseWallet: ${responseWallet} ${JSON.stringify(data)} clientWalletTrimmed: ${clientWalletTrimmed}`);
                         console.error('One or both wallet addresses are missing');
-                        // clearLogin();
+                        clearLogin();
                         clearCartCookie();
                         return false;
                     }
@@ -284,13 +283,13 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                         console.log(data.data?.wallet_address);
                         console.log(clientWallet);
                         console.log(parsedMessage.address.toLowerCase());
-                        // clearLogin();
+                        clearLogin();
                         clearCartCookie();
                         return false;
                     }
                 } else {
                     console.log('running verify unauthenticated');
-                    // clearLogin();
+                    clearLogin();
                     throw new Error(data.message);
                 }
             } catch (e) {
