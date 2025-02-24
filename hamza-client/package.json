@@ -1,6 +1,6 @@
 {
     "name": "hamza-client",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "private": true,
     "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, Chris Li, John R. Kosinski",
     "description": "Hamza Web Client",
