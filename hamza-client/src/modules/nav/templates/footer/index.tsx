@@ -267,14 +267,14 @@ export default async function Footer() {
                 </Flex>
 
                 {/* google analytics */}
-                {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TAG === 'true' &&
+                {/* {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TAG === 'true' &&
                     process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
                         <Flex
                             dangerouslySetInnerHTML={{
                                 __html: `<!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}"></script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}");</script>`,
                             }}
                         ></Flex>
-                    )}
+                    )} */}
             </Flex>
         </Flex>
     );
