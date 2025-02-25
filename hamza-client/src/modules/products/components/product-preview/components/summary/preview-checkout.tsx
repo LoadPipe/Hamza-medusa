@@ -198,7 +198,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : preferred_currency_code ?? 'usdc'
+                            : (preferred_currency_code ?? 'usdc')
                     );
 
                     // Update USD price if the preferred currency is 'eth'

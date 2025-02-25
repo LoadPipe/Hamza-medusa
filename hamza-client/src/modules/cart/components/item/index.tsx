@@ -37,7 +37,7 @@ const debouncedChangeQuantity = debounce(
 const Item = ({ item, region, cart_id }: ItemProps) => {
     const [quantity, setQuantity] = useState(item.quantity);
     const setIsUpdating = useCartStore((state) => state.setIsUpdating);
-    const [isMobile] = useMediaQuery("(max-width: 768px)");
+    const [isMobile] = useMediaQuery('(max-width: 768px)');
 
     const { handle } = item.variant.product;
     // console.log('item quantity: ', item.quantity);
@@ -98,7 +98,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
         >
             <Divider borderColor="#3E3E3E" />
 
-            <Flex my="auto" className='cart-item-container'>
+            <Flex my="auto" className="cart-item-container">
                 {/* <Radio mr="2rem" /> */}
 
                 <LocalizedClientLink href={`/products/${handle}`}>
@@ -140,7 +140,10 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 {item?.title}
                             </Text>
                             <Flex ml="auto">
-                                <DeleteButton id={item?.id} className="delete-button" />
+                                <DeleteButton
+                                    id={item?.id}
+                                    className="delete-button"
+                                />
                             </Flex>
                         </Flex>
 
@@ -154,8 +157,8 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             <Flex width="100%">
                                 <LineItemOptions variant={item?.variant} />
                             </Flex>
-                            {!isMobile && 
-                                (<Flex display={{ base: 'none', md: 'flex' }}>
+                            {!isMobile && (
+                                <Flex display={{ base: 'none', md: 'flex' }}>
                                     <ItemQuantityButton
                                         value={quantity}
                                         onChange={(newQuantity) =>
@@ -163,8 +166,10 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                         }
                                         min={1}
                                         max={Math.min(
-                                            item?.variant?.inventory_quantity > 0
-                                                ? item?.variant?.inventory_quantity
+                                            item?.variant?.inventory_quantity >
+                                                0
+                                                ? item?.variant
+                                                      ?.inventory_quantity
                                                 : 100,
                                             100
                                         )}

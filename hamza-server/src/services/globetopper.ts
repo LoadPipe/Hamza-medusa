@@ -88,7 +88,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 (a, b) =>
                     (a?.topup_product_id ?? 0) - (b?.topup_product_id ?? 0)
             );
-            
+
             // Fetch all Active GC from DB
             const existingProducts =
                 await this.productService_.getAllProductsByExternalSource(
@@ -97,13 +97,13 @@ export default class GlobetopperService extends TransactionBaseService {
 
             // Map active products
             const existingProductMap = new Map(
-                existingProducts.map((p) => [String(p.external_id), p]) 
+                existingProducts.map((p) => [String(p.external_id), p])
             );
 
             // Identify missing product IDs (not found in active products)
             const missingProductIds = gtRecords
-                .map((record) => String(record?.operator?.id)) 
-                .filter((id) => !existingProductMap.has(id)); 
+                .map((record) => String(record?.operator?.id))
+                .filter((id) => !existingProductMap.has(id));
 
             // Batch query to fetch soft-deleted products
             const softDeletedProducts = missingProductIds.length
@@ -111,8 +111,8 @@ export default class GlobetopperService extends TransactionBaseService {
                       missingProductIds
                   )
                 : [];
-  
-            // Map soft-deleted products 
+
+            // Map soft-deleted products
             const softDeletedProductMap = new Map(
                 softDeletedProducts.map((p) => [p.external_id, p])
             );
@@ -125,17 +125,20 @@ export default class GlobetopperService extends TransactionBaseService {
 
                 // If Product not in catalogue , Skip the process
                 if (!productDetails) continue;
-                
+
                 importedProductIds.push(record?.operator?.id);
 
                 // Check if the product exists as active
-                let existingProduct = existingProductMap.get(String(record?.operator?.id));
+                let existingProduct = existingProductMap.get(
+                    String(record?.operator?.id)
+                );
 
                 // If not found, check if it's soft-deleted
                 if (!existingProduct) {
-                    existingProduct = softDeletedProductMap.get(String(record?.operator?.id));
+                    existingProduct = softDeletedProductMap.get(
+                        String(record?.operator?.id)
+                    );
                     if (existingProduct) {
-
                         // Restore the product instead of creating a new one
                         await this.productService_.restoreProduct(
                             existingProduct.id
@@ -150,10 +153,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 }
 
                 if (!existingProduct) {
-                    if (
-                        behavior === 'add-only' ||
-                        behavior === 'combined'
-                    ) {
+                    if (behavior === 'add-only' || behavior === 'combined') {
                         const item = await this.mapDataToInsertProductInput(
                             record,
                             productDetails,
@@ -167,34 +167,46 @@ export default class GlobetopperService extends TransactionBaseService {
                         if (item?.handle) toCreate.push(item);
                     }
                 } else {
-                    if (
-                        behavior === 'update-only' ||
-                        behavior === 'combined'
-                    ) {
-                        const {
-                            updateInput,
-                            newVariants,
-                            deletedVariantIds,
-                        } = await this.mapDataToUpdateProductInput(
-                            record,
-                            productDetails,
-                            ProductStatus.DRAFT,
-                            storeId,
-                            categoryId,
-                            collectionId,
-                            [salesChannelId],
-                            existingProduct
-                        );
+                    if (behavior === 'update-only' || behavior === 'combined') {
+                        const { updateInput, newVariants, deletedVariantIds } =
+                            await this.mapDataToUpdateProductInput(
+                                record,
+                                productDetails,
+                                ProductStatus.DRAFT,
+                                storeId,
+                                categoryId,
+                                collectionId,
+                                [salesChannelId],
+                                existingProduct
+                            );
 
                         if (updateInput?.handle) toUpdate.push(updateInput);
                         if (newVariants.length)
                             newVariantsList.push(...newVariants);
                         if (deletedVariantIds.length)
-                            deletedVariantIdsList.push(
-                                ...deletedVariantIds
-                            );
+                            deletedVariantIdsList.push(...deletedVariantIds);
                     }
                 }
+
+                /* //TODO:
+                 now, based on behavior param, we decide how to handle existing 
+
+                 if (behavior is add-only, and existing = true, then ignore)
+                 if (behavior is update-only, and existing = false, then ignore )
+                 if existing, then update
+                 if not existing, then add 
+                */
+
+                /*
+                Fields that can be updated: 
+                    product.title
+                    product.subtitle 
+                    description
+                    thumbnail
+                    images
+                    external_metadata
+                    variants/prices
+                 */
             }
 
             if (deleteFlag) {
@@ -1143,11 +1155,11 @@ export default class GlobetopperService extends TransactionBaseService {
         // Find the first missing rank (fill gaps)
         for (let i = 0; i < usedRanks.length; i++) {
             if (usedRanks[i] !== i) {
-                return i; 
+                return i;
             }
         }
 
-        return usedRanks.length; 
+        return usedRanks.length;
     }
 
     private async buildPriceForUpdateVariant(

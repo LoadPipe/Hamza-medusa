@@ -32,13 +32,12 @@ type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
 };
 
-
 export type CreateProductVariantInputDTO = CreateProductVariantInput & {
     options?: {
         value: string;
         option_id: string;
     }[];
-    external_id?:string;
+    external_id?: string;
     external_source?: string;
     external_metadata?: Record<string, unknown>;
 };
@@ -69,17 +68,20 @@ export type UpdateProductProductVariantDTO = {
     external_id?: string;
     external_source?: string;
     external_metadata?: Record<string, unknown>;
-    variant_rank?:number; 
+    variant_rank?: number;
     options?: {
         value: string;
         option_id: string;
     }[];
 };
 
-export type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
+export type UpdateProductInput = Omit<
+    Partial<CreateProductInput>,
+    'variants'
+> & {
     variants?: UpdateProductProductVariantDTO[];
     external_source?: string;
-    external_metadata? :any;
+    external_metadata?: any;
     id?: string;
 };
 
@@ -392,11 +394,13 @@ class ProductService extends MedusaProductService {
             //get existing products by handle
             const existingProducts: Product[] = await Promise.all(
                 productData
-                    .filter(product => product.id)
-                    .map(product => this.productRepository_.findOne({
+                    .filter((product) => product.id)
+                    .map((product) =>
+                        this.productRepository_.findOne({
                             where: { id: product.id },
                             relations: ['variants'],
-                    }))
+                        })
+                    )
             );
 
             // Handle deleted variants
@@ -409,9 +413,10 @@ class ProductService extends MedusaProductService {
                 }
             }
 
-            
             const updatedProducts = await Promise.all(
-                productData.map((product) => this.processProductUpdate(product, existingProducts))
+                productData.map((product) =>
+                    this.processProductUpdate(product, existingProducts)
+                )
             );
 
             // Handle new variants
@@ -427,7 +432,6 @@ class ProductService extends MedusaProductService {
                 }
             }
 
-
             // Ensure all products are non-null and have valid IDs
             const validProducts = updatedProducts.filter((p) => p && p.id);
             this.logger.info(
@@ -442,15 +446,15 @@ class ProductService extends MedusaProductService {
             );
             return validProducts;
         } catch (error) {
-            this.logger.error(
-                'Error in updating products from CSV: ',
-                error
-            );
+            this.logger.error('Error in updating products from CSV: ', error);
             throw error;
         }
     }
 
-    public async processProductUpdate(product: UpdateProductInput, existingProducts: Product[]): Promise<Product | null> {
+    public async processProductUpdate(
+        product: UpdateProductInput,
+        existingProducts: Product[]
+    ): Promise<Product | null> {
         const productId = product.id;
 
         try {
@@ -483,10 +487,15 @@ class ProductService extends MedusaProductService {
             }
 
             // If the product does not exist, create a new one
-            this.logger.info(`Product with ID: ${productId} does not exist, creating new product.`);
+            this.logger.info(
+                `Product with ID: ${productId} does not exist, creating new product.`
+            );
             return null;
         } catch (error) {
-            this.logger.error(`Error processing product with product ID: ${productId}`, error);
+            this.logger.error(
+                `Error processing product with product ID: ${productId}`,
+                error
+            );
             return null;
         }
     }
