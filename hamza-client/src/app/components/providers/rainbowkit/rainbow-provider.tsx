@@ -14,7 +14,7 @@ import {HnsClient} from '@/web3/contracts/hns-client';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {SiweMessage} from 'siwe';
 import {createSiweMessage} from 'viem/siwe';
-import {useQuery} from '@tanstack/react-query';
+import {useQuery, useSuspenseQuery} from '@tanstack/react-query';
 import {
     clearAuthCookie,
     clearCartCookie,
@@ -128,49 +128,48 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
     const hnsClient = new HnsClient(10);
 
-    useEffect(() => {
-        // alert("USE EFFECT 1")
-        let retries = 0;
-        const maxRetries = 2; // Set a max retry limit
+    // useEffect(() => {
+    //     // alert("USE EFFECT 1")
+    //     let retries = 0;
+    //     const maxRetries = 2; // Set a max retry limit
+    //
+    //     const getHnsClient = async () => {
+    //         try {
+    //             console.log('attempting to retrieve HNS name & avatar');
+    //             const {name, avatar} =
+    //                 await hnsClient.getNameAndAvatar(walletAddress);
+    //             console.log('HNS name & avatar:', name, avatar);
+    //
+    //             setHnsName(name);
+    //             setHnsAvatar(avatar);
+    //         } catch (err) {
+    //             if (retries < maxRetries) {
+    //                 retries++;
+    //                 setTimeout(getHnsClient, 1000); // Retry after 1 second
+    //             } else {
+    //                 console.error(
+    //                     'Max retries reached. Could not connect to RPC.'
+    //                 );
+    //             }
+    //         }
+    //     };
+    //
+    //     if (walletAddress && authData.status === 'authenticated') {
+    //         getHnsClient();
+    //     }
+    // }, [authData.status, isHydrated]);
 
-        const getHnsClient = async () => {
-            try {
-                console.log('attempting to retrieve HNS name & avatar');
-                const {name, avatar} =
-                    await hnsClient.getNameAndAvatar(walletAddress);
-                console.log('HNS name & avatar:', name, avatar);
-
-                setHnsName(name);
-                setHnsAvatar(avatar);
-            } catch (err) {
-                if (retries < maxRetries) {
-                    retries++;
-                    setTimeout(getHnsClient, 1000); // Retry after 1 second
-                } else {
-                    console.error(
-                        'Max retries reached. Could not connect to RPC.'
-                    );
-                }
-            }
-        };
-
-        if (walletAddress && authData.status === 'authenticated') {
-            getHnsClient();
-        }
-    }, [authData.status, isHydrated]);
-
-    useEffect(() => {
-        if (!isHydrated) return;
-
-        // alert(`USE EFFECT 2 ${authData.status} ${customer_id} ${isHydrated}`)
-        if (authData.status === 'authenticated' && customer_id) {
-            loadWishlist(customer_id);
-            router.refresh();
-        }
-    }, [authData.status, customer_id, isHydrated]); // Dependency array includes any state variables that trigger a reload
+    // useEffect(() => {
+    //     if (!isHydrated) return;
+    //
+    //     // alert(`USE EFFECT 2 ${authData.status} ${customer_id} ${isHydrated}`)
+    //     if (authData.status === 'authenticated' && customer_id) {
+    //         loadWishlist(customer_id);
+    //         router.refresh();
+    //     }
+    // }, [authData.status, customer_id, isHydrated]); // Dependency array includes any state variables that trigger a reload
 
     const clearLogin = () => {
-        alert('CLEARING LOGIN');
         setCustomerAuthData({
             customer_id: '',
             is_verified: false,
@@ -190,8 +189,8 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     } = useQuery({
         queryKey: ['combinedCustomers', authData.wallet_address],
         queryFn: getCombinedCustomer,
-        enabled: Boolean(authData.wallet_address?.length > 0) && isHydrated,
-        staleTime: 0,
+        enabled: Boolean(authData.wallet_address?.length > 0),
+        staleTime: 60 * 3 * 1000,
         gcTime: 0,
     });
 
@@ -209,7 +208,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                 },
             });
             // alert(output?.data?.nonce)
-            return output?.data?.nonce ?? '';
+            return output.data.nonce;
         },
         // Set these to ensure you always get a fresh nonce
         staleTime: 0,
@@ -218,15 +217,38 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     });
 
     useEffect(() => {
-        if (!isHydrated) return
+        console.log('Auth Data on mount:', authData);
+        console.log('Is Hydrated:', isHydrated);
+    }, [authData, isHydrated]);
+
+    useEffect(() => {
+        console.log('Query enabled?', Boolean(authData.wallet_address?.length > 0) && isHydrated);
+    }, [authData]);
+    // }, [authData, isHydrated]);
+
+    useEffect(() => {
+        // if (!isHydrated) return;
+        if (hamzaLoading) {
+            console.log('Hamza query is loading...');
+            return;
+        }
+        if (hamzaCustomerSuccess) {
+            console.log('Combined customer data:', getHamzaCustomerData);
+        } else {
+            console.error('Combined customer query failed or returned no data', { hamzaCustomerSuccess, getHamzaCustomerData });
+        }
+    }, [hamzaCustomerSuccess, getHamzaCustomerData]);
+    // }, [hamzaCustomerSuccess, getHamzaCustomerData, isHydrated]);
+
+
+    useEffect(() => {
+        // if (!isHydrated) return
         if (hamzaLoading || !hamzaCustomerSuccess) return;
 
         if (!hamzaCustomerSuccess || !getHamzaCustomerData) return;
         const {hamzaCustomer, medusaCustomer} = getHamzaCustomerData;
 
-        alert(`THIS SHITS KILLING IT?`)
         if (!hamzaCustomer || !medusaCustomer || hamzaCustomer.id !== medusaCustomer.id) {
-            alert(`THIS SHITS KILLING IT?`)
             console.log('Mismatch found.... Clearing Login')
             clearLogin()
         }
@@ -237,7 +259,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
             const {data: nonce} = await fetchNonce();
-            return nonce ?? '';
+            return nonce;
         },
 
         createMessage: ({nonce, address, chainId}) => {
@@ -269,7 +291,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
         },
 
         signOut: async () => {
-            alert('SIGNING OUT')
+            alert('STOP')
             console.trace('signOut called');
 
             if (authData.status !== 'authenticated') {
@@ -277,7 +299,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                 return;
             }
             if (verifyMutation.isPending) return
-            if (isHydrated) {
+            // if (isHydrated) {
                 setCustomerAuthData({
                     ...authData,
                     status: 'unauthenticated',
@@ -289,7 +311,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                 await signOut();
                 router.replace('/');
                 return;
-            }
+            // }
         },
     });
 
