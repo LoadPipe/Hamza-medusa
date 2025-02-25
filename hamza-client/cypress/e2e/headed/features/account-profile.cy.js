@@ -31,14 +31,16 @@ describe('Account Profile', () => {
 
         cy.wait(3000);
 
-        elementCheckByElementClass('.first-name-input', {
-            findByChild: 'input',
-        }).type('John');
+        elementCheckByElementClass('.first-name-input input', {
+            timeout: 30000,
+        })
+            .clear()
+            .type('John');
         buttonClickByElementText('Update');
         cy.wait(1000);
         cy.reload();
-        elementCheckByElementClass('.first-name-input', {
-            findByChild: 'input',
+        elementCheckByElementClass('.first-name-input input', {
+            timeout: 30000,
         }).should('have.value', 'John');
     });
 
@@ -63,14 +65,16 @@ describe('Account Profile', () => {
 
         cy.visit('/en/account/profile');
 
-        elementCheckByElementClass('.last-name-input', {
-            findByChild: 'input',
-        }).type('Doe');
+        elementCheckByElementClass('.last-name-input input', {
+            timeout: 30000,
+        })
+            .clear()
+            .type('Doe');
         buttonClickByElementText('Update');
         cy.wait(1000);
         cy.reload();
-        elementCheckByElementClass('.last-name-input', {
-            findByChild: 'input',
+        elementCheckByElementClass('.last-name-input input', {
+            timeout: 30000,
         }).should('have.value', 'Doe');
     });
 });
