@@ -9,7 +9,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
-import CustomChainModal from '../../components/custom-chain-modal';
+import CustomChainModal from '@/modules/layout/templates/nav/components/custom-chain-modal';
 
 export const WalletConnectButton = () => {
     // Update zustand store with Wagmi hook when connected
