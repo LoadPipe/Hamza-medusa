@@ -21,13 +21,20 @@ import { getChainId } from '@wagmi/core';
 import { wagmiConfig } from '@/app/components/providers/rainbowkit/wagmi';
 import { RxQuestionMarkCircled } from 'react-icons/rx';
 import { MdClose } from 'react-icons/md'; // Import the Close Icon from react-icons
+interface CustomChainModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
 
-const CustomChainModal = () => {
+const CustomChainModal: React.FC<CustomChainModalProps> = ({
+    isOpen,
+    onClose,
+}) => {
     const { chains, switchChain } = useSwitchChain();
     const chainId = getChainId(wagmiConfig);
 
     return (
-        <Modal isOpen={true} onClose={() => {}} isCentered>
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
@@ -106,6 +113,7 @@ const CustomChainModal = () => {
                                 ml="auto"
                                 backgroundColor={'gray.600'}
                                 _hover={{ backgroundColor: 'gray.600' }}
+                                onClick={onClose}
                             />
                         </Flex>
                         <Text

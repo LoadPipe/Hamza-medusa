@@ -5,7 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@/modules/nav/templates/nav/menu-desktop/account-menu';
 import { useWalletClient, useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
@@ -22,6 +22,8 @@ export const DesktopWalletConnectButton = () => {
             setWalletAddress(account.address); // Update Zustand store
         }
     }, [account?.address, setWalletAddress]);
+
+    const [isChainModalOpen, setChainModalOpen] = useState(false);
 
     return (
         <ConnectButton.Custom>
@@ -91,9 +93,12 @@ export const DesktopWalletConnectButton = () => {
                                 >
                                     <HnsDisplay />
                                     <CurrencySelector network={chain.name} />
-                                    <CustomChainModal />
+                                    <CustomChainModal
+                                        isOpen={isChainModalOpen}
+                                        onClose={() => setChainModalOpen(false)}
+                                    />
                                     <button
-                                        onClick={openChainModal}
+                                        onClick={() => setChainModalOpen(true)}
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
