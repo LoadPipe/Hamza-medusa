@@ -854,22 +854,37 @@ export async function getSession() {
 
 // Customer actions
 export async function getHamzaCustomer(includeAddresses: boolean = true) {
+    console.log("getHamzaCustomer: Starting function");
     const headers = getMedusaHeaders(['customer']);
-    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
-        customer_id: '',
-    };
+    console.log("getHamzaCustomer: Headers generated:", headers);
+
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
+    console.log("getHamzaCustomer: Decoded token:", token);
+
     const customer_id: string = token?.customer_id ?? '';
+    console.log("getHamzaCustomer: Customer ID:", customer_id);
+
     let response = null;
 
     if (customer_id?.length) {
-        response = await getSecure('/custom/customer', {
-            customer_id,
-            include_addresses: includeAddresses ? 'true' : 'false',
-        });
+        console.log("getHamzaCustomer: Making secure call with customer_id and include_addresses =", includeAddresses);
+        try {
+            response = await getSecure('/custom/customer', {
+                customer_id,
+                include_addresses: includeAddresses ? 'true' : 'false',
+            });
+            console.log("getHamzaCustomer: Secure call response:", response);
+        } catch (err) {
+            console.error("getHamzaCustomer: Error during secure call:", err);
+        }
+    } else {
+        console.warn("getHamzaCustomer: No customer_id found in token");
     }
 
+    console.log("getHamzaCustomer: Returning response:", response ?? {});
     return response ?? {};
 }
+
 
 export async function getCombinedCustomer(){
     // 1. Get the specialized `Hamza` data
@@ -918,21 +933,28 @@ export async function clearCartCookie() {
 // Customer actions
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
+    console.log("Fetching Medusa customer with headers:", headers);
 
     return medusaClient.customers
         .retrieve(headers)
-        .then(({ customer }) => customer)
+        .then(({ customer }) => {
+            console.log("Retrieved Medusa customer:", customer);
+            return customer;
+        })
         .catch((err) => {
+            console.error("Error retrieving Medusa customer:", err);
             try {
                 cookies().set('_medusa_jwt', '', {
                     maxAge: -1,
                 });
+                console.log("Cleared _medusa_jwt cookie due to error.");
             } catch (e) {
-                console.error(e);
+                console.error("Error clearing _medusa_jwt cookie:", e);
             }
             return null;
         });
 }
+
 
 export async function getCustomerOrder(customer_id: string, order_id: string) {
     const orders = await postSecure('/custom/order', {

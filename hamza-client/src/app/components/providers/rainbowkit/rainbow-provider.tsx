@@ -18,7 +18,7 @@ import {useQuery, useSuspenseQuery} from '@tanstack/react-query';
 import {
     clearAuthCookie,
     clearCartCookie,
-    getCombinedCustomer,
+    getCombinedCustomer, getCustomer, getHamzaCustomer,
     getToken,
     recoverCart,
 } from '@/lib/server';
@@ -180,19 +180,39 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
         clearAuthCookie();
     };
 
-    // `getHamzaCustomer`
-    const {
-        data: getHamzaCustomerData,
-        isLoading: hamzaLoading,
-        error: hamzaError,
-        isSuccess: hamzaCustomerSuccess,
-    } = useQuery({
-        queryKey: ['combinedCustomers', authData.wallet_address],
-        queryFn: getCombinedCustomer,
-        enabled: Boolean(authData.wallet_address?.length > 0),
-        staleTime: 60 * 3 * 1000,
-        gcTime: 0,
-    });
+    // // `getHamzaCustomer`
+    // const {
+    //     data: getHamzaCustomerData,
+    //     isLoading: hamzaLoading,
+    //     error: hamzaError,
+    //     isSuccess: hamzaCustomerSuccess,
+    // } = useQuery({
+    //     queryKey: ['combinedCustomers', authData.wallet_address],
+    //     queryFn: getCombinedCustomer,
+    //     // enabled: authData.status === 'authenticated' && Boolean(authData.wallet_address?.length > 0),
+    //     staleTime: 60 * 3 * 1000,
+    //     gcTime: 0,
+    // });
+
+    useEffect(() => {
+        console.log('Saved wallet address', clientWallet);
+        if (clientWallet?.length && verifyMutation.isSuccess) {
+            getHamzaCustomer().then((hamzaCustomer) => {
+                getCustomer().then((customer) => {
+                    if (
+                        !customer ||
+                        !hamzaCustomer ||
+                        customer?.id !== hamzaCustomer?.id
+                    ) {
+                        console.log('Hamza Customer: ', hamzaCustomer);
+                        console.log('Medusa Customer: ', customer);
+                        clearLogin();
+                    }
+                });
+            });
+        }
+        console.log(authData.wallet_address);
+    }, [authData.wallet_address, verifyMutation.isSuccess])
 
     const {
         refetch: fetchNonce,
@@ -226,35 +246,35 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     }, [authData]);
     // }, [authData, isHydrated]);
 
-    useEffect(() => {
-        // if (!isHydrated) return;
-        if (hamzaLoading) {
-            console.log('Hamza query is loading...');
-            return;
-        }
-        if (hamzaCustomerSuccess) {
-            console.log('Combined customer data:', getHamzaCustomerData);
-        } else {
-            console.error('Combined customer query failed or returned no data', { hamzaCustomerSuccess, getHamzaCustomerData });
-        }
-    }, [hamzaCustomerSuccess, getHamzaCustomerData]);
-    // }, [hamzaCustomerSuccess, getHamzaCustomerData, isHydrated]);
+    // useEffect(() => {
+    //     // if (!isHydrated) return;
+    //     if (hamzaLoading) {
+    //         console.log('Hamza query is loading...');
+    //         return;
+    //     }
+    //     if (hamzaCustomerSuccess) {
+    //         console.log('Combined customer data:', getHamzaCustomerData);
+    //     } else {
+    //         console.error('Combined customer query failed or returned no data', { hamzaCustomerSuccess, getHamzaCustomerData });
+    //     }
+    // }, [hamzaCustomerSuccess, getHamzaCustomerData]);
+    // // }, [hamzaCustomerSuccess, getHamzaCustomerData, isHydrated]);
 
-
-    useEffect(() => {
-        // if (!isHydrated) return
-        if (hamzaLoading || !hamzaCustomerSuccess) return;
-
-        if (!hamzaCustomerSuccess || !getHamzaCustomerData) return;
-        const {hamzaCustomer, medusaCustomer} = getHamzaCustomerData;
-
-        if (!hamzaCustomer || !medusaCustomer || hamzaCustomer.id !== medusaCustomer.id) {
-            console.log('Mismatch found.... Clearing Login')
-            clearLogin()
-        }
-
-    }, [hamzaCustomerSuccess, getHamzaCustomerData])
-
+    //
+    // useEffect(() => {
+    //     // if (!isHydrated) return
+    //     if (hamzaLoading || !hamzaCustomerSuccess) return;
+    //
+    //     if (!hamzaCustomerSuccess || !getHamzaCustomerData) return;
+    //     const {hamzaCustomer, medusaCustomer} = getHamzaCustomerData;
+    //
+    //     if (!hamzaCustomer || !medusaCustomer || hamzaCustomer.id !== medusaCustomer.id) {
+    //         console.log('Mismatch found.... Clearing Login')
+    //         clearLogin()
+    //     }
+    //
+    // }, [hamzaCustomerSuccess, getHamzaCustomerData])
+    //
 
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
