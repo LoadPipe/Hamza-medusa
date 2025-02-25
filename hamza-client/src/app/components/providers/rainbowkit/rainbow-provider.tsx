@@ -1,5 +1,5 @@
 'use client';
-import React, {useState, useEffect, Suspense} from 'react';
+import React, {useState, useEffect} from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
 import {
     createAuthenticationAdapter,
@@ -12,15 +12,12 @@ import {darkThemeConfig} from '@/components/providers/rainbowkit/rainbowkit-util
 import {QueryClientProvider, QueryClient} from '@tanstack/react-query';
 import {HnsClient} from '@/web3/contracts/hns-client';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
-import dynamic from 'next/dynamic';
 import {SiweMessage} from 'siwe';
 import {createSiweMessage} from 'viem/siwe';
 import {useQuery} from '@tanstack/react-query';
 import {
     clearAuthCookie,
     clearCartCookie,
-    getCustomer,
-    getHamzaCustomer,
     getCombinedCustomer,
     getToken,
     recoverCart,
@@ -33,6 +30,7 @@ import {useRouter} from 'next/navigation';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
 import {wagmiConfig} from './wagmi';
+import {useVerifyMutation} from './rainbowkit-utils/verify-mutation'
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -65,6 +63,7 @@ async function sendVerifyRequest(message: any, signature: any) {
     );
 }
 
+// I guess this should also be wrapped in a useQuery...
 async function getNonce() {
     //const response = await fetch(GET_NONCE_URL);
     //const data = await response.json();
@@ -79,6 +78,29 @@ async function getNonce() {
 }
 
 export function RainbowWrapper({children}: { children: React.ReactNode }) {
+    // ***Ensures data is not shared between different users and requests***
+    // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
+    const queryClientRef = React.useRef<QueryClient>();
+
+    if (!queryClientRef.current) {
+        queryClientRef.current = new QueryClient({
+            defaultOptions: {
+                queries: {
+                    staleTime: 2 * 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
+                    refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
+                    refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
+                    refetchOnMount: false, // Prevents redundant fetches when remounting components
+                    retry: 2, // 🔄 Retries failed queries twice before throwing an error
+                },
+                mutations: {
+                    retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
+                },
+            },
+        });
+    }
+
+    const verifyMutation = useVerifyMutation();
+
     const {
         walletAddress,
         authData,
@@ -114,7 +136,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
         const getHnsClient = async () => {
             try {
                 console.log('attempting to retrieve HNS name & avatar');
-                const { name, avatar } =
+                const {name, avatar} =
                     await hnsClient.getNameAndAvatar(walletAddress);
                 console.log('HNS name & avatar:', name, avatar);
 
@@ -169,26 +191,52 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
         queryKey: ['combinedCustomers', authData.wallet_address],
         queryFn: getCombinedCustomer,
         enabled: Boolean(authData.wallet_address?.length > 0) && isHydrated,
-        staleTime: 2 * 60 * 1000,
+        staleTime: 0,
+        gcTime: 0,
+    });
+
+    const {
+        refetch: fetchNonce,
+        // data, error, etc., if needed
+    } = useQuery({
+        queryKey: ['nonce'],
+        queryFn: async () => {
+            const output = await axios.get(GET_NONCE_URL, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-control': 'no-cache, no-store',
+                    Accept: 'application/json',
+                },
+            });
+            // alert(output?.data?.nonce)
+            return output?.data?.nonce ?? '';
+        },
+        // Set these to ensure you always get a fresh nonce
+        staleTime: 0,
+        gcTime: 0,
+        enabled: false, // Disable automatic fetching
     });
 
     useEffect(() => {
+        if (!isHydrated) return
         if (hamzaLoading || !hamzaCustomerSuccess) return;
 
         if (!hamzaCustomerSuccess || !getHamzaCustomerData) return;
-        const { hamzaCustomer, medusaCustomer } = getHamzaCustomerData;
+        const {hamzaCustomer, medusaCustomer} = getHamzaCustomerData;
 
-        if (!hamzaCustomer || !medusaCustomer || hamzaCustomer.id !== medusaCustomer.id){
+        alert(`THIS SHITS KILLING IT?`)
+        if (!hamzaCustomer || !medusaCustomer || hamzaCustomer.id !== medusaCustomer.id) {
+            alert(`THIS SHITS KILLING IT?`)
             console.log('Mismatch found.... Clearing Login')
             clearLogin()
         }
-        
+
     }, [hamzaCustomerSuccess, getHamzaCustomerData])
 
 
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
-            const nonce = await getNonce();
+            const {data: nonce} = await fetchNonce();
             return nonce ?? '';
         },
 
@@ -205,101 +253,30 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
             });
         },
 
-        verify: async ({message, signature}) => {
+        verify: async ({ message, signature }) => {
+            // Now use the mutation from the top level
             try {
-                const parsedMessage = new SiweMessage(message);
-                console.log('parsedMessage', parsedMessage);
-                const response = await sendVerifyRequest(message, signature);
-
-                console.log('message', message);
-
-                let data = response.data;
-                console.log('data', data);
-                //if just creating, then a second request is needed
-                if (data.status == true && data.data?.created == true) {
-                    const authResponse = await sendVerifyRequest(
-                        message,
-                        signature
-                    );
-                    data = authResponse.data;
-                }
-
-                console.log('data.status', data.status);
-                if (data.status === true) {
-                    console.log('HELLO WORLD?')
-                    const tokenResponse = await getToken({
-                        wallet_address: parsedMessage.address.toLowerCase(),
-                        email: data.data?.email?.trim()?.toLowerCase(),
-                        password: '',
-                    });
-                    console.log(`tokenResponse: ${tokenResponse}`);
-
-                    const responseWallet =
-                        parsedMessage.address.toLowerCase() || '';
-                    const clientWalletTrimmed = clientWallet?.trim()?.toLowerCase() || '';
-
-                    // If either wallet is missing, treat it as a failure.
-                    if (!responseWallet || !clientWalletTrimmed) {
-                        console.log(`responseWallet: ${responseWallet} ${JSON.stringify(data)} clientWalletTrimmed: ${clientWalletTrimmed}`);
-                        console.error('One or both wallet addresses are missing');
-                        clearLogin();
-                        clearCartCookie();
-                        return false;
-                    }
-
-                    // Now check if they match.
-                    if (responseWallet === clientWalletTrimmed) {
-                        const customerId = data.data.customer_id;
-                        setCustomerId(customerId);
-                        Cookies.set('_medusa_jwt', tokenResponse);
-                        //localStorage.setItem('_medusa_jwt', tokenResponse);
-
-                        setCustomerAuthData({
-                            token: tokenResponse,
-                            wallet_address: parsedMessage.address.toLowerCase(),
-                            customer_id: data.data?.customer_id,
-                            is_verified: data.data?.is_verified,
-                            status: 'authenticated',
-                        });
-
-                        setCustomerPreferredCurrency(
-                            data.data?.preferred_currency?.code
-                        );
-
-                        setWhitelistConfig(data.data?.whitelist_config);
-
-                        try {
-                            console.log('recovering cart');
-                            recoverCart(customerId);
-                        } catch (e) {
-                            console.log('Error recovering cart');
-                            console.error(e);
-                        }
-
-                        return true;
-                    } else {
-                        console.log('Wallet address mismatch on login');
-                        console.log('Wallet address mismatch on login');
-                        console.log(data.data?.wallet_address);
-                        console.log(clientWallet);
-                        console.log(parsedMessage.address.toLowerCase());
-                        clearLogin();
-                        clearCartCookie();
-                        return false;
-                    }
-                } else {
-                    console.log('running verify unauthenticated');
-                    clearLogin();
-                    throw new Error(data.message);
-                }
-            } catch (e) {
-                console.error('Error in signing in:', e);
+                await verifyMutation.mutateAsync({
+                    message,
+                    signature,
+                    clientWallet: walletAddress, // assuming walletAddress from your store
+                });
+                return true;
+            } catch (error) {
+                console.error('Verification failed:', error);
                 return false;
             }
         },
 
         signOut: async () => {
             alert('SIGNING OUT')
+            console.trace('signOut called');
+
+            if (authData.status !== 'authenticated') {
+                console.log("Preventing unnecessary logout - status still loading...");
+                return;
+            }
+            if (verifyMutation.isPending) return
             if (isHydrated) {
                 setCustomerAuthData({
                     ...authData,
@@ -316,26 +293,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
         },
     });
 
-    // ***Ensures data is not shared between different users and requests***
-    // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
-    const queryClientRef = React.useRef<QueryClient>();
 
-    if (!queryClientRef.current) {
-        queryClientRef.current = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    staleTime: 2 * 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
-                    refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
-                    refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
-                    refetchOnMount: false, // 🚀 Prevents redundant fetches when remounting components
-                    retry: 2, // 🔄 Retries failed queries twice before throwing an error
-                },
-                mutations: {
-                    retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
-                },
-            },
-        });
-    }
 
     const CustomAvatar: AvatarComponent = ({address, ensImage, size}) => {
         return <ProfileImage centered={true}/>;
@@ -360,7 +318,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                     <ReactQueryDevtools initialIsOpen={false}/>
                     {showDevtools && (
                         <React.Suspense fallback={null}>
-                            <ReactQueryDevtoolsProduction />
+                            <ReactQueryDevtoolsProduction/>
                         </React.Suspense>
                     )}
                 </QueryClientProvider>
