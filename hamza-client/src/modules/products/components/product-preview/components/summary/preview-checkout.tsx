@@ -8,7 +8,6 @@ import { addToCart, getOrSetCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
-import { Variant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
@@ -26,9 +25,7 @@ import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '@/modules/terms-of-service/templates/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
-import useWishlistStore, {
-    WishlistProduct,
-} from '@/zustand/wishlist/wishlist-store';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';

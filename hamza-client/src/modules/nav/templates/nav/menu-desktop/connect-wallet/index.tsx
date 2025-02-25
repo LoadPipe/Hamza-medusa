@@ -79,11 +79,11 @@ export const WalletConnectButton = () => {
                                     <HnsDisplay />
                                     <CurrencySelector network={chain.name} />
                                     <button
+                                        onClick={openChainModal}
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
                                         }}
-                                        onClick={() => setChainModalOpen(true)}
                                         type="button"
                                     >
                                         {chain.hasIcon && (

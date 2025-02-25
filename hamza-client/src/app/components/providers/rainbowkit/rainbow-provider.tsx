@@ -207,6 +207,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         password: '',
                     });
 
+                    //check that customer data and wallet address match
                     if (
                         data.data.wallet_address.trim().toLowerCase() ===
                         clientWallet?.trim()?.toLowerCase()

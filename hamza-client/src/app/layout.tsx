@@ -31,7 +31,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <html lang="en" data-mode="dark">
             <head>
                 {/* Google Tag Manager Script */}
-                <Script
+                {/* <Script
                     id="gtm-script"
                     strategy="afterInteractive"
                     dangerouslySetInnerHTML={{
@@ -44,7 +44,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                             })(window,document,'script','dataLayer','GTM-W9HPPFG3');
                         `,
                     }}
-                />
+                /> */}
 
                 {/* Chat Widget Script */}
                 {/* <Script
@@ -69,7 +69,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                             })(document, "script");
                         `,
                     }}
-                />
+                /> */}
 
                 {/* Klaviyo Script
                 <Script
@@ -77,6 +77,14 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     strategy="afterInteractive"
                 /> */}
             </head>
+            {/* {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TAG === 'true' &&
+                process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+                    <GoogleTagManager
+                        gtmId={
+                            process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''
+                        }
+                    />
+                )} */}
             <body>
                 <div>
                     <MedusaProvider token={token}>
