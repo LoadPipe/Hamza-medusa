@@ -4,17 +4,21 @@ import {
     IWalletPaymentHandler,
     FakeWalletPaymentHandler,
     MassmarketWalletPaymentHandler,
+    LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler,
     EscrowWalletPaymentHandler,
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import ErrorMessage from '../../../error-message';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { useAccount, useWalletClient } from 'wagmi';
-import { ethers } from 'ethers';
+import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import { ethers, BigNumberish } from 'ethers';
+import { useCompleteCart, useUpdateCart } from 'medusa-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
-import { clearCart, finalizeCheckout } from '@/lib/server';
+import { clearCart, finalizeCheckout, getCheckoutData } from '@/lib/server';
 import toast from 'react-hot-toast';
 import { getServerConfig } from '@/lib/server/index';
 import { getClientCookie } from '@lib/util/get-client-cookies';
@@ -26,12 +30,20 @@ import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
 
 //TODO: we need a global common function to replace this
 
+
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
 
 type PaymentButtonProps = {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
 };
+
+// Extend the Window interface
+declare global {
+    interface Window {
+        ethereum?: WindowProvider;
+    }
+}
 
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
@@ -41,15 +53,16 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
         !cart.email ||
         (cart.shipping_methods?.length ?? 0) > 0;
 
+
     console.log(`1AHD IS THIS CART DATA?? ${JSON.stringify(cart)}`);
 
     return <CryptoPaymentButton notReady={notReady} cart={cart} />;
 };
 
 const CryptoPaymentButton = ({
-    cart,
-    notReady,
-}: {
+                                 cart,
+                                 notReady,
+                             }: {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
     notReady: boolean;
 }) => {
@@ -63,6 +76,10 @@ const CryptoPaymentButton = ({
     const { data: walletClient, isError } = useWalletClient();
     const { isUpdating } = useCartStore();
     const router = useRouter();
+    const { connect, connectors, error, isLoading, pendingConnector } =
+        useConnect({
+            connector: new InjectedConnector(),
+        });
 
     useEffect(() => {
         const fetchChainId = async () => {
@@ -135,7 +152,7 @@ const CryptoPaymentButton = ({
                 //TODO: get provider, chain id & signer from window.ethereum
                 if (window.ethereum?.providers) {
                     provider = new ethers.BrowserProvider(
-                        window.ethereum?.providers[0]
+                        window.ethereum?.providers[0],
                     );
                     signer = await provider.getSigner();
                 }
@@ -147,7 +164,7 @@ const CryptoPaymentButton = ({
                 provider,
                 signer,
                 chainId,
-                data
+                data,
             );
 
             return output;
@@ -166,12 +183,12 @@ const CryptoPaymentButton = ({
     const redirectToOrderConfirmation = (
         orderId: string,
         cartId: string,
-        countryCode: string
+        countryCode: string,
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (orderId?.length) {
             router.push(
-                `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`
+                `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`,
             );
         }
     };
@@ -196,7 +213,7 @@ const CryptoPaymentButton = ({
                     headers: {
                         Authorization: `${getClientCookie('_medusa_jwt')}`,
                     },
-                }
+                },
             );
             const data = checkoutData.data;
 
@@ -212,7 +229,7 @@ const CryptoPaymentButton = ({
                         cartId,
                         output.transaction_id,
                         output.payer_address,
-                        output.chain_id
+                        output.chain_id,
                     );
 
                     // Country code needed for redirect (get before clearing the cart)
@@ -228,14 +245,14 @@ const CryptoPaymentButton = ({
                     redirectToOrderConfirmation(
                         data?.orders?.length ? data.orders[0].order_id : null,
                         cart.id,
-                        countryCode
+                        countryCode,
                     );
                 } else {
                     setLoaderVisible(false);
                     displayError(
                         output?.message
                             ? output.message
-                            : 'Checkout was not completed.'
+                            : 'Checkout was not completed.',
                     );
                     await cancelOrderFromCart(cartId);
                 }
@@ -251,6 +268,8 @@ const CryptoPaymentButton = ({
             setSubmitting(false);
         }
     };
+
+
 
     const { mutate: completeCart } = useCompleteCartCustom();
     /**
@@ -290,11 +309,13 @@ const CryptoPaymentButton = ({
                     },
                 });
             });
+
         } catch (e) {
             console.error(e);
             displayError('Checkout was not completed');
             setLoaderVisible(false);
             await cancelOrderFromCart(cart.id);
+
         } finally {
             setSubmitting(false);
             setLoaderVisible(false);
@@ -320,7 +341,13 @@ const CryptoPaymentButton = ({
 
     return (
         <>
-            {loaderVisible && <HamzaLogoLoader messages={MESSAGES} />}
+            {loaderVisible && (
+                <HamzaLogoLoader
+                    messages={
+                        MESSAGES
+                    }
+                />
+            )}
             <Button
                 borderRadius={'full'}
                 height={{ base: '42px', md: '58px' }}

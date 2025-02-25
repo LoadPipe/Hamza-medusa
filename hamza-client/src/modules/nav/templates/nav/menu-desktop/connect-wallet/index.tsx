@@ -1,26 +1,29 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Button, Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@/modules/nav/templates/nav/menu-desktop/account-menu';
 import { useWalletClient, useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useEffect } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
+import CustomChainModal from '@/modules/layout/templates/nav/components/custom-chain-modal';
 
-export const DesktopWalletConnectButton = () => {
-    //Update zustand store with Wagmi hook when connected
+export const WalletConnectButton = () => {
+    // Update zustand store with Wagmi hook when connected
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
-    // useEffect to update Zustand state when the account is connected
 
     useEffect(() => {
         if (account?.address) {
             setWalletAddress(account.address); // Update Zustand store
         }
     }, [account?.address, setWalletAddress]);
+
+    // Local state to control CustomChainModal visibility
+    const [isChainModalOpen, setChainModalOpen] = useState(false);
 
     return (
         <ConnectButton.Custom>
@@ -33,8 +36,6 @@ export const DesktopWalletConnectButton = () => {
                 authenticationStatus,
                 mounted,
             }) => {
-                // Note: If your app doesn't use authentication, you
-                // can remove all 'authenticationStatus' checks
                 const ready = mounted && authenticationStatus !== 'loading';
                 const connected =
                     ready &&
@@ -61,41 +62,35 @@ export const DesktopWalletConnectButton = () => {
                             if (!connected) {
                                 return (
                                     <Button
-                                        borderRadius={'30px'}
-                                        backgroundColor={'primary.green.900'}
+                                        borderRadius="30px"
+                                        backgroundColor="primary.green.900"
                                         onClick={openConnectModal}
                                         height="48px"
-                                        fontSize={'16px'}
+                                        fontSize="16px"
                                     >
                                         Connect Wallet
                                     </Button>
                                 );
                             }
-                            if (chain.unsupported) {
-                                return (
-                                    <button
-                                        onClick={openChainModal}
-                                        type="button"
-                                    >
-                                        Wrong network
-                                    </button>
-                                );
-                            }
 
                             return (
                                 <Flex
-                                    gap={'18px'}
-                                    flexDirection={'row'}
-                                    alignItems={'center'}
+                                    gap="18px"
+                                    flexDirection="row"
+                                    alignItems="center"
                                 >
+                                    <CustomChainModal
+                                        isOpen={isChainModalOpen}
+                                        onClose={() => setChainModalOpen(false)}
+                                    />
                                     <HnsDisplay />
                                     <CurrencySelector network={chain.name} />
                                     <button
-                                        onClick={openChainModal}
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
                                         }}
+                                        onClick={() => setChainModalOpen(true)}
                                         type="button"
                                     >
                                         {chain.hasIcon && (
