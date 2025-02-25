@@ -21,6 +21,7 @@ import { getChainId } from '@wagmi/core';
 import { wagmiConfig } from '@/app/components/providers/rainbowkit/wagmi';
 import { RxQuestionMarkCircled } from 'react-icons/rx';
 import { MdClose } from 'react-icons/md'; // Import the Close Icon from react-icons
+import { useState } from 'react';
 interface CustomChainModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -32,6 +33,8 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
 }) => {
     const { chains, switchChain } = useSwitchChain();
     const chainId = getChainId(wagmiConfig);
+
+    const [loadingChainId, setLoadingChainId] = useState<number | null>(null);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -141,9 +144,18 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
                                             ? 'primary.indigo.900'
                                             : 'transparent'
                                     }
-                                    onClick={() =>
-                                        switchChain({ chainId: chain.id })
-                                    }
+                                    onClick={async () => {
+                                        setLoadingChainId(chain.id);
+                                        // Initiate the chain switch
+                                        switchChain({ chainId: chain.id });
+                                        // Wait a little for the switch to take effect before closing the modal
+                                        await new Promise((resolve) =>
+                                            setTimeout(resolve, 1000)
+                                        );
+                                        setLoadingChainId(null);
+                                        onClose();
+                                    }}
+                                    isLoading={loadingChainId === chain.id}
                                     cursor={'pointer'}
                                     _hover={{
                                         backgroundColor:
