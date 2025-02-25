@@ -10,6 +10,7 @@ import { Heading, Text, Tooltip, clx } from '@medusajs/ui';
 import { Button } from '@chakra-ui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect } from 'wagmi';
+import { InjectedConnector } from 'wagmi/connectors/injected';
 import Divider from '@modules/common/components/divider';
 import Spinner from '@modules/common/icons/spinner';
 import PaymentContainer from '@/modules/checkout/components/payment/components/payment-container';
@@ -27,6 +28,9 @@ const Payment = ({
     const [cardComplete, setCardComplete] = useState(false);
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
+    const { connect } = useConnect({
+        connector: new InjectedConnector(),
+    });
 
     // useEffect hook to check if connection status changes
     // if !isConnected, connect to wallet
@@ -35,6 +39,11 @@ const Payment = ({
             if (openConnectModal) openConnectModal();
         }
     }, [openConnectModal, isConnected]);
+
+    //connects wallet if necessary
+    const connectWallet = () => {
+        connect();
+    };
 
     const searchParams = useSearchParams();
     const router = useRouter();

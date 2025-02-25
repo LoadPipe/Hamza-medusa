@@ -1,12 +1,14 @@
 import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
 import HamzaBetaTitle from '@/images/logo/hamza-title-beta.svg';
 import MobileMainMenu from './menu/mobile-main-menu';
-import { MobileWalletConnectButton } from './connect-wallet/connect-button';
+import { WalletConnectButton } from './connect-wallet/connect-button';
 import CartButtonMobile from './components/cart-button';
+import HamzaHoliday from '@/images/logo/hamza christmas logo - H.svg';
+import HamzaTitleHoliday from '@/images/logo/hamza christmas logo - word.svg';
 
 export default async function MobileNav() {
     return (
@@ -48,7 +50,7 @@ export default async function MobileNav() {
 
                 <Flex flex={1}>
                     <Flex ml="auto">
-                        <MobileWalletConnectButton />
+                        <WalletConnectButton />
                     </Flex>
                     <CartButtonMobile />
                 </Flex>

@@ -10,9 +10,13 @@ import {
     MenuList,
     MenuItem,
     MenuDivider,
+    Center,
+    Image,
 } from '@chakra-ui/react';
 import Link from 'next/link';
+import { CgProfile } from 'react-icons/cg';
 import { MdOutlinePersonOutline, MdOutlineShield } from 'react-icons/md';
+import { AiFillSetting } from 'react-icons/ai';
 import { AuthorizedAccount } from '../../menu-desktop/components/authorized-account';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';

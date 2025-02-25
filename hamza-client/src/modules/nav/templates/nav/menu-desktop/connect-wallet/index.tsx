@@ -10,8 +10,8 @@ import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
 
-export const DesktopWalletConnectButton = () => {
-    // Update zustand store with Wagmi hook when connected
+export const WalletConnectButton = () => {
+    //Update zustand store with Wagmi hook when connected
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
 
