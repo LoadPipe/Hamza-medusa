@@ -36,18 +36,6 @@ export const ReleaseEscrowDialog = ({
     const [isLoading, setIsLoading] = useState(false);
     const [isReleased, setIsReleased] = useState(false);
     const toast = useToast();
-    const currentChainId = useChainId();
-    const { switchChain } = useSwitchChain();
-
-    const handleSwitchNetwork = (chainId: number) => {
-        if (switchChain) {
-            switchChain({ chainId });
-        } else {
-            console.error(
-                'Network switching is not supported by the current provider.'
-            );
-        }
-    };
 
     const handleReleaseEscrow = async () => {
         setIsLoading(true);
@@ -108,15 +96,6 @@ export const ReleaseEscrowDialog = ({
             setIsReleased(true);
         }
     }, [escrowPayment]);
-
-    useEffect(() => {
-        const paymentChainId = order.payments[0].blockchain_data.chain_id;
-        console.log(paymentChainId);
-        console.log(currentChainId);
-        if (paymentChainId !== currentChainId) {
-            handleSwitchNetwork(paymentChainId);
-        }
-    }, [order, currentChainId]);
 
     return (
         <>
