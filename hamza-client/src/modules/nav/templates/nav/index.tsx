@@ -4,13 +4,23 @@ import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
+// Images
+//import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+//import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
+//import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
+import HamzaHoliday from '@/images/logo/hamza-holiday.svg';
+//  Components
+import HnsDisplay from './menu-desktop/hns-display/index';
 import NavSearchBar from './menu-desktop/components/nav-searchbar';
+import MobileMenu from './menu-mobile/menu/mobile-main-menu';
 import MobileNav from './menu-mobile/mobile-nav';
-import { DesktopWalletConnectButton } from './menu-desktop/connect-wallet';
+import MainMenu from './menu-desktop/main-menu';
+import { WalletConnectButton } from './menu-desktop/connect-wallet';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
+import { headers } from 'next/headers';
 import MobileNavContainer from './mobile-nav-container';
 
 const fetchCart = async () => {
@@ -76,11 +86,10 @@ export default async function Nav() {
                             </Flex>
                         </LocalizedClientLink>
 
-
                         <NavSearchBar />
 
                         <Box ml={'auto'}>
-                            <DesktopWalletConnectButton />
+                            <WalletConnectButton />
                         </Box>
 
                         <Flex flexDirection={'row'} alignItems={'center'}>
@@ -128,10 +137,7 @@ export default async function Nav() {
                                                 color="white"
                                                 fontWeight="700"
                                             >
-                                                <Text
-                                                    fontSize={'10px'}
-                                                    className="cart-quantity"
-                                                >
+                                                <Text fontSize={'10px'} className='cart-quantity'>
                                                     {totalItems}
                                                 </Text>
                                             </Flex>

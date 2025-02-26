@@ -8,7 +8,7 @@ import Thumbnail from '@modules/products/components/thumbnail';
 import { updateLineItem, deleteLineItem } from '@modules/cart/actions';
 import { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text, Divider } from '@chakra-ui/react';
+import { Flex, Text, Divider, useMediaQuery } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import { debounce } from 'lodash';
 import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
@@ -37,6 +37,7 @@ const debouncedChangeQuantity = debounce(
 const Item = ({ item, region, cart_id }: ItemProps) => {
     const [quantity, setQuantity] = useState(item.quantity);
     const setIsUpdating = useCartStore((state) => state.setIsUpdating);
+    const [isMobile] = useMediaQuery('(max-width: 768px)');
 
     const { handle } = item.variant.product;
     // console.log('item quantity: ', item.quantity);
@@ -97,7 +98,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
         >
             <Divider borderColor="#3E3E3E" />
 
-            <Flex my="auto" className='cart-item-container'>
+            <Flex my="auto" className="cart-item-container">
                 {/* <Radio mr="2rem" /> */}
 
                 <LocalizedClientLink href={`/products/${handle}`}>
@@ -139,7 +140,10 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 {item?.title}
                             </Text>
                             <Flex ml="auto">
-                                <DeleteButton id={item?.id} className="delete-button" />
+                                <DeleteButton
+                                    id={item?.id}
+                                    className="delete-button"
+                                />
                             </Flex>
                         </Flex>
 
@@ -153,21 +157,25 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             <Flex width="100%">
                                 <LineItemOptions variant={item?.variant} />
                             </Flex>
-                            <Flex display={{ base: 'none', md: 'flex' }}>
-                                <ItemQuantityButton
-                                    value={quantity}
-                                    onChange={(newQuantity) =>
-                                        changeQuantity(newQuantity)
-                                    }
-                                    min={1}
-                                    max={Math.min(
-                                        item?.variant?.inventory_quantity > 0
-                                            ? item?.variant?.inventory_quantity
-                                            : 100,
-                                        100
-                                    )}
-                                />
-                            </Flex>
+                            {!isMobile && (
+                                <Flex display={{ base: 'none', md: 'flex' }}>
+                                    <ItemQuantityButton
+                                        value={quantity}
+                                        onChange={(newQuantity) =>
+                                            changeQuantity(newQuantity)
+                                        }
+                                        min={1}
+                                        max={Math.min(
+                                            item?.variant?.inventory_quantity >
+                                                0
+                                                ? item?.variant
+                                                      ?.inventory_quantity
+                                                : 100,
+                                            100
+                                        )}
+                                    />
+                                </Flex>
+                            )}
                         </Flex>
 
                         {/* Price Section */}
@@ -195,19 +203,21 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                     </Flex>
                 </Flex>
             </Flex>
-            <Flex display={{ base: 'flex', md: 'none' }} my={'1rem'}>
-                <ItemQuantityButton
-                    value={quantity}
-                    onChange={(newQuantity) => changeQuantity(newQuantity)}
-                    min={1}
-                    max={Math.min(
-                        item?.variant?.inventory_quantity > 0
-                            ? item?.variant?.inventory_quantity
-                            : 100,
-                        100
-                    )}
-                />
-            </Flex>
+            {isMobile && (
+                <Flex display={{ base: 'flex', md: 'none' }} my={'1rem'}>
+                    <ItemQuantityButton
+                        value={quantity}
+                        onChange={(newQuantity) => changeQuantity(newQuantity)}
+                        min={1}
+                        max={Math.min(
+                            item?.variant?.inventory_quantity > 0
+                                ? item?.variant?.inventory_quantity
+                                : 100,
+                            100
+                        )}
+                    />
+                </Flex>
+            )}
         </Flex>
     );
 };

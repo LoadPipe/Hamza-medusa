@@ -5,10 +5,23 @@ import {
 } from '@/lib/util/order-escrow';
 import { getChainId } from '@/web3';
 import { PaymentDefinition } from '@/web3/contracts/escrow';
-import { Button, useDisclosure, useToast } from '@chakra-ui/react';
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    useDisclosure,
+    useToast,
+    Flex,
+    ModalCloseButton,
+    Text,
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Order } from '@/web3/contracts/escrow';
-import { useChainId, useSwitchChain } from 'wagmi';
+import { useSwitchNetwork } from 'wagmi';
 import { updateOrderEscrowStatus } from '@/lib/server';
 import { FaExclamationTriangle, FaQuestionCircle } from 'react-icons/fa';
 import { EscrowStatus } from '@/lib/server/enums';
@@ -36,12 +49,11 @@ export const ReleaseEscrowDialog = ({
     const [isLoading, setIsLoading] = useState(false);
     const [isReleased, setIsReleased] = useState(false);
     const toast = useToast();
-    const currentChainId = useChainId();
-    const { switchChain } = useSwitchChain();
+    const { switchNetwork } = useSwitchNetwork();
 
     const handleSwitchNetwork = (chainId: number) => {
-        if (switchChain) {
-            switchChain({ chainId });
+        if (switchNetwork) {
+            switchNetwork(chainId);
         } else {
             console.error(
                 'Network switching is not supported by the current provider.'
@@ -100,6 +112,12 @@ export const ReleaseEscrowDialog = ({
                     ? error.info?.error?.message || error.message
                     : 'An unknown error occurred';
             setErrorMessage(message);
+
+            // toast({
+            //     title: 'Error during escrow release',
+            //     description: message,
+            //     status: 'error',
+            // });
         }
     };
 
@@ -110,11 +128,16 @@ export const ReleaseEscrowDialog = ({
     }, [escrowPayment]);
 
     useEffect(() => {
-        const paymentChainId = order.payments[0].blockchain_data.chain_id;
-        if (paymentChainId !== currentChainId) {
-            handleSwitchNetwork(paymentChainId);
-        }
-    }, [order, currentChainId]);
+        const checkNetwork = async () => {
+            const chainId = await getChainId();
+            const paymentChainId = order.payments[0].blockchain_data.chain_id;
+
+            if (paymentChainId !== Number(chainId)) {
+                handleSwitchNetwork(paymentChainId);
+            }
+        };
+        checkNetwork();
+    }, [order]);
 
     return (
         <>

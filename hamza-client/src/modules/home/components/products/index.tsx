@@ -10,13 +10,17 @@ import rainbow from '../../../../../public/images/wallet_connect/rainbow.jpeg';
 import wallet from '../../../../../public/images/wallet_connect/wallet.png';
 import Image from 'next/image';
 import ProductCollections from '@modules/collections/product_collection_filter';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
+import { InjectedConnector } from 'wagmi/connectors/injected';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 const RecommendedItems = () => {
     const [storeName, setStoreName] = useState('Legendary Light Design');
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
+    const { connect } = useConnect({
+        connector: new InjectedConnector(),
+    });
 
     //connects wallet if necessary
     const connectWallet = () => {

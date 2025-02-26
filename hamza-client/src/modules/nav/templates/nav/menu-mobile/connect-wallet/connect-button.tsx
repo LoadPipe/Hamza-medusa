@@ -1,11 +1,30 @@
 'use client';
 
-import { Flex } from '@chakra-ui/react';
+import {
+    Button,
+    Flex,
+    Text,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalBody,
+} from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import MobileAccountMenu from '../menu/mobile-account-menu';
+import {
+    getAllowedChainsFromConfig,
+    getBlockchainNetworkName,
+} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { MdOutlineWallet } from 'react-icons/md';
+import { useSwitchNetwork } from 'wagmi';
 
-export const MobileWalletConnectButton = () => {
+export const WalletConnectButton = () => {
+    const { error, isLoading, pendingChainId, switchNetwork } =
+        useSwitchNetwork();
+
+    const switchNetworkId = getAllowedChainsFromConfig()[0];
+    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
+
     return (
         <ConnectButton.Custom>
             {({
@@ -24,10 +43,6 @@ export const MobileWalletConnectButton = () => {
                     chain &&
                     (!authenticationStatus ||
                         authenticationStatus === 'authenticated');
-
-                if (ready && connected && chain.unsupported) {
-                    openChainModal();
-                }
 
                 return (
                     <div
@@ -56,15 +71,8 @@ export const MobileWalletConnectButton = () => {
                                 );
                             }
 
-                            if (chain.unsupported) {
-                                return (
-                                    <button
-                                        onClick={openChainModal}
-                                        type="button"
-                                    >
-                                        Wrong network
-                                    </button>
-                                );
+                            if (ready && connected && chain.unsupported) {
+                                openChainModal();
                             }
 
                             return (

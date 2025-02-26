@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
+import { Flex } from '@chakra-ui/react';
+
 import { Escrow } from '@/modules/order/templates/escrow';
 import { headers } from 'next/headers';
-import { getCustomerOrder, getHamzaCustomer } from '@/lib/server';
+import { getHamzaCustomer } from '@/lib/server';
 import { getRegion } from '@/app/actions';
 import { notFound } from 'next/navigation';
 
@@ -14,25 +16,22 @@ export const metadata: Metadata = {
     description: 'View your Order Escrow',
 };
 
-//This could be refactored to hydration boundries with prefetching
-//Logic and UI should be split
 export default async function EscrowPage({ params }: Props) {
     const nextHeaders = headers();
     const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
         ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : nextHeaders.get('next-url')?.split('/')[1] || '';
-
     const customer = await getHamzaCustomer();
-    const order = await getCustomerOrder(customer.id, params.id);
     const region = await getRegion(countryCode);
 
-    if (!customer || !region || !order) {
+    if (!customer || !region) {
         notFound();
     }
+    // TODO: move the customer / order check here, pass as props
 
     return (
         <>
-            <Escrow order={order} />
+            <Escrow />
         </>
     );
 }
