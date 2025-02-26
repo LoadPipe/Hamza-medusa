@@ -9,7 +9,7 @@ import { ReleaseEscrowDialog } from '../components/escrow/release-escrow-dialog'
 import EscrowStatus from '../components/order-overview/escrow-status';
 import { getEscrowPayment } from '@/lib/util/order-escrow';
 import { Order, PaymentDefinition } from '@/web3/contracts/escrow';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId, useSwitchChain } from 'wagmi';
 import { ModalCoverWalletConnect } from '@/modules/common/components/modal-cover-wallet-connect';
 
 interface EscrowProps {
@@ -29,28 +29,43 @@ export const Escrow = ({ order }: EscrowProps) => {
     const [escrowPayment, setEscrowPayment] =
         useState<PaymentDefinition | null>(null);
 
+    const currentChainId = useChainId();
+    const { switchChain } = useSwitchChain();
+
+    const handleSwitchNetwork = (chainId: number) => {
+        if (switchChain) {
+            switchChain({ chainId });
+        } else {
+            console.error(
+                'Network switching is not supported by the current provider.'
+            );
+        }
+    };
+
+    const fetchCustomerAndOrder = async () => {
+        try {
+            // Fetch escrow payment
+            const escrowPayment = await getEscrowPayment(order);
+            setEscrowPaymentExist(!!escrowPayment);
+            if (!escrowPayment) return;
+            setEscrowPayment(escrowPayment);
+        } catch (error) {
+            console.error(
+                'Error fetching customer, order, or escrow payment:',
+                error
+            );
+        }
+    };
+
     useEffect(() => {
-        const fetchCustomerAndOrder = async () => {
-            try {
-                // Fetch escrow payment
-                const escrowPayment = await getEscrowPayment(order);
-                setEscrowPaymentExist(!!escrowPayment);
-                if (!escrowPayment) return;
-                setEscrowPayment(escrowPayment);
-            } catch (error) {
-                console.error(
-                    'Error fetching customer, order, or escrow payment:',
-                    error
-                );
-            }
-        };
-
-        fetchCustomerAndOrder();
-    }, [order]);
-
-    console.log('order', order);
-
-    console.log('escrow payment', escrowPayment);
+        const paymentChainId = order.payments[0].blockchain_data.chain_id;
+        if (paymentChainId !== currentChainId) {
+            handleSwitchNetwork(paymentChainId);
+        }
+        if (paymentChainId === currentChainId) {
+            fetchCustomerAndOrder();
+        }
+    }, [order, currentChainId]);
 
     return (
         <Flex
@@ -87,27 +102,6 @@ export const Escrow = ({ order }: EscrowProps) => {
                     </>
                 )}
 
-                {/* {customerExist === null ? (
-                    <Text>Customer loading...</Text>
-                ) : customerExist === false ? (
-                    <Text>Customer not found</Text>
-                ) : orderExist === null ? (
-                    <Text>Order loading...</Text>
-                ) : orderExist === false ? (
-                    <Text>Order not found</Text>
-                ) : orderExist === true && !order ? (
-                    <Text>
-                        The order ({id}) does not belong to this customer
-                    </Text>
-                ) : (
-                    order && (
-                        <>
-                            {order.id}
-                            <OrderComponent order={order} />
-                        </>
-                    )
-                )} */}
-
                 {/* Escrow Payment Status */}
                 {escrowPayment === null ? (
                     <Text>Escrow status loading...</Text>
@@ -120,12 +114,12 @@ export const Escrow = ({ order }: EscrowProps) => {
                     </Text>
                 ) : escrowPaymentExist === true && escrowPayment && order ? (
                     <>
-                        {/* {escrowPayment.payerReleased === false && (
+                        {escrowPayment.payerReleased === false && (
                             <ReleaseEscrowDialog
                                 order={order}
                                 escrowPayment={escrowPayment}
                             />
-                        )} */}
+                        )}
                         <EscrowStatus payment={escrowPayment} />
                     </>
                 ) : null}

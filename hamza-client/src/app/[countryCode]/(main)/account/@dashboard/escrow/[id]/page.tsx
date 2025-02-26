@@ -24,18 +24,17 @@ export default async function EscrowPage({ params }: Props) {
 
     // const currentChainId = await useChainId();
     // const { switchChain } = await useSwitchChain();
-    // const customer = await getHamzaCustomer();
-    // const order = await getCustomerOrder(customer.id, params.id);
-    // const region = await getRegion(countryCode);
+    const customer = await getHamzaCustomer();
+    const order = await getCustomerOrder(customer.id, params.id);
+    const region = await getRegion(countryCode);
 
-    // if (!customer || !region || !order) {
-    //     notFound();
-    // }
+    if (!customer || !region || !order) {
+        notFound();
+    }
 
     return (
         <>
-            <p>hello</p>
-            {/* <Escrow order={order} /> */}
+            <Escrow order={order} />
         </>
     );
 }
