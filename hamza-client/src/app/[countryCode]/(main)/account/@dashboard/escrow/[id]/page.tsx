@@ -22,17 +22,20 @@ export default async function EscrowPage({ params }: Props) {
         ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : nextHeaders.get('next-url')?.split('/')[1] || '';
 
-    const customer = await getHamzaCustomer();
-    const order = await getCustomerOrder(customer.id, params.id);
-    const region = await getRegion(countryCode);
+    // const currentChainId = await useChainId();
+    // const { switchChain } = await useSwitchChain();
+    // const customer = await getHamzaCustomer();
+    // const order = await getCustomerOrder(customer.id, params.id);
+    // const region = await getRegion(countryCode);
 
-    if (!customer || !region || !order) {
-        notFound();
-    }
+    // if (!customer || !region || !order) {
+    //     notFound();
+    // }
 
     return (
         <>
-            <Escrow order={order} />
+            <p>hello</p>
+            {/* <Escrow order={order} /> */}
         </>
     );
 }

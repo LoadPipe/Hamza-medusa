@@ -48,6 +48,10 @@ export const Escrow = ({ order }: EscrowProps) => {
         fetchCustomerAndOrder();
     }, [order]);
 
+    console.log('order', order);
+
+    console.log('escrow payment', escrowPayment);
+
     return (
         <Flex
             flexDir={'column'}
@@ -116,12 +120,12 @@ export const Escrow = ({ order }: EscrowProps) => {
                     </Text>
                 ) : escrowPaymentExist === true && escrowPayment && order ? (
                     <>
-                        {escrowPayment.payerReleased === false && (
+                        {/* {escrowPayment.payerReleased === false && (
                             <ReleaseEscrowDialog
                                 order={order}
                                 escrowPayment={escrowPayment}
                             />
-                        )}
+                        )} */}
                         <EscrowStatus payment={escrowPayment} />
                     </>
                 ) : null}

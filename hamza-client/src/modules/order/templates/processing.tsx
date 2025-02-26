@@ -44,6 +44,8 @@ import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import { upperCase } from 'lodash';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import Link from 'next/link';
+
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
@@ -112,13 +114,21 @@ const Processing = ({
     const processingOrder = cachedData?.Processing || [];
 
     const mutation = useMutation({
-        mutationFn: async ({ order_id, cancel_reason }: { order_id: string; cancel_reason: string }) => {
+        mutationFn: async ({
+            order_id,
+            cancel_reason,
+        }: {
+            order_id: string;
+            cancel_reason: string;
+        }) => {
             return cancelOrder(order_id, cancel_reason);
         },
         onSuccess: async () => {
             try {
                 // Refetch orders after a successful cancellation
-                await queryClient.invalidateQueries({ queryKey: ['fetchAllOrders', customer] });
+                await queryClient.invalidateQueries({
+                    queryKey: ['fetchAllOrders', customer],
+                });
 
                 setIsModalOpen(false);
                 setSelectedOrderId(null);
@@ -130,7 +140,6 @@ const Processing = ({
             console.error('Error cancelling order: ', error);
         },
     });
-
 
     // Utility function to format status values
     const formatStatus = (prefix: string, status: any) => {
@@ -347,25 +356,28 @@ const Processing = ({
                                                         {order.escrow_status &&
                                                             order.escrow_status !==
                                                                 'released' && (
-                                                                <Box
-                                                                    as="a"
+                                                                <Link
                                                                     href={`/account/escrow/${order.id}`}
-                                                                    border="1px solid"
-                                                                    borderColor="white"
-                                                                    borderRadius="37px"
-                                                                    color="white"
-                                                                    px="4"
-                                                                    py="2"
-                                                                    textAlign="center"
-                                                                    _hover={{
-                                                                        textDecoration:
-                                                                            'none',
-                                                                        bg: 'primary.teal.600', // Adjust the hover color as needed
-                                                                    }}
                                                                 >
-                                                                    View Escrow
-                                                                    Details
-                                                                </Box>
+                                                                    <Box
+                                                                        border="1px solid"
+                                                                        borderColor="white"
+                                                                        borderRadius="37px"
+                                                                        color="white"
+                                                                        px="4"
+                                                                        py="2"
+                                                                        textAlign="center"
+                                                                        _hover={{
+                                                                            textDecoration:
+                                                                                'none',
+                                                                            bg: 'primary.teal.600', // Adjust the hover color as needed
+                                                                        }}
+                                                                    >
+                                                                        View
+                                                                        Escrow
+                                                                        Details
+                                                                    </Box>
+                                                                </Link>
                                                             )}
                                                     </Flex>
                                                 ) : null}

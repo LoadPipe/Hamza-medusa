@@ -111,6 +111,8 @@ export const ReleaseEscrowDialog = ({
 
     useEffect(() => {
         const paymentChainId = order.payments[0].blockchain_data.chain_id;
+        console.log(paymentChainId);
+        console.log(currentChainId);
         if (paymentChainId !== currentChainId) {
             handleSwitchNetwork(paymentChainId);
         }
