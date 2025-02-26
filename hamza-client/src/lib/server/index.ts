@@ -854,20 +854,15 @@ export async function getSession() {
 
 // Customer actions
 export async function getHamzaCustomer(includeAddresses: boolean = true) {
-    console.log("getHamzaCustomer: Starting function");
     const headers = getMedusaHeaders(['customer']);
-    console.log("getHamzaCustomer: Headers generated:", headers);
 
     const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
-    console.log("getHamzaCustomer: Decoded token:", token);
 
     const customer_id: string = token?.customer_id ?? '';
-    console.log("getHamzaCustomer: Customer ID:", customer_id);
 
     let response = null;
 
     if (customer_id?.length) {
-        console.log("getHamzaCustomer: Making secure call with customer_id and include_addresses =", includeAddresses);
         try {
             response = await getSecure('/custom/customer', {
                 customer_id,

@@ -78,6 +78,7 @@ async function getNonce() {
 }
 
 export function RainbowWrapper({children}: { children: React.ReactNode }) {
+
     // ***Ensures data is not shared between different users and requests***
     // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
     const queryClientRef = React.useRef<QueryClient>();
@@ -101,16 +102,19 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
     const verifyMutation = useVerifyMutation();
 
-    const {
-        walletAddress,
-        authData,
-        isHydrated,
-        setCustomerAuthData,
-        setCustomerPreferredCurrency,
-        setWhitelistConfig,
-        setHnsAvatar,
-        setHnsName,
-    } = useCustomerAuthStore();
+    const walletAddress = useCustomerAuthStore((state) => state.authData.wallet_address);
+    const isAuthenticated = useCustomerAuthStore((state) => state.authData.status === "authenticated");
+    const isHydrated = useCustomerAuthStore((state) => state.isHydrated);
+    const setCustomerAuthData = useCustomerAuthStore((state) => state.setCustomerAuthData);
+
+
+    // Using local storage
+    useEffect(() => {
+        localStorage.setItem('authData', JSON.stringify(isAuthenticated));
+        console.log('Updated localStorage authData:', isAuthenticated);
+    }, [isAuthenticated]);
+
+
     // Enabling devtools in build mode $ window.toggleDevtools()
     // TODO: I'm moving really fast here, and focusing on the bug, this should be removed and replaced with env variable
     const [showDevtools, setShowDevtools] = React.useState(false)
@@ -194,25 +198,34 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     //     gcTime: 0,
     // });
 
+
+    // Ignore responses after unmount
+    // Ensuring only valid requests update state
+    // TODO: While this solution means we don't require API function changes, we should be implementing Signals in our Axios wrapper...
     useEffect(() => {
-        console.log('Saved wallet address', clientWallet);
-        if (clientWallet?.length && verifyMutation.isSuccess) {
-            getHamzaCustomer().then((hamzaCustomer) => {
-                getCustomer().then((customer) => {
-                    if (
-                        !customer ||
-                        !hamzaCustomer ||
-                        customer?.id !== hamzaCustomer?.id
-                    ) {
-                        console.log('Hamza Customer: ', hamzaCustomer);
-                        console.log('Medusa Customer: ', customer);
-                        clearLogin();
-                    }
-                });
+        let isMounted = true; // Prevent state updates after unmount
+
+        console.log("Saved wallet address:", walletAddress);
+
+        if (!walletAddress || !verifyMutation.isSuccess) return;
+
+        Promise.all([getHamzaCustomer(), getCustomer()])
+            .then(([hamzaCustomer, customer]) => {
+                if (!isMounted) return; // Ignore outdated responses if component unmounted
+
+                if (!customer || !hamzaCustomer || customer?.id !== hamzaCustomer?.id) {
+                    clearLogin();
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching customer data:", error);
             });
-        }
-        console.log(authData.wallet_address);
-    }, [authData.wallet_address, verifyMutation.isSuccess])
+
+        return () => {
+            isMounted = false; // Cleanup function to prevent memory leaks
+        };
+    }, [walletAddress, verifyMutation.isSuccess]);
+
 
     const {
         refetch: fetchNonce,
@@ -236,14 +249,14 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
         enabled: false, // Disable automatic fetching
     });
 
-    useEffect(() => {
-        console.log('Auth Data on mount:', authData);
-        console.log('Is Hydrated:', isHydrated);
-    }, [authData, isHydrated]);
+    // useEffect(() => {
+    //     console.log('Auth Data on mount:', authData);
+    //     console.log('Is Hydrated:', isHydrated);
+    // }, [authData, isHydrated]);
 
     useEffect(() => {
-        console.log('Query enabled?', Boolean(authData.wallet_address?.length > 0) && isHydrated);
-    }, [authData]);
+        console.log('Query enabled?', Boolean(walletAddress?.length > 0) && isHydrated);
+    }, [walletAddress]);
     // }, [authData, isHydrated]);
 
     // useEffect(() => {
@@ -295,7 +308,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
             });
         },
 
-        verify: async ({ message, signature }) => {
+        verify: async ({message, signature}) => {
             // Now use the mutation from the top level
             try {
                 await verifyMutation.mutateAsync({
@@ -314,27 +327,26 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
             alert('STOP')
             console.trace('signOut called');
 
-            if (authData.status !== 'authenticated') {
+            if (!isAuthenticated) {
                 console.log("Preventing unnecessary logout - status still loading...");
                 return;
             }
             if (verifyMutation.isPending) return
             // if (isHydrated) {
-                setCustomerAuthData({
-                    ...authData,
-                    status: 'unauthenticated',
-                    token: '',
-                    wallet_address: '',
-                    customer_id: '',
-                    is_verified: false,
-                });
-                await signOut();
-                router.replace('/');
-                return;
+            setCustomerAuthData({
+                ...authData,
+                status: 'unauthenticated',
+                token: '',
+                wallet_address: '',
+                customer_id: '',
+                is_verified: false,
+            });
+            await signOut();
+            router.replace('/');
+            return;
             // }
         },
     });
-
 
 
     const CustomAvatar: AvatarComponent = ({address, ensImage, size}) => {
@@ -347,7 +359,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                 <QueryClientProvider client={queryClientRef.current}>
                     <RainbowKitAuthenticationProvider
                         adapter={walletSignature}
-                        status={authData.status}
+                        status={isAuthenticated}
                     >
                         <RainbowKitProvider
                             avatar={CustomAvatar}
