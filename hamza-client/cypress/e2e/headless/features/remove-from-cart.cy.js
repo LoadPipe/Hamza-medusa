@@ -3,54 +3,57 @@ import { elementCheckByElementClass } from '../../../support/utils/element-check
 import { buttonClickByElementText } from '../../../support/utils/buttons/button-click-by-element-text';
 
 describe('Remove from cart', () => {
-	it('fetches product with handle [drone]', () => {
-			cy.visit('/en/products/drone');
-			elementCheckByElementText('DJI Mini 3 Pro');
+    it('fetches product with handle [drone]', () => {
+        cy.visit('/en/products/drone');
+        elementCheckByElementText('DJI Mini 3 Pro');
+    });
 
-	});
+    it('fetches product with handle [hyper-x-mouse]', () => {
+        cy.visit('/en/products/hyper-x-mouse');
+        elementCheckByElementText(
+            'HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight'
+        );
+    });
 
-	it('fetches product with handle [hyper-x-mouse]', () => {
-			cy.visit('/en/products/hyper-x-mouse');
-			elementCheckByElementText('HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight');
-	});
+    it('adds 2 different products to cart and deletes from cart', () => {
+        // Drone
+        cy.visit('/en/products/drone');
 
-	it('adds 2 different products to cart and deletes from cart', () => {
-			// Drone
-			cy.visit('/en/products/drone');
+        buttonClickByElementText('Add to Cart');
 
-			buttonClickByElementText('Add to Cart');
+        // Check for modal popup with "Added to Cart" text, retry 3 times with 4s intervals
+        elementCheckByElementText('Added to Cart');
 
-			// Check for modal popup with "Added to Cart" text, retry 3 times with 4s intervals
-			elementCheckByElementText('Added to Cart');
+        // HyperX Mouse
+        cy.visit('/en/products/hyper-x-mouse');
 
-			// HyperX Mouse
-			cy.visit('/en/products/hyper-x-mouse');
+        buttonClickByElementText('Add to Cart');
 
-			buttonClickByElementText('Add to Cart');
+        // Check for modal popup with "Added to Cart" text, retry 5 times with 4s intervals
+        elementCheckByElementText('Added to Cart');
 
-			// Check for modal popup with "Added to Cart" text, retry 5 times with 4s intervals
-			elementCheckByElementText('Added to Cart');
+        // Cart ----------------------------------------------------------------
+        cy.visit('/en/cart');
 
-			// Cart ----------------------------------------------------------------
-			cy.visit('/en/cart');
+        // check drone -------------------------------------------------------------
+        elementCheckByElementClass('.cart-item-container', {
+            findByChild: 'DJI Mini 3 Pro',
+            scrollIntoView: true,
+        })
+            .parents('.cart-item-container')
+            .find('.delete-button')
+            .click();
 
-			// check drone -------------------------------------------------------------
-			elementCheckByElementClass('.cart-item-container', {
-                findByChild: 'DJI Mini 3 Pro',
-                scrollIntoView: true,
-            })
-                .parents('.cart-item-container')
-                .find('.delete-button')
-                .click();
+        cy.wait(2000);
 
-			// check hyperx mouse
-			elementCheckByElementClass('.cart-item-container', {
-                findByChild:
-                    'HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight',
-                scrollIntoView: true,
-            })
-                .parents('.cart-item-container')
-                .find('.delete-button')
-                .click();
-	});
+        // check hyperx mouse
+        elementCheckByElementClass('.cart-item-container', {
+            findByChild:
+                'HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight',
+            scrollIntoView: true,
+        })
+            .parents('.cart-item-container')
+            .find('.delete-button')
+            .click();
+    });
 });
