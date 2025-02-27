@@ -23,6 +23,9 @@ describe('Account Profile', () => {
         buttonClickByElementText('Update');
         cy.wait(1000);
         cy.reload();
+
+        cy.wait(3000);
+
         elementCheckByElementClass('.first-name-input input', {
             timeout: 30000,
         }).should('have.value', 'John');
@@ -41,6 +44,9 @@ describe('Account Profile', () => {
         buttonClickByElementText('Update');
         cy.wait(1000);
         cy.reload();
+
+        cy.wait(3000);
+
         elementCheckByElementClass('.last-name-input input', {
             timeout: 30000,
         }).should('have.value', 'Doe');
