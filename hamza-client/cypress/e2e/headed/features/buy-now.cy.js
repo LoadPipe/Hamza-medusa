@@ -13,22 +13,6 @@ describe('Product page', () => {
 
         connectWallet();
 
-        // Simulate wallet selection (MetaMask in this case)
-        cy.get('body').then(($body) => {
-            if ($body.find('button:contains("MetaMask")').length) {
-                buttonClickByElementText('MetaMask');
-            }
-        });
-
-        buttonClickByElementText('Sign message');
-
-        elementCheckByElementText('Verify your account', {
-            exist: false,
-            scrollIntoView: false,
-            beVisible: false,
-            timeout: 30000,
-        });
-
         elementCheckByElementText('Medusa T-Shirt');
     });
 });

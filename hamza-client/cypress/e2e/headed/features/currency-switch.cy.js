@@ -12,22 +12,6 @@ describe('Metamask login then user profile', () => {
     it('should connect wallet and display account information', () => {
         connectWallet();
 
-        // Simulate wallet selection (MetaMask in this case)
-        cy.get('body').then(($body) => {
-            if ($body.find('button:contains("MetaMask")').length) {
-                buttonClickByElementText('MetaMask');
-            }
-        });
-
-        buttonClickByElementText('Sign message');
-
-        elementCheckByElementText('Verify your account', {
-            exist: false,
-            scrollIntoView: false,
-            beVisible: false,
-            timeout: 30000,
-        });
-
         //open currency selector and select USDC
         buttonClickByElementClass('.currency-selector');
 
