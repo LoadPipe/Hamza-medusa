@@ -2,16 +2,10 @@
 
 import React from 'react';
 import ProductCardGroup from '@/modules/products/components/product-group';
-import { Flex } from '@chakra-ui/react';
+import {Flex} from '@chakra-ui/react';
 import FilterBar from './components/filter-bar/FilterBar';
-import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
 
-const SearchAndFilterPanel = ({
-    dehydratedState,
-}: {
-    dehydratedState: any;
-}) => {
-    const queryClient = new QueryClient();
+const SearchAndFilterPanel = ({}) => {
 
     return (
         <Flex
@@ -22,10 +16,8 @@ const SearchAndFilterPanel = ({
             justifyContent={'center'}
             alignItems={'center'}
         >
-            <FilterBar />
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <ProductCardGroup />
-            </HydrationBoundary>
+            <FilterBar/>
+                <ProductCardGroup/>
         </Flex>
     );
 };

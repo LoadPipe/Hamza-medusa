@@ -218,6 +218,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                             href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${review?.product?.handle}`}
                                         >
                                             <Image
+                                                alt={review?.product?.title ? `${review?.product?.title} thumbnail` : 'Product image'}
                                                 rounded="lg"
                                                 width={{
                                                     base: '72px',
@@ -416,6 +417,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${item.variant.product.handle}`}
                                                 >
                                                     <Image
+                                                        alt={item?.title ? `${item.title} thumbnail` : 'Product image'}
                                                         rounded="lg"
                                                         width={{
                                                             base: '72px',

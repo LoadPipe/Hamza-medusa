@@ -871,6 +871,19 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
     return response ?? {};
 }
 
+export async function getCombinedCustomer(){
+    // 1. Get the specialized `Hamza` data
+    const hamzaCustomer = await getHamzaCustomer();
+
+    // 2. Use the same cookie / token to fetch the standard Medusa customer?
+    const medusaCustomer = await getCustomer();
+
+    //3. Log it to the Client CLI....
+    console.log(`hamzaCustomer ${hamzaCustomer} medusaCustomer ${medusaCustomer}`)
+
+    return { hamzaCustomer, medusaCustomer }
+}
+
 export async function getNonSecureCustomer(includedAddresses: boolean = true) {
     const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
         customer_id: '',

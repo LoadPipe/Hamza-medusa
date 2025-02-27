@@ -5,7 +5,8 @@ import { useParams } from 'next/navigation';
 import { FaCheckCircle } from 'react-icons/fa';
 
 type StoreProps = {
-    store: string;
+    storeName: string;
+    storeHandle:string;
     icon: string;
 };
 
@@ -15,7 +16,7 @@ const StoreBanner = (props: StoreProps) => {
     const [isLoading, setIsLoading] = useState(true); // State to track loading
 
     const navigateToVendor = () => {
-        router.push(`/${countryCode}/store/${props.store}`);
+        router.push(`/${countryCode}/store/${props.storeHandle}`);
     };
 
     return (
@@ -62,7 +63,7 @@ const StoreBanner = (props: StoreProps) => {
                             fontWeight="bold"
                             noOfLines={1}
                         >
-                            {props.store}
+                            {props.storeName}
                         </Text>
                         <Flex
                             display={{ base: 'none', md: 'flex' }}
