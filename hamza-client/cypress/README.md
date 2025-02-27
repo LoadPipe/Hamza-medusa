@@ -210,3 +210,23 @@ This method helps check to see if an element with a certain text exist.
     timeout?: number          | default=10000;
 }): any
 ```
+
+### Selecting input or textarea fields
+
+Beyond checking content, I also use elementChecks for selecting fields like input fields.
+
+I found that using findByChild didn't work with "input". So I suspect that this will also work with "textarea" as well.
+
+```Typescript
+// clears and input new text
+elementCheckByElementClass('.last-name-input input', {
+		timeout: 30000,
+})
+		.clear()
+		.type('Doe');
+
+// detects value in the input
+elementCheckByElementClass('.last-name-input input', {
+		timeout: 30000,
+}).should('have.value', 'Doe');
+```
