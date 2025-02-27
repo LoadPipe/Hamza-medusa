@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     Skeleton,
@@ -9,33 +9,33 @@ import {
     GridItem,
     Flex,
 } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import {useQuery} from '@tanstack/react-query';
+import {formatCryptoPrice} from '@lib/util/get-product-price';
+import {useCustomerAuthStore} from '@/zustand/customer-auth/customer-auth';
 import ProductCard from '../product-card';
 import useHomeProductsPage from '@/zustand/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
-import { getAllProducts } from '@/lib/server';
+import {getAllProducts} from '@/lib/server';
 import useProductGroup from '@/zustand/products/product-group/product-group';
 import useProductFilterModal from '@/zustand/products/filter/product-filter';
-import { useSearchParams } from 'next/navigation';
-import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
+import {useSearchParams} from 'next/navigation';
+import {formatPriceBetweenCurrencies} from '@/lib/util/prices';
 
 const ProductCardGroup = ({
-                              columns = { base: 2, lg: 4 },
-                              gap = { base: 4, md: '25.5px' },
-                              skeletonCount = 8,
-                              skeletonHeight = { base: '134.73', md: '238px' },
-                              visibleProductCountInitial = 16,
-                              padding = { base: '1rem', md: '1rem' },
+  columns = {base: 2, lg: 4},
+  gap = {base: 4, md: '25.5px'},
+  skeletonCount = 8,
+  skeletonHeight = {base: '134.73', md: '238px'},
+  visibleProductCountInitial = 16,
+  padding = {base: '1rem', md: '1rem'},
                           }) => {
-    const { preferred_currency_code } = useCustomerAuthStore();
-    const { categorySelect, setCategorySelect } = useProductGroup();
+    const {preferred_currency_code} = useCustomerAuthStore();
+    const {categorySelect, setCategorySelect} = useProductGroup();
     const [visibleProductsCount, setVisibleProductsCount] = useState(
         visibleProductCountInitial,
     );
 
-    const { rangeUpper, rangeLower } = useProductFilterModal();
+    const {rangeUpper, rangeLower} = useProductFilterModal();
 
     const searchParams = useSearchParams();
     const categoryFromUrl = searchParams.get('category');
@@ -46,7 +46,7 @@ const ProductCardGroup = ({
         }
     }, [categoryFromUrl, setCategorySelect]);
 
-    const { data, error, isLoading } = useQuery({
+    const {data, error, isLoading} = useQuery({
         queryKey: ['categories', categorySelect, rangeUpper, rangeLower],
         queryFn: () =>
             getAllProducts(
@@ -63,7 +63,7 @@ const ProductCardGroup = ({
     if (isLoading) {
         return (
             <Flex
-                mt={{ base: '0', md: '1rem' }}
+                mt={{base: '0', md: '1rem'}}
                 mb={'4rem'}
                 maxW={'1280px'}
                 width="100%"
@@ -80,22 +80,22 @@ const ProductCardGroup = ({
                     }}
                     gap={gap}
                 >
-                    {Array.from({ length: skeletonCount }).map((_, index) => (
+                    {Array.from({length: skeletonCount}).map((_, index) => (
                         <GridItem
                             key={index}
                             minHeight="243.73px"
-                            height={{ base: '100%', md: '399px' }}
+                            height={{base: '100%', md: '399px'}}
                             width="100%"
                             borderRadius="16px"
                             overflow="hidden"
                             backgroundColor="#121212"
                         >
-                            <Skeleton height={skeletonHeight} width="100%" />
-                            <Box p={{ base: '2', md: '4' }}>
+                            <Skeleton height={skeletonHeight} width="100%"/>
+                            <Box p={{base: '2', md: '4'}}>
                                 <SkeletonText
-                                    mt={{ base: '1', md: '4' }}
+                                    mt={{base: '1', md: '4'}}
                                     noOfLines={2}
-                                    spacing={{ base: '3', md: '4' }}
+                                    spacing={{base: '3', md: '4'}}
                                 />
                             </Box>
                         </GridItem>
@@ -107,7 +107,7 @@ const ProductCardGroup = ({
 
     return (
         <Flex
-            mt={{ base: '0', md: '1rem' }}
+            mt={{base: '0', md: '1rem'}}
             mb={'4rem'}
             maxW={'1280px'}
             width="100%"
@@ -115,7 +115,7 @@ const ProductCardGroup = ({
             justifyContent={'center'}
             alignItems={'center'}
             className="product-cards"
-            px={{ base: padding.base, md: padding.md }}
+            px={{base: padding.base, md: padding.md}}
         >
             <Grid
                 maxWidth={'1256.52px'}
@@ -162,9 +162,9 @@ const ProductCardGroup = ({
                         <GridItem
                             key={index}
                             minHeight={'243.73px'}
-                            height={{ base: '100%', md: '399px' }}
+                            height={{base: '100%', md: '399px'}}
                             width="100%"
-                            my={{ base: '2', md: '0' }}
+                            my={{base: '2', md: '0'}}
                         >
                             <ProductCard
                                 key={index}

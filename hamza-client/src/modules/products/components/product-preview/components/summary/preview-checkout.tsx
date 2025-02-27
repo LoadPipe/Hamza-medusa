@@ -8,7 +8,6 @@ import { addToCart, getOrSetCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
-import { Variant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
@@ -26,18 +25,19 @@ import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '@/modules/terms-of-service/templates/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
-import useWishlistStore, {
-    WishlistProduct,
-} from '@/zustand/wishlist/wishlist-store';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { Cart } from '@medusajs/medusa';
+import { useQueryClient } from '@tanstack/react-query';
+import { Product } from '@lib/schemas/product';
 
 interface PreviewCheckoutProps {
     productId: string;
     selectedVariantImage: string;
     setSelectedVariantImage: (imageUrl: string) => void;
+    handle: string;
 }
 
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
@@ -45,7 +45,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     productId,
     selectedVariantImage,
     setSelectedVariantImage,
+    handle,
 }) => {
+    const queryClient = useQueryClient();
+    const product = queryClient.getQueryData<Product>(['product', handle]);
+
     console.log(
         'PreviewCheckout component rendered with productId:',
         productId
@@ -74,9 +78,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
     const [usdPrice, setUsdPrice] = useState<string | null>(null);
-    const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
-        null
-    );
+    const [selectedVariant, setSelectedVariant] = useState<
+        Product['variants'][number] | null
+    >(null);
 
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
@@ -97,7 +101,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         setVariantId('');
         setSelectedVariant(null);
         setSelectedVariantImage('');
-    }, [productData]);
+    }, [product, setVariantId, setSelectedVariantImage]);
 
     useEffect(() => {
         const fetchProductReview = async () => {
@@ -130,8 +134,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const variantRecord = useMemo(() => {
         const map: Record<string, Record<string, string>> = {};
-        if (productData && productData.variants) {
-            for (const variant of productData.variants) {
+        if (product && product.variants) {
+            for (const variant of product.variants) {
                 if (!variant.options || !variant.id) continue;
 
                 const temp: Record<string, string> = {};
@@ -145,7 +149,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
             return map;
         }
-    }, [productData, variantId]);
+    }, [product]);
 
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
@@ -159,16 +163,16 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         if (checkVariantId) {
             setVariantId(checkVariantId);
         }
-    }, [options]);
+    }, [options, variantRecord, setVariantId]);
 
     useEffect(() => {
-        if (productData && productData.variants) {
+        if (product && product.variants) {
             if (!variantId) {
                 // Initially setting the variantId if it's not set
-                setVariantId(productData.variants[0].id);
+                setVariantId(product.variants[0].id);
             } else {
                 // Finding the variant that matches the current variantId
-                let selectedProductVariant = productData.variants.find(
+                let selectedProductVariant = product.variants.find(
                     (v: any) => v.id === variantId
                 );
 
@@ -194,7 +198,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : (preferred_currency_code ?? 'usdc')
+                            : preferred_currency_code ?? 'usdc'
                     );
 
                     // Update USD price if the preferred currency is 'eth'
@@ -214,7 +218,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 }
             }
         }
-    }, [productData, variantId, preferred_currency_code]); // Adding preferred_currency_code to dependencies if it can change
+    }, [product, variantId, preferred_currency_code]); // Adding preferred_currency_code to dependencies if it can change
 
     const handleAddToCart = async (showPopup: boolean = true) => {
         if (!selectedVariant) {
@@ -237,31 +241,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.error('Error adding to cart:', error);
         }
     };
-
-    const whitelistedProductHandler = async () => {
-        let data = await getStore(productData.id);
-        // console.log(data);
-
-        if (data.status == true) {
-            console.log('white list config ', whitelist_config);
-            const whitelistedProduct =
-                whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
-                    ? true
-                    : false;
-
-            // console.log('white listed product ', whitelistedProduct);
-
-            setIsWhitelisted(whitelistedProduct);
-        }
-        return;
-    };
-
-    const inStock =
-        selectedVariant && selectedVariant.inventory_quantity > 0
-            ? true
-            : false;
-
     useEffect(() => {
         if (
             authData.status == 'authenticated' &&
@@ -296,7 +275,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData.id]);
 
-    const convertToPriceDictionary = (selectedVariant: Variant | null) => {
+    const convertToPriceDictionary = (
+        selectedVariant: Product['variants'][number] | null
+    ) => {
         const output: { [key: string]: number } = {};
         if (selectedVariant) {
             for (let price of selectedVariant.prices) {
@@ -328,6 +309,72 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         fetchCart();
     }, [countryCode]);
 
+    if (!product) {
+        return <Spinner />;
+    }
+
+    const whitelistedProductHandler = async () => {
+        let data = await getStore(product?.id);
+        // console.log(data);
+
+        if (data.status == true) {
+            console.log('white list config ', whitelist_config);
+            const whitelistedProduct =
+                whitelist_config.is_whitelisted &&
+                whitelist_config.whitelisted_stores.includes(data.data)
+                    ? true
+                    : false;
+
+            // console.log('white listed product ', whitelistedProduct);
+
+            setIsWhitelisted(whitelistedProduct);
+        }
+        return;
+    };
+
+    const inStock =
+        selectedVariant && selectedVariant.inventory_quantity > 0
+            ? true
+            : false;
+
+    const getValidValuesForOption = (optionId: string): string[] => {
+        const mainOptionId = productData.options[0]?.id;
+
+        // For the main variant, show all available values.
+        if (optionId === mainOptionId) {
+            const mainOption = productData.options.find(
+                (opt: any) => opt.id === optionId
+            );
+            return mainOption
+                ? mainOption.values.map((val: any) => val.value)
+                : [];
+        }
+
+        // For sub variant options, filter based on the main variant selection.
+        const mainSelection = options[mainOptionId];
+        const validValues = new Set<string>();
+        productData.variants.forEach((variant: any) => {
+            // Only consider variants that match the main variant selection.
+            const mainVariantOption = variant.options.find(
+                (opt: any) => opt.option_id === mainOptionId
+            );
+            if (
+                mainVariantOption &&
+                mainVariantOption.value === mainSelection
+            ) {
+                // Find the value for the current sub variant option.
+                const subVariantOption = variant.options.find(
+                    (opt: any) => opt.option_id === optionId
+                );
+                if (subVariantOption) {
+                    validValues.add(subVariantOption.value);
+                }
+            }
+        });
+
+        return Array.from(validValues);
+    };
+
     return (
         <Flex
             padding={{ base: '0', md: '2rem' }}
@@ -345,7 +392,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     fontSize={'16px'}
                     color="white"
                 >
-                    {productData.title}
+                    {product.title}
                 </Heading>
                 <Heading
                     display={{ base: 'none', md: 'block' }}
@@ -381,28 +428,26 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             ml="auto"
                         >
                             {wishlist.products.find(
-                                (a) => a.id == productData?.id
+                                (a) => a.id == product?.id
                             ) ? (
                                 <BiSolidHeart
                                     size={'22px'}
                                     onClick={() => {
                                         removeWishlistItemMutation.mutate({
-                                            id: productData?.id ?? '',
+                                            id: product?.id ?? '',
                                             description:
-                                                productData?.description ?? '',
-                                            handle: productData?.handle ?? '',
-                                            thumbnail:
-                                                productData?.thumbnail ?? '',
+                                                product?.description ?? '',
+                                            handle: product?.handle ?? '',
+                                            thumbnail: product?.thumbnail ?? '',
                                             variantThumbnail:
                                                 selectedVariantImage,
-                                            title: productData?.title ?? '',
+                                            title: product?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
                                             productVariantId:
                                                 wishlist.products.find(
-                                                    (i) =>
-                                                        i.id == productData?.id
+                                                    (i) => i.id == product?.id
                                                 )?.productVariantId || null,
                                         });
                                     }}
@@ -413,15 +458,14 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                     size={'22px'}
                                     onClick={() => {
                                         addWishlistItemMutation.mutate({
-                                            id: productData?.id,
+                                            id: product?.id,
                                             description:
-                                                productData?.description ?? '',
-                                            handle: productData?.handle ?? '',
-                                            thumbnail:
-                                                productData?.thumbnail ?? '',
+                                                product?.description ?? '',
+                                            handle: product?.handle ?? '',
+                                            thumbnail: product?.thumbnail ?? '',
                                             variantThumbnail:
                                                 selectedVariantImage,
-                                            title: productData?.title ?? '',
+                                            title: product?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
@@ -544,8 +588,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             <div className="flex flex-col gap-y-4">
                                 {(productData.options || []).map(
                                     (option: any) => {
-                                        const updatedValues = option.values.map(
-                                            (val: any) => {
+                                        const validValues =
+                                            getValidValuesForOption(option.id);
+
+                                        const updatedValues = option.values
+                                            .map((val: any) => {
                                                 const matchingVariant =
                                                     productData.variants.find(
                                                         (v: any) =>
@@ -559,8 +606,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                                         matchingVariant?.variant_rank ??
                                                         null,
                                                 };
-                                            }
-                                        );
+                                            })
+                                            .filter((val: any) =>
+                                                validValues.includes(val.value)
+                                            );
+
                                         const augmentedOption = {
                                             ...option,
                                             values: updatedValues,
@@ -808,7 +858,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
                 <CartPopup
                     open={cartModalOpen}
-                    productName={productData.title}
+                    productName={product.title}
                     closeModal={() => {
                         setCartModalOpen(false);
                     }}
@@ -816,7 +866,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             </Flex>
 
             {/* TOS */}
-            <TermsOfService metadata={productData.metadata} />
+            <TermsOfService metadata={product.metadata} />
         </Flex>
     );
 };

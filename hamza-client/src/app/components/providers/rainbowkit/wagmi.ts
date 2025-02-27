@@ -10,6 +10,10 @@ import {
 } from 'wagmi/chains';
 import { _chains } from '@rainbow-me/rainbowkit/dist/config/getDefaultConfig';
 import { RainbowKitChain } from '@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext';
+import {watchBlocks} from "@wagmi/core";
+const WALLETCONNECT_ID =
+    process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
+const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || '';
 
 let wagmiChains: RainbowKitChain[] = [];
 
@@ -53,8 +57,29 @@ if (wagmiChains.length === 0) {
 let allowedWagmiChains: _chains = [wagmiChains[0], ...wagmiChains.slice(1)];
 
 export const wagmiConfig = getDefaultConfig({
-    appName: 'My RainbowKit App',
-    projectId: 'YOUR_PROJECT_ID',
+    appName: 'op_sep',
+    projectId: WALLETCONNECT_ID,
     chains: allowedWagmiChains,
     ssr: true,
 });
+
+/**
+ * One-time block watcher helper.
+ * This function sets up a one-shot listener that resolves when the next block is detected.
+ */
+
+// export async function waitForNextBlock(chainId: number): Promise<number> {
+//     return new Promise((resolve, reject) => {
+//         const unwatch = watchBlocks(wagmiConfig, {
+//             chainId,
+//             onBlock(blockNumber: number, prevBlock?: number) {
+//                 unwatch(); // Unsubscribe immediately after receiving the block
+//                 resolve(blockNumber);
+//             },
+//             onError(error) {
+//                 unwatch();
+//                 reject(error);
+//             },
+//         });
+//     });
+// }

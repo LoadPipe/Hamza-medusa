@@ -99,7 +99,7 @@ const AccountNavMobile = ({
         ) {
             router.push(`/${countryCode}/account/profile`);
         }
-    }, [authData.is_verified]);
+    }, [authData.is_verified, countryCode, route, router, searchParams]);
 
     return (
         <Flex flexDirection={'column'} width={'100%'}>

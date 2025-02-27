@@ -17,9 +17,12 @@ import { FaChevronLeft } from 'react-icons/fa';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useParams, useRouter } from 'next/navigation';
 import ProductDetailsMobileMenu from './components/mobile-menu';
+import { useQueryClient } from '@tanstack/react-query';
+import { Product } from '@lib/schemas/product';
 
 interface PreviewGalleryProps {
     selectedVariantImage: string;
+    handle: string;
 }
 interface ImageType {
     url: string;
@@ -27,16 +30,17 @@ interface ImageType {
 
 const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     selectedVariantImage,
+    handle,
 }) => {
-    const { productData } = useProductPreview();
+    const queryClient = useQueryClient();
+    const product = queryClient.getQueryData<Product>(['product', handle]);
     const [images, setImages] = useState<string[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
     useEffect(() => {
         // Construct the initial images array from product data
-        let newImages =
-            productData?.images?.map((img: ImageType) => img.url) || [];
+        let newImages = product?.images?.map((img: ImageType) => img.url) || [];
 
         // Check if a selected variant image is provided and is different from the main image
         if (selectedVariantImage && selectedVariantImage !== newImages[0]) {
@@ -49,7 +53,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
 
         // Update the images state
         setImages(newImages);
-    }, [productData, selectedVariantImage]);
+    }, [product, selectedVariantImage]);
 
     const openGallery = (index: number) => {
         setSelectedImageIndex(index);
@@ -63,16 +67,13 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     // Default fallback path to homepage if there is no history to go back to
     const fallbackPath = countryCode ? `${baseURL}/${countryCode}` : baseURL;
 
-    const handleClick = (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-        e.preventDefault(); // Prevent default button behavior
+    const goBackToShop = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
 
-        // Go back one step in history if possible, otherwise redirect to fallback
         if (window.history.length > 1) {
-            router.back(); // Go back in history
+            router.back();
         } else {
-            router.push(fallbackPath); // Navigate to fallback path if no history exists
+            router.push(fallbackPath);
         }
     };
 
@@ -88,7 +89,12 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     });
 
     return (
-        <Flex maxW={'1280px'} width={'100%'} flexDirection={'column'} className="preview-gallery">
+        <Flex
+            maxW={'1280px'}
+            width={'100%'}
+            flexDirection={'column'}
+            className="preview-gallery"
+        >
             <Grid
                 templateColumns={gridTemplateColumns}
                 templateRows={gridTemplateRows}
@@ -150,37 +156,33 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                             </AspectRatio>
                         )}
                         {/* Back Button (Top Left) */}
-                        <IconButton
-                            as="button"
-                            display={{ base: 'flex', md: 'none' }}
-                            icon={<FaChevronLeft />}
+                        <Flex
+                            flexDir={'row'}
+                            flex={1}
+                            width={'100%'}
+                            height={'32px'}
                             position="absolute"
+                            zIndex="1"
                             top="10px"
-                            left="10px"
-                            size="sm"
-                            aria-label="Go Back"
-                            onClick={handleClick} // Replace with actual back logic
-                            backgroundColor="rgba(0, 0, 0, 0.5)"
-                            color="white"
-                            borderRadius="full"
-                            zIndex="1" // Ensure button is on top of the image
-                        />
+                        >
+                            <Flex
+                                height={'32px'}
+                                width={'32px'}
+                                borderRadius={'full'}
+                                justifyContent={'center'}
+                                backgroundColor={'#3E3E3E80'}
+                                onClick={goBackToShop}
+                            >
+                                <Flex alignSelf={'center'}>
+                                    <FaChevronLeft color="white" />
+                                </Flex>
+                            </Flex>
 
-                        {/* 3-Dot Menu Button (Top Right) */}
-                        <IconButton
-                            as="button"
-                            display={{ base: 'flex', md: 'none' }}
-                            // icon={<ProductDetailsMobileMenu />}
-                            position="absolute"
-                            top="10px"
-                            right="10px"
-                            size="sm"
-                            aria-label="Open Menu"
-                            onClick={() => console.log('Menu Button Clicked')} // Replace with menu logic
-                            backgroundColor="rgba(0, 0, 0, 0.5)"
-                            color="white"
-                            borderRadius="full"
-                        />
+                            {/* 3-Dot Menu Button (Top Right) */}
+                            <Flex ml="auto">
+                                <ProductDetailsMobileMenu />
+                            </Flex>
+                        </Flex>
                     </Box>
                 </GridItem>
 

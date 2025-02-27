@@ -35,7 +35,7 @@ const EditReviewTemplate = ({
             setCurrentReview(review.content || '');
             setRating(review.rating || 0);
         }
-    }, [review]);
+    }, [currentReview, rating, review]);
 
     const submitReview = async () => {
         const data = {

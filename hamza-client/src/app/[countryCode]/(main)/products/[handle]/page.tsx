@@ -6,29 +6,27 @@ import { notFound } from 'next/navigation';
 import {
     getProductByHandle,
     getProductsList,
-    listRegions,
     retrievePricedProductById,
+    getPricedProductByHandle
 } from '@/lib/server';
 import { Region } from '@medusajs/medusa';
 import ProductTemplate from '@modules/products/templates';
 import { getRegion } from '@/app/actions';
+import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 type Props = {
     params: { countryCode: string; handle: string };
 };
 
 export async function generateStaticParams() {
-    //const countryCodes = await listRegions().then((regions) =>
-    //    regions?.map((r) => r.countries.map((c) => c.iso_2)).flat()
-    //);
     const countryCodes = [process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'];
 
     const products = await Promise.all(
         countryCodes.map((countryCode) => {
             return getProductsList({ countryCode });
-        })
+        }),
     ).then((responses) =>
-        responses.map(({ response }) => response.products).flat()
+        responses.map(({ response }) => response.products).flat(),
     );
 
     const staticParams = countryCodes
@@ -36,7 +34,7 @@ export async function generateStaticParams() {
             products.map((product) => ({
                 countryCode,
                 handle: product.handle,
-            }))
+            })),
         )
         .flat();
 
@@ -47,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { handle } = params;
 
     const { product } = await getProductByHandle(handle).then(
-        (product) => product
+        (product) => product,
     );
 
     if (!product) {
@@ -65,41 +63,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-const getPricedProductByHandle = async (handle: string, region: Region) => {
-    const { product } = await getProductByHandle(handle).then(
-        (product) => product
-    );
+export default async function ProductPage({ params }: Props) {
+    const queryClient = new QueryClient();
+    const region = await getRegion(params.countryCode);
+    if (!region || !params?.countryCode) notFound();
 
-    if (!product || !product.id) {
-        return null;
-    }
+    // Fetch the priced product *once*
+    // Async function renders on server before sending html to browser
+    // const pricedProduct = await getPricedProductByHandle(params?.handle, region);
 
-    const pricedProduct = await retrievePricedProductById({
-        id: product.id,
-        regionId: region.id,
+
+    // Prefetch query for React Query Hydration (this doesn't actually fetch again, its storing data
+    // inside the React Query's cache so for when the client hydrates, it doesn't need to refetch..
+    await queryClient.prefetchQuery({
+        queryKey: ['product', params.handle],
+        queryFn: () => getPricedProductByHandle(params?.handle, region), // Avoid fetching twice
     });
 
-    return pricedProduct;
-};
-
-export default async function ProductPage({ params }: Props) {
-    const region = await getRegion(params.countryCode);
-
-    if (!region) {
-        notFound();
-    }
-
-    const pricedProduct = await getPricedProductByHandle(params.handle, region);
-
-    if (!pricedProduct) {
-        notFound();
-    }
-
     return (
-        <ProductTemplate
-            product={pricedProduct}
-            region={region}
-            countryCode={params.countryCode}
-        />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <ProductTemplate
+                region={region}
+                handle={params.handle}
+                countryCode={params.countryCode}
+            />
+        </HydrationBoundary>
     );
 }
