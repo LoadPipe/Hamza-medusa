@@ -108,7 +108,7 @@ const ProductInfo = ({ handle }: ProductProps): JSX.Element => {
             flexDirection="column"
             gap="26px"
         >
-            <Flex flexDir={'column'}>
+            <Flex flexDir={'column'} className="product-info-header">
                 <Flex flexDir={'row'}>
                     <Heading
                         display={{ base: 'none', md: 'block' }}
