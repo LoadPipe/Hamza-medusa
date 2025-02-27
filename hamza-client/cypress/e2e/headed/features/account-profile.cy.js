@@ -22,7 +22,7 @@ describe('Account Profile', () => {
             .type('John');
         buttonClickByElementText('Update');
         cy.wait(1000);
-        cy.reload();
+        cy.visit('/en/account/profile');
 
         cy.wait(3000);
 
@@ -43,7 +43,7 @@ describe('Account Profile', () => {
             .type('Doe');
         buttonClickByElementText('Update');
         cy.wait(1000);
-        cy.reload();
+        cy.visit('/en/account/profile');
 
         cy.wait(3000);
 
