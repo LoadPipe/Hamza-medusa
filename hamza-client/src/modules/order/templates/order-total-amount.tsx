@@ -65,40 +65,37 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
         amount: number | null | undefined,
         currency_code: string
     ) => (
-        <Flex direction={'row'} gap={2} flexWrap={'nowrap'}>
-            <Flex flexDir={'column'}>
-                <Flex
-                    direction={'row'}
-                    gap={2}
-                    alignItems={'center'}
-                    flexWrap={'nowrap'}
-                >
-                    <Text fontSize={'18px'} whiteSpace="nowrap">
-                        {title}
-                    </Text>
-                    <Image
-                        src={
-                            currencyIcons[currency_code.toLowerCase()] ??
-                            currencyIcons['usdc']
-                        }
-                        alt={currency_code.toUpperCase()}
-                        width={16}
-                        height={16}
-                    />
-                    <Text fontSize={'18px'} whiteSpace="nowrap">
-                        {getAmount(amount, currency_code)}
-                    </Text>
+        <Flex
+            direction={'row'}
+            gap={2}
+            flexWrap={'nowrap'}
+            alignItems={'center'}
+        >
+            <Text fontSize={'18px'} lineHeight="36px" whiteSpace="nowrap">
+                {title}
+            </Text>
+            <Image
+                src={
+                    currencyIcons[currency_code.toLowerCase()] ??
+                    currencyIcons['usdc']
+                }
+                alt={currency_code.toUpperCase()}
+                width={16}
+                height={16}
+            />
+            <Text fontSize={'18px'} lineHeight="36px" fontWeight={700}>
+                {getAmount(amount, currency_code)}
+            </Text>
+
+            {/* {currencyCode === 'eth' && (
+                <Flex gap={2}>
+                    {usdPrice === '' ? (
+                        <Spinner size="sm" color="gray.300" />
+                    ) : (
+                        <Text> ≅ ${usdPrice} USD</Text>
+                    )}
                 </Flex>
-                {currencyCode === 'eth' && (
-                    <Flex alignItems="center" gap={2}>
-                        {usdPrice === '' ? (
-                            <Spinner size="sm" color="gray.300" />
-                        ) : (
-                            <Text> ≅ ${usdPrice} USD</Text>
-                        )}
-                    </Flex>
-                )}
-            </Flex>
+            )} */}
         </Flex>
     );
 

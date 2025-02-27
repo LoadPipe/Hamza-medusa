@@ -50,6 +50,7 @@ const OrderLeftColumn = ({
             flexDirection={{ base: 'column' }}
             width={'100%'}
             minW={{ sm: '350px', md: '350px', lg: '500px' }}
+            gap={1}
             // border="1px solid red"
         >
             <Flex
@@ -57,7 +58,7 @@ const OrderLeftColumn = ({
                 my={'10px'}
                 display={{ base: 'flex' }}
                 alignItems="center"
-                gap={1.5}
+                gap={3}
             >
                 <Link
                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${storeName}`}
@@ -73,11 +74,10 @@ const OrderLeftColumn = ({
                     fontSize={{ base: '18px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
-                    mr={{ sm: '5px', md: '10px' }}
                 >
                     {storeName}
                 </Text>
-                <FaCheckCircle color="#3196DF" />
+                <FaCheckCircle size={16} color="#3196DF" />
             </Flex>
 
             <Flex direction={{ base: 'column', lg: 'row' }}>
@@ -86,8 +86,8 @@ const OrderLeftColumn = ({
                 >
                     <Image
                         borderRadius="lg"
-                        width={{ base: '75px', md: '100px' }}
-                        height={{ base: '75px', md: '100px' }}
+                        width={'75px'}
+                        height={'75px'}
                         src={
                             order?.variant?.metadata?.imgUrl ??
                             order.thumbnail ??
