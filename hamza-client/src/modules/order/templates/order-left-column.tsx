@@ -44,9 +44,8 @@ const OrderLeftColumn = ({
             justifyContent={{ sm: 'center', md: 'space-between' }}
             flexDirection={{ base: 'column' }}
             width={'100%'}
-            minW={{ sm: '350px', md: '350px', lg: '500px' }}
+            maxW={{ sm: '350px', md: '500px' }}
             gap={1}
-            backgroundColor={'green'}
             // border="1px solid red"
         >
             <Flex direction={{ base: 'column', lg: 'row' }}>
