@@ -55,6 +55,17 @@ const chainLogoMap: Record<string, StaticImageData> = {
 };
 
 /**
+ * Mapping from network names to the "Learn more" URL.
+ */
+const learnMoreUrlMap: Record<string, string> = {
+    'Arbitrum One':
+        'https://coinmarketcap.com/academy/article/how-to-bridge-to-arbitrum',
+    'OP Mainnet':
+        'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism',
+    Base: 'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
+};
+
+/**
  * Returns the chain ID for a given network name.
  */
 const getChainIdFromName = (networkName: string): number | null => {
@@ -74,7 +85,12 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    console.log(chains);
+    // Determine the learn more URL based on the active chain.
+    const learnMoreUrl =
+        chain && learnMoreUrlMap[chain.name]
+            ? learnMoreUrlMap[chain.name]
+            : 'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism';
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
@@ -128,8 +144,8 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
                                             tokens, dApps, and features that are
                                             only available on specific
                                             blockchains.{' '}
-                                            {/* <a
-                                                href="https://example.com" // Your link here
+                                            <a
+                                                href={learnMoreUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 style={{
@@ -138,7 +154,7 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
                                                 }}
                                             >
                                                 Learn more.
-                                            </a> */}
+                                            </a>
                                         </>
                                     </PopoverBody>
                                 </PopoverContent>
