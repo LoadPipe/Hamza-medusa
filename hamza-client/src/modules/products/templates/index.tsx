@@ -1,37 +1,39 @@
 'use client';
 
 import { Region } from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-
-// import ProductReview from '@modules/products/components/product-review';
-// import ProductInfo from '@modules/products/templates/product-info';
 import { notFound } from 'next/navigation';
-import { Box, Flex, Divider, Text } from '@chakra-ui/react';
+import { Flex, Divider, Text } from '@chakra-ui/react';
 import PreviewGallery from '../components/product-preview/components/image-gallery/image-display/preview-gallery';
 import ProductInfo from '../components/product-preview/components/product-info/product-info';
 import PreviewCheckout from '../components/product-preview/components/summary/preview-checkout';
 import ProductReview from '../components/product-preview/components/product-review';
-import ProductReviewMobile from '../components/product-preview/components/product-review-mobile';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import StoreBanner from '../components/product-preview/components/store-banner/store-banner';
-import SearchBar from '../components/product-preview/components/mobile-search';
-// import Tweet from '@/components/tweet';
-import { MdChevronLeft } from 'react-icons/md';
-import { getStore } from '@lib/data';
-import { BiBorderRadius } from 'react-icons/bi';
+import { getPricedProductByHandle, getStore } from '@/lib/server';
 import { FaArrowLeftLong } from 'react-icons/fa6';
+import { useQuery } from '@tanstack/react-query';
+import { Spinner } from '@medusajs/icons';
+import { ProductSchema, Product } from '@/lib/schemas/product';
 
 type ProductTemplateProps = {
-    product: PricedProduct;
+    // product: PricedProduct;
     region: Region;
+    handle: string;
     countryCode: string;
 };
 
+/*
+ * @Doom: This code needs to be ripped apart and put back together...
+ * @Breakdown: let's break it down into component view. Get a nice herirachical overview of the components and how they interact with each other. This way we know what we are working with.
+ * @useEffect: Currently the best way to deal with the zustand store, is to leave it as is. Let's not touch it for now.
+ * @Pipeline: We want to control the data from root (product/[handle]/page.tsx) all the way down the leaf nodes. This way we can cache the data and control the flow of data.
+ */
+
 const ProductTemplate: React.FC<ProductTemplateProps> = ({
-    product,
     region,
+    handle,
     countryCode,
 }) => {
     const {
@@ -42,12 +44,33 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         setQuantity,
     } = useProductPreview();
 
-    const [storeName, setstoreName] = useState('');
-    const [storeHandle, setstorehandle] = useState('');
-    const [icon, setIcon] = useState('');
     const [selectedVariantImage, setSelectedVariantImage] = useState('');
 
+    const {
+        data: product,
+        isError,
+        isLoading,
+    } = useQuery<Product, Error>({
+        queryKey: ['product', handle],
+        queryFn: async () => {
+            const response = await getPricedProductByHandle(handle, region);
+            if (!response) {
+                // If no product is found, throw an error
+                throw new Error('Product not found');
+            }
+            // Parse the response using Zod to ensure it matches the Product schema
+            return ProductSchema.parse(response);
+        },
+    });
+
+    // If we hit these error states, product either doesn't exist or there was an error fetching it.
+    // Otherwise, the rest of the page will render. [OMIT**Banner**]
+    if (isError || !product || !product.id) {
+        notFound();
+    }
+
     // Only update product data when `product` changes
+    // useProductPreview is a custom hook that sets the product data in a global zustand state.
     useEffect(() => {
         if (product && product.id) {
             setProductData(product);
@@ -69,29 +92,21 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         setQuantity,
     ]);
 
-    // if (!product || !product.id) {
-    //     return null; // Return null or some error display components
-    // }
-    // console.log(
-    //     `Product Page, we have product ${product.id} ${product.handle}`
-    // );
-
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(product.id as string);
-                // console.log(`Vendor: ${data}`);
-                setstoreName(data.name);
-                setstorehandle(data.handle);
-                setIcon(data.icon);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [product]);
+    // TODO: This CAN'T be grabbed in relations unless we get rid of getPricedProductByHandle and use a full custom hook removing medusaClient... not really beneficial
+    // Fetching store data, based off the product id, storeData.(handle|icon) is used in StoreBanner (navigation/icon)
+    // This is a separate query from the product query, as it fetches store data based off the product id.
+    // We're using isStoreLoading && isStoreError states to handle loading and error states for Banner.
+    const {
+        data: storeData,
+        isLoading: isStoreLoading,
+        isError: isStoreError,
+    } = useQuery({
+        // Cache / Fetch data based off this unique product_id
+        queryKey: ['store_vendor', product?.id],
+        queryFn: () => getStore(product?.id as string),
+        // Only run this query when product
+        enabled: !!product.id,
+    });
 
     return (
         <Flex
@@ -154,6 +169,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     mb={{ base: '-1rem', md: '0' }}
                 >
                     <PreviewGallery
+                        handle={handle}
                         selectedVariantImage={selectedVariantImage}
                     />
                 </Flex>
@@ -167,7 +183,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 >
                     <Flex flex="1" order={{ base: 2, md: 1 }}>
                         <Flex flexDirection="column">
-                            <ProductInfo />
+                            <ProductInfo handle={handle} />
                             {/*<Box mt="1.5rem">*/}
                             {/*    <Tweet*/}
                             {/*        productHandle={product.handle as string}*/}
@@ -188,14 +204,21 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                             selectedVariantImage={selectedVariantImage}
                             setSelectedVariantImage={setSelectedVariantImage}
                             productId={product.id as string}
+                            handle={handle}
                         />
                     </Flex>
                 </Flex>
-                <StoreBanner
-                    storeName={storeName}
-                    storeHandle={storeHandle}
-                    icon={icon}
-                />
+                {isStoreLoading ? (
+                    <Spinner /> // Or some loading placeholder for StoreBanner
+                ) : isStoreError ? (
+                    <Text>Error loading store details</Text> // Handle error case gracefully
+                ) : (
+                    <StoreBanner
+                        storeHandle={storeData?.handle}
+                        storeName={storeData?.name}
+                        icon={storeData?.icon}
+                    />
+                )}
                 <Divider
                     color="#555555"
                     display={{ base: 'block', md: 'none' }}

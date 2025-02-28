@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
-import Footer from '@modules/layout/templates/footer';
-import Nav from '@modules/layout/templates/nav';
+import Footer from '@/modules/nav/templates/footer';
+import Nav from '@/modules/nav/templates/nav';
 import { Box } from '@chakra-ui/react';
 
 const MEDUSA_CLIENT_URL =

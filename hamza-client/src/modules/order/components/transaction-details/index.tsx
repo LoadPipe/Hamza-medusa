@@ -1,12 +1,8 @@
 'use client';
 
-import { formatAmount } from '@lib/util/prices';
-import { InformationCircleSolid } from '@medusajs/icons';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
-import { Tooltip } from '@medusajs/ui';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import React, { useEffect, useState } from 'react';
-import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import React, { useState } from 'react';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';

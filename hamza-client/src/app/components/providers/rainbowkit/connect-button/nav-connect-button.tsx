@@ -1,11 +1,9 @@
 'use client';
 
-import { Box, Button, Text, Flex, Image } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { formatAddress } from '@lib/util/format-address';
-import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
-import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
-import CartButton from '@modules/layout/components/cart-nav';
+import AccountMenu from '@/modules/nav/templates/nav/menu-desktop/account-menu';
+import CartButton from '@/modules/nav/components/cart-nav';
 
 //Todo: If chain unsupported?
 export const WalletConnectButton = () => {

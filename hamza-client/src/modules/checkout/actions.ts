@@ -10,11 +10,11 @@ import {
     setCartEmail,
     setPaymentSession,
     updateCart,
-} from '@lib/data';
+} from '@/lib/server';
 import { GiftCard, StorePostCartsCartReq } from '@medusajs/medusa';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { medusaClient } from '@lib/config';
+import { medusaClient } from '@/lib/config/config';
 import axios from 'axios';
 
 export async function cartUpdate(data: StorePostCartsCartReq) {

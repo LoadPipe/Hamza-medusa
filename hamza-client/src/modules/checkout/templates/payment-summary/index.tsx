@@ -3,17 +3,25 @@ import { Flex, Text } from '@chakra-ui/react';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import CartTotals from '@modules/common/components/cart-totals';
-import PaymentButton from '@modules/checkout/components/payment-button';
 import DiscountCode from '@modules/checkout/components/discount-code';
-import CheckoutTermsOfService from '@modules/terms-of-service/checkout-tos';
+import PaymentButton from '@modules/checkout/components/payment/components/payment-button';
+import CheckoutTermsOfService from '@/modules/terms-of-service/templates/checkout-tos';
 
-const PaymentSummary = async (params: any) => {
-    const cartId = params.cartId;
+const PaymentSummary = async ({ cartId }: { cartId: string }) => {
     const cart = await retrieveCart(cartId).then((cart) => cart);
 
     if (!cart) {
         console.log('cart not found');
-        return null;
+        return (
+            <Flex bgColor="#121212" color="white" maxW={{ base: '100%', md: '401px' }} width="100%" minHeight="400px" flexDir="column" borderRadius="16px" p={{ base: '16px', md: '40px' }} align="center" justify="center">
+                <Text color="primary.green.900" fontSize="18px" fontWeight={600}>
+                    Payment Summary
+                </Text>
+                <Text mt="2" fontSize="14px">
+                    No cart found.
+                </Text>
+            </Flex>
+        );
     }
 
     if (cart?.items.length) {
@@ -44,10 +52,10 @@ const PaymentSummary = async (params: any) => {
                 Payment Summary
             </Text>
 
-            <CartTotals data={cart} useCartStyle={true} />
+            <CartTotals cartId={cartId} useCartStyle={true} />
 
             <Flex mt="auto" flexDir={'column'} gap={5}>
-                <DiscountCode cart={cart} />
+                <DiscountCode cartId={cartId} />
                 <PaymentButton cart={cart} />
                 {/* <Text
                     textAlign="center"

@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Text,
-    Stack,
-    StackDivider,
     useDisclosure,
     ButtonGroup,
     Flex,
@@ -14,11 +12,10 @@ import {
     Divider,
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
+import { getAllProductReviews, getNotReviewedOrders } from '@/lib/server';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
-import { useQueries, useQuery } from '@tanstack/react-query';
-import getQueryClient from '@/getQueryClient';
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import Spinner from '@modules/common/icons/spinner';
 
@@ -84,7 +81,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const customer_id = customer.id;
 
     // setup query client
-    const queryClient = getQueryClient();
+    const queryClient = useQueryClient();
 
     const results = useQueries({
         queries: [
@@ -103,15 +100,15 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const [pendingReviewsQuery, reviewQuery] = results;
 
     const handleReviewUpdated = async () => {
-        await queryClient.resetQueries(['reviewQuery', customer_id]);
-        await queryClient.resetQueries(['homeProducts']);
-        await queryClient.refetchQueries(['homeProducts']);
+        await queryClient.resetQueries({ queryKey: ['reviewQuery', customer_id] });
+        await queryClient.resetQueries({ queryKey:['homeProducts']});
+        await queryClient.refetchQueries({ queryKey:['homeProducts']});
     };
 
     const handlePendingUpdated = async () => {
         await pendingReviewsQuery.refetch();
-        await queryClient.resetQueries(['homeProducts']);
-        await queryClient.refetchQueries(['homeProducts']);
+        await queryClient.resetQueries({ queryKey:['homeProducts']});
+        await queryClient.refetchQueries({ queryKey:['homeProducts']});
     };
 
     const handleReviewEdit = (review: any) => {

@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
-import categoryIcons from '../../data/category-icons';
 import useProductFilter from '@/zustand/products/filter/product-filter';
 
 interface CategoryButtonProps {

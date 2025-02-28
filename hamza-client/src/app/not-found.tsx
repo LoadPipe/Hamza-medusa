@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { Flex, Box, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import errorMessage from '../../public/images/error/error-404.svg';
 import Image from 'next/image';
 

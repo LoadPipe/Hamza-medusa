@@ -10,7 +10,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { addToCart } from '@modules/cart/actions';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
-import { getProductsByStoreName } from '@lib/data';
+import { getProductsByStoreName } from '@/lib/server';
 
 type Props = {
     vendorName: string;
@@ -19,14 +19,18 @@ type Props = {
 
 const ProductCardGroup = ({ vendorName, category }: Props) => {
     // Get products from vendor
-    const { data, error, isLoading } = useQuery(
-        ['products', { vendor: vendorName }],
-        () =>
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['products',
+            {
+                vendor: vendorName,
+            },
+        ],
+        queryFn: () =>
             getProductsByStoreName(vendorName).catch((err) => {
                 console.log(err);
                 return null;
-            })
-    );
+            }),
+    });
 
     console.log(data);
 
@@ -62,7 +66,7 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                         const reviewCounter = product.reviews.length;
                         const totalRating = product.reviews.reduce(
                             (acc: number, review: any) => acc + review.rating,
-                            0
+                            0,
                         );
                         const avgRating = reviewCounter
                             ? totalRating / reviewCounter
@@ -70,9 +74,9 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                         const productPricing = formatCryptoPrice(
                             variantPrices.find(
                                 (p: any) =>
-                                    p.currency_code === preferred_currency_code
+                                    p.currency_code === preferred_currency_code,
                             )?.amount || 0,
-                            preferred_currency_code as string
+                            preferred_currency_code as string,
                         );
                         variantID = product.variants[0].id;
 

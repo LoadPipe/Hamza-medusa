@@ -10,7 +10,7 @@ import rainbow from '../../../../../public/images/wallet_connect/rainbow.jpeg';
 import wallet from '../../../../../public/images/wallet_connect/wallet.png';
 import Image from 'next/image';
 import ProductCollections from '@modules/collections/product_collection_filter';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 
@@ -211,14 +211,10 @@ const RecommendedItems = () => {
                     <Button
                         fontWeight="italic"
                         bg={
-                            STORE_NAMES.medusa === storeName
-                                ? 'white'
-                                : 'black'
+                            STORE_NAMES.medusa === storeName ? 'white' : 'black'
                         }
                         color={
-                            STORE_NAMES.medusa === storeName
-                                ? 'black'
-                                : 'white'
+                            STORE_NAMES.medusa === storeName ? 'black' : 'white'
                         }
                         size="lg"
                         name={'Medusa Merch'}

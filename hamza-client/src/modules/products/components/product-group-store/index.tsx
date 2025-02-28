@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import ProductCard from '../product-card/product-card';
+import ProductCard from '../product-card';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import useVendor from '@/zustand/store-page/vendor';
 import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
@@ -30,15 +30,16 @@ const ProductCardGroup = ({ storeName }: Props) => {
 
     const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categorySelect}&currency_code=${preferred_currency_code ?? 'usdc'}`;
 
-    const { data, error, isLoading } = useQuery(
-        ['products', categorySelect],
-        async () => {
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['products', categorySelect,
+        ],
+        queryFn: async () => {
             console.log('Fetching data from URL:', url);
             const response = await axios.get(url);
             console.log('Data fetched:', response.data);
             return response.data;
-        }
-    );
+        },
+    });
 
     // Log if there's an error
     if (error) {
@@ -103,6 +104,7 @@ const ProductCardGroup = ({ storeName }: Props) => {
             mx="auto"
             justifyContent={'center'}
             alignItems={'center'}
+            className="product-group-store"
         >
             <Grid
                 maxWidth={'1256.52px'}
@@ -120,25 +122,25 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         variant?.prices?.find(
                             (price: any) =>
                                 price.currency_code ===
-                                (preferred_currency_code ?? 'usdc')
+                                (preferred_currency_code ?? 'usdc'),
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
                         0;
                     const formattedPrice = formatCryptoPrice(
                         productPricing ?? 0,
-                        (preferred_currency_code ?? 'usdc') as string
+                        (preferred_currency_code ?? 'usdc') as string,
                     );
 
                     const usdcFormattedPrice = formatPriceBetweenCurrencies(
                         variant?.prices,
                         preferred_currency_code ?? 'usdc',
-                        'usdc'
+                        'usdc',
                     );
 
                     const reviewCounter = product.reviews.length;
                     const totalRating = product.reviews.reduce(
                         (acc: number, review: any) => acc + review.rating,
-                        0
+                        0,
                     );
                     const avgRating = reviewCounter
                         ? totalRating / reviewCounter

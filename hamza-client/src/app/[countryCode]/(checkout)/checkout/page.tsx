@@ -1,69 +1,41 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
-import { LineItem } from '@medusajs/medusa';
-import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
-import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
+import ForceWalletConnect from '@/modules/common/components/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
-import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 export const metadata: Metadata = {
     title: 'Checkout',
-};
-
-const sleep = (seconds: number) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(true), seconds * 1000);
-    });
-};
-
-const fetchCart = async (cartId: string) => {
-    const cart = await retrieveCart(cartId);
-
-    if (cart?.items.length) {
-        const enrichedItems = await enrichLineItems(
-            cart?.items,
-            cart?.region_id
-        );
-        cart.items = enrichedItems as LineItem[];
-    }
-
-    return cart;
+    description: 'Proceed to checkout securely',
 };
 
 export default async function Checkout(params: any) {
+    const queryClient = new QueryClient();
+
     let cartId = cookies().get('_medusa_cart_id')?.value;
-    if (!cartId && params?.searchParams?.cart)
-        cartId = params.searchParams.cart;
+    if (!cartId && params?.searchParams?.cart) cartId = params.searchParams.cart;
 
     if (!cartId) {
-        console.log('cart id not found');
+        console.log('Cart ID not found');
         return notFound();
     }
 
-    const cart = await fetchCart(cartId);
-
-    if (!cart) {
-        console.log('cart data not found');
-        return notFound();
-    }
-
-    if (cart?.items.length) {
-        const enrichedItems = await enrichLineItems(
-            cart?.items,
-            cart?.region_id
-        );
-        cart.items = enrichedItems as LineItem[];
-    }
+    // Prefetch and hydrate the cart
+    await queryClient.prefetchQuery({
+        queryKey: ['cart', cartId],
+        queryFn: () => fetchCartForCheckout(cartId),
+        staleTime: 1000 * 60 * 5,
+    });
 
     return (
-        <Flex flexDir="row" maxW={'1280px'} width={'100%'}>
-            {!cart.customer_id ? (
-                <ForceWalletConnect />
-            ) : (
-                <CheckoutTemplate cart={cart} cartId={cartId} />
-            )}
-        </Flex>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <Flex flexDir="row" maxW="1280px" width="100%">
+                {<CheckoutTemplate cartId={cartId} />}
+            </Flex>
+        </HydrationBoundary>
     );
 }

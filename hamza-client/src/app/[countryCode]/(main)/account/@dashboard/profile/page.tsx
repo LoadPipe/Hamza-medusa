@@ -1,15 +1,14 @@
 import { Metadata } from 'next';
-import { getHamzaCustomer, listRegions } from '@lib/data';
+import { getHamzaCustomer, listRegions } from '@/lib/server';
 import { notFound } from 'next/navigation';
-import { Flex } from '@chakra-ui/react';
-import ProfileForm from './profile-form/profile-form';
+import Profile from '@/modules/account/components/profile';
 
 export const metadata: Metadata = {
     title: 'Profile',
     description: 'View and edit your Medusa Store profile.',
 };
 
-export default async function Profile() {
+export default async function ProfilePage() {
     const customer = await getHamzaCustomer();
     const regions = await listRegions();
 
@@ -18,18 +17,8 @@ export default async function Profile() {
     }
 
     return (
-        <Flex
-            maxW={'927px'}
-            width="100%"
-            backgroundColor={'#121212'}
-            flexDirection={'column'}
-            justifyContent={'center'}
-            alignItems={'center'}
-            borderRadius={'12px'}
-            p={'1.5rem'}
-        >
-            {/* Profile Form */}
-            <ProfileForm customer={customer} />
-        </Flex>
+        <>
+            <Profile customer={customer} />
+        </>
     );
 }

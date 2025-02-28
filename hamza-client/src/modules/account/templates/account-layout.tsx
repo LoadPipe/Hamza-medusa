@@ -1,13 +1,10 @@
 'use client';
+
 import React, { useEffect } from 'react';
-
-import UnderlineLink from '@modules/common/components/interactive-link';
-
 import AccountNav from '../components/account-nav';
 import { Customer } from '@medusajs/medusa';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-
-import { Flex, Box, Text } from '@chakra-ui/react';
+import { Flex, Box } from '@chakra-ui/react';
 import axios from 'axios';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 
