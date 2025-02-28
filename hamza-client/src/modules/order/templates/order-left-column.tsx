@@ -56,6 +56,7 @@ const OrderLeftColumn = ({
                         borderRadius="lg"
                         width={'75px'}
                         height={'75px'}
+                        backgroundColor={'white'}
                         src={
                             order?.variant?.metadata?.imgUrl ??
                             order.thumbnail ??

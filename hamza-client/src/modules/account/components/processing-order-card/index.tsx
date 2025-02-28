@@ -61,6 +61,7 @@ const ProcessingOrderCard = ({
             maxWidth="100%"
             // flexDirection={{ base: 'column', md: 'row' }}
             flexDirection={'column'}
+            gap={2}
         >
             <Flex
                 mx={{ base: 'auto', md: 0 }}
@@ -90,7 +91,10 @@ const ProcessingOrderCard = ({
             </Flex>
             {/* Left Side: Default  */}
 
-            <Flex>
+            <Flex
+                justifyContent={{ base: 'center', md: 'unset' }}
+                flexDir={{ base: 'column', md: 'row' }}
+            >
                 <OrderLeftColumn
                     order={order}
                     handle={handle}
