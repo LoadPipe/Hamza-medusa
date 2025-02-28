@@ -282,7 +282,7 @@ const Processing = ({
                                                 mb={5}
                                             >
                                                 {/* Left-aligned text */}
-                                                <OrderTotalAmount
+                                                {/* <OrderTotalAmount
                                                     subTotal={subTotal}
                                                     currencyCode={
                                                         item.currency_code
@@ -294,10 +294,10 @@ const Processing = ({
                                                     paymentTotal={
                                                         order.payments[0]
                                                     }
-                                                />
+                                                /> */}
 
                                                 {/* Right-aligned buttons */}
-                                                {index ===
+                                                {/* {index ===
                                                 order.items.length - 1 ? (
                                                     <Flex
                                                         direction={{
@@ -387,7 +387,7 @@ const Processing = ({
                                                                 </Box>
                                                             )}
                                                     </Flex>
-                                                ) : null}
+                                                ) : null} */}
                                             </Flex>
 
                                             {/* Collapsible Section */}

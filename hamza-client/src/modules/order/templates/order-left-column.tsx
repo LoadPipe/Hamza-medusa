@@ -1,5 +1,4 @@
 import { Flex, Text, Link, Image } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
 import React from 'react';
 type OrderDetails = {
     thumbnail: string;
@@ -32,14 +31,10 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: string;
-    storeName: string;
-    icon?: string;
     showDate: boolean;
 };
 
 const OrderLeftColumn = ({
-    storeName,
-    icon,
     handle,
     order,
     showDate = false,
@@ -51,35 +46,9 @@ const OrderLeftColumn = ({
             width={'100%'}
             minW={{ sm: '350px', md: '350px', lg: '500px' }}
             gap={1}
+            backgroundColor={'green'}
             // border="1px solid red"
         >
-            <Flex
-                mx={{ base: 'auto', md: 0 }}
-                my={'10px'}
-                display={{ base: 'flex' }}
-                alignItems="center"
-                gap={3}
-            >
-                <Link
-                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${storeName}`}
-                >
-                    <Image
-                        src={icon}
-                        alt="Light Logo"
-                        boxSize={{ base: '32px' }}
-                        borderRadius="full"
-                    />
-                </Link>
-                <Text
-                    fontSize={{ base: '18px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {storeName}
-                </Text>
-                <FaCheckCircle size={16} color="#3196DF" />
-            </Flex>
-
             <Flex direction={{ base: 'column', lg: 'row' }}>
                 <Link
                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}

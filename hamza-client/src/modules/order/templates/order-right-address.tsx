@@ -17,10 +17,10 @@ const OrderRightAddress = ({ address }: OrderCardProps) => {
     return (
         <Flex
             width={'100%'}
+            maxW={'265px'}
             justifyContent={'center'}
             direction={{ base: 'column' }}
             // border="1px solid red"
-            ml="auto"
             minWidth={{ sm: '130px', md: '130px' }}
         >
             <Flex direction={'row'}>
@@ -36,7 +36,7 @@ const OrderRightAddress = ({ address }: OrderCardProps) => {
                     color={'white'}
                     fontSize="16px"
                 >
-                    {address?.address_1 || 'N/A'}{' '}{address?.address_2 || ''}{' '}
+                    {address?.address_1 || 'N/A'} {address?.address_2 || ''}{' '}
                     {address?.city || 'N/A'} {address?.province || 'N/A'}{' '}
                     {address?.postal_code || 'N/A'}
                 </Text>

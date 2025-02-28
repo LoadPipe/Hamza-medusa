@@ -29,12 +29,12 @@ export default async function Orders() {
     }
     return (
         <Flex
-            maxW={{ md: '600px', lg: '927px' }}
+            maxW={'927px'}
             width="100%"
             backgroundColor={'#121212'}
             flexDirection={'column'}
             color="white"
-            p={6}
+            p={'1.5rem'}
             rounded="lg"
         >
             <OrderOverview
