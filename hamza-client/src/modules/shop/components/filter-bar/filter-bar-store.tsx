@@ -16,14 +16,14 @@ const FilterBarStore = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible categories
 
     // Fetching categories data
-    const { data, isLoading } = useQuery<Category[]>(
-        ['categories'],
-        async () => {
+    const { data, isLoading } = useQuery<Category[]>({
+        queryKey: ['categories'],
+        queryFn: async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
             const response = await axios.get(url);
             return response.data;
         }
-    );
+    });
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data

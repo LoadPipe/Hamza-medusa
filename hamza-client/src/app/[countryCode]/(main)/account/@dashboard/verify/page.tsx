@@ -1,4 +1,4 @@
-import { getHamzaCustomer, listRegions, updateCustomer } from '@lib/data';
+import { getHamzaCustomer, listRegions, updateCustomer } from '@/lib/server';
 import { notFound } from 'next/navigation';
 import { Flex, Button, Text, Box } from '@chakra-ui/react';
 import { Metadata } from 'next';

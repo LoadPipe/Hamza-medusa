@@ -11,7 +11,7 @@ import {
     Portal,
 } from '@chakra-ui/react';
 import Link from 'next/link';
-import NavLink from '@modules/layout/templates/nav/components/nav-link';
+import NavLink from '@/modules/nav/templates/nav/components/nav-link';
 
 import {
     MdOutlinePeople,

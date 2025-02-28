@@ -1,19 +1,17 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
 import {
     createAuthenticationAdapter,
     RainbowKitAuthenticationProvider,
     RainbowKitProvider,
-    AuthenticationStatus,
     AvatarComponent,
 } from '@rainbow-me/rainbowkit';
-import { useWalletClient, WagmiConfig } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 import {
     chains,
     config,
     darkThemeConfig,
-    SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { HnsClient } from '@/web3/contracts/hns-client';
@@ -26,14 +24,14 @@ import {
     getHamzaCustomer,
     getToken,
     recoverCart,
-} from '@lib/data';
+} from '@/lib/server';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
-import ProfileImage from '@/account/@dashboard/profile/profile-form/components/customer-icon/profile-image';
+import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -105,9 +103,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             } catch (err) {
                 if (retries < maxRetries) {
                     retries++;
-                    // console.log(
-                    //     `Retrying to fetch HNS data. Retry count: ${retries}`
-                    // );
                     setTimeout(getHnsClient, 1000); // Retry after 1 second
                 } else {
                     console.error(
@@ -282,19 +277,27 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
     });
 
-    // Set default staleTime to avoid refetching immediately on the client
-    // Ensures ensures that data is not shared between different users and requests
+    // ***Ensures data is not shared between different users and requests***
     // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
-    const [queryClient] = useState(
-        () =>
-            new QueryClient({
-                defaultOptions: {
-                    queries: {
-                        staleTime: 60 * 1000,
-                    },
+    const queryClientRef = React.useRef<QueryClient>();
+
+    if (!queryClientRef.current) {
+        queryClientRef.current = new QueryClient({
+            defaultOptions: {
+                queries: {
+                    staleTime: 2 * 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
+                    refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
+                    refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
+                    refetchOnMount: false, // 🚀 Prevents redundant fetches when remounting components
+                    retry: 2, // 🔄 Retries failed queries twice before throwing an error
                 },
-            })
-    );
+                mutations: {
+                    retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
+                },
+            },
+        });
+    }
+
 
     const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
         return <ProfileImage centered={true} />;
@@ -303,7 +306,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     return (
         <div>
             <WagmiConfig config={config}>
-                <QueryClientProvider client={queryClient}>
+                <QueryClientProvider client={queryClientRef.current}>
                     <RainbowKitAuthenticationProvider
                         adapter={walletSignature}
                         status={authData.status}

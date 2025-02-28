@@ -2,9 +2,7 @@ import { Order } from '@medusajs/medusa';
 import { Heading } from '@medusajs/ui';
 import { Text } from '@chakra-ui/react';
 import { formatAmount } from '@lib/util/prices';
-
 import Divider from '@modules/common/components/divider';
-import { useEffect } from 'react';
 
 type ShippingDetailsProps = {
     order: Order;

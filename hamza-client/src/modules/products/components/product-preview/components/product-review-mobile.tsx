@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReviewCardMobile from './review-card-mobile';
 import { Text, Flex, Box } from '@chakra-ui/react';
 import axios from 'axios';
-import { getAllProductReviews } from '@lib/data';
+import { getAllProductReviews } from '@/lib/server';
 
 const fakeReviews = [
     {
@@ -29,34 +29,30 @@ const fakeReviews = [
 ];
 const ProductReviewMobile = ({ productId }: { productId: string }) => {
     const [reviews, setReviews] = useState<any>([]);
-    const reviewDataFetcher = async () => {
-        let res = await getAllProductReviews(productId);
-
+    const reviewDataFetcher = React.useCallback(async () => {
+        if (!productId) return;
+        const res = await getAllProductReviews(productId);
         if (res) {
-            setReviews([
-                ...res.map((a: any) => {
-                    return {
-                        id: a.id,
-                        name:
-                            `${a.customer.first_name} ${a.customer.last_name}` ||
-                            'Anonymous Customer',
-                        location: 'US',
-                        review: a.content,
-                        stars: a.rating,
-                    };
-                }),
-            ]);
+            setReviews(
+                res.map((a: any) => ({
+                    id: a.id,
+                    name: `${a.customer.first_name} ${a.customer.last_name}` || 'Anonymous Customer',
+                    location: 'US',
+                    review: a.content,
+                    stars: a.rating,
+                }))
+            );
         }
-
-        return;
-    };
+    }, [productId]);
 
     useEffect(() => {
         console.log('product id changed on product review ', productId);
         if (productId) {
             reviewDataFetcher();
         }
-    }, [productId]);
+    }, [productId, reviewDataFetcher]);
+
+
     return reviews.length > 0 ? (
         <Flex
             maxW="1280px"

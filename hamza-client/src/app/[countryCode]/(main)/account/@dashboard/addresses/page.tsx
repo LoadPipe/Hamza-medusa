@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import AddressBook from '@modules/account/components/address-book';
-import { getHamzaCustomer } from '@lib/data';
+import { getHamzaCustomer } from '@/lib/server';
 import { getRegion } from '@/app/actions';
 import { headers } from 'next/headers';
 

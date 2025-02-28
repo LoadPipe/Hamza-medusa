@@ -1,5 +1,4 @@
-import { Button, Text, Flex, Box } from '@chakra-ui/react';
-import { BiPlus } from 'react-icons/bi';
+import { Button, Text, Flex } from '@chakra-ui/react';
 
 type CartButtonProps = {
     styles: string;

@@ -7,13 +7,18 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';
 import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query'; // Import Zustand store
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 
-type SummaryProps = {
-    cart: CartWithCheckoutStep;
-};
 
-const Summary = ({ cart }: SummaryProps) => {
+const Summary = () => {
+
+    const { data: cart } = useQuery({
+        queryKey: ['cart'],
+        queryFn: fetchCartForCart,
+        staleTime: 1000 * 60 * 5,
+    });
+
     const isUpdating = useCartStore((state) => state.isUpdating);
 
     return (
@@ -35,9 +40,9 @@ const Summary = ({ cart }: SummaryProps) => {
             >
                 Summary
             </Text>
-            <CartTotals data={cart} useCartStyle={false} />
-            <DiscountCode cart={cart} />
-            <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
+            <CartTotals useCartStyle={false} />
+            <DiscountCode />
+            <LocalizedClientLink href={'/checkout?step=' + cart?.checkout_step}>
                 <Button
                     mt="2rem"
                     backgroundColor={'primary.indigo.900'}
@@ -46,7 +51,8 @@ const Summary = ({ cart }: SummaryProps) => {
                     height={{ base: '42px', md: '52px' }}
                     borderRadius={'full'}
                     fontSize={{ base: '14px', md: '16px' }}
-                    isDisabled={cart.items.length === 0 || isUpdating}
+                    isDisabled={cart?.items?.length === 0 || isUpdating}
+                    className='checkout-now-button'
                     _hover={{
                         backgroundColor: 'white',
                         color: 'black',

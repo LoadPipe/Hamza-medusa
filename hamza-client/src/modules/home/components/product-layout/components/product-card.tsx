@@ -300,7 +300,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                     }
                                 }}
                                 loader={loadingBuy}
-                                styles={'w-full'}
+                                styles={'w-full buy-now-button'}
                                 outOfStock={inventory == 0 && !isWhitelisted}
                                 title="Buy Now"
                             />

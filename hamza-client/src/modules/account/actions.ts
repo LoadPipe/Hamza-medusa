@@ -8,7 +8,7 @@ import {
     getToken,
     updateCustomer,
     updateShippingAddress,
-} from '@lib/data';
+} from '@/lib/server';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies, headers } from 'next/headers';

@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import OrderOverview from '@modules/account/components/order-overview';
-import { getHamzaCustomer, getOrderBucket } from '@lib/data';
+import { getHamzaCustomer, getOrderBucket } from '@/lib/server';
 import { notFound } from 'next/navigation';
 import { Flex } from '@chakra-ui/react';
-import getQueryClient from '@/getQueryClient';
+import getQueryClient from '@/app/query-utils/getQueryClient';
 import { dehydrate } from '@tanstack/react-query';
 
 export const metadata: Metadata = {

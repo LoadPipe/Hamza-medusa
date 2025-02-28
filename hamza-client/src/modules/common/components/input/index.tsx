@@ -1,7 +1,6 @@
 import { Label } from '@medusajs/ui';
 import React, { useEffect, useImperativeHandle, useState } from 'react';
 import { Input as ChakraInput } from '@chakra-ui/react';
-
 import Eye from '@modules/common/icons/eye';
 import EyeOff from '@modules/common/icons/eye-off';
 

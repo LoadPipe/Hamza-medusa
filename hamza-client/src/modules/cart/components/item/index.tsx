@@ -1,19 +1,17 @@
 'use client';
-import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 import { LineItem, Region } from '@medusajs/medusa';
-import CartItemSelect from '@modules/cart/components/cart-item-select';
 import DeleteButton from '@modules/common/components/delete-button';
-import LineItemOptions from '@modules/common/components/line-item-options';
-import LineItemPrice from '@modules/common/components/line-item-price';
+import LineItemOptions from '@/modules/common/components/line-item/line-item-options';
+import LineItemPrice from '@/modules/common/components/line-item/line-item-price';
 import Thumbnail from '@modules/products/components/thumbnail';
 import { updateLineItem, deleteLineItem } from '@modules/cart/actions';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Flex, Text, Divider, useMediaQuery } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import { debounce } from 'lodash';
-import { addDefaultShippingMethod } from '@lib/data';
-import LineItemUnitPrice from '@/modules/common/components/line-item-unit-price';
+import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
 import ItemQuantityButton from './components/item-quantity-button';
 
 type ExtendedLineItem = LineItem & {
@@ -100,7 +98,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
         >
             <Divider borderColor="#3E3E3E" />
 
-            <Flex my="auto">
+            <Flex my="auto" className="cart-item-container">
                 {/* <Radio mr="2rem" /> */}
 
                 <LocalizedClientLink href={`/products/${handle}`}>
@@ -142,7 +140,10 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 {item?.title}
                             </Text>
                             <Flex ml="auto">
-                                <DeleteButton id={item?.id} />
+                                <DeleteButton
+                                    id={item?.id}
+                                    className="delete-button"
+                                />
                             </Flex>
                         </Flex>
 

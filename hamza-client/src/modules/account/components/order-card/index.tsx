@@ -3,8 +3,9 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
-import { getStore } from '@lib/data';
+import { getStore } from '@/lib/server';
 import Link from 'next/link';
+
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -143,7 +144,7 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                 >
                     Buy Again
                 </Button>
-                <a href='https://blog.hamza.market/contact/' target='_blank'>
+                <a href="https://blog.hamza.market/contact/" target="_blank">
                     <Button
                         ml={2}
                         variant="outline"

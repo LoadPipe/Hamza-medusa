@@ -17,9 +17,12 @@ import { FaChevronLeft } from 'react-icons/fa';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useParams, useRouter } from 'next/navigation';
 import ProductDetailsMobileMenu from './components/mobile-menu';
+import { useQueryClient } from '@tanstack/react-query';
+import { Product } from '@lib/schemas/product';
 
 interface PreviewGalleryProps {
     selectedVariantImage: string;
+    handle: string;
 }
 interface ImageType {
     url: string;
@@ -27,16 +30,17 @@ interface ImageType {
 
 const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     selectedVariantImage,
+    handle,
 }) => {
-    const { productData } = useProductPreview();
+    const queryClient = useQueryClient();
+    const product = queryClient.getQueryData<Product>(['product', handle]);
     const [images, setImages] = useState<string[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
     useEffect(() => {
         // Construct the initial images array from product data
-        let newImages =
-            productData?.images?.map((img: ImageType) => img.url) || [];
+        let newImages = product?.images?.map((img: ImageType) => img.url) || [];
 
         // Check if a selected variant image is provided and is different from the main image
         if (selectedVariantImage && selectedVariantImage !== newImages[0]) {
@@ -49,7 +53,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
 
         // Update the images state
         setImages(newImages);
-    }, [productData, selectedVariantImage]);
+    }, [product, selectedVariantImage]);
 
     const openGallery = (index: number) => {
         setSelectedImageIndex(index);
@@ -85,7 +89,12 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     });
 
     return (
-        <Flex maxW={'1280px'} width={'100%'} flexDirection={'column'}>
+        <Flex
+            maxW={'1280px'}
+            width={'100%'}
+            flexDirection={'column'}
+            className="preview-gallery"
+        >
             <Grid
                 templateColumns={gridTemplateColumns}
                 templateRows={gridTemplateRows}

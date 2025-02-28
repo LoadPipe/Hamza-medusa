@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Flex, Text, MenuItem, Box, Image } from '@chakra-ui/react';
+import { Flex, Text, MenuItem, Box } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { CiLogout } from 'react-icons/ci';
 export const LogoutMobile = () => {

@@ -1,23 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-    Flex,
-    Text,
-    Button,
-    Box,
-    Skeleton,
-    SkeletonText,
-} from '@chakra-ui/react';
+import { Flex, Text, Box, Skeleton, SkeletonText } from '@chakra-ui/react';
 import HeroImageCarousel from './components/hero-image-carousel';
-import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { getProductCollection } from '@/lib/data';
+import { getProductCollection } from '@/lib/server';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
-import HeroBGImage from '@/images/home/hero_bg_image.webp';
 import { motion } from 'framer-motion';
-import { convertPrice } from '@/lib/util/price-conversion';
 
 const HeroSlider: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -25,21 +15,19 @@ const HeroSlider: React.FC = () => {
     const [usdPrice, setUsdPrice] = useState('');
 
     // Fetch product collection using react-query
-    const { data, error, isLoading } = useQuery(
-        ['productCollection'],
-        () => getProductCollection(),
-        {
-            staleTime: 60 * 1000,
-            cacheTime: 2 * 60 * 1000,
-        }
-    );
+    const { data, error, isLoading } = useQuery({
+
+        queryKey: ['productCollection'],
+        queryFn: () => getProductCollection(),
+        staleTime: 60 * 1000,
+    });
 
     // Automatic carousel timer
     useEffect(() => {
         const timer = setInterval(() => {
             if (data?.products?.length) {
                 setCurrentIndex(
-                    (prevIndex) => (prevIndex + 1) % data.products.length
+                    (prevIndex) => (prevIndex + 1) % data.products.length,
                 );
             }
         }, 5000); // Change slide every 5 seconds
@@ -120,15 +108,15 @@ const HeroSlider: React.FC = () => {
 
     const productPricing = formatCryptoPrice(
         variantPrices?.find(
-            (p: any) => p.currency_code === (preferred_currency_code ?? 'usdc')
+            (p: any) => p.currency_code === (preferred_currency_code ?? 'usdc'),
         )?.amount || 0,
-        (preferred_currency_code ?? 'usdc') as string
+        (preferred_currency_code ?? 'usdc') as string,
     );
 
     const usdPricing = formatCryptoPrice(
         variantPrices?.find((p: any) => p.currency_code === 'usdc')?.amount ||
-            0,
-        'usdc' as string
+        0,
+        'usdc' as string,
     );
 
     return (

@@ -75,6 +75,7 @@ const QuantityButton = () => {
                     borderColor={'#3E3E3E'}
                     cursor={'pointer'}
                     justifyContent={'center'}
+                    className='quantity-button-decrement'
                 >
                     <Flex
                         alignSelf="center"
@@ -98,6 +99,7 @@ const QuantityButton = () => {
                         fontSize={{ base: '12px', md: '20px' }}
                         alignSelf={'center'}
                         color="white"
+                        className='quantity-display'
                     >
                         {quantity}
                     </Text>
@@ -114,6 +116,7 @@ const QuantityButton = () => {
                     cursor={'pointer'}
                     justifyContent={'center'}
                     backgroundColor={{ base: 'black', md: 'transparent' }}
+                    className='quantity-button-increment'
                 >
                     <Flex
                         alignSelf="center"
