@@ -94,6 +94,7 @@ const ProcessingOrderCard = ({
             <Flex
                 justifyContent={{ base: 'center', md: 'unset' }}
                 flexDir={{ base: 'column', md: 'row' }}
+                gap={{ base: 2, md: 0 }}
             >
                 <OrderLeftColumn
                     order={order}

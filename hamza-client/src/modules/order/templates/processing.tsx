@@ -269,20 +269,12 @@ const Processing = ({
                                             <Flex
                                                 direction={{
                                                     base: 'column',
-                                                    md: 'row',
+                                                    md: 'column',
                                                 }}
-                                                justifyContent={{
-                                                    base: 'flex-start',
-                                                    md: 'center',
-                                                }}
-                                                alignItems={{
-                                                    base: 'flex-start',
-                                                    md: 'center',
-                                                }}
-                                                mb={5}
+                                                my={5}
                                             >
                                                 {/* Left-aligned text */}
-                                                {/* <OrderTotalAmount
+                                                <OrderTotalAmount
                                                     subTotal={subTotal}
                                                     currencyCode={
                                                         item.currency_code
@@ -294,21 +286,18 @@ const Processing = ({
                                                     paymentTotal={
                                                         order.payments[0]
                                                     }
-                                                /> */}
+                                                />
 
                                                 {/* Right-aligned buttons */}
-                                                {/* {index ===
+                                                {index ===
                                                 order.items.length - 1 ? (
                                                     <Flex
                                                         direction={{
                                                             base: 'column',
                                                             md: 'row',
                                                         }}
-                                                        justifyContent={
-                                                            'flex-end'
-                                                        }
                                                         gap={2}
-                                                        mt={{ base: 4, md: 0 }}
+                                                        mt={{ base: 4, md: 4 }}
                                                         width="100%"
                                                     >
                                                         <Button
@@ -318,14 +307,6 @@ const Processing = ({
                                                             cursor="pointer"
                                                             fontWeight={400}
                                                             height={'36px'}
-                                                            ml={{
-                                                                base: 0,
-                                                                md: 2,
-                                                            }}
-                                                            mt={{
-                                                                base: 2,
-                                                                md: 0,
-                                                            }}
                                                             width={{
                                                                 base: '100%',
                                                                 md: 'auto',
@@ -387,7 +368,7 @@ const Processing = ({
                                                                 </Box>
                                                             )}
                                                     </Flex>
-                                                ) : null} */}
+                                                ) : null}
                                             </Flex>
 
                                             {/* Collapsible Section */}
