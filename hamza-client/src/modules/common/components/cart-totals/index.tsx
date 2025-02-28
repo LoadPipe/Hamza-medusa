@@ -107,6 +107,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                         <Text
                             fontSize={{ base: '14px', md: '16px' }}
                             alignSelf="center"
+                            className='cart-totals-subtotal'
                         >
                             {formatCryptoPrice(
                                 finalSubtotal.amount,
@@ -142,6 +143,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 alignSelf="center"
+                                className='cart-totals-shipping'
                             >
                                 {formatCryptoPrice(
                                     shippingCost!,
@@ -203,6 +205,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                                     lineHeight="1.1"
                                     position="relative"
                                     top="1px"
+                                    className='cart-totals-total'
                                 >
                                     {formatCryptoPrice(
                                         grandTotal,

@@ -151,6 +151,7 @@ const FilterBar = () => {
                     top="0"
                     bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #2C272D 65%)"
                     userSelect={'none'}
+                    className="filter-bar-chevron"
                 >
                     <Flex
                         ml="auto"

@@ -1,3 +1,6 @@
+import { elementCheckByElementClass } from '../../../support/utils/element-check-by-element-class';
+import { buttonClickByElementClass } from '../../../support/utils/buttons/button-click-by-element-class';
+
 describe('Store header', () => {
     beforeEach(() => {
         // Assuming the store page URL is '/store'
@@ -16,6 +19,14 @@ describe('Store header', () => {
 		it('should have store product count', () => {
 			cy.get('.store-product-count').should('exist').and('contain', '7');
 		});
+
+		it('Chat with them', () => {
+			// checks for external url
+			elementCheckByElementClass('a', {
+				findByChild: 'Chat with them',
+				isVisible: true,
+			}).parents('a').should('have.attr', 'href', 'https://support.hamza.market/help/1568263160');
+		});
 });
 
 describe('Store filters', () => {
@@ -33,7 +44,32 @@ describe('Store filters', () => {
 				cy.get('p').contains('Fashion').should('exist');
 				cy.get('p').contains('Featured').should('exist');
 			});
+	});
 
+	it('filters: home', () => {
+			buttonClickByElementClass('.store-filters', { findByChild: 'Home', exist: true });
+
+			elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 1);
+	});
+
+	it('filters: fashion', () => {
+		buttonClickByElementClass('.store-filters', { findByChild: 'Fashion', exist: true });
+
+		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 6);
+	});
+
+	it('filters: featured', () => {
+		buttonClickByElementClass('.store-filters', { findByChild: 'Featured', exist: true });
+
+		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 3);
+	});
+
+	it('filters: home, fashion, featured', () => {
+		buttonClickByElementClass('.store-filters', { findByChild: 'Home', exist: true });
+		buttonClickByElementClass('.store-filters', { findByChild: 'Fashion', exist: true });
+		buttonClickByElementClass('.store-filters', { findByChild: 'Featured', exist: true });
+
+		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 7);
 	});
 });
 
@@ -48,3 +84,5 @@ describe('Store products', () => {
 		cy.get('.product-card').should('have.length', 7);
 	});
 });
+
+

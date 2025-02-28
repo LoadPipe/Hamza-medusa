@@ -49,6 +49,7 @@ const RangeSliderModal: React.FC<RangeSliderProps> = ({ range, setRange }) => {
                         index={1}
                         boxSize={5}
                         bg="primary.indigo.900"
+                        className="range-slider-thumb-right"
                     />
                 </RangeSlider>
             </Box>

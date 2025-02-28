@@ -157,7 +157,6 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                         )}
                         {/* Back Button (Top Left) */}
                         <Flex
-                            display={{ base: 'flex', md: 'none' }}
                             flexDir={'row'}
                             flex={1}
                             width={'100%'}
