@@ -31,6 +31,7 @@ const Summary = () => {
             width={'100%'}
             backgroundColor={'#121212'}
             borderRadius={'16px'}
+            className='summary-container'
         >
             <Text
                 color="primary.green.900"

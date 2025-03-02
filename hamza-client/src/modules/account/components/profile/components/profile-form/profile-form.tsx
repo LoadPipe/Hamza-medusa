@@ -107,12 +107,14 @@ const ProfileForm: React.FC<any> = ({ customer }) => {
                     label="First Name"
                     value={firstNameValue}
                     setValue={setFirstNameValue}
+                    className="first-name-input"
                 />
                 <ProfileInput
                     placeholder="Last Name"
                     label="Last Name"
                     value={lastNameValue}
                     setValue={setLastNameValue}
+                    className="last-name-input"
                 />
             </Flex>
 
@@ -134,6 +136,7 @@ const ProfileForm: React.FC<any> = ({ customer }) => {
                         setCustomerPreferredCurrency={
                             setCustomerPreferredCurrency
                         }
+                        className="currency-input"
                     />
                 </Flex>
                 {emailValue?.length > 0 && (

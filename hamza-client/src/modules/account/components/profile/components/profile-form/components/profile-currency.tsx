@@ -6,11 +6,13 @@ import { Flex, FormLabel, Select } from '@chakra-ui/react';
 type ProfileCurrencyProps = {
     preferred_currency_code: string | null;
     setCustomerPreferredCurrency: (currency: string) => void;
+    className?: string;
 };
 
 const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     preferred_currency_code,
     setCustomerPreferredCurrency,
+    className,
 }) => {
     const handleCurrencyChange = (
         event: React.ChangeEvent<HTMLSelectElement>
@@ -20,7 +22,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     };
 
     return (
-        <Flex flexDirection={'column'} width={'100%'}>
+        <Flex flexDirection={'column'} width={'100%'} className={className}>
             <FormLabel
                 textTransform={'uppercase'}
                 fontSize={'12px'}

@@ -482,12 +482,17 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 my="3"
                                 color={'white'}
                             >
-                                <Flex alignItems="center" color={'white'}>
+                                <Flex
+                                    alignItems="center"
+                                    color={'white'}
+                                    className="address-checkboxes"
+                                >
                                     {(customer?.shipping_addresses?.length ??
                                         0) < MAX_ADDRESSES && (
                                         <>
                                             <Checkbox
                                                 mr="2"
+                                                className="save-address-checkbox"
                                                 isChecked={saveAddress}
                                                 onChange={
                                                     handleSaveAddressChange
@@ -503,6 +508,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                             <Checkbox
                                                 ml="4"
                                                 mr="2"
+                                                className="overwrite-address-checkbox"
                                                 isChecked={overwriteAddress}
                                                 onChange={
                                                     handleOverwriteAddressChange
