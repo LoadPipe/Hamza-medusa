@@ -1,2 +1,0 @@
-yarn nuke
-yarn deepclean

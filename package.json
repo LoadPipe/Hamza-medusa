@@ -9,7 +9,7 @@
   },
   "scripts": {
     "prepare": "husky",
-    "build": "cd hamza-server && yarn run build && cd .. && cd hamza-client && yarn run build",
+    "build": "cd hamza-client && yarn run build",
     "prettier": "prettier --write hamza-server/src && prettier --write hamza-client/src"
   },
   "name": "hamza-medusa",
