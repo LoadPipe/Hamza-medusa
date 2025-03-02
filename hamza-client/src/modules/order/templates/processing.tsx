@@ -112,13 +112,21 @@ const Processing = ({
     const processingOrder = cachedData?.Processing || [];
 
     const mutation = useMutation({
-        mutationFn: async ({ order_id, cancel_reason }: { order_id: string; cancel_reason: string }) => {
+        mutationFn: async ({
+            order_id,
+            cancel_reason,
+        }: {
+            order_id: string;
+            cancel_reason: string;
+        }) => {
             return cancelOrder(order_id, cancel_reason);
         },
         onSuccess: async () => {
             try {
                 // Refetch orders after a successful cancellation
-                await queryClient.invalidateQueries({ queryKey: ['fetchAllOrders', customer] });
+                await queryClient.invalidateQueries({
+                    queryKey: ['fetchAllOrders', customer],
+                });
 
                 setIsModalOpen(false);
                 setSelectedOrderId(null);
@@ -130,7 +138,6 @@ const Processing = ({
             console.error('Error cancelling order: ', error);
         },
     });
-
 
     // Utility function to format status values
     const formatStatus = (prefix: string, status: any) => {
