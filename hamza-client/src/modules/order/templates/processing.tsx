@@ -40,7 +40,7 @@ import { BsCircleFill } from 'react-icons/bs';
 import Image from 'next/image';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
-import { OrdersData } from './all';
+import { OrdersData, OrderNote } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import { upperCase } from 'lodash';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
@@ -190,8 +190,10 @@ const Processing = ({
     };
 
     if (isEmpty && processingOrder?.length === 0) {
-        return <EmptyState />;
+        return <EmptyState/>;
     }
+
+
     return (
         <div style={{ width: '100%' }}>
             {/*{processingOrdersLoading ? (*/}
@@ -238,6 +240,10 @@ const Processing = ({
                                 acc + item.unit_price * item.quantity,
                             0
                         );
+
+                        // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
+                        const hasSellerNotes = order?.notes?.length > 0
+
 
                         return (
                             <div key={order.id}>
@@ -353,7 +359,7 @@ const Processing = ({
                                                         </Button>
                                                         {order.escrow_status &&
                                                             order.escrow_status !==
-                                                                'released' && (
+                                                            'released' && (
                                                                 <Box
                                                                     as="a"
                                                                     href={`/account/escrow/${order.id}`}
@@ -395,7 +401,7 @@ const Processing = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Order Timeline
+                                                                Order Details
                                                             </Tab>
                                                             <Tab
                                                                 _selected={{
@@ -406,18 +412,20 @@ const Processing = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Order Details
+                                                                Order Timeline
                                                             </Tab>
+                                                            {hasSellerNotes &&
+                                                                <Tab
+                                                                    _selected={{
+                                                                        color: 'primary.green.900',
+                                                                        borderBottom:
+                                                                            '2px solid',
+                                                                        borderColor:
+                                                                            'primary.green.900',
+                                                                    }}
+                                                                >Seller Note</Tab>}
                                                         </TabList>
                                                         <TabPanels>
-                                                            <TabPanel>
-                                                                <OrderTimeline
-                                                                    orderDetails={
-                                                                        order
-                                                                    }
-                                                                />
-                                                            </TabPanel>
-
                                                             <TabPanel>
                                                                 <VStack
                                                                     align="start"
@@ -442,6 +450,15 @@ const Processing = ({
                                                                             }
                                                                             flex="1"
                                                                         >
+                                                                            <Flex>
+                                                                                {order.tracking_number && (
+                                                                                    <>
+                                                                                        <Text><b>Tracking
+                                                                                            Number:</b> {order.tracking_number}
+                                                                                        </Text>
+                                                                                    </>
+                                                                                )}
+                                                                            </Flex>
                                                                             {order
                                                                                 ?.shipping_methods[0]
                                                                                 ?.price && (
@@ -458,7 +475,7 @@ const Processing = ({
                                                                                                 ?.price
                                                                                         ),
                                                                                         item.currency_code ??
-                                                                                            'usdc'
+                                                                                        'usdc'
                                                                                     )}{' '}
                                                                                     {upperCase(
                                                                                         item.currency_code
@@ -500,11 +517,11 @@ const Processing = ({
                                                                                     </strong>{' '}
                                                                                     {order?.id &&
                                                                                     typeof order.id ===
-                                                                                        'string'
+                                                                                    'string'
                                                                                         ? order.id.replace(
-                                                                                              /^order_/,
-                                                                                              ''
-                                                                                          ) // Remove "order_" prefix
+                                                                                            /^order_/,
+                                                                                            ''
+                                                                                        ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>
@@ -552,6 +569,31 @@ const Processing = ({
                                                                     </Flex>
                                                                 </VStack>
                                                             </TabPanel>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
+                                                            </TabPanel>
+                                                            {hasSellerNotes && (
+                                                                <TabPanel>
+                                                                    {order.notes.map((note: OrderNote) => (
+                                                                        <Box
+                                                                            key={note.id}
+                                                                            p={8}
+                                                                            mb={4}
+                                                                            border="1px transparent"
+                                                                            borderRadius="md"
+                                                                            bg="black"
+                                                                            boxShadow="sm"
+                                                                            fontFamily="Inter, sans-serif"
+                                                                        >
+                                                                            <Text>{note.note}</Text>
+                                                                        </Box>
+                                                                    ))}
+                                                                </TabPanel>
+                                                            )}
                                                         </TabPanels>
                                                     </Tabs>
                                                 </Box>
@@ -574,10 +616,10 @@ const Processing = ({
                         );
                     })}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
-                        <ModalOverlay />
+                        <ModalOverlay/>
                         <ModalContent>
                             <ModalHeader>Request Cancellation</ModalHeader>
-                            <ModalCloseButton />
+                            <ModalCloseButton/>
                             <ModalBody>
                                 <FormControl
                                     isInvalid={cancelReason.trim().length < 50}

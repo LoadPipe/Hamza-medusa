@@ -14,28 +14,29 @@ import {
 } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import {useQueryClient} from '@tanstack/react-query';
+import React, {useState} from 'react';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import CancellationModal from '@modules/order/templates/cancelled-modal';
-import { OrdersData } from './all';
-import { useOrderTabStore } from '@/zustand/order-tab-state';
+import {OrdersData} from './all';
+import {useOrderTabStore} from '@/zustand/order-tab-state';
 import OrderTimeline from '@modules/order/components/order-timeline';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { upperCase } from 'lodash';
+import {formatCryptoPrice} from '@lib/util/get-product-price';
+import {upperCase} from 'lodash';
 import {
     chainIdToName,
     getChainLogo,
 } from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
+import {OrderNote} from './all'
 
 const Cancelled = ({
-    customer,
-    // chainEnabled,
-    // onSuccess,
-    isEmpty,
-}: {
+                       customer,
+                       // chainEnabled,
+                       // onSuccess,
+                       isEmpty,
+                   }: {
     customer: string;
     // chainEnabled?: boolean;
     // onSuccess?: () => void;
@@ -62,11 +63,11 @@ const Cancelled = ({
 
     const canceledOrder = cachedData?.Cancelled || [];
     if (isEmpty && canceledOrder && canceledOrder?.length == 0) {
-        return <EmptyState />;
+        return <EmptyState/>;
     }
 
     return (
-        <div style={{ width: '100%' }}>
+        <div style={{width: '100%'}}>
             {/*{cancelIsLoading ? (*/}
             {/*    <Box*/}
             {/*        display="flex"*/}
@@ -103,6 +104,9 @@ const Cancelled = ({
                                 acc + item.unit_price * item.quantity,
                             0
                         );
+
+                        // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
+                        const hasSellerNotes = order?.notes?.length > 0
 
                         return (
                             <Flex
@@ -185,7 +189,7 @@ const Cancelled = ({
                                                             'flex-end'
                                                         }
                                                         gap={2}
-                                                        mt={{ base: 4, md: 0 }}
+                                                        mt={{base: 4, md: 0}}
                                                         width="100%"
                                                     >
                                                         <Button
@@ -264,7 +268,7 @@ const Cancelled = ({
                                                         </a>
                                                         {order.escrow_status &&
                                                             order.escrow_status !==
-                                                                'released' && (
+                                                            'released' && (
                                                                 <Box
                                                                     as="a"
                                                                     href={`/account/escrow/${order.id}`}
@@ -295,17 +299,7 @@ const Cancelled = ({
                                                 <Box mt={4}>
                                                     <Tabs variant="unstyled">
                                                         <TabList>
-                                                            <Tab
-                                                                _selected={{
-                                                                    color: 'primary.green.900',
-                                                                    borderBottom:
-                                                                        '2px solid',
-                                                                    borderColor:
-                                                                        'primary.green.900',
-                                                                }}
-                                                            >
-                                                                Order Timeline
-                                                            </Tab>
+
                                                             <Tab
                                                                 _selected={{
                                                                     color: 'primary.green.900',
@@ -317,16 +311,30 @@ const Cancelled = ({
                                                             >
                                                                 Order Details
                                                             </Tab>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Timeline
+                                                            </Tab>
+
+                                                            {hasSellerNotes &&
+                                                                <Tab
+                                                                    _selected={{
+                                                                        color: 'primary.green.900',
+                                                                        borderBottom:
+                                                                            '2px solid',
+                                                                        borderColor:
+                                                                            'primary.green.900',
+                                                                    }}
+                                                                >Seller Note</Tab>}
                                                         </TabList>
                                                         <TabPanels>
-                                                            <TabPanel>
-                                                                <OrderTimeline
-                                                                    orderDetails={
-                                                                        order
-                                                                    }
-                                                                />
-                                                            </TabPanel>
-
                                                             <TabPanel>
                                                                 <VStack
                                                                     align="start"
@@ -351,6 +359,13 @@ const Cancelled = ({
                                                                             }
                                                                             flex="1"
                                                                         >
+                                                                            {order.tracking_number && (
+                                                                                <>
+                                                                                    <Text><b>Tracking
+                                                                                        Number:</b> {order.tracking_number}
+                                                                                    </Text>
+                                                                                </>
+                                                                            )}
                                                                             {order
                                                                                 ?.shipping_methods[0]
                                                                                 ?.price && (
@@ -367,7 +382,7 @@ const Cancelled = ({
                                                                                                 ?.price
                                                                                         ),
                                                                                         item.currency_code ??
-                                                                                            'usdc'
+                                                                                        'usdc'
                                                                                     )}{' '}
                                                                                     {upperCase(
                                                                                         item.currency_code
@@ -409,11 +424,11 @@ const Cancelled = ({
                                                                                     </strong>{' '}
                                                                                     {order?.id &&
                                                                                     typeof order.id ===
-                                                                                        'string'
+                                                                                    'string'
                                                                                         ? order.id.replace(
-                                                                                              /^order_/,
-                                                                                              ''
-                                                                                          ) // Remove "order_" prefix
+                                                                                            /^order_/,
+                                                                                            ''
+                                                                                        ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>
@@ -461,6 +476,31 @@ const Cancelled = ({
                                                                     </Flex>
                                                                 </VStack>
                                                             </TabPanel>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
+                                                            </TabPanel>
+                                                            {hasSellerNotes && (
+                                                                <TabPanel>
+                                                                    {order.notes.map((note: OrderNote) => (
+                                                                        <Box
+                                                                            key={note.id}
+                                                                            p={8}
+                                                                            mb={4}
+                                                                            border="1px transparent"
+                                                                            borderRadius="md"
+                                                                            bg="black"
+                                                                            boxShadow="sm"
+                                                                            fontFamily="Inter, sans-serif"
+                                                                        >
+                                                                            <Text>{note.note}</Text>
+                                                                        </Box>
+                                                                    ))}
+                                                                </TabPanel>
+                                                            )}
                                                         </TabPanels>
                                                     </Tabs>
                                                 </Box>
