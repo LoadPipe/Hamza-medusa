@@ -227,8 +227,9 @@ const Shipped = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Order Timeline
+                                                                Order Details
                                                             </Tab>
+
                                                             <Tab
                                                                 _selected={{
                                                                     color: 'primary.green.900',
@@ -249,17 +250,11 @@ const Shipped = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Order Details
+                                                                Order Timeline
                                                             </Tab>
                                                         </TabList>
                                                         <TabPanels>
-                                                            <TabPanel>
-                                                                <OrderTimeline
-                                                                    orderDetails={
-                                                                        order
-                                                                    }
-                                                                />
-                                                            </TabPanel>
+
                                                             <TabPanel>
                                                                 <HStack
                                                                     align="start"
@@ -492,6 +487,14 @@ const Shipped = ({
                                                                         </VStack>
                                                                     </Flex>
                                                                 </VStack>
+                                                            </TabPanel>
+
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
                                                             </TabPanel>
                                                         </TabPanels>
                                                     </Tabs>
