@@ -5,20 +5,6 @@ on:
     branches: [main, staging, staging-ci]
 
 jobs:
-  build_server:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 18.18.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18.18.x'
-      - name: Install Dependencies for Server
-        run: yarn install
-        working-directory: hamza-server
-      - name: Build Server
-        run: yarn build
-        working-directory: hamza-server
 
   lint_client:
     runs-on: ubuntu-latest

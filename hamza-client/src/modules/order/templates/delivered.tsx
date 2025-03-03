@@ -286,17 +286,7 @@ const Delivered = ({
                                                 <Box mt={4}>
                                                     <Tabs variant="unstyled">
                                                         <TabList>
-                                                            <Tab
-                                                                _selected={{
-                                                                    color: 'primary.green.900',
-                                                                    borderBottom:
-                                                                        '2px solid',
-                                                                    borderColor:
-                                                                        'primary.green.900',
-                                                                }}
-                                                            >
-                                                                Order Timeline
-                                                            </Tab>
+
                                                             <Tab
                                                                 _selected={{
                                                                     color: 'primary.green.900',
@@ -307,6 +297,17 @@ const Delivered = ({
                                                                 }}
                                                             >
                                                                 Order Details
+                                                            </Tab>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Timeline
                                                             </Tab>
                                                             {hasSellerNotes &&
                                                                 <Tab
@@ -320,13 +321,6 @@ const Delivered = ({
                                                                 >Seller Note</Tab>}
                                                         </TabList>
                                                         <TabPanels>
-                                                            <TabPanel>
-                                                                <OrderTimeline
-                                                                    orderDetails={
-                                                                        order
-                                                                    }
-                                                                />
-                                                            </TabPanel>
 
                                                             <TabPanel>
                                                                 <VStack
@@ -381,6 +375,13 @@ const Delivered = ({
                                                                         </VStack>
                                                                     </Flex>
                                                                 </VStack>
+                                                            </TabPanel>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
                                                             </TabPanel>
 
                                                             {hasSellerNotes && (

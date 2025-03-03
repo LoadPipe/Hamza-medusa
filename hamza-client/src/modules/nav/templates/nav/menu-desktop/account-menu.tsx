@@ -69,7 +69,9 @@ const AccountMenu = () => {
                             color="white"
                             fontWeight="700"
                         >
-                            <Text fontSize={'10px'}>{totalItems}</Text>
+                            <Text fontSize={'10px'} className="wishlist-count">
+                                {totalItems}
+                            </Text>
                         </Flex>
                     )}
                 </MenuButton>

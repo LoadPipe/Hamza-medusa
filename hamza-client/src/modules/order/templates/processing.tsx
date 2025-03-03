@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {cancelOrder} from '@/lib/server';
+import React, { useState } from 'react';
+import { cancelOrder } from '@/lib/server';
 import {
     chainIdToName,
     getChainLogo,
@@ -30,21 +30,19 @@ import {
     Icon,
     Divider,
 } from '@chakra-ui/react';
-import {formatCryptoPrice} from '@lib/util/get-product-price';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
 import OrderTimeline from '@modules/order/components/order-timeline';
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
-import {BsCircleFill} from 'react-icons/bs';
+import { BsCircleFill } from 'react-icons/bs';
 import Image from 'next/image';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
-import {OrdersData} from './all';
-import {useOrderTabStore} from '@/zustand/order-tab-state';
-import {upperCase} from 'lodash';
-import {OrderNote} from './all'
-
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
+import { upperCase } from 'lodash';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 /**
@@ -83,10 +81,10 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
  */
 
 const Processing = ({
-                        customer,
-                        // onSuccess,
-                        isEmpty,
-                    }: {
+    customer,
+    // onSuccess,
+    isEmpty,
+}: {
     customer: string;
     // onSuccess?: () => void;
     isEmpty?: boolean;
@@ -115,13 +113,21 @@ const Processing = ({
     const processingOrder = cachedData?.Processing || [];
 
     const mutation = useMutation({
-        mutationFn: async ({order_id, cancel_reason}: { order_id: string; cancel_reason: string }) => {
+        mutationFn: async ({
+            order_id,
+            cancel_reason,
+        }: {
+            order_id: string;
+            cancel_reason: string;
+        }) => {
             return cancelOrder(order_id, cancel_reason);
         },
         onSuccess: async () => {
             try {
                 // Refetch orders after a successful cancellation
-                await queryClient.invalidateQueries({queryKey: ['fetchAllOrders', customer]});
+                await queryClient.invalidateQueries({
+                    queryKey: ['fetchAllOrders', customer],
+                });
 
                 setIsModalOpen(false);
                 setSelectedOrderId(null);
@@ -133,7 +139,6 @@ const Processing = ({
             console.error('Error cancelling order: ', error);
         },
     });
-
 
     // Utility function to format status values
     const formatStatus = (prefix: string, status: any) => {
@@ -191,7 +196,7 @@ const Processing = ({
 
 
     return (
-        <div style={{width: '100%'}}>
+        <div style={{ width: '100%' }}>
             {/*{processingOrdersLoading ? (*/}
             {/*    <Box*/}
             {/*        display="flex"*/}
@@ -308,7 +313,7 @@ const Processing = ({
                                                             'flex-end'
                                                         }
                                                         gap={2}
-                                                        mt={{base: 4, md: 0}}
+                                                        mt={{ base: 4, md: 0 }}
                                                         width="100%"
                                                     >
                                                         <Button

@@ -1,6 +1,6 @@
 {
     "name": "hamza-client",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "private": true,
     "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, Chris Li, John R. Kosinski",
     "description": "Hamza Web Client",
@@ -43,6 +43,7 @@
         "@medusajs/product": "^0.3.4",
         "@medusajs/ui": "^2.2.0",
         "@meilisearch/instant-meilisearch": "^0.7.1",
+        "@next/third-parties": "^15.1.7",
         "@paypal/paypal-js": "^5.0.6",
         "@paypal/react-paypal-js": "^7.8.1",
         "@radix-ui/react-use-layout-effect": "^1.1.0",

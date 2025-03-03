@@ -54,7 +54,7 @@ const LineItemUnitPrice = ({
     // console.log('preferred_currency_code: ', preferred_currency_code);
 
     return (
-        <div className="flex flex-col text-ui-fg-muted justify-center h-full">
+        <div className="flex flex-col text-ui-fg-muted justify-center h-full line-item-unit-price">
             {displayReducedPrice && hasReducedPrice && (
                 <>
                     <p>

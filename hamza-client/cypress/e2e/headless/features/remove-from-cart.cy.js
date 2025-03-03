@@ -1,117 +1,59 @@
-describe('Product page exist', () => {
-	it('fetches product with handle [drone]', () => {
-			cy.visit('/en/products/drone');
-			cy.get('h1').contains('DJI Mini 3 Pro');
-	});
+import { elementCheckByElementText } from '../../../support/utils/element-check-by-element-text';
+import { elementCheckByElementClass } from '../../../support/utils/element-check-by-element-class';
+import { buttonClickByElementText } from '../../../support/utils/buttons/button-click-by-element-text';
 
-	it('fetches product with handle [hyper-x-mouse]', () => {
-			cy.visit('/en/products/hyper-x-mouse');
-			cy.get('h1').contains(/HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight/i);
-	});
+describe('Remove from cart', () => {
+    it('fetches product with handle [drone]', () => {
+        cy.visit('/en/products/drone');
+        elementCheckByElementText('DJI Mini 3 Pro');
+    });
 
-	it('adds 2 different products to cart and deletes from cart', () => {
-			// Drone
-			cy.visit('/en/products/drone');
+    it('fetches product with handle [hyper-x-mouse]', () => {
+        cy.visit('/en/products/hyper-x-mouse');
+        elementCheckByElementText(
+            'HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight'
+        );
+    });
 
-			cy.get('.preview-checkout-add-to-cart')
-					.should('not.be.disabled')
-					.contains('Add to Cart')
-					.click();
+    it('adds 2 different products to cart and deletes from cart', () => {
+        // Drone
+        cy.visit('/en/products/drone');
 
-			// Check for modal popup with "Added to Cart" text, retry 3 times with 4s intervals
-			cy.contains('Added to Cart')
-					.should((elem) => {
-							return new Cypress.Promise((resolve, reject) => {
-									let attempts = 0;
-									const check = () => {
-											attempts++;
-											if (Cypress.$(elem).is(':visible')) {
-													resolve();
-											} else if (attempts >= 10) {
-													reject(new Error('Element not visible after 5 attempts'));
-											} else {
-													setTimeout(check, 2000);
-											}
-									};
-									check();
-							});
-					});
+        buttonClickByElementText('Add to Cart');
 
-			// HyperX Mouse
-			cy.visit('/en/products/hyper-x-mouse');
+        // Check for modal popup with "Added to Cart" text, retry 3 times with 4s intervals
+        elementCheckByElementText('Added to Cart');
 
-			cy.get('.preview-checkout-add-to-cart')
-					.should('not.be.disabled')
-					.contains('Add to Cart')
-					.click();
+        // HyperX Mouse
+        cy.visit('/en/products/hyper-x-mouse');
 
-			// Check for modal popup with "Added to Cart" text, retry 5 times with 4s intervals
-			cy.contains('Added to Cart')
-					.should((elem) => {
-							return new Cypress.Promise((resolve, reject) => {
-									let attempts = 0;
-									const check = () => {
-											attempts++;
-											if (Cypress.$(elem).is(':visible')) {
-													resolve();
-											} else if (attempts >= 10) {
-													reject(new Error('Element not visible after 5 attempts'));
-											} else {
-													setTimeout(check, 2000);
-											}
-									};
-									check();
-							});
-					});
+        buttonClickByElementText('Add to Cart');
 
-			// Cart ----------------------------------------------------------------
-			cy.visit('/en/cart');
+        // Check for modal popup with "Added to Cart" text, retry 5 times with 4s intervals
+        elementCheckByElementText('Added to Cart');
 
-			// check drone -------------------------------------------------------------
-			cy.get('.cart-item-container')
-				.should((elem) => {
-					return new Cypress.Promise((resolve, reject) => {
-						let attempts = 0;
-						const check = () => {
-							attempts++;
-							if (Cypress.$(elem).is(':visible')) {
-								resolve();
-							} else if (attempts >= 10) {
-								reject(new Error('Cart item container not visible after 10 seconds'));
-							} else {
-								setTimeout(check, 2000);
-							}
-						};
-						check();
-					});
-				})
-				.contains('p', 'DJI Mini 3 Pro')
-				.parents('.cart-item-container')
-				.find('.delete-button')
-				.click();
+        // Cart ----------------------------------------------------------------
+        cy.visit('/en/cart');
 
-			// check hyperx mouse
-			cy.get('.cart-item-container')
-				.should((elem) => {
-					return new Cypress.Promise((resolve, reject) => {
-						let attempts = 0;
-						const check = () => {
-							attempts++;
-							if (Cypress.$(elem).is(':visible')) {
-								resolve();
-							} else if (attempts >= 10) {
-								reject(new Error('Cart item container not visible after 10 seconds'));
-							} else {
-								setTimeout(check, 2000);
-							}
-						};
-						check();
-					});
-				})
-				.find('p')
-				.contains(/HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight/i)
-				.parents('.cart-item-container')
-				.find('.delete-button')
-				.click();
-	});
+        // check drone -------------------------------------------------------------
+        elementCheckByElementClass('.cart-item-container', {
+            findByChild: 'DJI Mini 3 Pro',
+            scrollIntoView: true,
+        })
+            .parents('.cart-item-container')
+            .find('.delete-button')
+            .click();
+
+        cy.wait(2000);
+
+        // check hyperx mouse
+        elementCheckByElementClass('.cart-item-container', {
+            findByChild:
+                'HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight',
+            scrollIntoView: true,
+        })
+            .parents('.cart-item-container')
+            .find('.delete-button')
+            .click();
+    });
 });
