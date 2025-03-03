@@ -8,7 +8,7 @@ import {
     MenuList,
     MenuItem,
     Button,
-    Checkbox,
+    Radio,
     Box,
     MenuDivider,
 } from '@chakra-ui/react';
@@ -28,21 +28,20 @@ const CurrencySelector = (props: any) => {
         preferred_currency_code
     );
 
-    const handleCurrencySelect = (currency: string) => {
-        setSelectedCurrency(currency);
-    };
 
-    const handleSaveChanges = async (onClose: () => void) => {
+    const handleCurrencyChange = async (currency: string, onClose: () => void) => {
         if (selectedCurrency) {
             try {
+                // Immediately update local states
+                setSelectedCurrency(currency);
                 // Update the preferred currency in Zustand
-                setCustomerPreferredCurrency(selectedCurrency);
+                setCustomerPreferredCurrency(currency);
 
                 // Update the displayed currency
-                setDisplayedCurrency(selectedCurrency);
+                setDisplayedCurrency(currency);
 
                 // Call the API to update the currency
-                await setCurrency(selectedCurrency, authData.customer_id);
+                await setCurrency(currency, authData.customer_id);
 
                 // Close the menu
                 onClose();
@@ -133,7 +132,7 @@ const CurrencySelector = (props: any) => {
                                     borderColor={'white'}
                                 />
                             </Box>
-                            {['usdt', 'usdc', 'eth'].map((currency) => (
+                            {['eth', 'usdc', 'usdt'].map((currency) => (
                                 <MenuItem
                                     key={currency}
                                     fontWeight={'600'}
@@ -143,11 +142,9 @@ const CurrencySelector = (props: any) => {
                                     backgroundColor={'transparent'}
                                     _hover={{ color: 'primary.green.900' }}
                                     className="currency-selector-item"
-                                    onClick={() =>
-                                        handleCurrencySelect(currency)
-                                    }
+                                    onClick={() => handleCurrencyChange(currency, onClose)}
                                 >
-                                    <Checkbox
+                                    <Radio
                                         style={{
                                             width: '14px',
                                             height: '14px',
@@ -155,9 +152,6 @@ const CurrencySelector = (props: any) => {
                                         colorScheme="green"
                                         isChecked={
                                             selectedCurrency === currency
-                                        }
-                                        onChange={() =>
-                                            handleCurrencySelect(currency)
                                         }
                                     />
                                     <Flex alignItems="center" gap={2}>
@@ -173,23 +167,6 @@ const CurrencySelector = (props: any) => {
                                     </Flex>
                                 </MenuItem>
                             ))}
-                            <Box mt="1rem" px={4} py={2}>
-                                <Button
-                                    colorScheme="green"
-                                    width="100%"
-                                    height={'27px'}
-                                    fontSize={'10px'}
-                                    borderRadius={'full'}
-                                    backgroundColor={'#84C441'}
-                                    color={'black'}
-                                    _hover={{
-                                        opacity: 0.5,
-                                    }}
-                                    onClick={() => handleSaveChanges(onClose)}
-                                >
-                                    Save Changes
-                                </Button>
-                            </Box>
                         </MenuList>
                     </>
                 )}
