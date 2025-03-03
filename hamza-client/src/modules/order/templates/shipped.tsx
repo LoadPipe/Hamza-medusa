@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { getSingleBucket } from '@/lib/server';
+import React, {useEffect, useState} from 'react';
+import {getSingleBucket} from '@/lib/server';
 import {
     Box,
     Button,
@@ -16,18 +16,18 @@ import {
     Text,
     VStack,
 } from '@chakra-ui/react';
-import { BsCircleFill } from 'react-icons/bs';
+import {BsCircleFill} from 'react-icons/bs';
 import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
-import { debounce, upperCase } from 'lodash';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
+import {debounce, upperCase} from 'lodash';
+import {formatCryptoPrice} from '@lib/util/get-product-price';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
-import { OrdersData } from './all';
-import { useOrderTabStore } from '@/zustand/order-tab-state';
+import {OrdersData} from './all';
+import {useOrderTabStore} from '@/zustand/order-tab-state';
 import OrderTimeline from '@modules/order/components/order-timeline';
 import {
     chainIdToName,
@@ -36,11 +36,11 @@ import {
 import Image from 'next/image';
 
 const Shipped = ({
-    customer,
-    // chainEnabled,
-    // onSuccess,
-    isEmpty,
-}: {
+                     customer,
+                     // chainEnabled,
+                     // onSuccess,
+                     isEmpty,
+                 }: {
     customer: string;
     // chainEnabled?: boolean;
     // onSuccess?: () => void;
@@ -61,7 +61,7 @@ const Shipped = ({
     const shippedOrder = cachedData?.Shipped || [];
 
     if (isEmpty && shippedOrder?.length === 0) {
-        return <EmptyState />;
+        return <EmptyState/>;
     }
 
     const toggleViewOrder = (orderId: any) => {
@@ -149,7 +149,7 @@ const Shipped = ({
                                                             'flex-end'
                                                         }
                                                         gap={2}
-                                                        mt={{ base: 4, md: 0 }}
+                                                        mt={{base: 4, md: 0}}
                                                         width="100%"
                                                     >
                                                         <Button
@@ -183,7 +183,7 @@ const Shipped = ({
                                                         </Button>
                                                         {order.escrow_status &&
                                                             order.escrow_status !==
-                                                                'released' && (
+                                                            'released' && (
                                                                 <Box
                                                                     as="a"
                                                                     href={`/account/escrow/${order.id}`}
@@ -261,29 +261,24 @@ const Shipped = ({
                                                                     spacing={3}
                                                                     w="100%"
                                                                 >
-                                                                    {' '}
-                                                                    {/* Align icon and text block horizontally */}
-                                                                    {/* Left Column: Icon */}
-                                                                    <Icon
-                                                                        as={
-                                                                            BsCircleFill
-                                                                        }
-                                                                        color="primary.green.900"
-                                                                        boxSize={
-                                                                            3
-                                                                        } // Adjust size as needed
-                                                                        mt={1} // Optional: Adjust this to vertically center the icon with the text
-                                                                    />
-                                                                    {/* Right Column: Text */}
                                                                     <VStack
                                                                         align="start"
                                                                         spacing={
                                                                             2
                                                                         }
                                                                     >
-                                                                        {' '}
                                                                         {/* Stack text vertically */}
+                                                                        <Flex>
+                                                                            {order.tracking_number && (
+                                                                                <>
+                                                                                    <Text><b>Tracking
+                                                                                        Number:</b> {order.tracking_number}
+                                                                                    </Text>
+                                                                                </>
+                                                                            )}
+                                                                        </Flex>
                                                                         <Flex alignItems="center">
+
                                                                             <Text
                                                                                 fontWeight="bold"
                                                                                 mr={
@@ -302,18 +297,18 @@ const Shipped = ({
                                                                                     ?.soOrderInfo
                                                                                     ?.createTime
                                                                                     ? new Date(
-                                                                                          order.external_metadata.tracking.data.soOrderInfo.createTime
-                                                                                      ).toLocaleString(
-                                                                                          undefined,
-                                                                                          {
-                                                                                              year: 'numeric',
-                                                                                              month: 'long',
-                                                                                              day: 'numeric',
-                                                                                              hour: '2-digit',
-                                                                                              minute: '2-digit',
-                                                                                              second: '2-digit',
-                                                                                          }
-                                                                                      )
+                                                                                        order.external_metadata.tracking.data.soOrderInfo.createTime
+                                                                                    ).toLocaleString(
+                                                                                        undefined,
+                                                                                        {
+                                                                                            year: 'numeric',
+                                                                                            month: 'long',
+                                                                                            day: 'numeric',
+                                                                                            hour: '2-digit',
+                                                                                            minute: '2-digit',
+                                                                                            second: '2-digit',
+                                                                                        }
+                                                                                    )
                                                                                     : 'Date not available'}
                                                                             </Text>
                                                                         </Flex>
@@ -324,18 +319,18 @@ const Shipped = ({
                                                                             </strong>{' '}
                                                                             {order?.created_at
                                                                                 ? new Date(
-                                                                                      order.created_at
-                                                                                  ).toLocaleDateString(
-                                                                                      undefined,
-                                                                                      {
-                                                                                          year: 'numeric',
-                                                                                          month: 'long',
-                                                                                          day: 'numeric',
-                                                                                          hour: '2-digit',
-                                                                                          minute: '2-digit',
-                                                                                          second: '2-digit',
-                                                                                      }
-                                                                                  )
+                                                                                    order.created_at
+                                                                                ).toLocaleDateString(
+                                                                                    undefined,
+                                                                                    {
+                                                                                        year: 'numeric',
+                                                                                        month: 'long',
+                                                                                        day: 'numeric',
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit',
+                                                                                        second: '2-digit',
+                                                                                    }
+                                                                                )
                                                                                 : 'N/A'}
                                                                         </Text>
                                                                         <Text>
@@ -345,9 +340,9 @@ const Shipped = ({
                                                                                 Number:
                                                                             </strong>{' '}
                                                                             {order
-                                                                                .external_metadata
-                                                                                ?.data
-                                                                                ?.shopOrderNo ||
+                                                                                    .external_metadata
+                                                                                    ?.data
+                                                                                    ?.shopOrderNo ||
                                                                                 'N/A'}
                                                                         </Text>
                                                                     </VStack>
@@ -394,7 +389,7 @@ const Shipped = ({
                                                                                                 ?.price
                                                                                         ),
                                                                                         item.currency_code ??
-                                                                                            'usdc'
+                                                                                        'usdc'
                                                                                     )}{' '}
                                                                                     {upperCase(
                                                                                         item.currency_code
@@ -436,11 +431,11 @@ const Shipped = ({
                                                                                     </strong>{' '}
                                                                                     {order?.id &&
                                                                                     typeof order.id ===
-                                                                                        'string'
+                                                                                    'string'
                                                                                         ? order.id.replace(
-                                                                                              /^order_/,
-                                                                                              ''
-                                                                                          ) // Remove "order_" prefix
+                                                                                            /^order_/,
+                                                                                            ''
+                                                                                        ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>

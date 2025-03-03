@@ -214,7 +214,7 @@ const Refund = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Order Timeline
+                                                                Order Details
                                                             </Tab>
                                                             <Tab
                                                                 _selected={{
@@ -225,18 +225,10 @@ const Refund = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Order Details
+                                                                Order Timeline
                                                             </Tab>
                                                         </TabList>
                                                         <TabPanels>
-                                                            <TabPanel>
-                                                                <OrderTimeline
-                                                                    orderDetails={
-                                                                        order
-                                                                    }
-                                                                />
-                                                            </TabPanel>
-
                                                             <TabPanel>
                                                                 <VStack
                                                                     align="start"
@@ -245,6 +237,14 @@ const Refund = ({
                                                                     borderRadius="lg"
                                                                     w="100%"
                                                                 >
+                                                                    <Flex>
+                                                                        {order.tracking_number && (
+                                                                            <>
+                                                                                <Text><b>Tracking Number:</b> {order.tracking_number}</Text>
+                                                                            </>
+                                                                        )}
+                                                                    </Flex>
+
                                                                     <Flex
                                                                         direction={{
                                                                             base: 'column',
@@ -370,6 +370,13 @@ const Refund = ({
                                                                         </VStack>
                                                                     </Flex>
                                                                 </VStack>
+                                                            </TabPanel>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
                                                             </TabPanel>
                                                         </TabPanels>
                                                     </Tabs>

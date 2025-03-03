@@ -295,17 +295,7 @@ const Cancelled = ({
                                                 <Box mt={4}>
                                                     <Tabs variant="unstyled">
                                                         <TabList>
-                                                            <Tab
-                                                                _selected={{
-                                                                    color: 'primary.green.900',
-                                                                    borderBottom:
-                                                                        '2px solid',
-                                                                    borderColor:
-                                                                        'primary.green.900',
-                                                                }}
-                                                            >
-                                                                Order Timeline
-                                                            </Tab>
+
                                                             <Tab
                                                                 _selected={{
                                                                     color: 'primary.green.900',
@@ -317,16 +307,19 @@ const Cancelled = ({
                                                             >
                                                                 Order Details
                                                             </Tab>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Timeline
+                                                            </Tab>
                                                         </TabList>
                                                         <TabPanels>
-                                                            <TabPanel>
-                                                                <OrderTimeline
-                                                                    orderDetails={
-                                                                        order
-                                                                    }
-                                                                />
-                                                            </TabPanel>
-
                                                             <TabPanel>
                                                                 <VStack
                                                                     align="start"
@@ -335,6 +328,14 @@ const Cancelled = ({
                                                                     borderRadius="lg"
                                                                     w="100%"
                                                                 >
+                                                                    <Flex>
+                                                                        {order.tracking_number && (
+                                                                            <>
+                                                                                <Text><b>Tracking Number:</b> {order.tracking_number}</Text>
+                                                                            </>
+                                                                        )}
+                                                                    </Flex>
+
                                                                     <Flex
                                                                         direction={{
                                                                             base: 'column',
@@ -460,6 +461,13 @@ const Cancelled = ({
                                                                         </VStack>
                                                                     </Flex>
                                                                 </VStack>
+                                                            </TabPanel>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
                                                             </TabPanel>
                                                         </TabPanels>
                                                     </Tabs>

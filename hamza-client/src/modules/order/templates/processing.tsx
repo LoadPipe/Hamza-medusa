@@ -388,7 +388,7 @@ const Processing = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Order Timeline
+                                                                Order Details
                                                             </Tab>
                                                             <Tab
                                                                 _selected={{
@@ -399,18 +399,10 @@ const Processing = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Order Details
+                                                                Order Timeline
                                                             </Tab>
                                                         </TabList>
                                                         <TabPanels>
-                                                            <TabPanel>
-                                                                <OrderTimeline
-                                                                    orderDetails={
-                                                                        order
-                                                                    }
-                                                                />
-                                                            </TabPanel>
-
                                                             <TabPanel>
                                                                 <VStack
                                                                     align="start"
@@ -435,6 +427,13 @@ const Processing = ({
                                                                             }
                                                                             flex="1"
                                                                         >
+                                                                            <Flex>
+                                                                                {order.tracking_number && (
+                                                                                    <>
+                                                                                        <Text><b>Tracking Number:</b> {order.tracking_number}</Text>
+                                                                                    </>
+                                                                                )}
+                                                                            </Flex>
                                                                             {order
                                                                                 ?.shipping_methods[0]
                                                                                 ?.price && (
@@ -544,6 +543,13 @@ const Processing = ({
                                                                         </VStack>
                                                                     </Flex>
                                                                 </VStack>
+                                                            </TabPanel>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
                                                             </TabPanel>
                                                         </TabPanels>
                                                     </Tabs>
