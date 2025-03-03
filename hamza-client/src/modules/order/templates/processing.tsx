@@ -40,11 +40,10 @@ import { BsCircleFill } from 'react-icons/bs';
 import Image from 'next/image';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
-import { OrdersData } from './all';
+import { OrdersData, OrderNote } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import { upperCase } from 'lodash';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
