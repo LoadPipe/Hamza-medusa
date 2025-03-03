@@ -18,6 +18,14 @@ export type OrdersData = {
     Refunded: Order[];
 };
 
+export interface OrderNote {
+    id: string
+    note: string
+    public: boolean
+    created_at?: string
+    updated_at?: string
+}
+
 const All = ({ customer }: { customer: string }) => {
     const [processingFetched, setProcessingFetched] = useState(false);
     const [shippedFetched, setShippedFetched] = useState(false);

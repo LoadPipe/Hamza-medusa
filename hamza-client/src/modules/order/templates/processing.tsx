@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { cancelOrder } from '@/lib/server';
+import React, {useState} from 'react';
+import {cancelOrder} from '@/lib/server';
 import {
     chainIdToName,
     getChainLogo,
@@ -30,20 +30,23 @@ import {
     Icon,
     Divider,
 } from '@chakra-ui/react';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
+import {formatCryptoPrice} from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
 import OrderTimeline from '@modules/order/components/order-timeline';
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
-import { BsCircleFill } from 'react-icons/bs';
+import {BsCircleFill} from 'react-icons/bs';
 import Image from 'next/image';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
-import { OrdersData } from './all';
-import { useOrderTabStore } from '@/zustand/order-tab-state';
-import { upperCase } from 'lodash';
+import {OrdersData} from './all';
+import {useOrderTabStore} from '@/zustand/order-tab-state';
+import {upperCase} from 'lodash';
+import {OrderNote} from './all'
+
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
@@ -80,10 +83,10 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
  */
 
 const Processing = ({
-    customer,
-    // onSuccess,
-    isEmpty,
-}: {
+                        customer,
+                        // onSuccess,
+                        isEmpty,
+                    }: {
     customer: string;
     // onSuccess?: () => void;
     isEmpty?: boolean;
@@ -112,13 +115,13 @@ const Processing = ({
     const processingOrder = cachedData?.Processing || [];
 
     const mutation = useMutation({
-        mutationFn: async ({ order_id, cancel_reason }: { order_id: string; cancel_reason: string }) => {
+        mutationFn: async ({order_id, cancel_reason}: { order_id: string; cancel_reason: string }) => {
             return cancelOrder(order_id, cancel_reason);
         },
         onSuccess: async () => {
             try {
                 // Refetch orders after a successful cancellation
-                await queryClient.invalidateQueries({ queryKey: ['fetchAllOrders', customer] });
+                await queryClient.invalidateQueries({queryKey: ['fetchAllOrders', customer]});
 
                 setIsModalOpen(false);
                 setSelectedOrderId(null);
@@ -183,10 +186,12 @@ const Processing = ({
     };
 
     if (isEmpty && processingOrder?.length === 0) {
-        return <EmptyState />;
+        return <EmptyState/>;
     }
+
+
     return (
-        <div style={{ width: '100%' }}>
+        <div style={{width: '100%'}}>
             {/*{processingOrdersLoading ? (*/}
             {/*    <Box*/}
             {/*        display="flex"*/}
@@ -231,6 +236,10 @@ const Processing = ({
                                 acc + item.unit_price * item.quantity,
                             0
                         );
+
+                        // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
+                        const hasSellerNotes = order?.notes?.length > 0
+
 
                         return (
                             <div key={order.id}>
@@ -299,7 +308,7 @@ const Processing = ({
                                                             'flex-end'
                                                         }
                                                         gap={2}
-                                                        mt={{ base: 4, md: 0 }}
+                                                        mt={{base: 4, md: 0}}
                                                         width="100%"
                                                     >
                                                         <Button
@@ -346,7 +355,7 @@ const Processing = ({
                                                         </Button>
                                                         {order.escrow_status &&
                                                             order.escrow_status !==
-                                                                'released' && (
+                                                            'released' && (
                                                                 <Box
                                                                     as="a"
                                                                     href={`/account/escrow/${order.id}`}
@@ -401,6 +410,16 @@ const Processing = ({
                                                             >
                                                                 Order Timeline
                                                             </Tab>
+                                                            {hasSellerNotes &&
+                                                                <Tab
+                                                                    _selected={{
+                                                                        color: 'primary.green.900',
+                                                                        borderBottom:
+                                                                            '2px solid',
+                                                                        borderColor:
+                                                                            'primary.green.900',
+                                                                    }}
+                                                                >Seller Note</Tab>}
                                                         </TabList>
                                                         <TabPanels>
                                                             <TabPanel>
@@ -430,7 +449,9 @@ const Processing = ({
                                                                             <Flex>
                                                                                 {order.tracking_number && (
                                                                                     <>
-                                                                                        <Text><b>Tracking Number:</b> {order.tracking_number}</Text>
+                                                                                        <Text><b>Tracking
+                                                                                            Number:</b> {order.tracking_number}
+                                                                                        </Text>
                                                                                     </>
                                                                                 )}
                                                                             </Flex>
@@ -450,7 +471,7 @@ const Processing = ({
                                                                                                 ?.price
                                                                                         ),
                                                                                         item.currency_code ??
-                                                                                            'usdc'
+                                                                                        'usdc'
                                                                                     )}{' '}
                                                                                     {upperCase(
                                                                                         item.currency_code
@@ -492,11 +513,11 @@ const Processing = ({
                                                                                     </strong>{' '}
                                                                                     {order?.id &&
                                                                                     typeof order.id ===
-                                                                                        'string'
+                                                                                    'string'
                                                                                         ? order.id.replace(
-                                                                                              /^order_/,
-                                                                                              ''
-                                                                                          ) // Remove "order_" prefix
+                                                                                            /^order_/,
+                                                                                            ''
+                                                                                        ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>
@@ -551,6 +572,24 @@ const Processing = ({
                                                                     }
                                                                 />
                                                             </TabPanel>
+                                                            {hasSellerNotes && (
+                                                                <TabPanel>
+                                                                    {order.notes.map((note: OrderNote) => (
+                                                                        <Box
+                                                                            key={note.id}
+                                                                            p={8}
+                                                                            mb={4}
+                                                                            border="1px transparent"
+                                                                            borderRadius="md"
+                                                                            bg="black"
+                                                                            boxShadow="sm"
+                                                                            fontFamily="Inter, sans-serif"
+                                                                        >
+                                                                            <Text>{note.note}</Text>
+                                                                        </Box>
+                                                                    ))}
+                                                                </TabPanel>
+                                                            )}
                                                         </TabPanels>
                                                     </Tabs>
                                                 </Box>
@@ -573,10 +612,10 @@ const Processing = ({
                         );
                     })}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
-                        <ModalOverlay />
+                        <ModalOverlay/>
                         <ModalContent>
                             <ModalHeader>Request Cancellation</ModalHeader>
-                            <ModalCloseButton />
+                            <ModalCloseButton/>
                             <ModalBody>
                                 <FormControl
                                     isInvalid={cancelReason.trim().length < 50}
