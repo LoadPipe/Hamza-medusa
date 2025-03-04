@@ -13,13 +13,10 @@ import {useQuery} from '@tanstack/react-query';
 import {formatCryptoPrice} from '@lib/util/get-product-price';
 import {useCustomerAuthStore} from '@/zustand/customer-auth/customer-auth';
 import ProductCard from '../product-card';
-import useHomeProductsPage from '@/zustand/home-page/product-layout/product-layout';
-import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
 import {getAllProducts} from '@/lib/server';
-import useProductGroup from '@/zustand/products/product-group/product-group';
-import useProductFilterModal from '@/zustand/products/filter/product-filter';
 import {useSearchParams} from 'next/navigation';
 import {formatPriceBetweenCurrencies} from '@/lib/util/prices';
+import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 const ProductCardGroup = ({
   columns = {base: 2, lg: 4},
@@ -28,29 +25,36 @@ const ProductCardGroup = ({
   skeletonHeight = {base: '134.73', md: '238px'},
   visibleProductCountInitial = 16,
   padding = {base: '1rem', md: '1rem'},
-                          }) => {
+}) => {
     const {preferred_currency_code} = useCustomerAuthStore();
-    const {categorySelect, setCategorySelect} = useProductGroup();
+    const {
+        selectedCategories,
+        setSelectedCategories,
+        range,
+        rangeUpper,
+        rangeLower,
+        setRange,
+        setRangeUpper,
+        setRangeLower,
+      } = useUnifiedFilterStore();
     const [visibleProductsCount, setVisibleProductsCount] = useState(
         visibleProductCountInitial,
     );
-
-    const {rangeUpper, rangeLower} = useProductFilterModal();
 
     const searchParams = useSearchParams();
     const categoryFromUrl = searchParams.get('category');
 
     useEffect(() => {
         if (categoryFromUrl) {
-            setCategorySelect([categoryFromUrl]);
+            setSelectedCategories([categoryFromUrl.toLowerCase()]);
         }
-    }, [categoryFromUrl, setCategorySelect]);
+    }, [categoryFromUrl, setSelectedCategories]);
 
-    const {data, error, isLoading} = useQuery({
-        queryKey: ['categories', categorySelect, rangeUpper, rangeLower],
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['categories', selectedCategories, rangeUpper, rangeLower],
         queryFn: () =>
             getAllProducts(
-                categorySelect,
+                selectedCategories,
                 rangeUpper,
                 rangeLower,
                 preferred_currency_code ?? 'usdc',

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Text, Heading, Flex, Skeleton, Button } from '@chakra-ui/react';
 import CategoryButton from './category-button';
 import RangeSlider from './range-slider';
@@ -8,9 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from 'next/image';
 import FilterIcon from '../../assets/filter-button.svg';
-import All from '@/images/categories/all.svg';
-import useProductGroup from '@/zustand/products/product-group/product-group';
-import useProductFilter from '@/zustand/products/filter/product-filter';
+import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 interface Category {
     id: string;
@@ -25,39 +23,40 @@ const USE_PRICE_FILTER: boolean = false;
 type RangeType = [number, number];
 
 const SideFilter = () => {
-    const [range, setRange] = useState<RangeType>([0, 350]);
-
-    // Use Zustand shop to handle filter object
-    const { setCategorySelect, setCategoryItem } = useProductGroup();
 
     const {
-        selectCategoryFilter,
-        categoryItemFilter,
+        selectedCategories,
+        setSelectedCategories,
+        range,
+        setRange,
         setRangeUpper,
         setRangeLower,
-    } = useProductFilter();
+    } = useUnifiedFilterStore();
 
-    const isDisabled =
-        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
+    const [localRange, setLocalRange] = useState<RangeType>(range);
+
+    useEffect(() => {
+        setLocalRange(range);
+    }, [range]);
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>({
         queryKey: ['categories'],
         queryFn: async() =>
     {
-        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
-        const response = await axios.get(url);
-        return response.data;
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
     }
-});
+    });
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     // Skeletons for loading state
@@ -72,6 +71,12 @@ const SideFilter = () => {
                 borderRadius="full"
             />
         ));
+
+    const isDisabled =
+        (selectedCategories.length === 1 &&
+            selectedCategories[0].toLowerCase() === 'all') &&
+        localRange[0] === 0 &&
+        localRange[1] === 350;
 
     return (
         <Box
@@ -91,7 +96,7 @@ const SideFilter = () => {
             </Text>
 
             {/* Slider  */}
-            <RangeSlider range={range} setRange={setRange} />
+            <RangeSlider range={localRange} setRange={setLocalRange} />
             {/* Slider end */}
 
             {/* Crypto Currencies */}
@@ -106,12 +111,12 @@ const SideFilter = () => {
                     {isLoading
                         ? skeletonButtons // Show skeletons while loading
                         : uniqueCategories.map((category, index) => (
-                              <CategoryButton
-                                  key={index}
-                                  categoryName={category.name}
-                                  url={category.metadata?.icon_url}
-                              />
-                          ))}
+                            <CategoryButton
+                                key={index}
+                                categoryName={category.name}
+                                url={category.metadata?.icon_url}
+                            />
+                        ))}
                 </Flex>
             </Box>
 
@@ -119,24 +124,17 @@ const SideFilter = () => {
                 <Button
                     isDisabled={isDisabled}
                     onClick={() => {
-                        // If no category is selected, set default to "All"
-                        if (selectCategoryFilter.length === 0) {
-                            setCategorySelect(['All']);
-                        } else {
-                            setCategorySelect(selectCategoryFilter);
+                        if (
+                            selectedCategories.length === 0 ||
+                            (selectedCategories.length === 1 &&
+                                selectedCategories[0].toLowerCase() === 'all')
+                        ) {
+                            setSelectedCategories(['all']);
                         }
-
-                        // Update range settings if modified
-                        if (range[0] !== 0 || range[1] !== 350) {
-                            setRangeLower(range[0]);
-                            setRangeUpper(range[1]);
-                        }
-
-                        // Set filter tags
-                        setCategoryItem(categoryItemFilter);
-
-                        // Update range
-                        setRange([range[0], range[1]]);
+                        // Update global price range with the local slider state.
+                        setRangeLower(localRange[0]);
+                        setRangeUpper(localRange[1]);
+                        setRange(localRange);
 
                         // Scroll to the top of the page
                         window.scrollTo({

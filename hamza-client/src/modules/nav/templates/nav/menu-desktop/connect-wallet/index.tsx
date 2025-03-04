@@ -10,17 +10,72 @@ import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
 import CustomChainModal from '@/modules/layout/templates/nav/components/custom-chain-modal';
+import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 export const WalletConnectButton = () => {
     // Update zustand store with Wagmi hook when connected
-    const account = useAccount();
+    const { address, isConnecting, isReconnecting } = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
 
+    const {
+        clearFilters,
+        lastAddress,
+        setLastAddress,
+        hasHydrated,
+    } = useUnifiedFilterStore((s) => ({
+        clearFilters: s.clearFilters,
+        lastAddress: s.lastAddress,
+        setLastAddress: s.setLastAddress,
+        hasHydrated: s.hasHydrated,
+    }));
+
     useEffect(() => {
-        if (account?.address) {
-            setWalletAddress(account.address); // Update Zustand store
+        // 1) Do nothing until the filter store is rehydrated & Wagmi is done connecting
+        if (!hasHydrated) return;
+        if (isConnecting || isReconnecting) return;
+
+        // 2) If address hasn't changed, do nothing
+        if (address === lastAddress) return;
+
+        // 3) If user logout
+        if (lastAddress && !address) {
+
+            // set the address to null before reloading
+            setLastAddress(null);
+            clearFilters();
+
+            // Then reload so next time the effect runs, lastAddress is already null
+            window.location.reload();
+            return;
         }
-    }, [account?.address, setWalletAddress]);
+
+        // 4) Otherwise, if user logs in (null -> new) or changes wallet (old -> new)
+        if (!lastAddress && address) {
+            // new login
+            clearFilters();
+        } else if (lastAddress && address && address !== lastAddress) {
+            // switched wallets
+            clearFilters();
+        }
+
+        // 5) Update lastAddress in the store
+        setLastAddress(address || null);
+
+        // 6) If there's a new address, store it in auth store
+        if (address) {
+            setWalletAddress(address);
+        }
+    }, [
+        address,
+        lastAddress,
+        hasHydrated,
+        isConnecting,
+        isReconnecting,
+        clearFilters,
+        setLastAddress,
+        setWalletAddress,
+    ]);
+
 
     // Local state to control CustomChainModal visibility
     const [isChainModalOpen, setChainModalOpen] = useState(false);

@@ -11,15 +11,14 @@ import {
     Divider,
     Text,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
 import CategoryButtonModal from '@/modules/products/components/buttons/category-button-modal';
 import RangeSliderModal from '@modules/shop/components/mobile-filter-modal/components/range-slider-modal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import useProductGroup from '@/zustand/products/product-group/product-group';
-import useProductFilterModal from '@/zustand/products/filter/product-filter';
+import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 interface FilterModalProps {
     isOpen: boolean;
@@ -40,18 +39,28 @@ const USE_PRICE_FILTER: boolean = false;
 type RangeType = [number, number];
 
 const FilterModalHome: React.FC<FilterModalProps> = ({
-                                                         isOpen,
-                                                         onClose,
-                                                         categories,
-                                                     }) => {
-    const { setCategorySelect } = useProductGroup();
-
+    isOpen,
+    onClose,
+    categories,
+}) => {
     const {
-        setSelectCategoryFilter,
-        selectCategoryFilter,
+        selectedCategories,
+        setSelectedCategories,
+        range: globalRange,
+        setRange,
         setRangeUpper,
         setRangeLower,
-    } = useProductFilterModal();
+    } = useUnifiedFilterStore();
+
+    const [modalSelectedCategories, setModalSelectedCategories] = useState<string[]>(selectedCategories);
+    const [modalRange, setModalRange] = useState<RangeType>(globalRange);
+
+    useEffect(() => {
+        if (isOpen) {
+            setModalSelectedCategories(selectedCategories);
+            setModalRange(globalRange);
+        }
+    }, [isOpen, selectedCategories, globalRange]);
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>({
@@ -63,7 +72,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         },
     });
 
-    const [range, setRange] = useState<RangeType>([0, 350]);
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
@@ -75,7 +83,9 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         : [];
 
     const isDisabled =
-        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
+        modalSelectedCategories.length === 0 &&
+        modalRange[0] === 0 &&
+        modalRange[1] === 350;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -110,11 +120,11 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     >
                         {uniqueCategories.map(
                             (category: any, index: number) => (
-                                <CategoryButtonModal
-                                    key={index}
-                                    categoryName={category.name}
-                                    url={category.metadata?.icon_url}
-                                />
+                            <CategoryButtonModal
+                                key={index}
+                                categoryName={category.name}
+                                url={category.metadata?.icon_url}
+                            />
                             ),
                         )}
                     </Flex>
@@ -128,7 +138,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         Price Range
                     </Text>
 
-                    <RangeSliderModal range={range} setRange={setRange} />
+                    <RangeSliderModal range={modalRange} setRange={setModalRange} />
 
                     <Divider
                         mt="2rem"
@@ -150,10 +160,13 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setSelectCategoryFilter([]);
-                            setCategorySelect(['All']);
+                            // Clear all filters: reset modal and global state to default
+                            setModalSelectedCategories(['all']);
+                            setSelectedCategories(['all']);
                             setRange([0, 350]);
-                            setRangeUpper(350), setRangeLower(0), onClose();
+                            setRangeUpper(350);
+                            setRangeLower(0);
+                            onClose();
                         }}
                     >
                         Clear All
@@ -161,22 +174,16 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     <Button
                         isDisabled={isDisabled}
                         onClick={() => {
-                            // If no category is selected, set default to "All"
-                            if (selectCategoryFilter.length === 0) {
-                                setCategorySelect(['All']);
+                            // If no category is selected, default to "all"
+                            if (modalSelectedCategories.length === 0) {
+                                setSelectedCategories(['all']);
                             } else {
-                                setCategorySelect(selectCategoryFilter);
+                                setSelectedCategories(modalSelectedCategories);
                             }
-
-                            // Update range settings if modified
-                            if (range[0] !== 0 || range[1] !== 350) {
-                                setRangeLower(range[0]);
-                                setRangeUpper(range[1]);
-                            }
-
-                            // Update range
-                            setRange([range[0], range[1]]);
-
+                            // Update global price range.
+                            setRange(modalRange);
+                            setRangeLower(modalRange[0]);
+                            setRangeUpper(modalRange[1]);
                             onClose();
                         }}
                         ml="auto"

@@ -11,15 +11,14 @@ import {
     Divider,
     Text,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FilterIcon from '../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
 import CategoryButtonModal from '@/modules/products/components/buttons/category-button-modal';
 import RangeSliderModal from './range-slider-modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import useProductFilter from '@/zustand/products/filter/product-filter';
-import useProductGroup from '@/zustand/products/product-group/product-group';
+import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 const USE_PRICE_FILTER: boolean = false;
 
@@ -39,43 +38,47 @@ interface Category {
 type RangeType = [number, number];
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
-    const { setCategorySelect, setCategoryItem } = useProductGroup();
-
     const {
-        setSelectCategoryFilter,
-        setCategoryItemFilter,
-        selectCategoryFilter,
-        categoryItemFilter,
+        selectedCategories,
+        setSelectedCategories,
+        range,
+        setRange,
         setRangeUpper,
         setRangeLower,
-        rangeUpper,
-        rangeLower,
-    } = useProductFilter();
+    } = useUnifiedFilterStore();
 
-    const [range, setRange] = useState<RangeType>([0, 350]);
+
+    const [localRange, setLocalRange] = useState<RangeType>(range);
+
+    useEffect(() => {
+        setLocalRange(range);
+    }, [range]);
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>({
         queryKey: ['categories'],
         queryFn: async() =>
     {
-        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
-        const response = await axios.get(url);
-        return response.data;
-    }
-});
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
+        }
+    });
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     const isDisabled =
-        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
+        selectedCategories.length === 1 &&
+        selectedCategories[0].toLowerCase() === 'all' &&
+        localRange[0] === 0 &&
+        localRange[1] === 350;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -164,11 +167,12 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setSelectCategoryFilter([]);
-                            setCategoryItemFilter([]);
-                            setCategorySelect(['All']);
+                            setSelectedCategories(['all']);
+                            setLocalRange([0, 350]);
                             setRange([0, 350]);
-                            setRangeUpper(350), setRangeLower(0), onClose();
+                            setRangeUpper(350);
+                            setRangeLower(0);
+                            onClose();
                         }}
                         mr="auto"
                     >
@@ -177,24 +181,14 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     <Button
                         isDisabled={isDisabled}
                         onClick={() => {
-                            // If no category is selected, set default to "All"
-                            if (selectCategoryFilter.length === 0) {
-                                setCategorySelect(['All']);
-                            } else {
-                                setCategorySelect(selectCategoryFilter);
+                            if (selectedCategories.length === 0) {
+                                setSelectedCategories(['all']);
                             }
-
-                            // Update range settings if modified
-                            if (range[0] !== 0 || range[1] !== 350) {
-                                setRangeLower(range[0]);
-                                setRangeUpper(range[1]);
+                            if (localRange[0] !== 0 || localRange[1] !== 350) {
+                                setRangeLower(localRange[0]);
+                                setRangeUpper(localRange[1]);
                             }
-
-                            // Set filter tags
-                            setCategoryItem(categoryItemFilter);
-
-                            setRange([range[0], range[1]]);
-
+                            setRange(localRange);
                             onClose();
                         }}
                         fontSize={'16px'}
