@@ -103,7 +103,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     const verifyMutation = useVerifyMutation();
 
     const walletAddress = useCustomerAuthStore((state) => state.authData.wallet_address);
-    const isAuthenticated = useCustomerAuthStore((state) => state.authData.status === "authenticated");
+    const isAuthenticated = useCustomerAuthStore((state) => state.authData.status);
     const isHydrated = useCustomerAuthStore((state) => state.isHydrated);
     const setCustomerAuthData = useCustomerAuthStore((state) => state.setCustomerAuthData);
 
@@ -125,12 +125,12 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
 
     const router = useRouter();
-    const [customer_id, setCustomerId] = useState('');
-    const {loadWishlist} = useWishlistStore((state) => state);
+    // const [customer_id, setCustomerId] = useState('');
+    // const {loadWishlist} = useWishlistStore((state) => state);
 
-    let clientWallet = walletAddress;
+    // let clientWallet = walletAddress;
 
-    const hnsClient = new HnsClient(10);
+    // const hnsClient = new HnsClient(10);
 
     // useEffect(() => {
     //     // alert("USE EFFECT 1")
@@ -228,6 +228,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
 
     const {
+        data: nonceData,
         refetch: fetchNonce,
         // data, error, etc., if needed
     } = useQuery({
@@ -311,10 +312,12 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
         verify: async ({message, signature}) => {
             // Now use the mutation from the top level
             try {
+                const siweMessage = new SiweMessage(message);
+                const addressFromMessage = siweMessage.address.toLowerCase();
                 await verifyMutation.mutateAsync({
                     message,
                     signature,
-                    clientWallet: walletAddress, // assuming walletAddress from your store
+                    clientWallet: addressFromMessage, // assuming walletAddress from your store
                 });
                 return true;
             } catch (error) {
@@ -334,7 +337,6 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
             if (verifyMutation.isPending) return
             // if (isHydrated) {
             setCustomerAuthData({
-                ...authData,
                 status: 'unauthenticated',
                 token: '',
                 wallet_address: '',
