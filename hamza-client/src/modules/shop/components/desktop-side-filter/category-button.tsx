@@ -1,15 +1,16 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
-import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 interface CategoryButtonProps {
     categoryName: string;
     url: string;
+    selectedCategories: string[];
+    setSelectedCategories: (categories: string[]) => void;
 }
 
-const CategoryButton: React.FC<CategoryButtonProps> = ({ categoryName, url }) => {
-    const { selectedCategories, setSelectedCategories } = useUnifiedFilterStore();
+const CategoryButton: React.FC<CategoryButtonProps> = ({ categoryName, url, selectedCategories,
+    setSelectedCategories, }) => {
 
     const toggleCategorySelection = (category: string) => {
         const normalized = category.toLowerCase();

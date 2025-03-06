@@ -47,7 +47,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
         setRangeLower,
     } = useUnifiedFilterStore();
 
-
+    const [modalSelectedCategories, setModalSelectedCategories] = useState<string[]>(selectedCategories);
     const [localRange, setLocalRange] = useState<RangeType>(range);
 
     useEffect(() => {
@@ -73,12 +73,6 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
             metadata: category.metadata,
         }))
         : [];
-
-    const isDisabled =
-        selectedCategories.length === 1 &&
-        selectedCategories[0].toLowerCase() === 'all' &&
-        localRange[0] === 0 &&
-        localRange[1] === 350;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -111,6 +105,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                                     key={index}
                                     categoryName={category.name}
                                     url={category.metadata?.icon_url}
+                                    selectedCategories={modalSelectedCategories}
+                                    setSelectedCategories={setModalSelectedCategories}
                                 />
                             )
                         )}
@@ -179,7 +175,6 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         Clear All
                     </Button>
                     <Button
-                        isDisabled={isDisabled}
                         onClick={() => {
                             if (selectedCategories.length === 0) {
                                 setSelectedCategories(['all']);

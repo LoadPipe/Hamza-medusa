@@ -120,11 +120,13 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     >
                         {uniqueCategories.map(
                             (category: any, index: number) => (
-                            <CategoryButtonModal
-                                key={index}
-                                categoryName={category.name}
-                                url={category.metadata?.icon_url}
-                            />
+                                <CategoryButtonModal
+                                    key={index}
+                                    categoryName={category.name}
+                                    url={category.metadata?.icon_url}
+                                    selectedCategories={modalSelectedCategories}
+                                    setSelectedCategories={setModalSelectedCategories}
+                                />
                             ),
                         )}
                     </Flex>

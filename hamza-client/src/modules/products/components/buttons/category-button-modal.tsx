@@ -1,23 +1,20 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
-import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 interface CategoryButtonModalProps {
     categoryName: string;
     url: string;
+    selectedCategories: string[];
+    setSelectedCategories: (categories: string[]) => void;
 }
 
 const CategoryButtonModal: React.FC<CategoryButtonModalProps> = ({
     categoryName,
-    
     url,
+    selectedCategories,
+    setSelectedCategories,
 }) => {
-    const { selectedCategories, setSelectedCategories } = useUnifiedFilterStore();
-
-    const identifier = categoryName.toLowerCase();
-    const isSelected = selectedCategories.includes(identifier);
-
     const toggleCategorySelection = (category: string) => {
         const normalized = category.toLowerCase();
         if (normalized === 'all') {
@@ -33,29 +30,26 @@ const CategoryButtonModal: React.FC<CategoryButtonModalProps> = ({
         }
     };
 
+    const isSelected = selectedCategories.includes(categoryName.toLowerCase());
+
     return (
         <Flex
             borderColor={'secondary.davy.900'}
             backgroundColor={isSelected ? 'white' : 'transparent'}
-            display={'flex'}
-            flexDirection={'row'}
-            alignItems={'center'}
-            borderWidth={'1px'}
-            borderRadius={'49px'}
-            height={'42px'}
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            borderWidth="1px"
+            borderRadius="49px"
+            height="42px"
             cursor="pointer"
             color={isSelected ? 'black' : 'white'}
             padding="10px 24px"
             transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
-            onClick={() => toggleCategorySelection(identifier)}
+            onClick={() => toggleCategorySelection(categoryName)}
         >
             {url?.length && (
-                <Image
-                    src={url}
-                    alt={categoryName}
-                    width={18}
-                    height={18}
-                />
+                <Image src={url} alt={categoryName} width={18} height={18} />
             )}
             <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                 {categoryName}

@@ -36,7 +36,8 @@ interface UnifiedFilterState {
     lastAddress: string | null;
     setLastAddress: (addr: string | null) => void;
 
-    // Has persisted store rehydrated?
+    // Indicates whether the store has finished loading (rehydrating) its persisted state from localStorage.
+    // For example, if a new tab is opened, the filters won't be applied until rehydration completes.
     hasHydrated: boolean;
     setHasHydrated: (value: boolean) => void;
 
