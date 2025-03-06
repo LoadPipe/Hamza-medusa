@@ -5,45 +5,61 @@ import { Flex, Text, Box, Tooltip } from '@chakra-ui/react';
 import { FiCopy } from 'react-icons/fi';
 import { MdWallet } from 'react-icons/md';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import { AuthenticationStatus } from '@rainbow-me/rainbowkit';
 
-const shortenAddress = (addr: string) =>
+interface AuthData {
+    status: AuthenticationStatus;
+    wallet_address: string;
+}
+
+interface CustomerAuthStoreState {
+    authData: AuthData;
+    hnsName: string | null;
+}
+
+const shortenAddress = (addr: string): string =>
     `${addr.slice(0, 12)}...${addr.slice(-4)}`;
 
-const AddressDisplay: React.FC = () => {
-    const { authData, hnsName } = useCustomerAuthStore();
-    const [isCopied, setIsCopied] = useState(false);
-    const [tooltipOpen, setTooltipOpen] = useState(false);
+const AddressDisplay: React.FC = (): JSX.Element | null => {
+    const { authData, hnsName } = useCustomerAuthStore(
+        (state: CustomerAuthStoreState) => ({
+            authData: state.authData,
+            hnsName: state.hnsName,
+        })
+    );
+    const [isCopied, setIsCopied] = useState<boolean>(false);
+    const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
 
     if (authData.status !== 'authenticated' || !authData.wallet_address) {
         return null;
     }
 
-    const displayValue =
+    const displayValue: string =
         hnsName && hnsName.trim() !== ''
             ? hnsName
             : shortenAddress(authData.wallet_address);
 
-    const fullValue =
+    const fullValue: string =
         hnsName && hnsName.trim() !== ''
             ? hnsName
             : authData.wallet_address;
 
-    const handleMouseEnter = () => {
+    const handleMouseEnter = (): void => {
         if (!isCopied) {
             setTooltipOpen(true);
         }
     };
 
-    const handleMouseLeave = () => {
+    const handleMouseLeave = (): void => {
         setTooltipOpen(false);
     };
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(fullValue).then(() => {
+    const handleCopy = (): void => {
+        navigator.clipboard.writeText(fullValue).then((): void => {
             setIsCopied(true);
             setTooltipOpen(true);
 
-            setTimeout(() => {
+            setTimeout((): void => {
                 setIsCopied(false);
                 setTooltipOpen(false);
             }, 1500);

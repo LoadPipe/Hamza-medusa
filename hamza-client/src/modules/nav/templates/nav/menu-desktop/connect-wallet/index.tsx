@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Flex, Button } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@/modules/nav/templates/nav/menu-desktop/account-menu';
@@ -10,9 +10,10 @@ import MainMenu from '../main-menu';
 import WalletInfo from '../wallet-info-menu';
 
 export const WalletConnectButton = () => {
-    // Update zustand store with Wagmi hook when connected
+    const setWalletAddress = useCustomerAuthStore((state) => state.setWalletAddress);
+    const preferred_currency_code = useCustomerAuthStore((state) => state.preferred_currency_code);
+
     const account = useAccount();
-    const { setWalletAddress, preferred_currency_code } = useCustomerAuthStore();
 
     useEffect(() => {
         if (account?.address) {

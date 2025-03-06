@@ -176,7 +176,7 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                                         Wallet Balance
                                     </Text>
                                 </Box>
-                                <Button
+                                {/* <Button
                                     bg="#242424"
                                     borderRadius="49px"
                                     px="16px"
@@ -187,7 +187,7 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                                     _active={{ bg: '#242424' }}
                                 >
                                     + Add fund
-                                </Button>
+                                </Button> */}
                             </Flex>
 
                             <Box height="1px" bg="gray.600" mb={5} />
