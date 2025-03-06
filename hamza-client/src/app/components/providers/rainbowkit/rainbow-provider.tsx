@@ -9,7 +9,7 @@ import {
 } from '@rainbow-me/rainbowkit';
 import {WagmiProvider} from 'wagmi';
 import {darkThemeConfig} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
-import {QueryClientProvider, QueryClient} from '@tanstack/react-query';
+import {QueryClientProvider, QueryClient, isServer} from '@tanstack/react-query';
 import {HnsClient} from '@/web3/contracts/hns-client';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {SiweMessage} from 'siwe';
@@ -18,7 +18,7 @@ import {useQuery, useSuspenseQuery} from '@tanstack/react-query';
 import {
     clearAuthCookie,
     clearCartCookie,
-    getCombinedCustomer, getCustomer, getHamzaCustomer,
+    getCombinedCustomer, getCustomer, getHamzaCustomer, fetchCombinedCustomer,
     getToken,
     recoverCart,
 } from '@/lib/server';
@@ -34,71 +34,68 @@ import {useVerifyMutation} from './rainbowkit-utils/verify-mutation'
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
-const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
 const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
 
 // Lazy load the production version of the React Query Devtools
-const ReactQueryDevtoolsProduction = React.lazy(() =>
-    import('@tanstack/react-query-devtools/build/modern/production.js').then(
-        (d) => ({
-            default: d.ReactQueryDevtools,
-        })
-    )
-);
+// const ReactQueryDevtoolsProduction = React.lazy(() =>
+//     import('@tanstack/react-query-devtools/build/modern/production.js').then(
+//         (d) => ({
+//             default: d.ReactQueryDevtools,
+//         })
+//     )
+// );
 
-async function sendVerifyRequest(message: any, signature: any) {
-    return await axios.post(
-        VERIFY_MSG_URL,
-        {
-            message,
-            signature,
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-control': 'no-cache, no-store',
-                Accept: 'application/json',
+function makeQueryClient() {
+    return new QueryClient({
+        defaultOptions: {
+            queries: {
+                staleTime: 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
+                refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
+                refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
+                refetchOnMount: false, // Prevents redundant fetches when remounting components
+                retry: 2, // 🔄 Retries failed queries twice before throwing an error
             },
-        }
-    );
-}
-
-// I guess this should also be wrapped in a useQuery...
-async function getNonce() {
-    //const response = await fetch(GET_NONCE_URL);
-    //const data = await response.json();
-    const output = await axios.get(GET_NONCE_URL, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Cache-control': 'no-cache, no-store',
-            Accept: 'application/json',
+            mutations: {
+                retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
+            },
         },
     });
-    return output?.data?.nonce ?? '';
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+export function getQueryClient() {
+    if (isServer) {
+        // Server: always make a new query client
+        return makeQueryClient()
+    } else {
+        // Browser: make a new query client if we don't already have one
+        // This is very important, so we don't re-make a new client if React
+        // suspends during the initial render. This may not be needed if we
+        // have a suspense boundary BELOW the creation of the query client
+        if (!browserQueryClient) browserQueryClient = makeQueryClient()
+        return browserQueryClient
+    }
 }
 
 export function RainbowWrapper({children}: { children: React.ReactNode }) {
+    // NOTE: Avoid useState when initializing the query client if you don't
+    //       have a suspense boundary between this and the code that may
+    //       suspend because React will throw away the client on the initial
+    //       render if it suspends and there is no boundary
+    const queryClient = getQueryClient()
 
-    // ***Ensures data is not shared between different users and requests***
-    // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
-    const queryClientRef = React.useRef<QueryClient>();
 
-    if (!queryClientRef.current) {
-        queryClientRef.current = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    staleTime: 2 * 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
-                    refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
-                    refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
-                    refetchOnMount: false, // Prevents redundant fetches when remounting components
-                    retry: 2, // 🔄 Retries failed queries twice before throwing an error
-                },
-                mutations: {
-                    retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
-                },
-            },
+
+    function useCombinedCustomer(walletAddress: string, isVerified: boolean) {
+        return useQuery({
+            queryKey: ['combinedCustomer', walletAddress],
+            queryFn: () => fetchCombinedCustomer(walletAddress),
+            enabled: !!walletAddress && isVerified, // only run if walletAddress exists and verification is successful
+            staleTime: 3 * 60 * 1000,  // Adjust as needed
         });
     }
+
 
     const verifyMutation = useVerifyMutation();
 
@@ -202,35 +199,22 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     // Ignore responses after unmount
     // Ensuring only valid requests update state
     // TODO: While this solution means we don't require API function changes, we should be implementing Signals in our Axios wrapper...
+    const isVerified = verifyMutation.isSuccess; // or from your auth store
+
+    const {data, isLoading, error, isSuccess: customerSuccess} = useCombinedCustomer(walletAddress, isVerified);
+
     useEffect(() => {
-        let isMounted = true; // Prevent state updates after unmount
-
-        console.log("Saved wallet address:", walletAddress);
-
-        if (!walletAddress || !verifyMutation.isSuccess) return;
-
-        Promise.all([getHamzaCustomer(), getCustomer()])
-            .then(([hamzaCustomer, customer]) => {
-                if (!isMounted) return; // Ignore outdated responses if component unmounted
-
-                if (!customer || !hamzaCustomer || customer?.id !== hamzaCustomer?.id) {
-                    clearLogin();
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching customer data:", error);
-            });
-
-        return () => {
-            isMounted = false; // Cleanup function to prevent memory leaks
-        };
-    }, [walletAddress, verifyMutation.isSuccess]);
+        if (data) {
+            const {hamzaCustomer, customer} = data;
+            if (!customer || !hamzaCustomer || customer.id !== hamzaCustomer.id) {
+                clearLogin();
+            }
+        }
+    }, [customerSuccess]);
 
 
     const {
-        data: nonceData,
         refetch: fetchNonce,
-        // data, error, etc., if needed
     } = useQuery({
         queryKey: ['nonce'],
         queryFn: async () => {
@@ -358,7 +342,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     return (
         <>
             <WagmiProvider config={wagmiConfig}>
-                <QueryClientProvider client={queryClientRef.current}>
+                <QueryClientProvider client={queryClient}>
                     <RainbowKitAuthenticationProvider
                         adapter={walletSignature}
                         status={isAuthenticated}
@@ -372,11 +356,11 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                         </RainbowKitProvider>
                     </RainbowKitAuthenticationProvider>
                     <ReactQueryDevtools initialIsOpen={false}/>
-                    {showDevtools && (
-                        <React.Suspense fallback={null}>
-                            <ReactQueryDevtoolsProduction/>
-                        </React.Suspense>
-                    )}
+                    {/*{showDevtools && (*/}
+                    {/*    <React.Suspense fallback={null}>*/}
+                    {/*        <ReactQueryDevtoolsProduction/>*/}
+                    {/*    </React.Suspense>*/}
+                    {/*)}*/}
                 </QueryClientProvider>
             </WagmiProvider>
         </>

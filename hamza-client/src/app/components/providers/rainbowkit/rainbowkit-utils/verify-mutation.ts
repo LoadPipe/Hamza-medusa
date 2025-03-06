@@ -1,14 +1,16 @@
 "use client"
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import {SiweMessage} from 'siwe';
 import {getToken, recoverCart, clearCartCookie, clearAuthCookie} from '@/lib/server';
 import {useCustomerAuthStore} from '@/zustand/customer-auth/customer-auth';
 import axios from "axios";
+import { useQueryClient } from '@tanstack/react-query';
 import {usePublicClient} from "wagmi";
 import {mainnet, sepolia} from 'wagmi/chains';
 import {watchBlocks} from "@wagmi/core";
 import {wagmiConfig} from "@/components/providers/rainbowkit/wagmi";
+import { getQueryClient } from "@/app/components/providers/rainbowkit/rainbow-provider";
 
 interface VerifyVariables {
     message: string;
@@ -36,7 +38,6 @@ async function sendVerifyRequest(message: any, signature: any) {
         }
     );
 }
-
 
 // Helper: Wait for a chain endpoint to be ready using AbortController.
 // const waitForChain = async (
@@ -116,6 +117,8 @@ export const useVerifyMutation = () => {
         });
         clearAuthCookie();
     };
+
+    const queryClient = getQueryClient()
 
     return useMutation({
         // 1 The core async logic from our old `verify()` function
@@ -206,6 +209,9 @@ export const useVerifyMutation = () => {
                 is_verified: data.data?.is_verified,
                 status: 'authenticated',
             });
+
+            // Invalidate any queries that might be stale
+            queryClient.invalidateQueries({ queryKey: ['combinedCustomer', parsedMessage.address.toLowerCase()] });
 
             // Set currency
             setCustomerPreferredCurrency(
