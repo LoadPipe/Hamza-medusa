@@ -342,7 +342,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     return (
         <>
             <WagmiProvider config={wagmiConfig}>
-                <QueryClientProvider client={queryClient}>
+                {/*<QueryClientProvider client={queryClient}>*/}
                     <RainbowKitAuthenticationProvider
                         adapter={walletSignature}
                         status={isAuthenticated}
@@ -361,7 +361,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
                     {/*        <ReactQueryDevtoolsProduction/>*/}
                     {/*    </React.Suspense>*/}
                     {/*)}*/}
-                </QueryClientProvider>
+                {/*</QueryClientProvider>*/}
             </WagmiProvider>
         </>
     );

@@ -894,6 +894,16 @@ export async function getCombinedCustomer(){
     return { hamzaCustomer, medusaCustomer }
 }
 
+export async function fetchCombinedCustomer(walletAddress: string) {
+    const [hamzaCustomer, customer] = await Promise.all([
+        getHamzaCustomer(),
+        getCustomer()
+    ]);
+    return { hamzaCustomer, customer };
+}
+
+
+
 export async function getNonSecureCustomer(includedAddresses: boolean = true) {
     const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
         customer_id: '',
