@@ -22,8 +22,8 @@ export interface OrderNote {
     id: string
     note: string
     public: boolean
-    created_at?: string
-    updated_at?: string
+    created_at: string
+    updated_at: string
 }
 
 const All = ({ customer }: { customer: string }) => {
