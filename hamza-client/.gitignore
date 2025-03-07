@@ -53,3 +53,6 @@ package-lock.json
 .yarn
 .swc
 dump.rdb
+
+# Sentry Config File
+.env.sentry-build-plugin
