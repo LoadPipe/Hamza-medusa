@@ -15,7 +15,7 @@ type State = {
     };
     whitelist_config: {
         is_whitelisted: boolean;
-        whitelisted_stores: string[];
+        whitelisted_stores: string[]
     };
     preferred_currency_code: string | null;
     isHydrated: boolean;

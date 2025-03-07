@@ -34,18 +34,18 @@ const AccountNavDesktop = ({
     const [isOpen, setIsOpen] = useState(false);
     const [isOrdersOpen, setIsOrdersOpen] = useState(false);
 
-    const handleLogout = async () => {
-        setCustomerAuthData({
-            customer_id: '',
-            is_verified: false,
-            token: '',
-            wallet_address: '',
-            status: 'unauthenticated',
-        });
-        Cookies.remove('_medusa_jwt');
-        Cookies.remove('_medusa_cart_id');
-        router.replace('/');
-    };
+    // const handleLogout = async () => {
+    //     setCustomerAuthData({
+    //         customer_id: '',
+    //         is_verified: false,
+    //         token: '',
+    //         wallet_address: '',
+    //         status: 'unauthenticated',
+    //     });
+    //     Cookies.remove('_medusa_jwt');
+    //     Cookies.remove('_medusa_cart_id');
+    //     router.replace('/');
+    // };
 
     const toggleCollapse = () => setIsOpen(!isOpen);
     const toggleOrdersCollapse = () => setIsOrdersOpen(!isOrdersOpen);

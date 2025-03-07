@@ -46,11 +46,11 @@ async function axiosCall(
     path: string,
     payload: any,
     requiresSecurity: boolean = false,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ): Promise<any> {
     try {
         console.log(
-            `calling ${verb.toUpperCase()} ${path} ${payload ? JSON.stringify(payload) : ''}`
+            `calling ${verb.toUpperCase()} ${path} ${payload ? JSON.stringify(payload) : ''}`,
         );
         let url = path;
         if (!url.startsWith('/')) url = '/' + url;
@@ -66,29 +66,27 @@ async function axiosCall(
 
         let response = { data: undefined };
         switch (verb) {
-            case 'get':
-                {
-                    const input: any = {};
-                    if (payload) input.params = payload;
-                    if (requiresSecurity) input.headers = config?.headers;
-                    if (!input.cache) {
-                        input.cache = false;
-                    }
-
-                    response = await axios.get(url, input);
+            case 'get': {
+                const input: any = {};
+                if (payload) input.params = payload;
+                if (requiresSecurity) input.headers = config?.headers;
+                if (!input.cache) {
+                    input.cache = false;
                 }
+
+                response = await axios.get(url, input);
+            }
                 break;
-            case 'delete':
-                {
-                    const input: any = {};
-                    if (payload) input.data = payload;
-                    if (requiresSecurity) input.headers = config?.headers;
-                    if (!input.cache) {
-                        input.cache = false;
-                    }
-
-                    response = await axios.delete(url, input);
+            case 'delete': {
+                const input: any = {};
+                if (payload) input.data = payload;
+                if (requiresSecurity) input.headers = config?.headers;
+                if (!input.cache) {
+                    input.cache = false;
                 }
+
+                response = await axios.delete(url, input);
+            }
                 break;
             case 'put':
                 response = await axios.put(url, payload, config);
@@ -108,7 +106,7 @@ async function axiosCall(
     } catch (error: any) {
         console.error(
             `${verb.toUpperCase()} ${path} ${JSON.stringify(payload) ?? ''} error: `,
-            error
+            error,
         );
         //return returnRaw ? error : error.data;
     }
@@ -118,7 +116,7 @@ export async function get(
     url: string,
     params: any = null,
     requiresSecurity: boolean = false,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ): Promise<any> {
     return axiosCall('get', url, params, requiresSecurity, returnRaw);
 }
@@ -127,7 +125,7 @@ async function post(
     url: string,
     payload: any,
     requiresSecurity: boolean = false,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ): Promise<any> {
     return axiosCall('post', url, payload, requiresSecurity, returnRaw);
 }
@@ -136,7 +134,7 @@ async function put(
     url: string,
     payload: any,
     requiresSecurity: boolean = false,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ): Promise<any> {
     return axiosCall('put', url, payload, requiresSecurity, returnRaw);
 }
@@ -145,7 +143,7 @@ async function del(
     url: string,
     payload: any,
     requiresSecurity: boolean = false,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ): Promise<any> {
     return axiosCall('delete', url, payload, requiresSecurity, returnRaw);
 }
@@ -154,7 +152,7 @@ async function patch(
     url: string,
     payload: any,
     requiresSecurity: boolean = false,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ): Promise<any> {
     return axiosCall('patch', url, payload, requiresSecurity, returnRaw);
 }
@@ -166,7 +164,7 @@ async function getSecure(url: string, params: any, returnRaw: boolean = false) {
 async function postSecure(
     url: string,
     payload: any,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ) {
     return post(url, payload, true, returnRaw);
 }
@@ -174,7 +172,7 @@ async function postSecure(
 async function putSecure(
     url: string,
     payload: any,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ) {
     return put(url, payload, true, returnRaw);
 }
@@ -182,7 +180,7 @@ async function putSecure(
 async function delSecure(
     url: string,
     payload: any,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ) {
     return del(url, payload, true, returnRaw);
 }
@@ -190,7 +188,7 @@ async function delSecure(
 async function patchSecure(
     url: string,
     payload: any,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ) {
     return patch(url, payload, true, returnRaw);
 }
@@ -252,7 +250,7 @@ export async function getAllProducts(
     categorySelect: string[] | null = ['all'],
     priceHigh: number = 5000000,
     priceLow: number = 0,
-    currencyCode: string = 'usdc'
+    currencyCode: string = 'usdc',
 ) {
     const categoryString =
         categorySelect && categorySelect.length > 0
@@ -272,7 +270,7 @@ export async function getAllProducts(
 // DELETE Wishlist Item
 export async function deleteWishlistItem(
     customer_id: string,
-    product_id: string
+    product_id: string,
 ) {
     return delSecure('/custom/wishlist/item', {
         customer_id,
@@ -315,7 +313,7 @@ export async function checkReviewsExistence(order_id: string) {
 
 export async function checkCustomerReviewExistence(
     order_id: string,
-    variant_id: string
+    variant_id: string,
 ) {
     return getSecure('/custom/review/existing', {
         order_id: order_id,
@@ -369,7 +367,7 @@ export async function cancelOrderCart(cart_id: string) {
 export async function verifyEmail(
     customer_id: string,
     email: string,
-    returnRaw: boolean = false
+    returnRaw: boolean = false,
 ) {
     return postSecure(
         '/custom/confirmation-token/generate',
@@ -377,13 +375,13 @@ export async function verifyEmail(
             customer_id,
             email,
         },
-        returnRaw
+        returnRaw,
     );
 }
 
 export async function addNotifications(
     customer_id: string,
-    notification_type: string
+    notification_type: string,
 ) {
     return postSecure('/custom/customer/notification', {
         customer_id: customer_id,
@@ -418,7 +416,7 @@ export async function getOrderBucket(customer_id: string) {
 export async function getSingleBucket(
     customer_id: string,
     bucket: number,
-    cart_id?: string
+    cart_id?: string,
 ) {
     const response = await getSecure('/custom/order/customer-order', {
         customer_id,
@@ -443,7 +441,7 @@ export async function getOrderStatus(order_id: string) {
 export async function updateOrderEscrowStatus(
     order_id: string,
     escrow_status: EscrowStatus,
-    metadata: any
+    metadata: any,
 ): Promise<Order> {
     return putSecure('/custom/order/status', {
         order_id: order_id,
@@ -479,7 +477,7 @@ export async function updateProductReview(
     review: string,
     rating: number,
     customer_id: string,
-    order_id: string
+    order_id: string,
 ) {
     return putSecure('/custom/review', {
         product_id: product_id,
@@ -505,7 +503,7 @@ export async function getStoreIdByName(store_name: string) {
 
 export async function setCurrency(
     preferred_currency: string,
-    customer_id: string
+    customer_id: string,
 ) {
     return putSecure('/custom/customer/preferred-currency', {
         customer_id,
@@ -535,7 +533,7 @@ export async function finalizeCheckout(
     cart_id: string,
     transaction_id: string,
     payer_address: string,
-    chain_id: number
+    chain_id: number,
     //cart_products: any
 ) {
     return postSecure('/custom/checkout', {
@@ -602,10 +600,10 @@ export async function getCart(cart_id: string) {
 }
 
 export async function addItem({
-    cartId,
-    variantId,
-    quantity,
-}: {
+                                  cartId,
+                                  variantId,
+                                  quantity,
+                              }: {
     cartId: string;
     variantId: string;
     quantity: number;
@@ -616,7 +614,7 @@ export async function addItem({
         .create(
             cartId,
             { variant_id: variantId, quantity /*currency_code: currencyCode*/ },
-            headers
+            headers,
         )
         .then(({ cart }) => cart)
         .catch((err) => {
@@ -626,10 +624,10 @@ export async function addItem({
 }
 
 export async function updateItem({
-    cartId,
-    lineId,
-    quantity,
-}: {
+                                     cartId,
+                                     lineId,
+                                     quantity,
+                                 }: {
     cartId: string;
     lineId: string;
     quantity: number;
@@ -656,9 +654,9 @@ export async function updateShippingCost(cart_id: string) {
 }
 
 export async function removeItem({
-    cartId,
-    lineId,
-}: {
+                                     cartId,
+                                     lineId,
+                                 }: {
     cartId: string;
     lineId: string;
 }) {
@@ -688,7 +686,7 @@ export async function deleteDiscount(cartId: string, code: string) {
 export async function updatePaymentSession(
     cartId: string,
     paymentSessionId: string | undefined,
-    providerId: string
+    providerId: string,
 ) {
     if (paymentSessionId) {
         return putSecure('/custom/payment-session', {
@@ -706,7 +704,7 @@ export async function addDefaultShippingMethod(cart_id: string) {
 
 export async function createPaymentSessions(
     cartId: string,
-    providerId: string = 'crypto'
+    providerId: string = 'crypto',
 ) {
     console.log(`createPaymentSessions(${cartId})`);
     const headers = getMedusaHeaders(['cart']);
@@ -723,9 +721,9 @@ export async function createPaymentSessions(
 }
 
 export async function setPaymentSession({
-    cartId,
-    providerId,
-}: {
+                                            cartId,
+                                            providerId,
+                                        }: {
     cartId: string;
     providerId: string;
 }) {
@@ -774,7 +772,7 @@ export async function retrieveOrder(id: string) {
 // Shipping actions
 export async function listShippingMethods(
     regionId: string,
-    productIds?: string[]
+    productIds?: string[],
 ) {
     const headers = getMedusaHeaders(['shipping']);
 
@@ -786,7 +784,7 @@ export async function listShippingMethods(
                 region_id: regionId,
                 product_ids,
             },
-            headers
+            headers,
         )
         .then(({ shipping_options }) => shipping_options)
         .catch((err) => {
@@ -796,9 +794,9 @@ export async function listShippingMethods(
 }
 
 export async function addShippingMethod({
-    cartId,
-    shippingMethodId,
-}: {
+                                            cartId,
+                                            shippingMethodId,
+                                        }: {
     cartId: string;
     shippingMethodId: string;
 }) {
@@ -814,22 +812,31 @@ export async function getToken(credentials: StorePostAuthReqCustom) {
     //set email & password automatically if not provided
     if (!credentials.email || !credentials.email.length)
         credentials.email = `${credentials.wallet_address}@evm.blockchain`;
-    if (!credentials.password || !credentials.password.length)
-        credentials.password = 'password'; //TODO: (JK) store this default value someplace
+    console.warn('getToken: No email provided, defaulting to', credentials.email);
 
-    return medusaClient.auth
-        .getToken(credentials, {
+    if (!credentials.password || !credentials.password.length) {
+        credentials.password = 'password'; //TODO: (JK) store this default value someplace
+        console.warn('getToken: No password provided, defaulting to a default password');
+    }
+
+    // Using async/await inside getToken helper can make the error handling more straightforward
+    try {
+        const { access_token } = await medusaClient.auth.getToken(credentials, {
             next: {
                 tags: ['auth'],
             },
-        })
-        .then(({ access_token }) => {
-            //TODO: is the following commented out code needed? (JK)access_token && cookies().set('_medusa_jwt', access_token);
-            return access_token;
-        })
-        .catch((err) => {
-            throw new Error('Wrong email or password.');
         });
+        console.warn('getToken: Received access token', access_token);
+        if (!access_token) {
+            alert('Empty access token received')
+            throw new Error('Empty access token received');
+        }
+        return access_token;
+    } catch (err) {
+        alert('Empty access token received')
+        console.error('getToken: Error retrieving token', err);
+        throw new Error('Wrong email or password.');
+    }
 }
 
 //TODO: (CLEANUP) is this ever called?
@@ -856,6 +863,7 @@ export async function getSession() {
 export async function getHamzaCustomer(includeAddresses: boolean = true) {
     const headers = getMedusaHeaders(['customer']);
 
+    // console.warn(`*** ${JSON.stringify(headers)}`)
     const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
 
     const customer_id: string = token?.customer_id ?? '';
@@ -868,20 +876,20 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
                 customer_id,
                 include_addresses: includeAddresses ? 'true' : 'false',
             });
-            console.log("getHamzaCustomer: Secure call response:", response);
+            console.log('getHamzaCustomer: Secure call response:', response);
         } catch (err) {
-            console.error("getHamzaCustomer: Error during secure call:", err);
+            console.error('getHamzaCustomer: Error during secure call:', err);
         }
     } else {
-        console.warn("getHamzaCustomer: No customer_id found in token");
+        console.warn('getHamzaCustomer: No customer_id found in token');
     }
 
-    console.log("getHamzaCustomer: Returning response:", response ?? {});
+    console.log('getHamzaCustomer: Returning response:', response ?? {});
     return response ?? {};
 }
 
 
-export async function getCombinedCustomer(){
+export async function getCombinedCustomer() {
     // 1. Get the specialized `Hamza` data
     const hamzaCustomer = await getHamzaCustomer();
 
@@ -889,19 +897,18 @@ export async function getCombinedCustomer(){
     const medusaCustomer = await getCustomer();
 
     //3. Log it to the Client CLI....
-    console.log(`hamzaCustomer ${hamzaCustomer} medusaCustomer ${medusaCustomer}`)
+    console.log(`hamzaCustomer ${hamzaCustomer} medusaCustomer ${medusaCustomer}`);
 
-    return { hamzaCustomer, medusaCustomer }
+    return { hamzaCustomer, medusaCustomer };
 }
 
 export async function fetchCombinedCustomer(walletAddress: string) {
     const [hamzaCustomer, customer] = await Promise.all([
         getHamzaCustomer(),
-        getCustomer()
+        getCustomer(),
     ]);
     return { hamzaCustomer, customer };
 }
-
 
 
 export async function getNonSecureCustomer(includedAddresses: boolean = true) {
@@ -938,23 +945,23 @@ export async function clearCartCookie() {
 // Customer actions
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
-    console.log("Fetching Medusa customer with headers:", headers);
+    console.log('Fetching Medusa customer with headers:', headers);
 
     return medusaClient.customers
         .retrieve(headers)
         .then(({ customer }) => {
-            console.log("Retrieved Medusa customer:", customer);
+            console.log('Retrieved Medusa customer:', customer);
             return customer;
         })
         .catch((err) => {
-            console.error("Error retrieving Medusa customer:", err);
+            console.error('Error retrieving Medusa customer:', err);
             try {
                 cookies().set('_medusa_jwt', '', {
                     maxAge: -1,
                 });
-                console.log("Cleared _medusa_jwt cookie due to error.");
+                console.log('Cleared _medusa_jwt cookie due to error.');
             } catch (e) {
-                console.error("Error clearing _medusa_jwt cookie:", e);
+                console.error('Error clearing _medusa_jwt cookie:', e);
             }
             return null;
         });
@@ -997,7 +1004,7 @@ export async function updateCustomer(data: StorePostCustomersCustomerReq) {
 }
 
 export async function addShippingAddress(
-    data: StorePostCustomersCustomerAddressesReq
+    data: StorePostCustomersCustomerAddressesReq,
 ) {
     const headers = getMedusaHeaders(['customer']);
 
@@ -1018,7 +1025,7 @@ export async function deleteShippingAddress(addressId: string) {
 
 export async function updateShippingAddress(
     addressId: string,
-    data: StorePostCustomersCustomerAddressesAddressReq
+    data: StorePostCustomersCustomerAddressesAddressReq,
 ) {
     const headers = getMedusaHeaders(['customer']);
 
@@ -1030,7 +1037,7 @@ export async function updateShippingAddress(
 
 export async function listCustomerOrders(
     limit: number = 10,
-    offset: number = 0
+    offset: number = 0,
 ) {
     const headers = getMedusaHeaders(['customer']);
 
@@ -1062,7 +1069,7 @@ export async function retrieveRegion(id: string) {
 
 const regionMap = new Map<string, Region>();
 
-export const getRegion = cache(async function (countryCode: string) {
+export const getRegion = cache(async function(countryCode: string) {
     try {
         if (regionMap.has(countryCode)) {
             return regionMap.get(countryCode);
@@ -1093,9 +1100,9 @@ export const getRegion = cache(async function (countryCode: string) {
 
 // Product actions
 export async function getProductsById({
-    ids,
-    regionId,
-}: {
+                                          ids,
+                                          regionId,
+                                      }: {
     ids: string[];
     regionId: string;
 }) {
@@ -1125,11 +1132,10 @@ export const getPricedProductByHandle = async (handle: string, region: Region) =
 };
 
 
-
 export async function retrievePricedProductById({
-    id,
-    regionId,
-}: {
+                                                    id,
+                                                    regionId,
+                                                }: {
     id: string;
     regionId: string;
 }) {
@@ -1145,7 +1151,7 @@ export async function retrievePricedProductById({
 }
 
 export async function getProductByHandle(
-    handle: string
+    handle: string,
 ): Promise<{ product: PricedProduct }> {
     const headers = getMedusaHeaders(['products']);
 
@@ -1160,10 +1166,10 @@ export async function getProductByHandle(
 }
 
 export async function getProductsList({
-    pageParam = 0,
-    queryParams,
-    countryCode,
-}: {
+                                          pageParam = 0,
+                                          queryParams,
+                                          countryCode,
+                                      }: {
     pageParam?: number;
     queryParams?: StoreGetProductsParams;
     countryCode: string;
@@ -1188,7 +1194,7 @@ export async function getProductsList({
                 // region_id: region.id,
                 ...queryParams,
             },
-            { next: { revalidate: 300, tags: ['products'] } }
+            { next: { revalidate: 300, tags: ['products'] } },
         )
         .then((res) => res)
         .catch((err) => {
@@ -1209,11 +1215,11 @@ export async function getProductsList({
 }
 
 export async function getProductsListWithSort({
-    page = 0,
-    queryParams,
-    sortBy = 'created_at',
-    countryCode,
-}: {
+                                                  page = 0,
+                                                  queryParams,
+                                                  sortBy = 'created_at',
+                                                  countryCode,
+                                              }: {
     page?: number;
     queryParams?: StoreGetProductsParams;
     sortBy?: SortOptions;
@@ -1244,7 +1250,7 @@ export async function getProductsListWithSort({
 
     const paginatedProducts = sortedProducts.slice(
         pageParam,
-        pageParam + limit
+        pageParam + limit,
     );
 
     return {
@@ -1258,10 +1264,10 @@ export async function getProductsListWithSort({
 }
 
 export async function getHomepageProducts({
-    collectionHandles,
-    currencyCode,
-    countryCode,
-}: {
+                                              collectionHandles,
+                                              currencyCode,
+                                              countryCode,
+                                          }: {
     collectionHandles?: string[];
     currencyCode: string;
     countryCode: string;
@@ -1303,12 +1309,12 @@ export async function retrieveCollection(id: string) {
 
 export async function getCollectionsList(
     offset: number = 0,
-    limit: number = 100
+    limit: number = 100,
 ): Promise<{ collections: ProductCollection[]; count: number }> {
     const collections = await medusaClient.collections
         .list(
             { limit, offset },
-            { next: { revalidate: 300, tags: ['collections'] } }
+            { next: { revalidate: 300, tags: ['collections'] } },
         )
         .then(({ collections }) => collections)
         .catch((err) => {
@@ -1324,7 +1330,7 @@ export async function getCollectionsList(
 }
 
 export async function getCollectionByHandle(
-    handle: string
+    handle: string,
 ): Promise<ProductCollection> {
     const collection = await medusaClient.collections
         .list({ handle: [handle] }, { next: { tags: ['collections'] } })
@@ -1337,11 +1343,11 @@ export async function getCollectionByHandle(
 }
 
 export async function getProductsByCollectionHandle({
-    pageParam = 0,
-    limit = 100,
-    handle,
-    countryCode,
-}: {
+                                                        pageParam = 0,
+                                                        limit = 100,
+                                                        handle,
+                                                        countryCode,
+                                                    }: {
     pageParam?: number;
     handle: string;
     limit?: number;
@@ -1352,7 +1358,7 @@ export async function getProductsByCollectionHandle({
     nextPage: number | null;
 }> {
     const { id } = await getCollectionByHandle(handle).then(
-        (collection) => collection
+        (collection) => collection,
     );
 
     const { response, nextPage } = await getProductsList({
@@ -1389,7 +1395,7 @@ export async function listCategories() {
 
 export async function getCategoriesList(
     offset: number = 0,
-    limit: number = 100
+    limit: number = 100,
 ): Promise<{
     product_categories: ProductCategoryWithChildren[];
     count: number;
@@ -1410,7 +1416,7 @@ export async function getCategoryByHandle(categoryHandle: string[]): Promise<{
     product_categories: ProductCategoryWithChildren[];
 }> {
     const handles = categoryHandle.map((handle: string, index: number) =>
-        categoryHandle.slice(0, index + 1).join('/')
+        categoryHandle.slice(0, index + 1).join('/'),
     );
 
     const product_categories = [] as ProductCategoryWithChildren[];
@@ -1425,7 +1431,7 @@ export async function getCategoryByHandle(categoryHandle: string[]): Promise<{
                     next: {
                         tags: ['categories'],
                     },
-                }
+                },
             )
             .then(({ product_categories: { [0]: category } }) => category)
             .catch((err) => {
@@ -1441,10 +1447,10 @@ export async function getCategoryByHandle(categoryHandle: string[]): Promise<{
 }
 
 export async function getProductsByCategoryHandle({
-    pageParam = 0,
-    handle,
-    countryCode,
-}: {
+                                                      pageParam = 0,
+                                                      handle,
+                                                      countryCode,
+                                                  }: {
     pageParam?: number;
     handle: string;
     countryCode: string;
@@ -1454,7 +1460,7 @@ export async function getProductsByCategoryHandle({
     nextPage: number | null;
 }> {
     const { id } = await getCategoryByHandle([handle]).then(
-        (res) => res.product_categories[0]
+        (res) => res.product_categories[0],
     );
 
     const { response, nextPage } = await getProductsList({

@@ -3,7 +3,8 @@ import {useMutation, useQuery} from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import {SiweMessage} from 'siwe';
 import {getToken, recoverCart, clearCartCookie, clearAuthCookie} from '@/lib/server';
-import {useCustomerAuthStore} from '@/zustand/customer-auth/customer-auth';
+import { useStore } from '@tanstack/react-store';
+import { setCustomerAuthData, setCustomerPreferredCurrency, setWhitelistConfig } from '@/tanstack-store/customer-auth/new-customer-auth';
 import axios from "axios";
 import { useQueryClient } from '@tanstack/react-query';
 import {usePublicClient} from "wagmi";
@@ -98,9 +99,6 @@ async function sendVerifyRequest(message: any, signature: any) {
 
 
 export const useVerifyMutation = () => {
-    const {setCustomerAuthData, setCustomerPreferredCurrency, setWhitelistConfig, /* etc */} =
-        useCustomerAuthStore();
-
     // Declare chain clients using usePublicClient hook (must be inside a component wrapped in WagmiProvider)
     // const mainnetClient = usePublicClient({chainId: mainnet.id});
     // const sepoliaClient = usePublicClient({chainId: sepolia.id});
@@ -136,9 +134,10 @@ export const useVerifyMutation = () => {
 
             // First verify request
             let response = await sendVerifyRequest(message, signature);
-            if (!response || !response.data) {
+            if (!response?.data) {
                 console.error('No response from /verify.');
-                throw new Error('No response from verify');
+                alert("Why 777")
+                // throw new Error('No response from verify');
             }
 
             let data = response.data;
@@ -148,20 +147,29 @@ export const useVerifyMutation = () => {
             if (data.status === true && data.data?.created === true) {
                 console.log('Doing a second verify request...');
                 const authResponse = await sendVerifyRequest(message, signature);
-                if (!authResponse || !authResponse.data) {
+                if (!authResponse?.data) {
+                    alert(!authResponse?.data)
                     console.error('No second response from /verify.');
-                    throw new Error('No response from second verify');
+                    alert("Why 777")
+                    // throw new Error('No response from second verify');
                 }
                 data = authResponse.data;
             }
 
             if (data.status !== true) {
                 console.log('running verify unauthenticated');
+                alert('running verify unauthenticated')
                 // If you want to forcibly logout on error, do it in onError
-                throw new Error(data.message);
+                alert("Why 222")
+                // throw new Error(data.message);
             }
 
             console.log('Verification success from server side...');
+
+            console.warn("verifyMutation: Calling getToken with", {
+                wallet_address: parsedMessage.address.toLowerCase(),
+                email: data.data?.email?.trim()?.toLowerCase(),
+            });
 
             // Next, get your token from the server
             const tokenResponse = await getToken({
@@ -169,6 +177,8 @@ export const useVerifyMutation = () => {
                 email: data.data?.email?.trim()?.toLowerCase(),
                 password: '',
             });
+            alert(`TOKEN`)
+            alert(`TOKEN IS ${JSON.stringify(tokenResponse)}`)
             console.log('tokenResponse:', tokenResponse);
 
             // Check address mismatch
@@ -177,12 +187,14 @@ export const useVerifyMutation = () => {
 
             if (!responseWallet || !clientWalletTrimmed) {
                 console.error('One or both wallet addresses are missing');
-                throw new Error('Missing wallet address');
+                alert('One or both wallet addresses are missing')
+                // throw new Error('Missing wallet address');
             }
 
             if (responseWallet !== clientWalletTrimmed) {
                 console.error('Wallet address mismatch on login');
-                throw new Error('Wallet address mismatch');
+                alert('Wallet address mismatch on login')
+                // throw new Error('Wallet address mismatch');
             }
 
             // If everything checks out, return all needed data to `onSuccess`
@@ -211,7 +223,7 @@ export const useVerifyMutation = () => {
             });
 
             // Invalidate any queries that might be stale
-            queryClient.invalidateQueries({ queryKey: ['combinedCustomer', parsedMessage.address.toLowerCase()] });
+            // queryClient.invalidateQueries({ queryKey: ['combinedCustomer', parsedMessage.address.toLowerCase()] });
 
             // Set currency
             setCustomerPreferredCurrency(
@@ -236,9 +248,15 @@ export const useVerifyMutation = () => {
         // 3. On error, handle forced logout, clearing cookies, etc.
         onError: (error) => {
             console.error('Verification failed:', error);
+            alert('verification failed')
             // If you want to forcibly logout on error:
             clearLogin();
             clearCartCookie();
+        },
+        onSettled: () => {
+            console.log('Mutation has settled.');
+            // Optionally, you can invalidate or refetch queries here.
+            queryClient.invalidateQueries({ queryKey: ['combinedCustomer'] });
         },
     });
 };

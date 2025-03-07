@@ -11,7 +11,7 @@ function makeQueryClient() {
                 refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
                 refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
                 refetchOnMount: false, // Prevents redundant fetches when remounting components
-                retry: 2, // 🔄 Retries failed queries twice before throwing an error
+                retry: 0, // 🔄 Retries failed queries twice before throwing an error
             },
             mutations: {
                 retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)

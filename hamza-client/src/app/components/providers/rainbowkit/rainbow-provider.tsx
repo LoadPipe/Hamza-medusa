@@ -1,5 +1,5 @@
 'use client';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
 import {
     createAuthenticationAdapter,
@@ -7,14 +7,14 @@ import {
     RainbowKitProvider,
     AvatarComponent,
 } from '@rainbow-me/rainbowkit';
-import {WagmiProvider} from 'wagmi';
-import {darkThemeConfig} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
-import {QueryClientProvider, QueryClient, isServer} from '@tanstack/react-query';
-import {HnsClient} from '@/web3/contracts/hns-client';
-import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
-import {SiweMessage} from 'siwe';
-import {createSiweMessage} from 'viem/siwe';
-import {useQuery, useSuspenseQuery} from '@tanstack/react-query';
+import { WagmiProvider } from 'wagmi';
+import { darkThemeConfig } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { QueryClientProvider, QueryClient, isServer } from '@tanstack/react-query';
+import { HnsClient } from '@/web3/contracts/hns-client';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { SiweMessage } from 'siwe';
+import { createSiweMessage } from 'viem/siwe';
+import { useQuery  } from '@tanstack/react-query';
 import {
     clearAuthCookie,
     clearCartCookie,
@@ -22,15 +22,18 @@ import {
     getToken,
     recoverCart,
 } from '@/lib/server';
-import {signOut} from '@modules/account/actions';
-import {useCustomerAuthStore} from '@/zustand/customer-auth/customer-auth';
+import { signOut } from '@modules/account/actions';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import {useRouter} from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
-import {wagmiConfig} from './wagmi';
-import {useVerifyMutation} from './rainbowkit-utils/verify-mutation'
+import { wagmiConfig } from './wagmi';
+import { useVerifyMutation } from './rainbowkit-utils/verify-mutation';
+import { useStore } from '@tanstack/react-store';
+import { customerAuthStore, setCustomerAuthData } from '@/tanstack-store/customer-auth/new-customer-auth';
+
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -62,29 +65,28 @@ function makeQueryClient() {
     });
 }
 
-let browserQueryClient: QueryClient | undefined = undefined
+let browserQueryClient: QueryClient | undefined = undefined;
 
 export function getQueryClient() {
     if (isServer) {
         // Server: always make a new query client
-        return makeQueryClient()
+        return makeQueryClient();
     } else {
         // Browser: make a new query client if we don't already have one
         // This is very important, so we don't re-make a new client if React
         // suspends during the initial render. This may not be needed if we
         // have a suspense boundary BELOW the creation of the query client
-        if (!browserQueryClient) browserQueryClient = makeQueryClient()
-        return browserQueryClient
+        if (!browserQueryClient) browserQueryClient = makeQueryClient();
+        return browserQueryClient;
     }
 }
 
-export function RainbowWrapper({children}: { children: React.ReactNode }) {
+export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     // NOTE: Avoid useState when initializing the query client if you don't
     //       have a suspense boundary between this and the code that may
     //       suspend because React will throw away the client on the initial
     //       render if it suspends and there is no boundary
-    const queryClient = getQueryClient()
-
+    const queryClient = getQueryClient();
 
 
     function useCombinedCustomer(walletAddress: string, isVerified: boolean) {
@@ -99,10 +101,15 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
     const verifyMutation = useVerifyMutation();
 
-    const walletAddress = useCustomerAuthStore((state) => state.authData.wallet_address);
-    const isAuthenticated = useCustomerAuthStore((state) => state.authData.status);
-    const isHydrated = useCustomerAuthStore((state) => state.isHydrated);
-    const setCustomerAuthData = useCustomerAuthStore((state) => state.setCustomerAuthData);
+    /*
+        Note: The new TanStack store API (using the useStore hook from @tanstack/react-store) subscribes to only the selected slice of state. This means that if other parts of the state change, your component won’t re-render unless the slice you selected has changed.
+     */
+
+    // Use the TanStack store instead of Zustand hooks:
+    const walletAddress = useStore(customerAuthStore, s => s.authData.wallet_address);
+    const isAuthenticated = useStore(customerAuthStore, s => s.authData.status);
+    const isHydrated = useStore(customerAuthStore, s => s.isHydrated);
+
 
 
     // Using local storage
@@ -114,11 +121,11 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
     // Enabling devtools in build mode $ window.toggleDevtools()
     // TODO: I'm moving really fast here, and focusing on the bug, this should be removed and replaced with env variable
-    const [showDevtools, setShowDevtools] = React.useState(false)
+    const [showDevtools, setShowDevtools] = React.useState(false);
 
     useEffect(() => {
-        window.toggleDevtools = () => setShowDevtools((old) => !old)
-    }, [])
+        window.toggleDevtools = () => setShowDevtools((old) => !old);
+    }, []);
 
 
     const router = useRouter();
@@ -201,16 +208,19 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     // TODO: While this solution means we don't require API function changes, we should be implementing Signals in our Axios wrapper...
     const isVerified = verifyMutation.isSuccess; // or from your auth store
 
-    const {data, isLoading, error, isSuccess: customerSuccess} = useCombinedCustomer(walletAddress, isVerified);
+    const { data, isLoading, error, isSuccess: customerSuccess } = useCombinedCustomer(walletAddress, isVerified);
 
     useEffect(() => {
+        if (!customerSuccess || isLoading) return; // ⬅️ PREVENT EARLY CHECKS
+
         if (data) {
-            const {hamzaCustomer, customer} = data;
+            const { hamzaCustomer, customer } = data;
             if (!customer || !hamzaCustomer || customer.id !== hamzaCustomer.id) {
+                console.log("🚨 Mismatch found! Clearing Login");
                 clearLogin();
             }
         }
-    }, [customerSuccess]);
+    }, [customerSuccess, isLoading]); // ADD isLoading TO DEPENDENCIES
 
 
     const {
@@ -276,11 +286,11 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
 
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
-            const {data: nonce} = await fetchNonce();
+            const { data: nonce } = await fetchNonce();
             return nonce;
         },
 
-        createMessage: ({nonce, address, chainId}) => {
+        createMessage: ({ nonce, address, chainId }) => {
             console.log(nonce, address, chainId);
             return createSiweMessage({
                 domain: window.location.host,
@@ -293,7 +303,7 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
             });
         },
 
-        verify: async ({message, signature}) => {
+        verify: async ({ message, signature }) => {
             // Now use the mutation from the top level
             try {
                 const siweMessage = new SiweMessage(message);
@@ -311,14 +321,18 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
         },
 
         signOut: async () => {
-            alert('STOP')
+            localStorage.removeItem('__new_hamza_customer')
+            alert('STOP');
             console.trace('signOut called');
+            queryClient.invalidateQueries({ queryKey: ['combinedCustomer'] });
+            queryClient.invalidateQueries({ queryKey: ['nonce'] });
 
             if (!isAuthenticated) {
-                console.log("Preventing unnecessary logout - status still loading...");
+                console.log('Preventing unnecessary logout - status still loading...');
                 return;
             }
-            if (verifyMutation.isPending) return
+            if (verifyMutation.isPending) return;
+
             // if (isHydrated) {
             setCustomerAuthData({
                 status: 'unauthenticated',
@@ -335,32 +349,32 @@ export function RainbowWrapper({children}: { children: React.ReactNode }) {
     });
 
 
-    const CustomAvatar: AvatarComponent = ({address, ensImage, size}) => {
-        return <ProfileImage centered={true}/>;
+    const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
+        return <ProfileImage centered={true} />;
     };
 
     return (
         <>
             <WagmiProvider config={wagmiConfig}>
                 {/*<QueryClientProvider client={queryClient}>*/}
-                    <RainbowKitAuthenticationProvider
-                        adapter={walletSignature}
-                        status={isAuthenticated}
+                <RainbowKitAuthenticationProvider
+                    adapter={walletSignature}
+                    status={isAuthenticated}
+                >
+                    <RainbowKitProvider
+                        avatar={CustomAvatar}
+                        theme={darkThemeConfig}
+                        modalSize="compact"
                     >
-                        <RainbowKitProvider
-                            avatar={CustomAvatar}
-                            theme={darkThemeConfig}
-                            modalSize="compact"
-                        >
-                            {children}
-                        </RainbowKitProvider>
-                    </RainbowKitAuthenticationProvider>
-                    <ReactQueryDevtools initialIsOpen={false}/>
-                    {/*{showDevtools && (*/}
-                    {/*    <React.Suspense fallback={null}>*/}
-                    {/*        <ReactQueryDevtoolsProduction/>*/}
-                    {/*    </React.Suspense>*/}
-                    {/*)}*/}
+                        {children}
+                    </RainbowKitProvider>
+                </RainbowKitAuthenticationProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
+                {/*{showDevtools && (*/}
+                {/*    <React.Suspense fallback={null}>*/}
+                {/*        <ReactQueryDevtoolsProduction/>*/}
+                {/*    </React.Suspense>*/}
+                {/*)}*/}
                 {/*</QueryClientProvider>*/}
             </WagmiProvider>
         </>
