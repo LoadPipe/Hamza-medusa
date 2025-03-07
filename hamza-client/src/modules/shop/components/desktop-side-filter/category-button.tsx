@@ -1,65 +1,39 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
-import useProductFilter from '@/zustand/products/filter/product-filter';
 
 interface CategoryButtonProps {
     categoryName: string;
     url: string;
+    selectedCategories: string[];
+    setSelectedCategories: (categories: string[]) => void;
 }
 
-const CategoryButton: React.FC<CategoryButtonProps> = ({
-    categoryName,
-    url,
-}) => {
-    const {
-        selectCategoryFilter,
-        setSelectCategoryFilter,
-        setCategoryItemFilter,
-    } = useProductFilter();
+const CategoryButton: React.FC<CategoryButtonProps> = ({ categoryName, url, selectedCategories,
+    setSelectedCategories, }) => {
 
     const toggleCategorySelection = (category: string) => {
-        const currentCategorySelection = selectCategoryFilter || [];
-
-        // If the category is already selected, we remove it along with its type
-        if (currentCategorySelection.includes(category)) {
-            const updatedCategorySelection = currentCategorySelection.filter(
-                (selectedCategory) => selectedCategory !== category
-            );
-
-            setSelectCategoryFilter(
-                updatedCategorySelection.length ? updatedCategorySelection : []
-            );
-
-            setCategoryItemFilter(
-                (prev) =>
-                    prev?.filter((item) => item.categoryName !== category) ||
-                    null
-            );
+        const normalized = category.toLowerCase();
+        if (normalized === 'all') {
+            setSelectedCategories(['all']);
+            return;
+        }
+        if (selectedCategories.includes(normalized)) {
+            const updated = selectedCategories.filter((c) => c !== normalized);
+            setSelectedCategories(updated.length ? updated : ['all']);
         } else {
-            // If the category is not selected, we add both the category and type
-            const updatedCategorySelection = currentCategorySelection.filter(
-                (cat) => cat !== 'All'
-            );
-
-            setSelectCategoryFilter([...updatedCategorySelection, category]);
-
-            setCategoryItemFilter((prev) => [
-                ...(prev || []),
-                { categoryName: category, urlLink: url },
-            ]);
+            const updated = selectedCategories.filter((c) => c !== 'all');
+            setSelectedCategories([...updated, normalized]);
         }
     };
+
+    const isSelected = selectedCategories.includes(categoryName.toLowerCase());
 
     return (
         <Flex>
             <Flex
                 borderColor={'secondary.davy.900'}
-                backgroundColor={
-                    selectCategoryFilter?.includes(categoryName)
-                        ? 'white'
-                        : 'transparent'
-                }
+                backgroundColor={isSelected ? 'white' : 'transparent'}
                 display={'flex'}
                 flexDirection={'row'}
                 alignItems={'center'}
@@ -67,16 +41,10 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                 borderRadius={'49px'}
                 height={'60px'}
                 cursor="pointer"
-                color={
-                    selectCategoryFilter?.includes(categoryName)
-                        ? 'black'
-                        : 'white'
-                }
+                color={isSelected ? 'black' : 'white'}
                 padding="10px 24px"
                 transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
-                onClick={() => {
-                    toggleCategorySelection(categoryName);
-                }}
+                onClick={() => toggleCategorySelection(categoryName)}
             >
                 {url?.length && (
                     <Image

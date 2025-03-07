@@ -14,8 +14,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import ProductCard from '../product-card';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import useVendor from '@/zustand/store-page/vendor';
 import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
+import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 type Props = {
     storeName: string;
@@ -25,14 +25,13 @@ type Props = {
 const ProductCardGroup = ({ storeName }: Props) => {
     // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
+    const { selectedCategories } = useUnifiedFilterStore();
+    const categoryParam = selectedCategories.join(',');
 
-    const { categorySelect } = useVendor();
-
-    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categorySelect}&currency_code=${preferred_currency_code ?? 'usdc'}`;
+    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categoryParam}&currency_code=${preferred_currency_code ?? 'usdc'}`;
 
     const { data, error, isLoading } = useQuery({
-        queryKey: ['products', categorySelect,
-        ],
+        queryKey: ['products', selectedCategories],
         queryFn: async () => {
             console.log('Fetching data from URL:', url);
             const response = await axios.get(url);
