@@ -6,7 +6,6 @@ import {
     Stack,
     Radio,
     RadioGroup,
-    Button,
     Box,
     Flex,
     Image,
@@ -46,33 +45,30 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     const formatBalance = (balanceData: any) =>
         balanceData ? parseFloat(balanceData.formatted).toFixed(2) : '0.00';
 
-    const handleChangeCurrency = async () => {
+    const handleCurrencySelection = async (value: string) => {
         try {
-            setCustomerPreferredCurrency(selectedCurrency);
-            await setCurrency(selectedCurrency, authData.customer_id);
+            setSelectedCurrency(value);
+            setCustomerPreferredCurrency(value);
+            await setCurrency(value, authData.customer_id);
         } catch (error) {
             console.error('Error updating currency:', error);
         }
     };
-
-    const isChanged =
-        selectedCurrency.toLowerCase() !==
-        (preferredCurrencyCode?.toLowerCase() || defaultCurrency);
 
     return (
         <Box>
             <Text fontSize="sm" color="gray.400" mb={4}>
                 Available Balance
             </Text>
-            <RadioGroup onChange={setSelectedCurrency} value={selectedCurrency}>
+            <RadioGroup value={selectedCurrency}>
                 <Stack direction="column" spacing={4}>
 
                     {/* ETH row */}
                     <Flex
                         justifyContent="space-between"
                         alignItems="center"
-                        onClick={() => setSelectedCurrency('eth')}
                         cursor="pointer"
+                        onClick={() => handleCurrencySelection('eth')}
                     >
                         <Flex alignItems="center" gap="8px">
                             <Radio
@@ -116,8 +112,8 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                     <Flex
                         justifyContent="space-between"
                         alignItems="center"
-                        onClick={() => setSelectedCurrency('usdc')}
                         cursor="pointer"
+                        onClick={() => handleCurrencySelection('usdc')}
                     >
                         <Flex alignItems="center" gap="8px">
                             <Radio
@@ -144,8 +140,8 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                     <Flex
                         justifyContent="space-between"
                         alignItems="center"
-                        onClick={() => setSelectedCurrency('usdt')}
                         cursor="pointer"
+                        onClick={() => handleCurrencySelection('usdt')}
                     >
                         <Flex alignItems="center" gap="8px">
                             <Radio
@@ -170,27 +166,6 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
 
                 </Stack>
             </RadioGroup>
-
-            <Button
-                mt={5}
-                p="10px 16px"
-                gap="10px"
-                width="100%"
-                h="44px"
-                bg={isChanged ? '#94D42A' : '#242424'}
-                borderRadius="49px"
-                color="white"
-                border="none"
-                _hover={{ bg: isChanged ? '#94D42A' : '#242424' }}
-                _active={{ bg: isChanged ? '#94D42A' : '#242424' }}
-                flex="none"
-                order={1}
-                alignSelf="stretch"
-                flexGrow={0}
-                onClick={handleChangeCurrency}
-            >
-                Change Currency
-            </Button>
         </Box>
     );
 };
