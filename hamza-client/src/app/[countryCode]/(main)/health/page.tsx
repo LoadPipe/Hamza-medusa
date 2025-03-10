@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     description: 'Something went wrong',
 };
 
-export default function Health() {
+export default function Page() {
     return (
         <Flex
             justifyContent={'center'}
