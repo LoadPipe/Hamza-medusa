@@ -32,6 +32,7 @@ import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { Cart } from '@medusajs/medusa';
 import { useQueryClient } from '@tanstack/react-query';
 import { Product } from '@lib/schemas/product';
+import { setCurrency } from '@/lib/server';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -85,7 +86,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
 
-    const { preferred_currency_code } = useCustomerAuthStore();
+    const { preferred_currency_code, setCustomerPreferredCurrency } = useCustomerAuthStore();
     //console.log('user preferred currency code: ', preferred_currency_code);
 
     const { whitelist_config, setWhitelistConfig, authData } =
@@ -115,6 +116,16 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         fetchProductReview();
     }, [productId]);
 
+    const handleCurrencyIconClick = async (newCurrency: string) => {
+        try {
+            setCustomerPreferredCurrency(newCurrency);
+            await setCurrency(newCurrency, authData.customer_id);
+        } catch (error) {
+            console.error('Error updating currency:', error);
+        }
+    };
+    
+
     const showAvailableCurrencies = () => {
         return (
             <>
@@ -123,9 +134,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     .map((currency) => (
                         <Image
                             key={currency}
-                            className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                            className="h-[14px] w-[14px] md:h-[20px] md:w-[20px] cursor-pointer"
                             src={currencyIcons[currency ?? 'usdc']}
                             alt={currency ?? 'usdc'}
+                            onClick={() => handleCurrencyIconClick(currency)}
                         />
                     ))}
             </>
