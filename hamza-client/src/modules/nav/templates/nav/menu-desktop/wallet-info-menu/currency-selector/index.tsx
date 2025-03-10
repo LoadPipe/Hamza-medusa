@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
     Text,
     Stack,
@@ -18,6 +18,8 @@ interface CurrencySelectorProps {
     preferredCurrencyCode?: string;
     defaultCurrency?: string;
     isOpen: boolean;
+    selectedCurrency: string;
+    setSelectedCurrency: (currency: string) => void;
     nativeBalanceData?: any;
     usdcBalanceData?: any;
     usdtBalanceData?: any;
@@ -27,23 +29,39 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     preferredCurrencyCode,
     defaultCurrency = 'eth',
     isOpen,
+    selectedCurrency,
+    setSelectedCurrency,
     nativeBalanceData,
     usdcBalanceData,
     usdtBalanceData,
 }) => {
     const { authData, setCustomerPreferredCurrency } = useCustomerAuthStore();
-    const [selectedCurrency, setSelectedCurrency] = useState(
-        preferredCurrencyCode ?? defaultCurrency
-    );
 
     useEffect(() => {
         if (!isOpen) {
             setSelectedCurrency(preferredCurrencyCode ?? defaultCurrency);
         }
-    }, [isOpen, preferredCurrencyCode, defaultCurrency]);
+    }, [isOpen, preferredCurrencyCode, defaultCurrency, setSelectedCurrency]);
 
-    const formatBalance = (balanceData: any) =>
-        balanceData ? parseFloat(balanceData.formatted).toFixed(2) : '0.00';
+    const formatBalance = (balanceData: any, currency: string) => {
+        if (!balanceData?.formatted) {
+            return currency === 'eth' ? '0.0000' : '0.00';
+        }
+
+        const value = parseFloat(balanceData.formatted);
+        const decimals = currency === 'eth' ? 4 : 2;
+
+        let formatted = value.toFixed(decimals);
+
+        if (value > 1000) {
+            formatted = parseFloat(formatted).toLocaleString(undefined, {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals,
+            });
+        }
+
+        return formatted;
+    };
 
     const handleCurrencySelection = async (value: string) => {
         try {
@@ -62,7 +80,6 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
             </Text>
             <RadioGroup value={selectedCurrency}>
                 <Stack direction="column" spacing={4}>
-
                     {/* ETH row */}
                     <Flex
                         justifyContent="space-between"
@@ -87,23 +104,27 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                                     ETH
                                 </Text>
                             </Flex>
-                            <Flex
-                                flex="none"
-                                order={2}
-                                flexGrow={0}
-                                direction="row"
-                                justifyContent="center"
-                                alignItems="center"
-                                p="7px 10px"
-                                gap="10px"
-                                bg="#272727"
-                                borderRadius="4px"
-                            >
-                                <Text color="white" fontSize="xs">DEFAULT</Text>
-                            </Flex>
+                            {preferredCurrencyCode === 'eth' && (
+                                <Flex
+                                    flex="none"
+                                    order={2}
+                                    flexGrow={0}
+                                    direction="row"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    p="7px 10px"
+                                    gap="10px"
+                                    bg="#272727"
+                                    borderRadius="4px"
+                                >
+                                    <Text color="white" fontSize="xs">
+                                        DEFAULT
+                                    </Text>
+                                </Flex>
+                            )}
                         </Flex>
                         <Text color="white">
-                            {formatBalance(nativeBalanceData)}
+                            {formatBalance(nativeBalanceData, 'eth')}
                         </Text>
                     </Flex>
 
@@ -130,12 +151,29 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                                 />
                                 <Text color="white">USDC</Text>
                             </Flex>
+                            {preferredCurrencyCode === 'usdc' && (
+                                <Flex
+                                    flex="none"
+                                    order={2}
+                                    flexGrow={0}
+                                    direction="row"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    p="7px 10px"
+                                    gap="10px"
+                                    bg="#272727"
+                                    borderRadius="4px"
+                                >
+                                    <Text color="white" fontSize="xs">
+                                        DEFAULT
+                                    </Text>
+                                </Flex>
+                            )}
                         </Flex>
                         <Text color="white">
-                            {formatBalance(usdcBalanceData)}
+                            {formatBalance(usdcBalanceData, 'usdc')}
                         </Text>
                     </Flex>
-
                     {/* USDT row */}
                     <Flex
                         justifyContent="space-between"
@@ -158,12 +196,29 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                                 />
                                 <Text color="white">USDT</Text>
                             </Flex>
+                            {preferredCurrencyCode === 'usdt' && (
+                                <Flex
+                                    flex="none"
+                                    order={2}
+                                    flexGrow={0}
+                                    direction="row"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    p="7px 10px"
+                                    gap="10px"
+                                    bg="#272727"
+                                    borderRadius="4px"
+                                >
+                                    <Text color="white" fontSize="xs">
+                                        DEFAULT
+                                    </Text>
+                                </Flex>
+                            )}
                         </Flex>
                         <Text color="white">
-                            {formatBalance(usdtBalanceData)}
+                            {formatBalance(usdtBalanceData, 'usdt')}
                         </Text>
                     </Flex>
-
                 </Stack>
             </RadioGroup>
         </Box>

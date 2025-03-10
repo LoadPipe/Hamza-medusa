@@ -33,11 +33,14 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
     const { address } = useAccount();
     const { chain: networkChain } = useNetwork();
     const chainId = networkChain?.id ?? 1;
+    const [selectedCurrency, setSelectedCurrency] = useState(
+        preferred_currency_code ?? 'eth'
+    );
 
     // Query native ETH balance
     const { data: ethBalanceData } = useBalance({ address, chainId });
 
-    // Query USDC and USDT balances 
+    // Query USDC and USDT balances
     const usdcAddress = getCurrencyAddress('usdc', chainId);
     const usdtAddress = getCurrencyAddress('usdt', chainId);
     const { data: usdcBalanceData } = useBalance({
@@ -51,40 +54,44 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
         chainId,
     });
 
-    const [usdValue, setUsdValue] = useState<number>(0);
+    const getTotal = () => {
+        let balanceData: any;
+        let symbol: string = '';
 
-    useEffect(() => {
-        const fetchTotalUsdValue = async () => {
-            let totalUsdValue = 0;
+        if (selectedCurrency === 'eth') {
+            balanceData = ethBalanceData;
+            symbol = 'ETH';
+        } else if (selectedCurrency === 'usdc') {
+            balanceData = usdcBalanceData;
+            symbol = 'USDC';
+        } else if (selectedCurrency === 'usdt') {
+            balanceData = usdtBalanceData;
+            symbol = 'USDT';
+        }
 
-            // Convert ETH balance to USD (using USDC)
-            if (ethBalanceData?.formatted) {
-                const ethAmount = parseFloat(ethBalanceData.formatted);
-                try {
-                    const ethUsd = await convertCryptoPrice(ethAmount, 'eth', 'usdc');
-                    totalUsdValue += Number(ethUsd);
-                } catch (error) {
-                    console.error('Error converting ETH balance:', error);
-                }
+        if (balanceData?.formatted) {
+            const value = parseFloat(balanceData.formatted);
+            const decimals = selectedCurrency === 'eth' ? 4 : 2;
+
+            let formatted = value.toFixed(decimals);
+
+            if (value > 1000) {
+                formatted = parseFloat(formatted).toLocaleString(undefined, {
+                    minimumFractionDigits: decimals,
+                    maximumFractionDigits: decimals,
+                });
             }
 
-            // Add USDC balance 
-            if (usdcBalanceData?.formatted) {
-                const usdcAmount = parseFloat(usdcBalanceData.formatted);
-                totalUsdValue += usdcAmount;
-            }
+            return selectedCurrency === 'eth'
+                ? `${formatted} ${symbol}`
+                : `$${formatted} ${symbol}`;
+        }
 
-            // Add USDT balance 
-            if (usdtBalanceData?.formatted) {
-                const usdtAmount = parseFloat(usdtBalanceData.formatted);
-                totalUsdValue += usdtAmount;
-            }
-
-            setUsdValue(parseFloat(totalUsdValue.toFixed(2)));
-        };
-
-        fetchTotalUsdValue();
-    }, [ethBalanceData, usdcBalanceData, usdtBalanceData]);
+        // Fallback if no balance data
+        return selectedCurrency === 'eth'
+            ? `0.0000 ${symbol}`
+            : `$0.00 ${symbol}`;
+    };
 
     return (
         <Menu placement="bottom-end">
@@ -94,8 +101,8 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                         as={Button}
                         bg="#121212"
                         borderRadius="81px"
-                        _hover={{ bg: "#121212" }}
-                        _active={{ bg: "#121212" }}
+                        _hover={{ bg: '#121212' }}
+                        _active={{ bg: '#121212' }}
                         border="none"
                         flex="none"
                         order={0}
@@ -115,14 +122,14 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                             {chain?.hasIcon && chain?.iconUrl && (
                                 <Image
                                     src={chain.iconUrl}
-                                    alt={chain.name ?? "Chain icon"}
+                                    alt={chain.name ?? 'Chain icon'}
                                     boxSize="20px"
                                     borderRadius="full"
                                 />
                             )}
                             {/* Chain name */}
                             <Text color="white" textTransform="uppercase">
-                                {chain?.name ?? chainName ?? "Unknown"}
+                                {chain?.name ?? chainName ?? 'Unknown'}
                             </Text>
                             {/* Vertical divider */}
                             <Box
@@ -135,7 +142,7 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                             />
                             {/* Currency code */}
                             <Text color="white" textTransform="uppercase">
-                                {preferred_currency_code ?? "ETH"}
+                                {preferred_currency_code ?? 'ETH'}
                             </Text>
                             {/* Dropdown icon */}
                             <TriangleDownIcon color="white" boxSize="12px" />
@@ -161,16 +168,24 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                             borderRadius="16px"
                             position="relative"
                         >
-                            <Flex justifyContent="space-between" alignItems="center" mb={5}>
+                            <Flex
+                                justifyContent="space-between"
+                                alignItems="center"
+                                mb={5}
+                            >
                                 <AddressDisplay />
                                 <ChainDropdown />
                             </Flex>
 
                             {/* Wallet balance row */}
-                            <Flex justifyContent="space-between" alignItems="center" mb={5}>
+                            <Flex
+                                justifyContent="space-between"
+                                alignItems="center"
+                                mb={5}
+                            >
                                 <Box>
                                     <Text fontSize="2xl" fontWeight="bold">
-                                        ${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                        {getTotal()}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
                                         Wallet Balance
@@ -196,6 +211,8 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                                 isOpen={isOpen}
                                 preferredCurrencyCode={preferred_currency_code}
                                 defaultCurrency="eth"
+                                selectedCurrency={selectedCurrency}
+                                setSelectedCurrency={setSelectedCurrency}
                                 nativeBalanceData={ethBalanceData}
                                 usdcBalanceData={usdcBalanceData}
                                 usdtBalanceData={usdtBalanceData}
