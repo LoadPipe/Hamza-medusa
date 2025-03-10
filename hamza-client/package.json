@@ -9,7 +9,7 @@
     ],
     "scripts": {
         "_devcomment": "This allows for debugging server components. The debugger will be attached to port 9230.  In LoadpipeSetup/market/hamza-client.code-workspace, There is a companion configuration to manage server component debug with breakpoints.  There are 2 debuggers, one for client and another for server.  Both should work out of the box.",
-        "dev": "NODE_OPTIONS='--inspect' next dev -p 8000 --turbo",
+        "dev": "NODE_OPTIONS='--inspect' next dev -p 8000",
         "build": "next build",
         "start": "next start -p 8000",
         "lint": "next lint",

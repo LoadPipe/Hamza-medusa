@@ -7,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-    throw new Error("No Health, exercise for goodness sake")
     return (
         <Flex
             justifyContent={'center'}
