@@ -41,22 +41,24 @@ interface AddressModalProps {
 const MAX_ADDRESSES = 10;
 
 const AddressModal: React.FC<AddressModalProps> = ({
-                                                       isOpen,
-                                                       onClose,
-                                                       customer,
-                                                       cart,
-                                                       countryCode,
-                                                       addressType,
-                                                   }) => {
+    isOpen,
+    onClose,
+    customer,
+    cart,
+    countryCode,
+    addressType,
+}) => {
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
     const [saveAddressButtonText, setSaveAddressButtonText] = useState(
-        addressType === 'add' ? 'Add Address' : 'Edit Address',
+        addressType === 'add' ? 'Add Address' : 'Edit Address'
     );
     const [overwriteAddress, setOverwriteAddress] = useState(false);
     const [savedAddressID, setSavedAddressId] = useState('');
     const [selectedAddressId, setSelectedAddressId] = useState<string>('');
-    const preferred_currency_code = useCustomerAuthStore((state) => state.preferred_currency_code);
+    const preferred_currency_code = useCustomerAuthStore(
+        (state) => state.preferred_currency_code
+    );
     const queryClient = useQueryClient();
 
     const [formData, setFormData] = useState({
@@ -99,17 +101,16 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     email: cart?.email
                         ? cart.email
                         : customer?.email?.includes('evm')
-                            ? ''
-                            : customer?.email || '',
+                          ? ''
+                          : customer?.email || '',
                     'shipping_address.phone': cart.shipping_address.phone || '',
                 }));
             }
             setSaveAddress(false);
             setOverwriteAddress(false);
             setSaveAddressButtonText(
-                addressType === 'add' ? 'Add Address' : 'Edit Address',
+                addressType === 'add' ? 'Add Address' : 'Edit Address'
             );
-
         }
     }, [isOpen, cart]);
 
@@ -117,11 +118,11 @@ const AddressModal: React.FC<AddressModalProps> = ({
         // If in edit mode and customer has addresses, compare current address to address book
         if (addressType === 'edit' && customer?.shipping_addresses) {
             const matchingAddress = customer.shipping_addresses.find((addr) =>
-                compareSelectedAddress(addr, cart?.shipping_address),
+                compareSelectedAddress(addr, cart?.shipping_address)
             );
             // if matching address set address id or set selected addressId
             setSavedAddressId(
-                matchingAddress?.id ? matchingAddress.id : selectedAddressId,
+                matchingAddress?.id ? matchingAddress.id : selectedAddressId
             );
         }
     }, [cart, countryCode, addressType, customer, selectedAddressId]);
@@ -129,7 +130,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const handleChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLInputElement | HTMLSelectElement
-        >,
+        >
     ) => {
         setFormData({
             ...formData,
@@ -138,7 +139,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     };
 
     const handleSaveAddressChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
+        e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setSaveAddress(e.target.checked);
         console.log('saved clicked', e.target.checked);
@@ -147,7 +148,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     };
 
     const handleOverwriteAddressChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
+        e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setOverwriteAddress(e.target.checked);
         console.log('overwrite clicked', e.target.checked);
@@ -164,52 +165,51 @@ const AddressModal: React.FC<AddressModalProps> = ({
                 const shippingAddressData = new FormData();
                 shippingAddressData.append(
                     'first_name',
-                    formData['shipping_address.first_name'],
+                    formData['shipping_address.first_name']
                 );
                 shippingAddressData.append(
                     'last_name',
-                    formData['shipping_address.last_name'],
+                    formData['shipping_address.last_name']
                 );
                 shippingAddressData.append(
                     'address_1',
-                    formData['shipping_address.address_1'],
+                    formData['shipping_address.address_1']
                 );
                 shippingAddressData.append(
                     'address_2',
-                    formData['shipping_address.address_2'],
+                    formData['shipping_address.address_2']
                 );
                 shippingAddressData.append(
                     'company',
-                    formData['shipping_address.company'],
+                    formData['shipping_address.company']
                 );
                 shippingAddressData.append(
                     'postal_code',
-                    formData['shipping_address.postal_code'],
+                    formData['shipping_address.postal_code']
                 );
                 shippingAddressData.append(
                     'city',
-                    formData['shipping_address.city'],
+                    formData['shipping_address.city']
                 );
                 shippingAddressData.append(
                     'country_code',
-                    formData['shipping_address.country_code'],
+                    formData['shipping_address.country_code']
                 );
                 shippingAddressData.append(
                     'province',
-                    formData['shipping_address.province'],
+                    formData['shipping_address.province']
                 );
                 shippingAddressData.append(
                     'phone',
-                    formData['shipping_address.phone'],
+                    formData['shipping_address.phone']
                 );
-
 
                 //if existing selected, update instead of adding new
                 if (customer?.shipping_addresses && overwriteAddress === true) {
                     console.log('Update existing address', savedAddressID);
                     await updateCustomerShippingAddress(
                         { addressId: savedAddressID },
-                        shippingAddressData,
+                        shippingAddressData
                     );
                 } else {
                     console.log('Add new shipping address');
@@ -221,9 +221,11 @@ const AddressModal: React.FC<AddressModalProps> = ({
         } finally {
             onClose();
 
-            alert(cart?.id)
-            alert(preferred_currency_code)
-            queryClient.refetchQueries({ queryKey: ['shippingCost', cart?.id, preferred_currency_code] })
+            alert(cart?.id);
+            alert(preferred_currency_code);
+            queryClient.refetchQueries({
+                queryKey: ['shippingCost', cart?.id, preferred_currency_code],
+            });
             await setAddresses(formPayload);
         }
     };
@@ -264,7 +266,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         value={
                                             formData[
                                                 'shipping_address.first_name'
-                                                ]
+                                            ]
                                         }
                                         onChange={handleChange}
                                     />
@@ -285,7 +287,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         value={
                                             formData[
                                                 'shipping_address.last_name'
-                                                ]
+                                            ]
                                         }
                                         onChange={handleChange}
                                     />
@@ -372,7 +374,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         value={
                                             formData[
                                                 'shipping_address.province'
-                                                ]
+                                            ]
                                         }
                                         onChange={handleChange}
                                     />
@@ -392,7 +394,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         value={
                                             formData[
                                                 'shipping_address.country_code'
-                                                ] ?? 'us'
+                                            ] ?? 'us'
                                         }
                                         onChange={handleChange}
                                         required
@@ -414,7 +416,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         value={
                                             formData[
                                                 'shipping_address.postal_code'
-                                                ]
+                                            ]
                                         }
                                         onChange={handleChange}
                                     />
@@ -470,18 +472,18 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
                             {(customer?.shipping_addresses?.length ?? 0) >
                                 0 && (
-                                    <AddressSelect
-                                        cart={cart}
-                                        addresses={
-                                            customer?.shipping_addresses ?? []
-                                        }
-                                        onSelect={(addrId) =>
-                                            setSelectedAddressId(addrId)
-                                        }
-                                        formData={formData}
-                                        setFormData={setFormData}
-                                    />
-                                )}
+                                <AddressSelect
+                                    cart={cart}
+                                    addresses={
+                                        customer?.shipping_addresses ?? []
+                                    }
+                                    onSelect={(addrId) =>
+                                        setSelectedAddressId(addrId)
+                                    }
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                />
+                            )}
 
                             {/* Checkbox for Default Address */}
                             <Flex
