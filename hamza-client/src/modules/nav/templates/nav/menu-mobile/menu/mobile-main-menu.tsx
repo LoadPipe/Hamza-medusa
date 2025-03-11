@@ -54,7 +54,7 @@ export default function MobileMainMenu() {
                 borderColor={'#555555'}
                 borderWidth={'1px'}
                 backgroundColor={'#121212'}
-                width={`calc(100vw - 2rem)`}
+                width={`calc(100vw - 4rem)`}
             >
                 <NavLink href={`/`}>
                     <MenuItem
