@@ -26,6 +26,24 @@ export interface OrderNote {
     updated_at: string
 }
 
+type TransactionType = "refund" | "release";
+
+export type HistoryMeta = {
+    transaction_id: string;
+    type: TransactionType;
+    date: string;
+};
+
+export interface OrderHistory {
+    // Other properties you might have...
+    metadata: {
+        transaction?: HistoryMeta[];
+        source?: string;
+    };
+}
+
+
+
 const All = ({ customer }: { customer: string }) => {
     const [processingFetched, setProcessingFetched] = useState(false);
     const [shippedFetched, setShippedFetched] = useState(false);
