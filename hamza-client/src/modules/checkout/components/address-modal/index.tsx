@@ -221,8 +221,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
         } finally {
             onClose();
 
-            alert(cart?.id);
-            alert(preferred_currency_code);
+            // alert(cart?.id);
+            // alert(preferred_currency_code);
             queryClient.refetchQueries({
                 queryKey: ['shippingCost', cart?.id, preferred_currency_code],
             });
