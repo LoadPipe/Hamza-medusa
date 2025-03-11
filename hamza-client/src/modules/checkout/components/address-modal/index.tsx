@@ -25,6 +25,8 @@ import {
 } from '@/modules/account/actions';
 import AddressSelect from '../address-select';
 import compareSelectedAddress from '@/lib/util/compare-address-select';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -54,6 +56,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const [overwriteAddress, setOverwriteAddress] = useState(false);
     const [savedAddressID, setSavedAddressId] = useState('');
     const [selectedAddressId, setSelectedAddressId] = useState<string>('');
+    // const { preferred_currency_code } = useCustomerAuthStore((state) => state.preferred_currency_code);
+    const queryClient = useQueryClient()
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -69,7 +73,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
         email: '',
         'shipping_address.phone': '',
     });
-
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
         if (isOpen) {
@@ -106,6 +109,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
             setSaveAddressButtonText(
                 addressType === 'add' ? 'Add Address' : 'Edit Address'
             );
+            queryClient.refetchQueries( {queryKey:  'shippingCost'})
         }
     }, [isOpen, cart]);
 
@@ -199,6 +203,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     formData['shipping_address.phone']
                 );
 
+
+
                 //if existing selected, update instead of adding new
                 if (customer?.shipping_addresses && overwriteAddress === true) {
                     console.log('Update existing address', savedAddressID);
@@ -230,7 +236,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         textAlign={'center'}
                         fontSize={'24px'}
                     >
-                        Shipping Address
+                        Shipping Address Test
                     </ModalHeader>
                     <ModalCloseButton color={'white'} />
                     <ModalBody>
