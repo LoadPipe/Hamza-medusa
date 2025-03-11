@@ -22,9 +22,27 @@ export interface OrderNote {
     id: string
     note: string
     public: boolean
-    created_at?: string
-    updated_at?: string
+    created_at: string
+    updated_at: string
 }
+
+type TransactionType = "refund" | "release";
+
+export type HistoryMeta = {
+    transaction_id: string;
+    type: TransactionType;
+    date: string;
+};
+
+export interface OrderHistory {
+    // Other properties you might have...
+    metadata: {
+        transaction?: HistoryMeta[];
+        source?: string;
+    };
+}
+
+
 
 const All = ({ customer }: { customer: string }) => {
     const [processingFetched, setProcessingFetched] = useState(false);

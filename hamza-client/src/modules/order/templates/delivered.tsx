@@ -31,6 +31,7 @@ import {upperCase} from 'lodash';
 import {chainIdToName, getChainLogo} from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
 import {OrderNote} from './all'
+import { format } from 'date-fns';
 
 const Delivered = ({
                        customer,
@@ -386,20 +387,32 @@ const Delivered = ({
 
                                                             {hasSellerNotes && (
                                                                 <TabPanel>
-                                                                    {order.notes.map((note: OrderNote) => (
-                                                                        <Box
-                                                                            key={note.id}
-                                                                            p={8}
-                                                                            mb={4}
-                                                                            border="1px transparent"
-                                                                            borderRadius="md"
-                                                                            bg="black"
-                                                                            boxShadow="sm"
-                                                                            fontFamily="Inter, sans-serif"
-                                                                        >
-                                                                            <Text>{note.note}</Text>
-                                                                        </Box>
-                                                                    ))}
+                                                                    <Box
+                                                                        mb={4}
+                                                                        p={8}
+                                                                        border="1px transparent"
+                                                                        borderRadius="md"
+                                                                        bg="black"
+                                                                        boxShadow="sm"
+                                                                        fontFamily="Inter, sans-serif"
+                                                                    >
+                                                                        {order.notes.map((note: OrderNote, index: number) => (
+                                                                            <div key={note.id}>
+                                                                                {/* Date in smaller, gray text */}
+                                                                                <Text color="gray.400" fontSize="sm" mb={2}>
+                                                                                    {format(new Date(note.updated_at), 'EEEE, MMMM d, yyyy | h:mm a')}
+                                                                                </Text>
+
+                                                                                {/* The note content */}
+                                                                                <Text color="white">{note.note}</Text>
+
+                                                                                {/* Divider between notes (except after the last one) */}
+                                                                                {index < order.notes.length - 1 && (
+                                                                                    <Divider my={4} borderColor="#272727" />
+                                                                                )}
+                                                                            </div>
+                                                                        ))}
+                                                                    </Box>
                                                                 </TabPanel>
                                                             )}
                                                         </TabPanels>
