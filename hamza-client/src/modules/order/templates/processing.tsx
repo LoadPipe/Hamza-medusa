@@ -11,7 +11,6 @@ import {
     Flex,
     Text,
     VStack,
-    HStack,
     Tabs,
     TabList,
     TabPanels,
@@ -27,10 +26,10 @@ import {
     FormErrorMessage,
     ModalFooter,
     Modal,
-    Icon,
     Divider,
 } from '@chakra-ui/react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { format } from 'date-fns';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
@@ -576,22 +575,35 @@ const Processing = ({
                                                                     }
                                                                 />
                                                             </TabPanel>
+                                                            {/* The note container */}
                                                             {hasSellerNotes && (
                                                                 <TabPanel>
-                                                                    {order.notes.map((note: OrderNote) => (
-                                                                        <Box
-                                                                            key={note.id}
-                                                                            p={8}
-                                                                            mb={4}
-                                                                            border="1px transparent"
-                                                                            borderRadius="md"
-                                                                            bg="black"
-                                                                            boxShadow="sm"
-                                                                            fontFamily="Inter, sans-serif"
-                                                                        >
-                                                                            <Text>{note.note}</Text>
-                                                                        </Box>
-                                                                    ))}
+                                                                    <Box
+                                                                        mb={4}
+                                                                        p={8}
+                                                                        border="1px transparent"
+                                                                        borderRadius="md"
+                                                                        bg="black"
+                                                                        boxShadow="sm"
+                                                                        fontFamily="Inter, sans-serif"
+                                                                    >
+                                                                        {order.notes.map((note: OrderNote, index: number) => (
+                                                                            <div key={note.id}>
+                                                                                {/* Date in smaller, gray text */}
+                                                                                <Text color="gray.400" fontSize="sm" mb={2}>
+                                                                                    {format(new Date(note.updated_at), 'EEEE, MMMM d, yyyy | h:mm a')}
+                                                                                </Text>
+
+                                                                                {/* The note content */}
+                                                                                <Text color="white">{note.note}</Text>
+
+                                                                                {/* Divider between notes (except after the last one) */}
+                                                                                {index < order.notes.length - 1 && (
+                                                                                    <Divider my={4} borderColor="#272727" />
+                                                                                )}
+                                                                            </div>
+                                                                        ))}
+                                                                    </Box>
                                                                 </TabPanel>
                                                             )}
                                                         </TabPanels>
