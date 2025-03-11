@@ -17,6 +17,9 @@ import {
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { MdOutlineWallet } from 'react-icons/md';
 import { useSwitchNetwork } from 'wagmi';
+import WalletInfoMobile from '../menu/wallet-info-menu-mobile';
+import Image from 'next/image';
+import walletIconUrl from '@/images/icon/wallet_icon.svg';
 
 export const WalletConnectButton = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
@@ -58,15 +61,14 @@ export const WalletConnectButton = () => {
                             if (!connected) {
                                 return (
                                     <Flex
-                                        backgroundColor={'primary.green.900'}
                                         onClick={openConnectModal}
-                                        height="24px"
-                                        width="24px"
+                                        height="48px"
+                                        width="48px"
                                         borderRadius={'3px'}
                                         justifyContent={'center'}
                                         alignItems={'center'}
                                     >
-                                        <MdOutlineWallet />
+                                        <Image src={walletIconUrl} alt="Wallet Icon" width={48} height={48} />
                                     </Flex>
                                 );
                             }
@@ -81,43 +83,7 @@ export const WalletConnectButton = () => {
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
-                                    <button
-                                        onClick={openChainModal}
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            marginRight: '1rem',
-                                        }}
-                                        type="button"
-                                    >
-                                        {chain.hasIcon && (
-                                            <div
-                                                style={{
-                                                    background:
-                                                        chain.iconBackground,
-                                                    width: 26,
-                                                    height: 26,
-                                                    borderRadius: 999,
-                                                    overflow: 'hidden',
-                                                    marginRight: 4,
-                                                }}
-                                            >
-                                                {chain.iconUrl && (
-                                                    <img
-                                                        alt={
-                                                            chain.name ??
-                                                            'Chain icon'
-                                                        }
-                                                        src={chain.iconUrl}
-                                                        style={{
-                                                            width: 26,
-                                                            height: 26,
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                        )}
-                                    </button>
+                                    <WalletInfoMobile />
                                     <MobileAccountMenu />
                                 </Flex>
                             );
