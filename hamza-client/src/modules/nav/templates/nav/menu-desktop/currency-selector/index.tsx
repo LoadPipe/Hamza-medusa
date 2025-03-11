@@ -19,15 +19,12 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { setCurrency } from '@/lib/server';
 
 const CurrencySelector = (props: any) => {
-    const { preferred_currency_code, setCustomerPreferredCurrency, authData } =
-        useCustomerAuthStore();
-    const [displayedCurrency, setDisplayedCurrency] = useState(
-        preferred_currency_code
-    );
-    const [selectedCurrency, setSelectedCurrency] = useState(
-        preferred_currency_code
-    );
+    const preferred_currency_code = useCustomerAuthStore((state) => state.preferred_currency_code);
+    const setCustomerPreferredCurrency = useCustomerAuthStore((state) => state.setCustomerPreferredCurrency);
+    const authData = useCustomerAuthStore((state) => state.authData);
 
+    const [displayedCurrency, setDisplayedCurrency] = useState(preferred_currency_code);
+    const [selectedCurrency, setSelectedCurrency] = useState(preferred_currency_code);
 
     const handleCurrencyChange = async (currency: string, onClose: () => void) => {
         if (selectedCurrency) {
@@ -36,13 +33,10 @@ const CurrencySelector = (props: any) => {
                 setSelectedCurrency(currency);
                 // Update the preferred currency in Zustand
                 setCustomerPreferredCurrency(currency);
-
                 // Update the displayed currency
                 setDisplayedCurrency(currency);
-
                 // Call the API to update the currency
                 await setCurrency(currency, authData.customer_id);
-
                 // Close the menu
                 onClose();
             } catch (error) {
@@ -51,9 +45,10 @@ const CurrencySelector = (props: any) => {
         }
     };
 
-    function capitalizeFirstLetter(str: string) {
+    function capitalizeFirstLetter(str: string): string {
         return str[0].toUpperCase() + str.slice(1);
     }
+    
     return (
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end" closeOnSelect={false}>
@@ -82,7 +77,7 @@ const CurrencySelector = (props: any) => {
                                 <Image
                                     src={
                                         currencyIcons[
-                                            displayedCurrency ?? 'usdc'
+                                        displayedCurrency ?? 'usdc'
                                         ]
                                     }
                                     alt={displayedCurrency ?? 'USDC'}
