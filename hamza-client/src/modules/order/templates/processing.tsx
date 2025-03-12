@@ -11,7 +11,6 @@ import {
     Flex,
     Text,
     VStack,
-    HStack,
     Tabs,
     TabList,
     TabPanels,
@@ -27,10 +26,10 @@ import {
     FormErrorMessage,
     ModalFooter,
     Modal,
-    Icon,
     Divider,
 } from '@chakra-ui/react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { format } from 'date-fns';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
@@ -40,10 +39,11 @@ import { BsCircleFill } from 'react-icons/bs';
 import Image from 'next/image';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
-import { OrdersData, OrderNote } from './all';
+import { OrdersData, OrderNote, HistoryMeta, OrderHistory } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import { upperCase } from 'lodash';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
@@ -190,9 +190,8 @@ const Processing = ({
     };
 
     if (isEmpty && processingOrder?.length === 0) {
-        return <EmptyState/>;
+        return <EmptyState />;
     }
-
 
     return (
         <div style={{ width: '100%' }}>
@@ -242,8 +241,18 @@ const Processing = ({
                         );
 
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
-                        const hasSellerNotes = order?.notes?.length > 0
+                        const hasSellerNotes = order?.notes?.length > 0;
 
+                        // Locate the history that contains a non-empty transaction array
+                        const historyWithTransaction = order?.histories?.find(
+                            (history: OrderHistory) =>
+                                Array.isArray(history.metadata?.transaction) &&
+                                history.metadata.transaction.length > 0
+                        );
+
+                        // Then extract the transactions array if it exists
+                        const transactions =
+                            historyWithTransaction?.metadata?.transaction;
 
                         return (
                             <div key={order.id}>
@@ -359,7 +368,7 @@ const Processing = ({
                                                         </Button>
                                                         {order.escrow_status &&
                                                             order.escrow_status !==
-                                                            'released' && (
+                                                                'released' && (
                                                                 <Box
                                                                     as="a"
                                                                     href={`/account/escrow/${order.id}`}
@@ -414,7 +423,7 @@ const Processing = ({
                                                             >
                                                                 Order Timeline
                                                             </Tab>
-                                                            {hasSellerNotes &&
+                                                            {hasSellerNotes && (
                                                                 <Tab
                                                                     _selected={{
                                                                         color: 'primary.green.900',
@@ -423,7 +432,25 @@ const Processing = ({
                                                                         borderColor:
                                                                             'primary.green.900',
                                                                     }}
-                                                                >Seller Note</Tab>}
+                                                                >
+                                                                    Seller Note
+                                                                </Tab>
+                                                            )}
+
+                                                            {transactions && (
+                                                                <Tab
+                                                                    _selected={{
+                                                                        color: 'primary.green.900',
+                                                                        borderBottom:
+                                                                            '2px solid',
+                                                                        borderColor:
+                                                                            'primary.green.900',
+                                                                    }}
+                                                                >
+                                                                    Transaction
+                                                                    History
+                                                                </Tab>
+                                                            )}
                                                         </TabList>
                                                         <TabPanels>
                                                             <TabPanel>
@@ -453,8 +480,14 @@ const Processing = ({
                                                                             <Flex>
                                                                                 {order.tracking_number && (
                                                                                     <>
-                                                                                        <Text><b>Tracking
-                                                                                            Number:</b> {order.tracking_number}
+                                                                                        <Text>
+                                                                                            <b>
+                                                                                                Tracking
+                                                                                                Number:
+                                                                                            </b>{' '}
+                                                                                            {
+                                                                                                order.tracking_number
+                                                                                            }
                                                                                         </Text>
                                                                                     </>
                                                                                 )}
@@ -475,7 +508,7 @@ const Processing = ({
                                                                                                 ?.price
                                                                                         ),
                                                                                         item.currency_code ??
-                                                                                        'usdc'
+                                                                                            'usdc'
                                                                                     )}{' '}
                                                                                     {upperCase(
                                                                                         item.currency_code
@@ -517,11 +550,11 @@ const Processing = ({
                                                                                     </strong>{' '}
                                                                                     {order?.id &&
                                                                                     typeof order.id ===
-                                                                                    'string'
+                                                                                        'string'
                                                                                         ? order.id.replace(
-                                                                                            /^order_/,
-                                                                                            ''
-                                                                                        ) // Remove "order_" prefix
+                                                                                              /^order_/,
+                                                                                              ''
+                                                                                          ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>
@@ -576,22 +609,135 @@ const Processing = ({
                                                                     }
                                                                 />
                                                             </TabPanel>
+                                                            {/* The note container */}
                                                             {hasSellerNotes && (
                                                                 <TabPanel>
-                                                                    {order.notes.map((note: OrderNote) => (
-                                                                        <Box
-                                                                            key={note.id}
-                                                                            p={8}
-                                                                            mb={4}
-                                                                            border="1px transparent"
-                                                                            borderRadius="md"
-                                                                            bg="black"
-                                                                            boxShadow="sm"
-                                                                            fontFamily="Inter, sans-serif"
-                                                                        >
-                                                                            <Text>{note.note}</Text>
-                                                                        </Box>
-                                                                    ))}
+                                                                    <Box
+                                                                        mb={4}
+                                                                        p={8}
+                                                                        border="1px transparent"
+                                                                        borderRadius="md"
+                                                                        bg="black"
+                                                                        boxShadow="sm"
+                                                                        fontFamily="Inter, sans-serif"
+                                                                    >
+                                                                        {order.notes.map(
+                                                                            (
+                                                                                note: OrderNote,
+                                                                                index: number
+                                                                            ) => (
+                                                                                <div
+                                                                                    key={
+                                                                                        note.id
+                                                                                    }
+                                                                                >
+                                                                                    {/* Date in smaller, gray text */}
+                                                                                    <Text
+                                                                                        color="gray.400"
+                                                                                        fontSize="sm"
+                                                                                        mb={
+                                                                                            2
+                                                                                        }
+                                                                                    >
+                                                                                        {format(
+                                                                                            new Date(
+                                                                                                note.updated_at
+                                                                                            ),
+                                                                                            'EEEE, MMMM d, yyyy | h:mm a'
+                                                                                        )}
+                                                                                    </Text>
+
+                                                                                    {/* The note content */}
+                                                                                    <Text color="white">
+                                                                                        {
+                                                                                            note.note
+                                                                                        }
+                                                                                    </Text>
+
+                                                                                    {/* Divider between notes (except after the last one) */}
+                                                                                    {index <
+                                                                                        order
+                                                                                            .notes
+                                                                                            .length -
+                                                                                            1 && (
+                                                                                        <Divider
+                                                                                            my={
+                                                                                                4
+                                                                                            }
+                                                                                            borderColor="#272727"
+                                                                                        />
+                                                                                    )}
+                                                                                </div>
+                                                                            )
+                                                                        )}
+                                                                    </Box>
+                                                                </TabPanel>
+                                                            )}
+
+                                                            {transactions && (
+                                                                <TabPanel>
+                                                                    <Box
+                                                                        p={8}
+                                                                        mb={4}
+                                                                        border="1px transparent"
+                                                                        borderRadius="md"
+                                                                        bg="black"
+                                                                        boxShadow="sm"
+                                                                        fontFamily="Inter, sans-serif"
+                                                                    >
+                                                                        {transactions.map(
+                                                                            (
+                                                                                tx: HistoryMeta,
+                                                                                index: number
+                                                                            ) => (
+                                                                                <div
+                                                                                    key={
+                                                                                        tx.transaction_id
+                                                                                    }
+                                                                                >
+                                                                                    <Text
+                                                                                        color="gray.400"
+                                                                                        fontSize="sm"
+                                                                                        mb={
+                                                                                            2
+                                                                                        }
+                                                                                    >
+                                                                                        {format(
+                                                                                            new Date(
+                                                                                                tx?.date
+                                                                                            ),
+                                                                                            'EEEE, MMMM d, yyyy | h:mm a'
+                                                                                        )}
+                                                                                    </Text>
+                                                                                    <Text>
+                                                                                        Transaction
+                                                                                        ID:{' '}
+                                                                                        {
+                                                                                            tx?.transaction_id
+                                                                                        }
+                                                                                    </Text>
+                                                                                    <Text>
+                                                                                        Transaction
+                                                                                        Type:{' '}
+                                                                                        {
+                                                                                            tx?.type
+                                                                                        }
+                                                                                    </Text>
+
+                                                                                    {index <
+                                                                                        transactions.length -
+                                                                                            1 && (
+                                                                                        <Divider
+                                                                                            my={
+                                                                                                4
+                                                                                            }
+                                                                                            borderColor="#272727"
+                                                                                        />
+                                                                                    )}
+                                                                                </div>
+                                                                            )
+                                                                        )}
+                                                                    </Box>
                                                                 </TabPanel>
                                                             )}
                                                         </TabPanels>
@@ -616,10 +762,10 @@ const Processing = ({
                         );
                     })}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
-                        <ModalOverlay/>
+                        <ModalOverlay />
                         <ModalContent>
                             <ModalHeader>Request Cancellation</ModalHeader>
-                            <ModalCloseButton/>
+                            <ModalCloseButton />
                             <ModalBody>
                                 <FormControl
                                     isInvalid={cancelReason.trim().length < 50}
