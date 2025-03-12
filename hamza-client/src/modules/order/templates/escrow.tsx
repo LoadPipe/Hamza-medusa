@@ -33,7 +33,7 @@ export const Escrow = ({
         PaymentDefinition | null,
         boolean
     >({
-        queryKey: ['escrowPayment', order?.id],
+        queryKey: ['escrowPayment', id],
         queryFn: async () => {
             if (!order) return null;
             return getEscrowPayment(order);
@@ -44,13 +44,6 @@ export const Escrow = ({
     useEffect(() => {
         setIsClient(true); // Set to true when the component is mounted on the client
     }, []);
-
-    useEffect(() => {
-        if (!isConnected) {
-            console.log('User is not connected');
-            return;
-        }
-    }, [isConnected]);
 
     if (!isClient) {
         return (

@@ -1,13 +1,15 @@
 import { Metadata } from 'next';
-import { Flex } from '@chakra-ui/react';
+import {
+    QueryClient,
+    dehydrate,
+    HydrationBoundary,
+} from '@tanstack/react-query';
 
 import { Escrow } from '@/modules/order/templates/escrow';
 import { headers } from 'next/headers';
 import { getCustomerOrder, getHamzaCustomer } from '@/lib/server';
-import { getRegion } from '@/app/actions';
 import { notFound } from 'next/navigation';
-import { getEscrowPayment } from '@/lib/util/order-escrow';
-import { Order, PaymentDefinition } from '@/web3/contracts/escrow';
+import { Order } from '@/web3/contracts/escrow';
 
 type Props = {
     params: { id: string };
@@ -24,30 +26,34 @@ export const metadata: Metadata = {
 };
 
 export default async function EscrowPage({ params }: Props) {
-    const nextHeaders = headers();
-
-    // const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
-    //     ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
-    //     : nextHeaders.get('next-url')?.split('/')[1] || '';
-
-    // const region = await getRegion(countryCode);
-
     const customer: Customer | {} = await getHamzaCustomer();
 
-    const order: Order | null =
-        Object.keys(customer).length > 0
-            ? await getCustomerOrder((customer as Customer).id, params.id)
-            : null;
-
-    if (!customer || !order) {
+    if (!customer || !('id' in customer)) {
         notFound();
     }
 
-    // TODO: move the customer / order check here, pass as props
+    const queryClient = new QueryClient();
+    await queryClient.prefetchQuery({
+        queryKey: ['customer', params.id],
+        queryFn: () => getHamzaCustomer(),
+        staleTime: 30000,
+    });
+
+    await queryClient.prefetchQuery({
+        queryKey: ['order', params.id],
+        queryFn: () => getCustomerOrder(customer.id, params.id),
+        staleTime: 30000,
+    });
+
+    const order: Order | null = await getCustomerOrder(customer.id, params.id);
+
+    if (!order) {
+        notFound();
+    }
 
     return (
-        <>
+        <HydrationBoundary state={dehydrate(queryClient)}>
             <Escrow id={params.id} customer={customer} order={order} />
-        </>
+        </HydrationBoundary>
     );
 }
