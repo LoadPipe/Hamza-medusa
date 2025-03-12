@@ -1,12 +1,23 @@
 'use client';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Text,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    useDisclosure,
+    ModalCloseButton,
+} from '@chakra-ui/react';
 import { MdOutlineHandshake } from 'react-icons/md';
 import { OrderComponent } from '@/modules/order/components/order-overview/order-component';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ReleaseEscrowDialog } from '../components/escrow/release-escrow-dialog';
 import EscrowStatus from '../components/order-overview/escrow-status';
 import { Order, PaymentDefinition } from '@/web3/contracts/escrow';
-import { useAccount, useSwitchNetwork } from 'wagmi';
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { ModalCoverWalletConnect } from '@/modules/common/components/modal-cover-wallet-connect';
 import { Customer } from '@/app/[countryCode]/(main)/account/@dashboard/escrow/[id]/page';
 import { getEscrowPayment } from '@/lib/util/order-escrow';
@@ -28,15 +39,27 @@ export const Escrow = ({
     order: Order | null;
 }) => {
     const { isConnected } = useAccount();
+    const { chain } = useNetwork();
     const [isClient, setIsClient] = useState<boolean>(false);
     const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
-    const { isLoading: isLoadingSwitchNetwork, switchNetwork } =
-        useSwitchNetwork();
+    const [currentChainName, setCurrentChainName] = useState<string | null>(
+        null
+    );
+    const [paymentChainName, setPaymentChainName] = useState<string | null>(
+        null
+    );
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        chains,
+        isLoading: isLoadingSwitchNetwork,
+        switchNetwork,
+    } = useSwitchNetwork();
 
     const handleSwitchNetwork = useCallback(
         (chainId: number) => {
             try {
                 if (switchNetwork) {
+                    onOpen();
                     switchNetwork(chainId);
                     setIsCorrectNetwork(true);
                 } else {
@@ -50,7 +73,7 @@ export const Escrow = ({
                 setIsCorrectNetwork(false);
             }
         },
-        [switchNetwork, setIsCorrectNetwork]
+        [switchNetwork, setIsCorrectNetwork, onOpen]
     );
 
     const { data: escrowPayment, isLoading: isLoadingEscrowPayment } = useQuery<
@@ -69,23 +92,108 @@ export const Escrow = ({
             isCorrectNetwork,
     });
 
+    // TODO: right now, when switching chain on the same page, the
+    // name saved for currentChain is chain that the user is originally on.
+    // but since the user is switching the intended name to be saved is the
+    // chain being switched to.  This is a problem.  Leave this for future
+    // as the system works, but the alert will simply say switching from
+    // sepolia to sepolia instead of telling the user that the system is
+    // auto switching them back to sepolia from ... opnet for example.
     useEffect(() => {
         setIsClient(true);
 
-        const checkNetwork = async () => {
+        // chain was added to detect chain switching on the page
+        // itself.  As a result, I need to keep the chain name before
+        // switching occurs, so it can be used in the modal.
+        if (chain && !currentChainName) {
+            setCurrentChainName(chain.name || null);
+        }
+
+        (async () => {
             const chainId = await getChainId();
-            const paymentChainId = order
-                ? order?.payments[0].blockchain_data.chain_id
-                : null;
+            const paymentChainId =
+                order?.payments[0]?.blockchain_data?.chain_id;
+
+            const currentChain = chains.find(
+                (chain) => Number(chain.id) === Number(chainId)
+            );
+            const paymentChain = chains.find(
+                (chain) => Number(chain.id) === Number(paymentChainId)
+            );
+
+            if (!isLoadingSwitchNetwork) {
+                if (!currentChainName) {
+                    setCurrentChainName(currentChain?.name || null);
+                }
+                if (!paymentChainName) {
+                    setPaymentChainName(paymentChain?.name || null);
+                }
+            }
 
             if (paymentChainId && paymentChainId !== Number(chainId)) {
                 handleSwitchNetwork(paymentChainId);
             } else {
                 setIsCorrectNetwork(true);
             }
-        };
-        checkNetwork();
-    }, [order, handleSwitchNetwork]);
+        })();
+    }, [
+        order,
+        handleSwitchNetwork,
+        isLoadingSwitchNetwork,
+        chains,
+        chain,
+        currentChainName,
+        paymentChainName,
+    ]);
+
+    const NetworkSwitchModal = (
+        <Modal isCentered isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent
+                bg="#121212"
+                p="40px"
+                borderRadius={'16px'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                color="white"
+                gap={2}
+                maxW={'496px'}
+                width={'100%'}
+            >
+                <ModalCloseButton color="white" />
+                <ModalBody
+                    display="flex"
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    flexDir={'column'}
+                >
+                    <ModalHeader
+                        fontSize="24px"
+                        fontWeight="bold"
+                        textAlign={'center'}
+                    >
+                        Switching Network
+                    </ModalHeader>
+                    <Text
+                        fontSize="16px"
+                        maxW={'332px'}
+                        width={'100%'}
+                        textAlign={'center'}
+                    >
+                        Since your payment is on{' '}
+                        <strong className="text-[#94d42a]">
+                            [{paymentChainName}]
+                        </strong>{' '}
+                        and your wallet is on{' '}
+                        <strong className="text-[#94d42a]">
+                            [{currentChainName}]
+                        </strong>
+                        , we must switch networks to proceed.
+                    </Text>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    );
 
     if (!isClient) {
         return (
@@ -112,6 +220,7 @@ export const Escrow = ({
             alignItems={'center'}
             backgroundColor={'#121212'}
         >
+            {NetworkSwitchModal}
             {!isConnected ? (
                 <ModalCoverWalletConnect
                     title="Proceed to Escrow"
