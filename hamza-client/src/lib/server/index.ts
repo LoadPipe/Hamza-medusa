@@ -643,6 +643,7 @@ export async function updateItem({
 }
 
 export async function updateShippingCost(cart_id: string) {
+    console.log(`TRIGGER update shipping cost`)
     try {
         const response = await getSecure('/custom/cart/shipping', {
             cart_id,

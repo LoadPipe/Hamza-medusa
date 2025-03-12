@@ -1,33 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Button, Flex } from '@chakra-ui/react';
+import { useEffect } from 'react';
+import { Flex, Button } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@/modules/nav/templates/nav/menu-desktop/account-menu';
-import { useWalletClient, useAccount } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import MainMenu from '../main-menu';
-import HnsDisplay from '../hns-display';
-import CurrencySelector from '../currency-selector';
-import CustomChainModal from '@/modules/layout/templates/nav/components/custom-chain-modal';
+import WalletInfo from '../wallet-info-menu';
 import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 export const WalletConnectButton = () => {
-    // Update zustand store with Wagmi hook when connected
+    const setWalletAddress = useCustomerAuthStore(
+        (state) => state.setWalletAddress
+    );
+    const preferred_currency_code = useCustomerAuthStore(
+        (state) => state.preferred_currency_code
+    );
     const { address, isConnecting, isReconnecting } = useAccount();
-    const { setWalletAddress } = useCustomerAuthStore();
 
-    const {
-        clearFilters,
-        lastAddress,
-        setLastAddress,
-        hasHydrated,
-    } = useUnifiedFilterStore((s) => ({
-        clearFilters: s.clearFilters,
-        lastAddress: s.lastAddress,
-        setLastAddress: s.setLastAddress,
-        hasHydrated: s.hasHydrated,
-    }));
+    const account = useAccount();
+
+    const { clearFilters, lastAddress, setLastAddress, hasHydrated } =
+        useUnifiedFilterStore((s) => ({
+            clearFilters: s.clearFilters,
+            lastAddress: s.lastAddress,
+            setLastAddress: s.setLastAddress,
+            hasHydrated: s.hasHydrated,
+        }));
 
     useEffect(() => {
         // 1) Do nothing until the filter store is rehydrated & Wagmi is done connecting
@@ -39,7 +39,6 @@ export const WalletConnectButton = () => {
 
         // 3) If user logout
         if (lastAddress && !address) {
-
             // set the address to null before reloading
             setLastAddress(null);
             clearFilters();
@@ -76,10 +75,6 @@ export const WalletConnectButton = () => {
         setWalletAddress,
     ]);
 
-
-    // Local state to control CustomChainModal visibility
-    const [isChainModalOpen, setChainModalOpen] = useState(false);
-
     return (
         <ConnectButton.Custom>
             {({
@@ -113,73 +108,34 @@ export const WalletConnectButton = () => {
                             },
                         })}
                     >
-                        {(() => {
-                            if (!connected) {
-                                return (
-                                    <Button
-                                        borderRadius="30px"
-                                        backgroundColor="primary.green.900"
-                                        onClick={openConnectModal}
-                                        height="48px"
-                                        fontSize="16px"
-                                    >
-                                        Connect Wallet
-                                    </Button>
-                                );
-                            }
+                        {!connected ? (
+                            <Button
+                                borderRadius="30px"
+                                backgroundColor="primary.green.900"
+                                onClick={openConnectModal}
+                                height="48px"
+                                fontSize="16px"
+                            >
+                                Connect Wallet
+                            </Button>
+                        ) : (
+                            <Flex
+                                gap="18px"
+                                flexDirection="row"
+                                alignItems="center"
+                            >
+                                <WalletInfo
+                                    chainName={chain?.name}
+                                    chain={chain}
+                                    preferred_currency_code={
+                                        preferred_currency_code ?? undefined
+                                    }
+                                />
 
-                            return (
-                                <Flex
-                                    gap="18px"
-                                    flexDirection="row"
-                                    alignItems="center"
-                                >
-                                    <CustomChainModal
-                                        isOpen={isChainModalOpen}
-                                        onClose={() => setChainModalOpen(false)}
-                                    />
-                                    <HnsDisplay />
-                                    <CurrencySelector network={chain.name} />
-                                    <button
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                        }}
-                                        onClick={() => setChainModalOpen(true)}
-                                        type="button"
-                                    >
-                                        {chain.hasIcon && (
-                                            <div
-                                                style={{
-                                                    background:
-                                                        chain.iconBackground,
-                                                    width: 48,
-                                                    height: 48,
-                                                    borderRadius: 999,
-                                                    overflow: 'hidden',
-                                                }}
-                                            >
-                                                {chain.iconUrl && (
-                                                    <img
-                                                        alt={
-                                                            chain.name ??
-                                                            'Chain icon'
-                                                        }
-                                                        src={chain.iconUrl}
-                                                        style={{
-                                                            width: 48,
-                                                            height: 48,
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                        )}
-                                    </button>
-                                    <MainMenu />
-                                    <AccountMenu />
-                                </Flex>
-                            );
-                        })()}
+                                <MainMenu />
+                                <AccountMenu />
+                            </Flex>
+                        )}
                     </div>
                 );
             }}
