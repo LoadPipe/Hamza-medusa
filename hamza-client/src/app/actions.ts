@@ -17,6 +17,7 @@ import { Region } from '@medusajs/medusa';
 export async function getRegion(countryCode: string) {
     try {
         const regions = await listRegions();
+        // console.log(`REGIONS ARE ${JSON.stringify(regions)}`)
 
         if (!regions) {
             return null;
@@ -29,6 +30,7 @@ export async function getRegion(countryCode: string) {
                 regionMap.set(c.iso_2, region);
             });
         });
+
 
         const region = countryCode
             ? regionMap.get(countryCode)

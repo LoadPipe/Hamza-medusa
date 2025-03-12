@@ -43,7 +43,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
         queryKey: ['shippingCost', cart?.id, preferred_currency_code], // Unique key per cart
         queryFn: () => updateShippingCost(cart!.id), // Only fetch when cart exists
         enabled: !!cart?.id, // Prevents fetching if no cart ID is available
-        staleTime: 1000 * 60 * 5, // Cache shipping cost for 5 minutes
+        staleTime: 0, // Cache shipping cost for 5 minutes
     });
 
 
