@@ -2,15 +2,16 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { MdOutlineHandshake } from 'react-icons/md';
 import { OrderComponent } from '@/modules/order/components/order-overview/order-component';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { ReleaseEscrowDialog } from '../components/escrow/release-escrow-dialog';
 import EscrowStatus from '../components/order-overview/escrow-status';
 import { Order, PaymentDefinition } from '@/web3/contracts/escrow';
-import { useAccount } from 'wagmi';
+import { useAccount, useSwitchNetwork } from 'wagmi';
 import { ModalCoverWalletConnect } from '@/modules/common/components/modal-cover-wallet-connect';
 import { Customer } from '@/app/[countryCode]/(main)/account/@dashboard/escrow/[id]/page';
 import { getEscrowPayment } from '@/lib/util/order-escrow';
 import { useQuery } from '@tanstack/react-query';
+import { getChainId } from '@/web3';
 
 // TODO: need to get the escrow address and chain id for releasing
 // TODO: user must connect the chain id that belongs to the order?
@@ -27,7 +28,30 @@ export const Escrow = ({
     order: Order | null;
 }) => {
     const { isConnected } = useAccount();
-    const [isClient, setIsClient] = useState(false);
+    const [isClient, setIsClient] = useState<boolean>(false);
+    const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
+    const { isLoading: isLoadingSwitchNetwork, switchNetwork } =
+        useSwitchNetwork();
+
+    const handleSwitchNetwork = useCallback(
+        (chainId: number) => {
+            try {
+                if (switchNetwork) {
+                    switchNetwork(chainId);
+                    setIsCorrectNetwork(true);
+                } else {
+                    setIsCorrectNetwork(false);
+                    console.error(
+                        'Network switching is not supported by the current provider.'
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+                setIsCorrectNetwork(false);
+            }
+        },
+        [switchNetwork, setIsCorrectNetwork]
+    );
 
     const { data: escrowPayment, isLoading: isLoadingEscrowPayment } = useQuery<
         PaymentDefinition | null,
@@ -38,12 +62,30 @@ export const Escrow = ({
             if (!order) return null;
             return getEscrowPayment(order);
         },
-        enabled: !!order && isConnected,
+        enabled:
+            !!order &&
+            !isLoadingSwitchNetwork &&
+            isConnected &&
+            isCorrectNetwork,
     });
 
     useEffect(() => {
-        setIsClient(true); // Set to true when the component is mounted on the client
-    }, []);
+        setIsClient(true);
+
+        const checkNetwork = async () => {
+            const chainId = await getChainId();
+            const paymentChainId = order
+                ? order?.payments[0].blockchain_data.chain_id
+                : null;
+
+            if (paymentChainId && paymentChainId !== Number(chainId)) {
+                handleSwitchNetwork(paymentChainId);
+            } else {
+                setIsCorrectNetwork(true);
+            }
+        };
+        checkNetwork();
+    }, [order, handleSwitchNetwork]);
 
     if (!isClient) {
         return (
@@ -93,7 +135,9 @@ export const Escrow = ({
                     {Object.keys(customer).length === 0 && (
                         <Text>Customer not found</Text>
                     )}
+
                     {!order && <Text>Order not found</Text>}
+
                     {Object.keys(customer).length > 0 && !order && (
                         <Text>
                             The order ({id}) does not belong to this customer
@@ -109,26 +153,28 @@ export const Escrow = ({
                     )}
 
                     {/* Escrow Payment Status */}
-                    {isLoadingEscrowPayment && (
-                        <Text>Escrow status loading...</Text>
-                    )}
-
-                    {!escrowPayment && order && (
-                        <Text>
-                            Order found for ({order.id}) but escrow payment not
-                            found
-                        </Text>
-                    )}
-
-                    {escrowPayment && order && (
+                    {isLoadingSwitchNetwork || isLoadingEscrowPayment ? (
+                        <Text>Loading...</Text>
+                    ) : (
                         <>
-                            {escrowPayment.payerReleased === false && (
-                                <ReleaseEscrowDialog
-                                    order={order}
-                                    escrowPayment={escrowPayment}
-                                />
+                            {order && !escrowPayment && (
+                                <Text>
+                                    Order found for ({order.id}) but escrow
+                                    payment not found
+                                </Text>
                             )}
-                            <EscrowStatus payment={escrowPayment} />
+
+                            {order && escrowPayment && (
+                                <>
+                                    {!escrowPayment.payerReleased && (
+                                        <ReleaseEscrowDialog
+                                            order={order}
+                                            escrowPayment={escrowPayment}
+                                        />
+                                    )}
+                                    <EscrowStatus payment={escrowPayment} />
+                                </>
+                            )}
                         </>
                     )}
                 </>
