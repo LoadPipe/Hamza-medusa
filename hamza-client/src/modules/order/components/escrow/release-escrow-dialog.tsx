@@ -3,29 +3,15 @@ import {
     getEscrowPayment,
     releaseEscrowPayment,
 } from '@/lib/util/order-escrow';
-import { getChainId } from '@/web3';
 import { PaymentDefinition } from '@/web3/contracts/escrow';
-import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-    useDisclosure,
-    useToast,
-    Flex,
-    ModalCloseButton,
-    Text,
-} from '@chakra-ui/react';
+import { Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Order } from '@/web3/contracts/escrow';
-import { useSwitchNetwork } from 'wagmi';
 import { updateOrderEscrowStatus } from '@/lib/server';
 import { FaExclamationTriangle, FaQuestionCircle } from 'react-icons/fa';
 import { EscrowStatus } from '@/lib/server/enums';
 import GeneralModal from '../../../common/components/modal-confirm';
+import { useQueryClient } from '@tanstack/react-query';
 
 class CustomError extends Error {
     info?: any;
@@ -49,17 +35,7 @@ export const ReleaseEscrowDialog = ({
     const [isLoading, setIsLoading] = useState(false);
     const [isReleased, setIsReleased] = useState(false);
     const toast = useToast();
-    const { switchNetwork } = useSwitchNetwork();
-
-    const handleSwitchNetwork = (chainId: number) => {
-        if (switchNetwork) {
-            switchNetwork(chainId);
-        } else {
-            console.error(
-                'Network switching is not supported by the current provider.'
-            );
-        }
-    };
+    const queryClient = useQueryClient();
 
     const handleReleaseEscrow = async () => {
         setIsLoading(true);
@@ -93,6 +69,10 @@ export const ReleaseEscrowDialog = ({
             setIsLoading(false);
             onClose();
 
+            await queryClient.invalidateQueries({
+                queryKey: ['escrowPayment', order.id],
+            });
+
             toast({
                 title: 'Escrow released successfully.',
                 status: 'success',
@@ -112,12 +92,6 @@ export const ReleaseEscrowDialog = ({
                     ? error.info?.error?.message || error.message
                     : 'An unknown error occurred';
             setErrorMessage(message);
-
-            // toast({
-            //     title: 'Error during escrow release',
-            //     description: message,
-            //     status: 'error',
-            // });
         }
     };
 
@@ -126,18 +100,6 @@ export const ReleaseEscrowDialog = ({
             setIsReleased(true);
         }
     }, [escrowPayment]);
-
-    useEffect(() => {
-        const checkNetwork = async () => {
-            const chainId = await getChainId();
-            const paymentChainId = order.payments[0].blockchain_data.chain_id;
-
-            if (paymentChainId !== Number(chainId)) {
-                handleSwitchNetwork(paymentChainId);
-            }
-        };
-        checkNetwork();
-    }, [order]);
 
     return (
         <>
