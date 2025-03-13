@@ -29,7 +29,7 @@ export default async function CartButtonMobile() {
 
     return (
         <Flex flexDirection={'row'} alignItems={'center'}>
-            <Flex alignSelf={'center'} ml="1rem">
+            <Flex alignSelf={'center'} ml="0.5rem">
                 <LocalizedClientLink href="/cart">
                     <Flex
                         position="relative"

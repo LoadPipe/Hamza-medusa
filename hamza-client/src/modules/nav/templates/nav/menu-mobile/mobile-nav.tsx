@@ -7,8 +7,6 @@ import HamzaBetaTitle from '@/images/logo/hamza-title-beta.svg';
 import MobileMainMenu from './menu/mobile-main-menu';
 import { WalletConnectButton } from './connect-wallet/connect-button';
 import CartButtonMobile from './components/cart-button';
-import HamzaHoliday from '@/images/logo/hamza christmas logo - H.svg';
-import HamzaTitleHoliday from '@/images/logo/hamza christmas logo - word.svg';
 
 export default async function MobileNav() {
     return (
@@ -22,12 +20,11 @@ export default async function MobileNav() {
             display={{ base: 'flex', md: 'none' }}
             justifyContent={'space-between'}
             alignItems="center"
+            px="20px"
+            py="10px"
         >
             <Flex width={'100%'} justifyContent={'center'} alignItems="center">
-                <Flex flex={1}>
-                    <MobileMainMenu />
-                </Flex>
-                <Flex flex={1} justifyContent={'center'}>
+                <Flex flex={1} justifyContent={'left'}>
                     <LocalizedClientLink href="/">
                         <Flex>
                             <Image
@@ -51,9 +48,13 @@ export default async function MobileNav() {
                 <Flex flex={1}>
                     <Flex ml="auto">
                         <WalletConnectButton />
+                        <CartButtonMobile />
                     </Flex>
-                    <CartButtonMobile />
                 </Flex>
+                <Flex>
+                    <MobileMainMenu />
+                </Flex>
+
             </Flex>
         </Flex>
     );
