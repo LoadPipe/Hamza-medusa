@@ -136,6 +136,7 @@ const ProfileForm: React.FC<any> = ({ customer }) => {
                         setCustomerPreferredCurrency={
                             setCustomerPreferredCurrency
                         }
+                        isProfile={true}
                         className="currency-input"
                     />
                 </Flex>

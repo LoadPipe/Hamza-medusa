@@ -9,15 +9,21 @@ import Spinner from '@modules/common/icons/spinner';
 import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
 import { useQuery } from '@tanstack/react-query'; // Import Zustand store
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
-
+import ProfileCurrency from '@/modules/account/components/profile/components/profile-form/components/profile-currency';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 const Summary = () => {
-
     const { data: cart } = useQuery({
         queryKey: ['cart'],
         queryFn: fetchCartForCart,
         staleTime: 1000 * 60 * 5,
     });
+
+    const { preferred_currency_code, setCustomerPreferredCurrency } =
+        useCustomerAuthStore((state) => ({
+            preferred_currency_code: state.preferred_currency_code,
+            setCustomerPreferredCurrency: state.setCustomerPreferredCurrency,
+        }));
 
     const isUpdating = useCartStore((state) => state.isUpdating);
 
@@ -31,7 +37,7 @@ const Summary = () => {
             width={'100%'}
             backgroundColor={'#121212'}
             borderRadius={'16px'}
-            className='summary-container'
+            className="summary-container"
         >
             <Text
                 color="primary.green.900"
@@ -39,8 +45,12 @@ const Summary = () => {
                 fontWeight={700}
                 mb="1rem"
             >
-                Summary
+                Pay With
             </Text>
+            <ProfileCurrency
+                preferred_currency_code={preferred_currency_code}
+                setCustomerPreferredCurrency={setCustomerPreferredCurrency}
+            />
             <CartTotals useCartStyle={false} />
             <DiscountCode />
             <LocalizedClientLink href={'/checkout?step=' + cart?.checkout_step}>
@@ -53,7 +63,7 @@ const Summary = () => {
                     borderRadius={'full'}
                     fontSize={{ base: '14px', md: '16px' }}
                     isDisabled={cart?.items?.length === 0 || isUpdating}
-                    className='checkout-now-button'
+                    className="checkout-now-button"
                     _hover={{
                         backgroundColor: 'white',
                         color: 'black',
