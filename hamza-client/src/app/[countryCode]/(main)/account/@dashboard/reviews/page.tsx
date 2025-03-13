@@ -8,10 +8,10 @@ import {
     getVerificationStatus,
 } from '@/lib/server';
 import getQueryClient from '@/app/query-utils/getQueryClient';
-import { dehydrate } from '@tanstack/react-query';
-import ReviewTemplate from '@/modules/account/templates/reviews-template';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getAllProductReviews, getNotReviewedOrders } from '@/lib/server';
 import React from 'react';
+import ReviewPage from '@/modules/account/components/reviews';
 
 export const metadata: Metadata = {
     title: 'Reviews',
@@ -43,22 +43,19 @@ export default async function Reviews() {
         queryFn: () => getAllProductReviews(customer.id),
     });
 
-    const dehydrateReviews = dehydrate(queryClient);
-
     return (
-        <Flex
-            maxW={{ md: '600px', lg: '927px' }}
-            width="100%"
-            backgroundColor={'#121212'}
-            flexDirection={'column'}
-            color="white"
-            p={'24px'}
-            rounded="lg"
-        >
-            <ReviewTemplate
-                customer={customer}
-                dehydratedState={dehydrateReviews}
-            />
-        </Flex>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <Flex
+                maxW={{ md: '600px', lg: '927px' }}
+                width="100%"
+                backgroundColor={'#121212'}
+                flexDirection={'column'}
+                color="white"
+                p={'24px'}
+                rounded="lg"
+            >
+                <ReviewPage customer={customer} />
+            </Flex>
+        </HydrationBoundary>
     );
 }
