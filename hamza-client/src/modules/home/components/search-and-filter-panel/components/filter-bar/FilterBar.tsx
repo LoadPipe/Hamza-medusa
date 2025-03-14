@@ -102,6 +102,18 @@ const FilterBar = () => {
                         '&::-webkit-scrollbar': { display: 'none' }, // Chrome, Safari, Opera
                     }}
                 >
+                    {/* Left Gradient Overlay - inside scrolling Flex */}
+                    <Flex
+                        position="absolute"
+                        left="0"
+                        top="0"
+                        height="100%"
+                        width="50px"
+                        pointerEvents="none"
+                        bgGradient="linear(to-r, rgba(44,39,45,1), transparent)"
+                        zIndex="1"
+                    />
+
                     <CategoryButton
                         categoryName={'All'}
                         url={
@@ -119,20 +131,19 @@ const FilterBar = () => {
                                   />
                               );
                           })}
+                    {/* Right gradient overlay */}
+                    <Flex
+                        position="absolute"
+                        top="0"
+                        right="0"
+                        height="100%"
+                        width="50px"
+                        pointerEvents="none"
+                        bgGradient="linear(to-l, rgba(44,39,45,1), transparent)"
+                    />
                 </Flex>
 
                 {/* Left gradient overlay */}
-
-                {/* Right gradient overlay */}
-                <Flex
-                    position="absolute"
-                    top="0"
-                    right="0"
-                    height="100%"
-                    width="50px"
-                    pointerEvents="none"
-                    bgGradient="linear(to-l, rgba(44,39,45,1), transparent)"
-                />
 
                 {/* Conditional rendering of Chevron */}
                 <Flex
