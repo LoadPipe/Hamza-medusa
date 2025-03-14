@@ -26,11 +26,6 @@ export default async function Reviews() {
         notFound();
     }
 
-    // if customer is found, check if the customer is verified
-    const verificationStatus = await getVerificationStatus(customer.id);
-    if (!verificationStatus.data) {
-        return <Error error={'Verify your email to access this page.'} />;
-    }
     const queryClient = getQueryClient();
 
     await queryClient.prefetchQuery({

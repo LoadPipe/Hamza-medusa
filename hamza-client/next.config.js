@@ -66,7 +66,15 @@ const nextConfig = withStoreConfig({
             },
             {
                 protocol: 'https',
+                hostname: 'hamzamarket.b-cdn.net',
+            },
+            {
+                protocol: 'https',
                 hostname: 'alpha.hamza.biz',
+            },
+            {
+                protocol: 'https',
+                hostname: 'hamzamarket.b-cdn.net',
             },
             {
                 protocol: 'https',
