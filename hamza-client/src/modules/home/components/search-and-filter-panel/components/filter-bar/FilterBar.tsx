@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, useDisclosure, Skeleton } from '@chakra-ui/react';
+import { Flex, useDisclosure, Skeleton, Box } from '@chakra-ui/react';
 import CategoryButton from '@/modules/products/components/buttons/category-button';
 import FilterButton from './components/FilterButton';
 import { CgChevronRight, CgChevronLeft } from 'react-icons/cg'; // Import both chevrons
@@ -23,13 +23,12 @@ const FilterBar = () => {
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>({
         queryKey: ['categories'],
-        queryFn: async() =>
-    {
-        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
-        const response = await axios.get(url);
-        return response.data;
-    }
-});
+        queryFn: async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
+        },
+    });
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
@@ -86,45 +85,45 @@ const FilterBar = () => {
                 mx="1rem"
                 maxW={'1249px'}
                 width={'100%'}
-                overflow={'hidden'}
+                // overflow={'hidden'}
                 gap={{ base: '12px', md: '20px' }}
                 position="relative"
+                paddingLeft={{ base: '13px', md: '0' }}
             >
                 <FilterButton onClick={onOpen} />
 
-                <CategoryButton
-                    categoryName={'All'}
-                    url={'https://images.hamza.market/category-icons/all.svg'}
+                {/* Left gradient overlay positioned exactly after FilterButton */}
+                <Flex
+                    position="absolute"
+                    left={{
+                        base: 'calc(56px + 12px)',
+                        md: 'calc(123px + 20px)',
+                    }} // width of FilterButton + gap
+                    top="0"
+                    height="100%"
+                    width="50px"
+                    pointerEvents="none"
+                    bgGradient="linear(to-r, rgba(44,39,45,1), transparent)"
+                    zIndex="1"
                 />
+                {/* Left Gradient Overlay - inside scrolling Flex */}
                 <Flex
                     maxW={'1100px'}
                     width={'100%'}
-                    overflow={'hidden'}
+                    overflowX={'auto'} // Enable horizontal scroll
                     gap={{ base: '12px', md: '20px' }}
+                    css={{
+                        scrollbarWidth: 'none', // Firefox
+                        msOverflowStyle: 'none', // IE & Edge
+                        '&::-webkit-scrollbar': { display: 'none' }, // Chrome, Safari, Opera
+                    }}
                 >
-                    {/* <Flex
-                        w="123px" // Same width as right chevron
-                        height={{ base: '42px', md: '63px' }}
-                        cursor="pointer"
-                        onClick={() => toggleShowMore('prev')} // Handle going backward
-                        position="absolute"
-                        left="0" // Align left
-                        top="0"
-                        bg="linear-gradient(270deg, rgba(44, 39, 45, 0) 0%, #2C272D 75%)"
-                        // Same gradient but mirrored
-                        userSelect={'none'}
-                    >
-                        <Flex
-                            w="35px"
-                            ml="0.75rem"
-                            height={'100%'}
-                            justifyContent={'center'}
-                            alignItems={'center'}
-                            alignSelf={'center'}
-                        >
-                            <CgChevronLeft size="4rem" color="white" />
-                        </Flex>
-                    </Flex> */}
+                    <CategoryButton
+                        categoryName={'All'}
+                        url={
+                            'https://images.hamza.market/category-icons/all.svg'
+                        }
+                    />
                     {isLoading
                         ? skeletons // Show skeletons while loading
                         : visibleCategories.map((category, index) => {
@@ -136,7 +135,19 @@ const FilterBar = () => {
                                   />
                               );
                           })}
+                    {/* Right gradient overlay */}
+                    <Flex
+                        position="absolute"
+                        top="0"
+                        right="0"
+                        height="100%"
+                        width={{ base: '50px', md: '100px' }}
+                        pointerEvents="none"
+                        bgGradient="linear(to-l, rgba(44,39,45,1), transparent)"
+                    />
                 </Flex>
+
+                {/* Left gradient overlay */}
 
                 {/* Conditional rendering of Chevron */}
                 <Flex
@@ -152,6 +163,7 @@ const FilterBar = () => {
                     bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #2C272D 65%)"
                     userSelect={'none'}
                     className="filter-bar-chevron"
+                    display={{ base: 'none', md: 'flex' }} // Hide on mobile
                 >
                     <Flex
                         ml="auto"
