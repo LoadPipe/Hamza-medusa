@@ -19,11 +19,12 @@ const Summary = () => {
         staleTime: 1000 * 60 * 5,
     });
 
-    const { preferred_currency_code, setCustomerPreferredCurrency } =
-        useCustomerAuthStore((state) => ({
-            preferred_currency_code: state.preferred_currency_code,
-            setCustomerPreferredCurrency: state.setCustomerPreferredCurrency,
-        }));
+    const preferred_currency_code = useCustomerAuthStore(
+        (state) => state.preferred_currency_code
+    );
+    const setCustomerPreferredCurrency = useCustomerAuthStore(
+        (state) => state.setCustomerPreferredCurrency
+    );
 
     const isUpdating = useCartStore((state) => state.isUpdating);
 
