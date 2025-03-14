@@ -279,19 +279,17 @@ const AccountNavDesktop = ({
                 />
             )}
 
-            {authData.is_verified && (
-                <NavLink
-                    href="/account/reviews"
-                    route={route!}
-                    title={'Reviews'}
-                    icon={
-                        <PiNotePencilLight
-                            size={'24px'}
-                            style={{ alignSelf: 'center', margin: '0 auto' }}
-                        />
-                    }
-                />
-            )}
+            <NavLink
+                href="/account/reviews"
+                route={route!}
+                title={'Reviews'}
+                icon={
+                    <PiNotePencilLight
+                        size={'24px'}
+                        style={{ alignSelf: 'center', margin: '0 auto' }}
+                    />
+                }
+            />
 
             <LogoutDesktop />
         </Flex>
