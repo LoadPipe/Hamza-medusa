@@ -88,6 +88,7 @@ const FilterBar = () => {
                 // overflow={'hidden'}
                 gap={{ base: '12px', md: '20px' }}
                 position="relative"
+                paddingLeft={{ base: '13px', md: '0' }}
             >
                 <FilterButton onClick={onOpen} />
 
@@ -95,7 +96,7 @@ const FilterBar = () => {
                 <Flex
                     position="absolute"
                     left={{
-                        base: 'calc(110px + 12px)',
+                        base: 'calc(56px + 12px)',
                         md: 'calc(123px + 20px)',
                     }} // width of FilterButton + gap
                     top="0"
@@ -140,7 +141,7 @@ const FilterBar = () => {
                         top="0"
                         right="0"
                         height="100%"
-                        width="50px"
+                        width={{ base: '50px', md: '100px' }}
                         pointerEvents="none"
                         bgGradient="linear(to-l, rgba(44,39,45,1), transparent)"
                     />
