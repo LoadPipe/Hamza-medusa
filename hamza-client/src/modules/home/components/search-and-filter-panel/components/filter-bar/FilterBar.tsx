@@ -91,6 +91,21 @@ const FilterBar = () => {
             >
                 <FilterButton onClick={onOpen} />
 
+                {/* Left gradient overlay positioned exactly after FilterButton */}
+                <Flex
+                    position="absolute"
+                    left={{
+                        base: 'calc(110px + 12px)',
+                        md: 'calc(123px + 20px)',
+                    }} // width of FilterButton + gap
+                    top="0"
+                    height="100%"
+                    width="50px"
+                    pointerEvents="none"
+                    bgGradient="linear(to-r, rgba(44,39,45,1), transparent)"
+                    zIndex="1"
+                />
+                {/* Left Gradient Overlay - inside scrolling Flex */}
                 <Flex
                     maxW={'1100px'}
                     width={'100%'}
@@ -102,18 +117,6 @@ const FilterBar = () => {
                         '&::-webkit-scrollbar': { display: 'none' }, // Chrome, Safari, Opera
                     }}
                 >
-                    {/* Left Gradient Overlay - inside scrolling Flex */}
-                    <Flex
-                        position="absolute"
-                        left="0"
-                        top="0"
-                        height="100%"
-                        width="50px"
-                        pointerEvents="none"
-                        bgGradient="linear(to-r, rgba(44,39,45,1), transparent)"
-                        zIndex="1"
-                    />
-
                     <CategoryButton
                         categoryName={'All'}
                         url={
