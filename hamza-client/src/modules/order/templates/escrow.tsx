@@ -1,92 +1,199 @@
 'use client';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Text,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    useDisclosure,
+    ModalCloseButton,
+} from '@chakra-ui/react';
 import { MdOutlineHandshake } from 'react-icons/md';
 import { OrderComponent } from '@/modules/order/components/order-overview/order-component';
-import { useParams } from 'next/navigation';
-import { getCustomerOrder, getHamzaCustomer } from '@/lib/server';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ReleaseEscrowDialog } from '../components/escrow/release-escrow-dialog';
 import EscrowStatus from '../components/order-overview/escrow-status';
-import { getEscrowPayment } from '@/lib/util/order-escrow';
 import { Order, PaymentDefinition } from '@/web3/contracts/escrow';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { ModalCoverWalletConnect } from '@/modules/common/components/modal-cover-wallet-connect';
-
-interface Customer {
-    id: string;
-    // ... other properties
-}
+import { Customer } from '@/app/[countryCode]/(main)/account/@dashboard/escrow/[id]/page';
+import { getEscrowPayment } from '@/lib/util/order-escrow';
+import { useQuery } from '@tanstack/react-query';
+import { getChainId } from '@/web3';
 
 // TODO: need to get the escrow address and chain id for releasing
 // TODO: user must connect the chain id that belongs to the order?
-// TODO: the escrow contract is queried to make sure that the specified order exists in escrow, that it hasn’t yet been released, and that there is money to release
+// TODO: the escrow contract is queried to make sure that the specified order exists in escrow, that it hasn't yet been released, and that there is money to release
 // TODO: API call to release escrow
 // TODO: When escrow completes, api should be made to sync with the order table escrow_status
-export const Escrow = () => {
-    const { id } = useParams();
-    const [customer, setCustomer] = useState<Customer | null>(null);
-    const [order, setOrder] = useState<Order | null>(null);
-    const [escrowPayment, setEscrowPayment] =
-        useState<PaymentDefinition | null>(null);
-    const [customerExist, setCustomerExist] = useState<true | false | null>(
+export const Escrow = ({
+    id,
+    customer,
+    order,
+}: {
+    id: string;
+    customer: Customer | {};
+    order: Order | null;
+}) => {
+    const { isConnected } = useAccount();
+    const { chain } = useNetwork();
+    const [isClient, setIsClient] = useState<boolean>(false);
+    const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
+    const [currentChainName, setCurrentChainName] = useState<string | null>(
         null
     );
-    const [orderExist, setOrderExist] = useState<true | false | null>(null);
-    const [escrowPaymentExist, setEscrowPaymentExist] = useState<
-        true | false | null
-    >(null);
-    const [isClient, setIsClient] = useState(false); // New state to track client-side rendering
+    const [paymentChainName, setPaymentChainName] = useState<string | null>(
+        null
+    );
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        chains,
+        isLoading: isLoadingSwitchNetwork,
+        switchNetwork,
+    } = useSwitchNetwork();
 
-    const { isConnected } = useAccount();
+    const handleSwitchNetwork = useCallback(
+        (chainId: number) => {
+            try {
+                if (switchNetwork) {
+                    onOpen();
+                    switchNetwork(chainId);
+                    setIsCorrectNetwork(true);
+                } else {
+                    setIsCorrectNetwork(false);
+                    console.error(
+                        'Network switching is not supported by the current provider.'
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+                setIsCorrectNetwork(false);
+            }
+        },
+        [switchNetwork, setIsCorrectNetwork, onOpen]
+    );
 
+    const { data: escrowPayment, isLoading: isLoadingEscrowPayment } = useQuery<
+        PaymentDefinition | null,
+        boolean
+    >({
+        queryKey: ['escrowPayment', id],
+        queryFn: async () => {
+            if (!order) return null;
+            return getEscrowPayment(order);
+        },
+        enabled:
+            !!order &&
+            !isLoadingSwitchNetwork &&
+            isConnected &&
+            isCorrectNetwork,
+    });
+
+    // TODO: right now, when switching chain on the same page, the
+    // name saved for currentChain is chain that the user is originally on.
+    // but since the user is switching the intended name to be saved is the
+    // chain being switched to.  This is a problem.  Leave this for future
+    // as the system works, but the alert will simply say switching from
+    // sepolia to sepolia instead of telling the user that the system is
+    // auto switching them back to sepolia from ... opnet for example.
     useEffect(() => {
-        setIsClient(true); // Set to true when the component is mounted on the client
-    }, []);
+        setIsClient(true);
 
-    useEffect(() => {
-        if (!isConnected) {
-            console.log('User is not connected');
-            return;
+        // chain was added to detect chain switching on the page
+        // itself.  As a result, I need to keep the chain name before
+        // switching occurs, so it can be used in the modal.
+        if (chain && !currentChainName) {
+            setCurrentChainName(chain.name || null);
         }
 
-        // TODO: This can be all put into the server component
-        const fetchCustomerAndOrder = async () => {
-            try {
-                // Fetch customer
-                const customer = await getHamzaCustomer(true);
-                setCustomerExist(!!customer);
-                if (!customer) {
-                    setOrderExist(false);
-                    setEscrowPaymentExist(false);
-                    return;
-                }
-                setCustomer(customer);
+        (async () => {
+            const chainId = await getChainId();
+            const paymentChainId =
+                order?.payments[0]?.blockchain_data?.chain_id;
 
-                // Fetch order
-                const order = await getCustomerOrder(customer.id, id as string);
-                // console.log("Order: ", order);
-                setOrderExist(!!order);
-                if (!order) {
-                    setEscrowPaymentExist(false);
-                    return;
-                }
-                setOrder(order);
+            const currentChain = chains.find(
+                (chain) => Number(chain.id) === Number(chainId)
+            );
+            const paymentChain = chains.find(
+                (chain) => Number(chain.id) === Number(paymentChainId)
+            );
 
-                // Fetch escrow payment
-                const escrowPayment = await getEscrowPayment(order);
-                setEscrowPaymentExist(!!escrowPayment);
-                if (!escrowPayment) return;
-                setEscrowPayment(escrowPayment);
-            } catch (error) {
-                console.error(
-                    'Error fetching customer, order, or escrow payment:',
-                    error
-                );
+            if (!isLoadingSwitchNetwork) {
+                if (!currentChainName) {
+                    setCurrentChainName(currentChain?.name || null);
+                }
+                if (!paymentChainName) {
+                    setPaymentChainName(paymentChain?.name || null);
+                }
             }
-        };
 
-        fetchCustomerAndOrder();
-    }, [id, isConnected]);
+            if (paymentChainId && paymentChainId !== Number(chainId)) {
+                handleSwitchNetwork(paymentChainId);
+            } else {
+                setIsCorrectNetwork(true);
+            }
+        })();
+    }, [
+        order,
+        handleSwitchNetwork,
+        isLoadingSwitchNetwork,
+        chains,
+        chain,
+        currentChainName,
+        paymentChainName,
+    ]);
+
+    const NetworkSwitchModal = (
+        <Modal isCentered isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent
+                bg="#121212"
+                p="40px"
+                borderRadius={'16px'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                color="white"
+                gap={2}
+                maxW={'496px'}
+                width={'100%'}
+            >
+                <ModalCloseButton color="white" />
+                <ModalBody
+                    display="flex"
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    flexDir={'column'}
+                >
+                    <ModalHeader
+                        fontSize="24px"
+                        fontWeight="bold"
+                        textAlign={'center'}
+                    >
+                        Switching Network
+                    </ModalHeader>
+                    <Text
+                        fontSize="16px"
+                        maxW={'332px'}
+                        width={'100%'}
+                        textAlign={'center'}
+                    >
+                        Since your payment is on{' '}
+                        <strong className="text-[#94d42a]">
+                            [{paymentChainName}]
+                        </strong>{' '}
+                        and your wallet is on{' '}
+                        <strong className="text-[#94d42a]">
+                            [{currentChainName}]
+                        </strong>
+                        , we must switch networks to proceed.
+                    </Text>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    );
 
     if (!isClient) {
         return (
@@ -113,6 +220,7 @@ export const Escrow = () => {
             alignItems={'center'}
             backgroundColor={'#121212'}
         >
+            {NetworkSwitchModal}
             {!isConnected ? (
                 <ModalCoverWalletConnect
                     title="Proceed to Escrow"
@@ -132,51 +240,52 @@ export const Escrow = () => {
                         Escrow
                     </Text>
 
-                    {/* Customer and Order Status */}
-                    {customerExist === null ? (
-                        <Text>Customer loading...</Text>
-                    ) : customerExist === false ? (
+                    {/* Customer and Order problems */}
+                    {Object.keys(customer).length === 0 && (
                         <Text>Customer not found</Text>
-                    ) : orderExist === null ? (
-                        <Text>Order loading...</Text>
-                    ) : orderExist === false ? (
-                        <Text>Order not found</Text>
-                    ) : orderExist === true && !order ? (
+                    )}
+
+                    {!order && <Text>Order not found</Text>}
+
+                    {Object.keys(customer).length > 0 && !order && (
                         <Text>
                             The order ({id}) does not belong to this customer
                         </Text>
-                    ) : (
-                        order && (
-                            <>
-                                {order.id}
-                                <OrderComponent order={order} />
-                            </>
-                        )
+                    )}
+
+                    {/* Customer and Order problems */}
+                    {order && (
+                        <>
+                            {order.id}
+                            <OrderComponent order={order} />
+                        </>
                     )}
 
                     {/* Escrow Payment Status */}
-                    {escrowPaymentExist === null ? (
-                        <Text>Escrow status loading...</Text>
-                    ) : orderExist === true &&
-                      escrowPaymentExist === false &&
-                      order ? (
-                        <Text>
-                            Order found for ({order.id}) but escrow payment not
-                            found
-                        </Text>
-                    ) : escrowPaymentExist === true &&
-                      escrowPayment &&
-                      order ? (
+                    {isLoadingSwitchNetwork || isLoadingEscrowPayment ? (
+                        <Text>Loading...</Text>
+                    ) : (
                         <>
-                            {escrowPayment.payerReleased === false && (
-                                <ReleaseEscrowDialog
-                                    order={order}
-                                    escrowPayment={escrowPayment}
-                                />
+                            {order && !escrowPayment && (
+                                <Text>
+                                    Order found for ({order.id}) but escrow
+                                    payment not found
+                                </Text>
                             )}
-                            <EscrowStatus payment={escrowPayment} />
+
+                            {order && escrowPayment && (
+                                <>
+                                    {!escrowPayment.payerReleased && (
+                                        <ReleaseEscrowDialog
+                                            order={order}
+                                            escrowPayment={escrowPayment}
+                                        />
+                                    )}
+                                    <EscrowStatus payment={escrowPayment} />
+                                </>
+                            )}
                         </>
-                    ) : null}
+                    )}
                 </>
             )}
         </Flex>
