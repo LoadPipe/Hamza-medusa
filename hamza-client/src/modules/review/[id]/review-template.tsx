@@ -14,8 +14,10 @@ import {
     Box,
     Flex,
 } from '@chakra-ui/react';
-import { createReview } from '@/lib/server';
+import { createReview, getVerificationStatus } from '@/lib/server';
 import toast from 'react-hot-toast';
+import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
 
 const ReviewTemplate = ({
     reviewItem,
@@ -26,6 +28,27 @@ const ReviewTemplate = ({
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(0);
     const [hovered, setHovered] = useState(0);
+
+    const {
+        data: verificationStatus,
+        error: verificationError,
+        isLoading: verificationStatusLoading,
+    } = useQuery({
+        queryKey: ['verificationStatus', reviewItem?.customer_id],
+        queryFn: async () => {
+            try {
+                const status = await getVerificationStatus(
+                    reviewItem?.customer_id
+                );
+                return status.data;
+            } catch (err) {
+                console.error('Error getting verification status.');
+                return null;
+            }
+        },
+        enabled: !!reviewItem?.customer_id,
+        staleTime: 5 * 60 * 1000,
+    });
 
     const submitReview = async () => {
         const data = {
@@ -71,7 +94,32 @@ const ReviewTemplate = ({
                     Add A Review
                 </ModalHeader>
                 <ModalCloseButton />
+
                 <ModalBody>
+                    {!verificationStatus && (
+                        <Box
+                            mb={4}
+                            p={4}
+                            bg="#1A1A1A"
+                            borderRadius="md"
+                            color="white"
+                        >
+                            <Text>
+                                Verify your email to share your feedback!
+                                Reviews are available only to verified users.
+                                Please check your inbox and confirm your email
+                                to start reviewing products.
+                            </Text>
+                            <Text
+                                mt={2}
+                                color="primary.green.900"
+                                fontWeight="bold"
+                                cursor="pointer"
+                            >
+                                <Link href="/account/verify">Verify Now</Link>
+                            </Text>
+                        </Box>
+                    )}
                     <Box color={'white'} className="flex items-center mb-4">
                         <Image
                             src={reviewItem.items[0].thumbnail}
@@ -79,7 +127,9 @@ const ReviewTemplate = ({
                             className="w-24 h-24 mr-4"
                         />
                         <Box>
-                            <h1 className="text-xl font-semibold">
+                            <h1
+                                className={`text-xl font-semibold ${!verificationStatus ? 'text-gray-500' : ''}`}
+                            >
                                 {reviewItem.items[0].title}
                             </h1>
                         </Box>
@@ -100,6 +150,7 @@ const ReviewTemplate = ({
                                         setRating(star);
                                         setHovered(star);
                                     }}
+                                    disabled={!verificationStatus}
                                 >
                                     ★
                                 </button>
@@ -108,7 +159,11 @@ const ReviewTemplate = ({
                                 {ratingDescriptions[rating - 1] || ''}
                             </span>
                         </Box>
-                        <p className="text-white">Review Detail</p>
+                        <p
+                            className={`${!verificationStatus ? 'text-gray-500' : 'text-white '}`}
+                        >
+                            Review Detail
+                        </p>
                         <textarea
                             className="w-full p-2  rounded text-white bg-black"
                             rows={4}
@@ -116,6 +171,7 @@ const ReviewTemplate = ({
                             placeholder="What do you think of this product?"
                             value={review}
                             onChange={(e) => setReview(e.target.value)}
+                            disabled={!verificationStatus}
                         />
                         {review.trim().length < 50 && (
                             <Text color="red.500" fontSize="sm" mt={2}>
@@ -129,9 +185,17 @@ const ReviewTemplate = ({
                             my={'1rem'}
                         >
                             <Button
-                                variant="outline"
-                                borderColor={'primary.indigo.900'}
-                                color={'primary.indigo.900'}
+                                backgroundColor={
+                                    verificationStatus ? 'gray.800' : 'gray.600'
+                                }
+                                borderColor={
+                                    verificationStatus
+                                        ? 'primary.indigo.900'
+                                        : 'gray.600'
+                                }
+                                color={
+                                    verificationStatus ? 'gray.600' : 'gray.300'
+                                }
                                 width={'180px'}
                                 height={'47px'}
                                 borderRadius={'37px'}
@@ -140,20 +204,27 @@ const ReviewTemplate = ({
                                     setRating(0);
                                     setReview('');
                                 }}
+                                disabled={!verificationStatus}
                             >
                                 Cancel
                             </Button>
 
-                            <Box
-                                as="button"
+                            <Button
                                 borderRadius={'37px'}
                                 alignItems="center"
                                 backgroundColor={
-                                    rating === 0 || review.trim().length < 50
-                                        ? 'gray.400'
-                                        : 'primary.indigo.900'
+                                    verificationStatus
+                                        ? 'primary.indigo.900'
+                                        : 'gray.600'
                                 }
-                                color={'white'}
+                                borderColor={
+                                    verificationStatus
+                                        ? 'primary.indigo.900'
+                                        : 'gray.600'
+                                }
+                                color={
+                                    verificationStatus ? 'white' : 'gray.300'
+                                }
                                 fontSize={'18px'}
                                 fontWeight={600}
                                 height={'47px'}
@@ -161,11 +232,14 @@ const ReviewTemplate = ({
                                 ml={'20px'}
                                 onClick={submitReview}
                                 disabled={
-                                    rating === 0 || review.trim().length < 50
+                                    verificationStatus
+                                        ? rating === 0 ||
+                                          review.trim().length < 50
+                                        : true
                                 }
                             >
                                 Submit
-                            </Box>
+                            </Button>
                         </Flex>
                     </Box>
                 </ModalBody>
