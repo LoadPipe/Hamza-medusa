@@ -18,7 +18,7 @@ import { CartWithCheckoutStep } from '@/types/global';
 import { useQuery } from '@tanstack/react-query';
 
 type CartTotalsProps = {
-    cartId?: string // Option, cartId for checkout flow...
+    cartId?: string; // Option, cartId for checkout flow...
     useCartStyle: boolean;
 };
 
@@ -27,7 +27,9 @@ type ExtendedLineItem = LineItem & {
 };
 
 const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
-    const { preferred_currency_code } = useCustomerAuthStore();
+    const { preferred_currency_code } = useCustomerAuthStore((state) => ({
+        preferred_currency_code: state.preferred_currency_code,
+    }));
 
     // Determine which fetch function to use based on cartId presence
     const { data: cart } = useQuery<CartWithCheckoutStep | null>({
@@ -37,8 +39,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
         enabled: true, // Always fetch
     });
 
-
-
     const { data: shippingCost, isLoading: loading } = useQuery({
         queryKey: ['shippingCost', cart?.id, preferred_currency_code], // Unique key per cart
         queryFn: () => updateShippingCost(cart!.id), // Only fetch when cart exists
@@ -46,24 +46,35 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
         staleTime: 0, // Cache shipping cost for 5 minutes
     });
 
-
     // Refactor: Imperative code to Declarative subset (Functional) code
-    const getCartSubtotal = (cart: CartWithCheckoutStep | null, currencyCode: string) => {
+    const getCartSubtotal = (
+        cart: CartWithCheckoutStep | null,
+        currencyCode: string
+    ) => {
         if (!cart?.items) return { currency: currencyCode, amount: 0 };
 
         return cart.items.reduce(
             (total, item) => {
-                const itemPrice = getPriceByCurrency(item.variant.prices, currencyCode);
+                const itemPrice = getPriceByCurrency(
+                    item.variant.prices,
+                    currencyCode
+                );
                 return {
                     currency: currencyCode,
-                    amount: total.amount + (Number(itemPrice) * item.quantity - (item.discount_total ?? 0)),
+                    amount:
+                        total.amount +
+                        (Number(itemPrice) * item.quantity -
+                            (item.discount_total ?? 0)),
                 };
             },
             { currency: currencyCode, amount: 0 }
         );
     };
 
-    const finalSubtotal = getCartSubtotal(cart ?? null, preferred_currency_code ?? 'usdc');
+    const finalSubtotal = getCartSubtotal(
+        cart ?? null,
+        preferred_currency_code ?? 'usdc'
+    );
     const taxTotal = cart?.tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =
@@ -73,7 +84,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
         queryKey: ['convertedPrice', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
         queryFn: async () => {
             const result = await convertPrice(
-                Number(formatCryptoPrice(grandTotal, preferred_currency_code ?? 'usdc')),
+                Number(
+                    formatCryptoPrice(
+                        grandTotal,
+                        preferred_currency_code ?? 'usdc'
+                    )
+                ),
                 'eth',
                 'usdc'
             );
@@ -82,7 +98,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
         enabled: preferred_currency_code === 'eth', //  Fetch only when preferred currency is ETH
         staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
     });
-
 
     if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
 
@@ -107,7 +122,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                         <Text
                             fontSize={{ base: '14px', md: '16px' }}
                             alignSelf="center"
-                            className='cart-totals-subtotal'
+                            className="cart-totals-subtotal"
                         >
                             {formatCryptoPrice(
                                 finalSubtotal.amount,
@@ -143,7 +158,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 alignSelf="center"
-                                className='cart-totals-shipping'
+                                className="cart-totals-shipping"
                             >
                                 {formatCryptoPrice(
                                     shippingCost!,
@@ -205,7 +220,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                                     lineHeight="1.1"
                                     position="relative"
                                     top="1px"
-                                    className='cart-totals-total'
+                                    className="cart-totals-total"
                                 >
                                     {formatCryptoPrice(
                                         grandTotal,
