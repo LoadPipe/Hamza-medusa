@@ -336,10 +336,6 @@ export async function getOrderSummary(cart_id: string) {
     return get('/custom/order/order-summary', { cart_id });
 }
 
-export async function getNotReviewed(customer_id: string) {
-    return getSecure('/custom/review/not-reviewed', { customer_id });
-}
-
 export async function allReviews(product_id: string) {
     return getSecure('/custom/review', { product_id });
 }
@@ -430,7 +426,7 @@ export async function getSingleBucket(
 
 export async function getNotReviewedOrders(customer_id: string) {
     return getSecure('/custom/review/not-reviewed', {
-        customer_id,
+        customer_id: customer_id,
     });
 }
 
@@ -643,7 +639,7 @@ export async function updateItem({
 }
 
 export async function updateShippingCost(cart_id: string) {
-    console.log(`TRIGGER update shipping cost`)
+    console.log(`TRIGGER update shipping cost`);
     try {
         const response = await getSecure('/custom/cart/shipping', {
             cart_id,
@@ -1071,9 +1067,12 @@ export async function getProductsById({
         });
 }
 
-export const getPricedProductByHandle = async (handle: string, region: Region) => {
+export const getPricedProductByHandle = async (
+    handle: string,
+    region: Region
+) => {
     const { product } = await getProductByHandle(handle).then(
-        (product) => product,
+        (product) => product
     );
     if (!product || !product.id) return null;
 
@@ -1084,8 +1083,6 @@ export const getPricedProductByHandle = async (handle: string, region: Region) =
 
     return pricedProduct;
 };
-
-
 
 export async function retrievePricedProductById({
     id,
