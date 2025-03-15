@@ -25,6 +25,12 @@ interface CurrencySelectorProps {
     usdtBalanceData?: any;
 }
 
+const currencies = [
+    { code: 'eth', label: 'ETH' },
+    { code: 'usdc', label: 'USDC' },
+    { code: 'usdt', label: 'USDT' },
+];
+
 const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     preferredCurrencyCode,
     defaultCurrency = 'eth',
@@ -35,13 +41,21 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     usdcBalanceData,
     usdtBalanceData,
 }) => {
-    const { authData, setCustomerPreferredCurrency } = useCustomerAuthStore();
+    const authData = useCustomerAuthStore((state) => state.authData);
+    const setCustomerPreferredCurrency = useCustomerAuthStore((state) => state.setCustomerPreferredCurrency);
 
     useEffect(() => {
         if (!isOpen) {
             setSelectedCurrency(preferredCurrencyCode ?? defaultCurrency);
         }
     }, [isOpen, preferredCurrencyCode, defaultCurrency, setSelectedCurrency]);
+
+    const getBalanceData = (currencyCode: string) => {
+        if (currencyCode === 'eth') return nativeBalanceData;
+        if (currencyCode === 'usdc') return usdcBalanceData;
+        if (currencyCode === 'usdt') return usdtBalanceData;
+        return undefined;
+    };
 
     const formatBalance = (balanceData: any, currency: string) => {
         if (!balanceData?.formatted) {
@@ -50,7 +64,6 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
 
         const value = parseFloat(balanceData.formatted);
         const decimals = currency === 'eth' ? 4 : 2;
-
         let formatted = value.toFixed(decimals);
 
         if (value > 1000) {
@@ -63,11 +76,11 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
         return formatted;
     };
 
-    const handleCurrencySelection = async (value: string) => {
+    const handleCurrencySelection = async (code: string) => {
         try {
-            setSelectedCurrency(value);
-            setCustomerPreferredCurrency(value);
-            await setCurrency(value, authData.customer_id);
+            setSelectedCurrency(code);
+            setCustomerPreferredCurrency(code);
+            await setCurrency(code, authData.customer_id);
         } catch (error) {
             console.error('Error updating currency:', error);
         }
@@ -78,147 +91,60 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
             <Text fontSize="sm" color="gray.400" mb={4}>
                 Available Balance
             </Text>
+
             <RadioGroup value={selectedCurrency}>
                 <Stack direction="column" spacing={4}>
-                    {/* ETH row */}
-                    <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                        cursor="pointer"
-                        onClick={() => handleCurrencySelection('eth')}
-                    >
-                        <Flex alignItems="center" gap="8px">
-                            <Radio
-                                value="eth"
-                                colorScheme="whiteAlpha"
-                                _checked={{ bg: 'white', borderColor: 'white' }}
-                                pointerEvents="none"
-                            />
-                            <Flex alignItems="center" gap="6px">
-                                <Image
-                                    src={currencyIcons['eth'].src}
-                                    alt="ETH Icon"
-                                    boxSize="20px"
+                    {currencies.map(({ code, label }) => (
+                        <Flex
+                            key={code}
+                            justifyContent="space-between"
+                            alignItems="center"
+                            cursor="pointer"
+                            onClick={() => handleCurrencySelection(code)}
+                        >
+                            <Flex alignItems="center" gap="8px">
+                                <Radio
+                                    value={code}
+                                    colorScheme="whiteAlpha"
+                                    _checked={{ bg: 'white', borderColor: 'white' }}
+                                    pointerEvents="none"
                                 />
-                                <Text color="white" mr={2}>
-                                    ETH
-                                </Text>
-                            </Flex>
-                            {preferredCurrencyCode === 'eth' && (
-                                <Flex
-                                    flex="none"
-                                    order={2}
-                                    flexGrow={0}
-                                    direction="row"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    p="7px 10px"
-                                    gap="10px"
-                                    bg="#272727"
-                                    borderRadius="4px"
-                                >
-                                    <Text color="white" fontSize="xs">
-                                        DEFAULT
+                                <Flex alignItems="center" gap="6px">
+                                    <Image
+                                        src={currencyIcons[code].src}
+                                        alt={`${label} Icon`}
+                                        boxSize="20px"
+                                    />
+                                    <Text color="white" mr={2}>
+                                        {label}
                                     </Text>
                                 </Flex>
-                            )}
-                        </Flex>
-                        <Text color="white">
-                            {formatBalance(nativeBalanceData, 'eth')}
-                        </Text>
-                    </Flex>
 
+                                {preferredCurrencyCode === code && (
+                                    <Flex
+                                        flex="none"
+                                        order={2}
+                                        flexGrow={0}
+                                        direction="row"
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        p="7px 10px"
+                                        gap="10px"
+                                        bg="#272727"
+                                        borderRadius="4px"
+                                    >
+                                        <Text color="white" fontSize="xs">
+                                            DEFAULT
+                                        </Text>
+                                    </Flex>
+                                )}
+                            </Flex>
 
-                    {/* USDC row */}
-                    <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                        cursor="pointer"
-                        onClick={() => handleCurrencySelection('usdc')}
-                    >
-                        <Flex alignItems="center" gap="8px">
-                            <Radio
-                                value="usdc"
-                                colorScheme="whiteAlpha"
-                                _checked={{ bg: 'white', borderColor: 'white' }}
-                                pointerEvents="none"
-                            />
-                            <Flex alignItems="center" gap="6px">
-                                <Image
-                                    src={currencyIcons['usdc'].src}
-                                    alt="USDC Icon"
-                                    boxSize="20px"
-                                />
-                                <Text color="white">USDC</Text>
-                            </Flex>
-                            {preferredCurrencyCode === 'usdc' && (
-                                <Flex
-                                    flex="none"
-                                    order={2}
-                                    flexGrow={0}
-                                    direction="row"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    p="7px 10px"
-                                    gap="10px"
-                                    bg="#272727"
-                                    borderRadius="4px"
-                                >
-                                    <Text color="white" fontSize="xs">
-                                        DEFAULT
-                                    </Text>
-                                </Flex>
-                            )}
+                            <Text color="white">
+                                {formatBalance(getBalanceData(code), code)}
+                            </Text>
                         </Flex>
-                        <Text color="white">
-                            {formatBalance(usdcBalanceData, 'usdc')}
-                        </Text>
-                    </Flex>
-                    {/* USDT row */}
-                    <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                        cursor="pointer"
-                        onClick={() => handleCurrencySelection('usdt')}
-                    >
-                        <Flex alignItems="center" gap="8px">
-                            <Radio
-                                value="usdt"
-                                colorScheme="whiteAlpha"
-                                _checked={{ bg: 'white', borderColor: 'white' }}
-                                pointerEvents="none"
-                            />
-                            <Flex alignItems="center" gap="6px">
-                                <Image
-                                    src={currencyIcons['usdt'].src}
-                                    alt="USDT Icon"
-                                    boxSize="20px"
-                                />
-                                <Text color="white">USDT</Text>
-                            </Flex>
-                            {preferredCurrencyCode === 'usdt' && (
-                                <Flex
-                                    flex="none"
-                                    order={2}
-                                    flexGrow={0}
-                                    direction="row"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    p="7px 10px"
-                                    gap="10px"
-                                    bg="#272727"
-                                    borderRadius="4px"
-                                >
-                                    <Text color="white" fontSize="xs">
-                                        DEFAULT
-                                    </Text>
-                                </Flex>
-                            )}
-                        </Flex>
-                        <Text color="white">
-                            {formatBalance(usdtBalanceData, 'usdt')}
-                        </Text>
-                    </Flex>
+                    ))}
                 </Stack>
             </RadioGroup>
         </Box>
