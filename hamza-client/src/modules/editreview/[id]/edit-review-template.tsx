@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -15,6 +15,8 @@ import {
     Flex,
 } from '@chakra-ui/react';
 import { updateProductReview } from '@/lib/server';
+import DOMPurify from 'dompurify';
+
 import toast from 'react-hot-toast';
 
 const EditReviewTemplate = ({
