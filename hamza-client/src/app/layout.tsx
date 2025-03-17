@@ -13,9 +13,10 @@ import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
 import FreeScoutWidget from './components/scripts/chat-widget';
-import { GoogleAnalytics } from '@next/third-parties/google'
-
+import { GoogleAnalytics } from '@next/third-parties/google';
+import PhantomWalletProvider from '@/components/providers/phantom/PhantomWalletProvider';
 // import { GoogleTagManager } from '@next/third-parties/google';
+
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
 };
@@ -91,13 +92,15 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 <div>
                     <MedusaProvider token={token}>
                         {/* Pass token as prop */}
-                        <RainbowWrapper>
-                            <ChakraProvider theme={theme}>
-                                <main className={sora.className}>
-                                    {props.children}
-                                </main>
-                            </ChakraProvider>
-                        </RainbowWrapper>
+                        <PhantomWalletProvider>
+                            <RainbowWrapper>
+                                <ChakraProvider theme={theme}>
+                                    <main className={sora.className}>
+                                        {props.children}
+                                    </main>
+                                </ChakraProvider>
+                            </RainbowWrapper>
+                        </PhantomWalletProvider>
                     </MedusaProvider>
                     <div>
                         <Toaster position="top-right" />
@@ -106,7 +109,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 </div>
             </body>
             {/* Documentation on this problem and how to solve it: https://nextjs.org/docs/messages/next-script-for-ga*/}
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
+            <GoogleAnalytics
+                gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''}
+            />
         </html>
     );
 }

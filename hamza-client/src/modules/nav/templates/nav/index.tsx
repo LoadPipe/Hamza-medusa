@@ -10,6 +10,7 @@ import Image from 'next/image';
 //import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import HamzaHoliday from '@/images/logo/hamza-holiday.svg';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 //  Components
 import HnsDisplay from './menu-desktop/hns-display/index';
 import NavSearchBar from './menu-desktop/components/nav-searchbar';
@@ -22,6 +23,7 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import { headers } from 'next/headers';
 import MobileNavContainer from './mobile-nav-container';
+import PhantomWalletButton from '@/components/providers/phantom/PhantomWalletButton';
 
 const fetchCart = async () => {
     const cart = await retrieveCart();
@@ -89,6 +91,9 @@ export default async function Nav() {
                         <NavSearchBar />
 
                         <Box ml={'auto'}>
+                            <PhantomWalletButton />
+                        </Box>
+                        <Box ml={'auto'}>
                             <WalletConnectButton />
                         </Box>
 
@@ -137,7 +142,10 @@ export default async function Nav() {
                                                 color="white"
                                                 fontWeight="700"
                                             >
-                                                <Text fontSize={'10px'} className='cart-quantity'>
+                                                <Text
+                                                    fontSize={'10px'}
+                                                    className="cart-quantity"
+                                                >
                                                     {totalItems}
                                                 </Text>
                                             </Flex>
