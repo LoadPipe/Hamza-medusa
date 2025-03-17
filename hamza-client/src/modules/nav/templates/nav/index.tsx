@@ -23,7 +23,7 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import { headers } from 'next/headers';
 import MobileNavContainer from './mobile-nav-container';
-import PhantomWalletButton from '@/components/providers/phantom/PhantomWalletButton';
+import PhantomWalletButton from '@/components/providers/phantom/phantom-wallet-button';
 
 const fetchCart = async () => {
     const cart = await retrieveCart();

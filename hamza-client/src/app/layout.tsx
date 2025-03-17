@@ -14,7 +14,7 @@ import { Sora } from 'next/font/google';
 import Script from 'next/script';
 import FreeScoutWidget from './components/scripts/chat-widget';
 import { GoogleAnalytics } from '@next/third-parties/google';
-import PhantomWalletProvider from '@/components/providers/phantom/PhantomWalletProvider';
+import PhantomWalletProvider from '@/components/providers/phantom/phantom-wallet-provider';
 // import { GoogleTagManager } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
