@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 import { Flex } from '@chakra-ui/react';
-import ForceWalletConnect from '@/modules/common/components/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
-import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import getQueryClient from '@/app/query-utils/getQueryClient';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -14,10 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Checkout(params: any) {
-    const queryClient = new QueryClient();
+    // SSR So make sure to create a new queryClient instance, so we don't share the same instance between multiple requests
+    const queryClient = getQueryClient();
 
     let cartId = cookies().get('_medusa_cart_id')?.value;
-    if (!cartId && params?.searchParams?.cart) cartId = params.searchParams.cart;
+    if (!cartId && params?.searchParams?.cart)
+        cartId = params.searchParams.cart;
 
     if (!cartId) {
         console.log('Cart ID not found');
