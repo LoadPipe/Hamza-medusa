@@ -108,7 +108,7 @@ const colors = {
         },
     },
     switchBackground: {
-        500: '#4b5669', // switch background color
+        500: '#94D42A', // switch background color
     },
 };
 
