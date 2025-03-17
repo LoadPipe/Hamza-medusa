@@ -6,7 +6,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 
 type StoreProps = {
     storeName: string;
-    storeHandle:string;
+    storeHandle: string;
     icon: string;
 };
 
@@ -93,7 +93,7 @@ const StoreBanner = (props: StoreProps) => {
                 ml="auto"
                 alignSelf="center"
                 flexDirection={'column'}
-                gap={'16px'}
+                gap={{ base: '8px', md: '16px' }}
             >
                 <a
                     href={
@@ -103,7 +103,7 @@ const StoreBanner = (props: StoreProps) => {
                     target="_blank"
                 >
                     <Flex
-                        display={{ base: 'none', md: 'flex' }}
+                        display={{ base: 'flex' }}
                         height={{ base: '33px', md: '47px' }}
                         width={{ base: '120px', md: '190px' }}
                         borderColor={'primary.green.900'}
