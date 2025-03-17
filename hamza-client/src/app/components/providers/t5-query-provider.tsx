@@ -15,7 +15,7 @@ function makeQueryClient() {
                 refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
                 refetchOnMount: false, // Prevents redundant fetches when remounting components
                 retry: 0, // 🔄 Retries failed queries twice before throwing an error
-                gcTime: 3 * 60 * 1000, // ⏳ Default gc time is now 3 mins
+                gcTime: 3 * 60 * 1000, // ⏳ Default gc time is now 3 mins, useQuery components override this*
             },
             mutations: {
                 retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
