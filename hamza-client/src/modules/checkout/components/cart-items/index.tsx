@@ -46,7 +46,7 @@ const CartItems = ({
                             item?.variant?.product?.tags?.filter((t: any) =>
                                 t?.id?.startsWith('geo-restriction')
                             ) ?? [];
-                            
+
                         let geoRestricted: boolean = true;
                         for (let tag of tags) {
                             if (tag?.metadata?.country) {
@@ -60,6 +60,7 @@ const CartItems = ({
                         }
 
                         if (geoRestricted) restrictedVariants.push(item);
+                    }
 
                     setRegionLockedItems(
                         restrictedVariants as ExtendedLineItem[]
