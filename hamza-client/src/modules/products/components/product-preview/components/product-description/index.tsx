@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, Flex, Heading, Text } from '@chakra-ui/react';
+import DOMPurify from 'dompurify';
 
 type ProductDescriptionProps = {
     subtitle: string;
@@ -8,6 +9,11 @@ type ProductDescriptionProps = {
 
 const ProductDescription: React.FC<ProductDescriptionProps> = React.memo(
     ({ subtitle, description }) => {
+        // This way it only re-renders when prop changes
+        const sanitizedDescription = useMemo(
+            () => DOMPurify.sanitize(description),
+            [description]
+        );
         return (
             <>
                 <Flex flexDirection={'column'}>
@@ -32,7 +38,9 @@ const ProductDescription: React.FC<ProductDescriptionProps> = React.memo(
                     </Heading>
                     <Box fontSize={{ base: '14px', md: '16px' }} color="white">
                         <div
-                            dangerouslySetInnerHTML={{ __html: description }}
+                            dangerouslySetInnerHTML={{
+                                __html: sanitizedDescription,
+                            }}
                             style={{ maxWidth: '100%', overflow: 'hidden' }}
                         />
                     </Box>
