@@ -59,7 +59,7 @@ const QuantityButton = () => {
                     fontSize={{ base: '14px', md: '18px' }}
                     color="primary.indigo.900"
                 >
-                    {`${quantityAvailable} available`}
+                    {`${Number(quantityAvailable).toLocaleString()} available`}
                 </Heading>
             </Flex>
 

@@ -1,6 +1,6 @@
 import { ProductOption } from '@medusajs/medusa';
 import { Tooltip } from '@medusajs/ui';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button } from '@chakra-ui/react';
 import { onlyUnique } from '@lib/util/only-unique';
 
@@ -14,28 +14,36 @@ type OptionSelectProps = {
 };
 
 const OptionSelect: React.FC<OptionSelectProps> = ({
-   option,
-   current,
-   updateOption,
-   title,
- }) => {
+  option,
+  current,
+  updateOption,
+  title,
+}) => {
   const sortedValues = [...option.values].sort((a: any, b: any) => {
     return (a.variant_rank) - (b.variant_rank);
   });
 
   const filteredOptions = sortedValues
-    .map((v) => v.value)
+    .map((v) => v.originalValue)
     .filter(onlyUnique);
+
+  const selectedDisplayValue = useMemo(() => {
+    if (!current) return '';
+    const foundItem = sortedValues.find((x) => x.originalValue === current);
+    return foundItem ? foundItem.displayValue : current;
+  }, [current, sortedValues]);
 
   return (
     <div className="flex flex-col gap-y-3">
-      <span className="mt-2 text-sm !text-white">Selected {title}: {current && current.length > 0 ? ` ${current}` : ''}</span>
+      <span className="mt-2 text-sm !text-white">Selected {title}: {selectedDisplayValue}</span>
       <div className="flex flex-wrap gap-x-2 gap-y-3">
-        {filteredOptions.map((v) => {
+        {filteredOptions.map((origVal) => {
+          const item = sortedValues.find(x => x.originalValue === origVal);
+          if (!item) return null;
           const buttonContent = (
             <Button
-              key={v}
-              onClick={() => updateOption({ [option.id]: v })}
+              key={origVal}
+              onClick={() => updateOption({ [option.id]: origVal })}
               size="md"
               height="auto"
               py="3"
@@ -49,8 +57,8 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
               overflow="hidden"
               whiteSpace="normal"
               textOverflow="ellipsis"
-              borderColor={v === current ? 'blue.500' : 'gray.200'}
-              borderWidth={v === current ? '4px' : '1px'}
+              borderColor={origVal === current ? 'blue.500' : 'gray.200'}
+              borderWidth={origVal === current ? '4px' : '1px'}
               _hover={{
                 boxShadow: 'md',
               }}
@@ -66,13 +74,13 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
                   maxHeight: '3.6em',
                 }}
               >
-                {v}
+                {item.displayValue}
               </div>
             </Button>
           );
 
-          return v.length > MINIMUM_CHARACTERS_FOR_TOOLTIP ? (
-            <Tooltip content={v} className="min-w-fit" key={v}>
+          return item.displayValue.length > MINIMUM_CHARACTERS_FOR_TOOLTIP ? (
+            <Tooltip content={item.displayValue} className="min-w-fit" key={origVal}>
               {buttonContent}
             </Tooltip>
           ) : (

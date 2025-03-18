@@ -124,7 +124,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.error('Error updating currency:', error);
         }
     };
-    
+
 
     const showAvailableCurrencies = () => {
         return (
@@ -333,7 +333,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -604,24 +604,38 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                             getValidValuesForOption(option.id);
 
                                         const updatedValues = option.values
+                                            .filter((val: any) => validValues.includes(val.value))
                                             .map((val: any) => {
-                                                const matchingVariant =
-                                                    productData.variants.find(
-                                                        (v: any) =>
-                                                            v.id ===
-                                                            val.variant_id
-                                                    );
+                                                const matchingVariant = productData.variants.find(
+                                                    (v: any) => v.id === val.variant_id
+                                                );
+
+                                                const originalValue = val.value;
+
+                                                let displayValue = originalValue;
+                                                const regex = /(\d+(?:\.\d+)?)/;
+                                                const match = originalValue.match(regex);
+                                                if (match) {
+                                                    const num = parseFloat(match[0]);
+                                                    if (num > 999) {
+                                                        const fractionDigits = match[0].includes('.')
+                                                            ? match[0].split('.')[1].length
+                                                            : 0;
+                                                        const formattedNum = num.toLocaleString(undefined, {
+                                                            minimumFractionDigits: fractionDigits,
+                                                            maximumFractionDigits: fractionDigits,
+                                                        });
+                                                        displayValue = originalValue.replace(regex, formattedNum);
+                                                    }
+                                                }
 
                                                 return {
                                                     ...val,
-                                                    variant_rank:
-                                                        matchingVariant?.variant_rank ??
-                                                        null,
+                                                    originalValue,
+                                                    displayValue,
+                                                    variant_rank: matchingVariant?.variant_rank ?? null,
                                                 };
-                                            })
-                                            .filter((val: any) =>
-                                                validValues.includes(val.value)
-                                            );
+                                            });
 
                                         const augmentedOption = {
                                             ...option,
@@ -726,8 +740,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
@@ -795,8 +809,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             {!inStock && isWhitelisted
                                 ? 'Add to cart'
                                 : inStock
-                                  ? 'Add to Cart'
-                                  : 'Out of Stock'}
+                                    ? 'Add to Cart'
+                                    : 'Out of Stock'}
                         </Flex>
                     </Button>
 
@@ -843,8 +857,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                         className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center mr-1"
                                         src={
                                             currencyIcons[
-                                                preferred_currency_code ??
-                                                    'usdc'
+                                            preferred_currency_code ??
+                                            'usdc'
                                             ]
                                         }
                                         alt={
