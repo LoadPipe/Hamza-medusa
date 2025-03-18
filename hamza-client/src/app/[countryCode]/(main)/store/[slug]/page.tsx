@@ -23,6 +23,8 @@ export default async function StorePage({
 }) {
     if (params.slug?.toLowerCase() === "stanzo's%203d%20prints")
         redirect('/en/store/onlyprints');
+    if (params.slug?.toLowerCase() === 'stanzo')
+        redirect('/en/store/onlyprints');
 
     //params.slug = 'onlyprints';
     return (
