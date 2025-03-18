@@ -46,17 +46,20 @@ const CartItems = ({
                             item?.variant?.product?.tags?.filter((t: any) =>
                                 t?.id?.startsWith('geo-restriction')
                             ) ?? [];
+                            
+                        let geoRestricted: boolean = true;
                         for (let tag of tags) {
                             if (tag?.metadata?.country) {
                                 if (
-                                    cart?.shipping_address?.country_code?.toLowerCase() !==
+                                    cart?.shipping_address?.country_code?.toLowerCase() ===
                                     tag.metadata.country.toLowerCase()
                                 ) {
-                                    restrictedVariants.push(item);
+                                    geoRestricted = false;
                                 }
                             }
                         }
-                    }
+
+                        if (geoRestricted) restrictedVariants.push(item);
 
                     setRegionLockedItems(
                         restrictedVariants as ExtendedLineItem[]
