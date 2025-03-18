@@ -99,7 +99,7 @@ const StoreBanner = (props: StoreProps) => {
             >
                 <Flex
                     flexDirection={{ base: 'row', md: 'column' }} // Column for mobile, Row for desktop
-                    gap={{ base: '8px', md: '16px' }}
+                    gap={{ base: '10px', md: '16px' }}
                     justifyContent="center"
                     pt={{ base: '12px', md: '0' }} // Adds top padding only on mobile
                     // mb={{ base: '12px', md: '0' }} // Adds bottom padding only on mobile
