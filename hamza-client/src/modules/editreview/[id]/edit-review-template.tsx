@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -15,6 +15,8 @@ import {
     Flex,
 } from '@chakra-ui/react';
 import { updateProductReview } from '@/lib/server';
+import DOMPurify from 'dompurify';
+
 import toast from 'react-hot-toast';
 
 const EditReviewTemplate = ({
@@ -28,14 +30,14 @@ const EditReviewTemplate = ({
     const [hovered, setHovered] = useState(0);
 
     useEffect(() => {
-        if (
-            review &&
-            (review.content !== currentReview || review.rating !== rating)
-        ) {
-            setCurrentReview(review.content || '');
-            setRating(review.rating || 0);
-        }
-    }, [currentReview, rating, review]);
+        setCurrentReview(review.content || '');
+        setRating(review.rating || 0);
+    }, [review]);
+
+    // Memoize the sanitized description so it's only re-computed when review.description changes
+    const sanitizedDescription = useMemo(() => {
+        return DOMPurify.sanitize(review.description || '');
+    }, [review.description]);
 
     const submitReview = async () => {
         const data = {
@@ -107,8 +109,9 @@ const EditReviewTemplate = ({
                                 {review.title}
                             </Text>
                             <Text
+                                // Use the memoized, sanitized HTML here
                                 dangerouslySetInnerHTML={{
-                                    __html: review.description || '',
+                                    __html: sanitizedDescription,
                                 }}
                             ></Text>
                         </Box>
