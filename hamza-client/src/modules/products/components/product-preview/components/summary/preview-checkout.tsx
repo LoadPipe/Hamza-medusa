@@ -702,14 +702,17 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                 marginBottom="10px"
                             >
                                 You must accept the{' '}
-                                <Link
-                                    color="primary.green.900"
-                                    onClick={onOpen}
-                                    textDecoration="underline"
-                                    _hover={{ color: 'primary.green.800' }}
-                                >
-                                    Terms and Conditions
-                                </Link>{' '}
+                                {productTermsData?.terms_and_conditions ? (
+                                    <Link
+                                        color="primary.green.900"
+                                        onClick={onOpen}
+                                        textDecoration="underline"
+                                    >
+                                        Terms and Conditions
+                                    </Link>
+                                ) : (
+                                    'Terms and Conditions'
+                                )}{' '}
                                 before you can purchase this product.
                             </Text>
                         </Flex>
@@ -856,20 +859,26 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                 }
                                 colorScheme="green"
                                 mr={2}
+                                marginBottom="20px"
                             />
                             <Text
                                 color="white"
                                 fontSize="xs"
                                 marginBottom="10px"
+                                fontWeight="bold"
                             >
                                 You must accept the{' '}
-                                <Link
-                                    color="primary.green.900"
-                                    onClick={onOpen}
-                                    textDecoration="underline"
-                                >
-                                    Terms and Conditions
-                                </Link>{' '}
+                                {productTermsData?.terms_and_conditions ? (
+                                    <Link
+                                        color="primary.green.900"
+                                        onClick={onOpen}
+                                        textDecoration="underline"
+                                    >
+                                        Terms and Conditions
+                                    </Link>
+                                ) : (
+                                    'Terms and Conditions'
+                                )}{' '}
                                 before you can purchase this product.
                                 <br />
                             </Text>
