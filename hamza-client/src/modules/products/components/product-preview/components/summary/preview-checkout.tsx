@@ -1,7 +1,23 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, Button, Flex, Box, Heading, Divider } from '@chakra-ui/react';
+import {
+    Text,
+    Button,
+    Flex,
+    Box,
+    Heading,
+    Divider,
+    Checkbox,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalCloseButton,
+    Link,
+    useDisclosure,
+} from '@chakra-ui/react';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import QuantityButton from '../quantity-button';
 import { addToCart, getOrSetCart } from '@modules/cart/actions';
@@ -19,6 +35,7 @@ import {
     getStore,
     getReviewCount,
     clearCart,
+    getProductTermsByProductHandle,
 } from '@/lib/server';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
@@ -30,7 +47,7 @@ import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-muta
 import { MdOutlineShoppingCart } from 'react-icons/md';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { Cart } from '@medusajs/medusa';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Product } from '@lib/schemas/product';
 import { setCurrency } from '@/lib/server';
 
@@ -41,6 +58,11 @@ interface PreviewCheckoutProps {
     handle: string;
 }
 
+type ProductTerms = {
+    terms_and_conditions: string;
+    require: boolean;
+};
+
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
 const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     productId,
@@ -50,6 +72,18 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 }) => {
     const queryClient = useQueryClient();
     const product = queryClient.getQueryData<Product>(['product', handle]);
+
+    const {
+        data: productTermsData,
+        isLoading: productTermsIsLoading,
+        isError: productTermsIsError,
+    } = useQuery<ProductTerms>({
+        // Cache / Fetch data based off this unique product_id
+        queryKey: ['product_terms', handle],
+        queryFn: () => getProductTermsByProductHandle(handle),
+        // Only run this query when product
+        enabled: !!handle,
+    });
 
     console.log(
         'PreviewCheckout component rendered with productId:',
@@ -86,7 +120,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
 
-    const { preferred_currency_code, setCustomerPreferredCurrency } = useCustomerAuthStore();
+    const { preferred_currency_code, setCustomerPreferredCurrency } =
+        useCustomerAuthStore();
     //console.log('user preferred currency code: ', preferred_currency_code);
 
     const { whitelist_config, setWhitelistConfig, authData } =
@@ -96,6 +131,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const { wishlist } = useWishlistStore();
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
+
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Clear variantId to avoid referencing ID from the previous product.
     useEffect(() => {
@@ -124,7 +162,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.error('Error updating currency:', error);
         }
     };
-
 
     const showAvailableCurrencies = () => {
         return (
@@ -210,7 +247,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : preferred_currency_code ?? 'usdc'
+                            : (preferred_currency_code ?? 'usdc')
                     );
 
                     // Update USD price if the preferred currency is 'eth'
@@ -333,7 +370,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -604,28 +641,52 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                             getValidValuesForOption(option.id);
 
                                         const updatedValues = option.values
-                                            .filter((val: any) => validValues.includes(val.value))
+                                            .filter((val: any) =>
+                                                validValues.includes(val.value)
+                                            )
                                             .map((val: any) => {
-                                                const matchingVariant = productData.variants.find(
-                                                    (v: any) => v.id === val.variant_id
-                                                );
+                                                const matchingVariant =
+                                                    productData.variants.find(
+                                                        (v: any) =>
+                                                            v.id ===
+                                                            val.variant_id
+                                                    );
 
                                                 const originalValue = val.value;
 
-                                                let displayValue = originalValue;
+                                                let displayValue =
+                                                    originalValue;
                                                 const regex = /(\d+(?:\.\d+)?)/;
-                                                const match = originalValue.match(regex);
+                                                const match =
+                                                    originalValue.match(regex);
                                                 if (match) {
-                                                    const num = parseFloat(match[0]);
+                                                    const num = parseFloat(
+                                                        match[0]
+                                                    );
                                                     if (num > 999) {
-                                                        const fractionDigits = match[0].includes('.')
-                                                            ? match[0].split('.')[1].length
-                                                            : 0;
-                                                        const formattedNum = num.toLocaleString(undefined, {
-                                                            minimumFractionDigits: fractionDigits,
-                                                            maximumFractionDigits: fractionDigits,
-                                                        });
-                                                        displayValue = originalValue.replace(regex, formattedNum);
+                                                        const fractionDigits =
+                                                            match[0].includes(
+                                                                '.'
+                                                            )
+                                                                ? match[0].split(
+                                                                      '.'
+                                                                  )[1].length
+                                                                : 0;
+                                                        const formattedNum =
+                                                            num.toLocaleString(
+                                                                undefined,
+                                                                {
+                                                                    minimumFractionDigits:
+                                                                        fractionDigits,
+                                                                    maximumFractionDigits:
+                                                                        fractionDigits,
+                                                                }
+                                                            );
+                                                        displayValue =
+                                                            originalValue.replace(
+                                                                regex,
+                                                                formattedNum
+                                                            );
                                                     }
                                                 }
 
@@ -633,7 +694,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                                     ...val,
                                                     originalValue,
                                                     displayValue,
-                                                    variant_rank: matchingVariant?.variant_rank ?? null,
+                                                    variant_rank:
+                                                        matchingVariant?.variant_rank ??
+                                                        null,
                                                 };
                                             });
 
@@ -659,6 +722,111 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 </div>
 
                 <QuantityButton />
+
+                {productTermsData?.require && (
+                    <>
+                        <Flex align="start" mt={4} mb={4}>
+                            <Checkbox
+                                isChecked={acceptedTerms}
+                                onChange={(e) =>
+                                    setAcceptedTerms(e.target.checked)
+                                }
+                                colorScheme="green"
+                                mr={2}
+                                mt={1}
+                            />
+                            <Text
+                                color="white"
+                                fontSize="sm"
+                                fontWeight="bold"
+                                marginBottom="10px"
+                            >
+                                You must accept the{' '}
+                                {productTermsData?.terms_and_conditions ? (
+                                    <Link
+                                        color="primary.green.900"
+                                        onClick={onOpen}
+                                        textDecoration="underline"
+                                    >
+                                        Terms and Conditions
+                                    </Link>
+                                ) : (
+                                    'Terms and Conditions'
+                                )}{' '}
+                                before you can purchase this product.
+                            </Text>
+                        </Flex>
+
+                        <Modal isOpen={isOpen} onClose={onClose} size="5xl">
+                            <ModalOverlay />
+                            <ModalContent
+                                bg="#181818"
+                                my="4" // Add small margin top/bottom
+                                maxH={{
+                                    base: 'calc(100vh - 32px)',
+                                    md: 'calc(100vh - 64px)',
+                                }} // Adjust height based on screen size
+                                h={{
+                                    base: 'calc(100vh - 32px)',
+                                    md: 'calc(100vh - 64px)',
+                                }}
+                            >
+                                <ModalHeader color="white">
+                                    Terms and Conditions
+                                </ModalHeader>
+                                <ModalCloseButton color="white" />
+                                <ModalBody
+                                    color="white"
+                                    pb={6}
+                                    mb={6}
+                                    mr={6}
+                                    overflowY="auto" // Enable vertical scrolling
+                                    css={{
+                                        '&::-webkit-scrollbar': {
+                                            width: '4px',
+                                        },
+                                        '&::-webkit-scrollbar-track': {
+                                            background: '#2D3748',
+                                        },
+                                        '&::-webkit-scrollbar-thumb': {
+                                            background: '#4A5568',
+                                            borderRadius: '24px',
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            '& h1, & h2, & h3, & h4, & h5, & h6':
+                                                {
+                                                    fontSize: 'lg',
+                                                    fontWeight: 'bold',
+                                                    mb: 2,
+                                                    mt: 4,
+                                                },
+                                            '& p': {
+                                                mb: 2,
+                                            },
+                                            '& ul, & ol': {
+                                                pl: 4,
+                                                mb: 3,
+                                            },
+                                            '& li': {
+                                                mb: 1,
+                                            },
+                                            '& a': {
+                                                color: 'primary.green.900',
+                                                textDecoration: 'underline',
+                                            },
+                                        }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: productTermsData.terms_and_conditions,
+                                        }}
+                                    />
+                                </ModalBody>
+                            </ModalContent>
+                        </Modal>
+                    </>
+                )}
 
                 <Button
                     display={{ base: 'none', md: 'flex' }}
@@ -691,7 +859,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     height={{ base: '40px', md: '55px' }}
                     width="100%"
                     backgroundColor={'primary.green.900'}
-                    disabled={isLoading || !cart} // Disable button while loading or if cart doesn't exist
+                    disabled={
+                        isLoading ||
+                        !cart ||
+                        (productTermsData?.require && !acceptedTerms)
+                    } // Disable button while loading or if cart doesn't exist
                     fontSize={{ base: '12px', md: '18px' }}
                     className="buy-now-button"
                 >
@@ -708,7 +880,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <Button
                     className="preview-checkout-add-to-cart"
                     display={{ base: 'none', md: 'flex' }}
-                    disabled={(!inStock && !isWhitelisted) || !cart}
+                    disabled={
+                        (!inStock && !isWhitelisted) ||
+                        !cart ||
+                        (productTermsData?.require && !acceptedTerms)
+                    }
                     onClick={() => {
                         if (!inStock && isWhitelisted) {
                             handleAddToCart();
@@ -740,8 +916,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                            ? 'Add to Cart'
-                            : 'Out of Stock'}
+                          ? 'Add to Cart'
+                          : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
@@ -758,128 +934,176 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 {/* Mobile Sticky Footer */}
                 <Flex
                     mx="-1rem"
-                    gap={2}
-                    flexDirection={'row'}
+                    flexDirection={'column'} // Changed to column to stack checkbox above buttons
                     position="fixed"
                     bottom="0"
-                    height="70px"
+                    height={productTermsData?.require ? '150px' : '90px'}
                     width="100%"
-                    padding="2"
                     backgroundColor="black"
                     zIndex="10"
                     display={{ base: 'flex', md: 'none' }} // Only show on mobile
+                    padding="5"
                 >
-                    <Button
-                        disabled={(!inStock && !isWhitelisted) || !cart}
-                        onClick={() => {
-                            if (!inStock && isWhitelisted) {
-                                handleAddToCart();
-                                return;
-                            }
-                            if (inStock) {
-                                handleAddToCart();
-                                return;
-                            }
-                            if (!inStock && !isWhitelisted) {
-                                toast.error('Out of stock');
-                            }
-                        }}
-                        width={'100%'}
-                        borderRadius={'6px'}
-                        height={'50px'}
-                        borderWidth={'1px'}
-                        color="white"
-                        border="none"
-                        backgroundColor={'#121212'}
-                        data-cy="add-to-cart-button"
-                        fontSize={'12px'}
-                        _hover={{
-                            color: 'black',
-                            bg: 'white',
-                            borderColor: 'white',
-                        }}
-                    >
-                        <Flex
-                            flexDir={'column'}
-                            justifyContent={'center'}
-                            alignItems={'center'}
-                        >
-                            <MdOutlineShoppingCart size={14} />
-
-                            {!inStock && isWhitelisted
-                                ? 'Add to cart'
-                                : inStock
-                                    ? 'Add to Cart'
-                                    : 'Out of Stock'}
+                    {productTermsData?.require && (
+                        <Flex align="center" mb={2} px={2}>
+                            <Checkbox
+                                isChecked={acceptedTerms}
+                                onChange={(e) =>
+                                    setAcceptedTerms(e.target.checked)
+                                }
+                                colorScheme="green"
+                                mr={2}
+                                marginBottom="20px"
+                            />
+                            <Text
+                                color="white"
+                                fontSize="xs"
+                                marginBottom="10px"
+                                fontWeight="bold"
+                            >
+                                You must accept the{' '}
+                                {productTermsData?.terms_and_conditions ? (
+                                    <Link
+                                        color="primary.green.900"
+                                        onClick={onOpen}
+                                        textDecoration="underline"
+                                    >
+                                        Terms and Conditions
+                                    </Link>
+                                ) : (
+                                    'Terms and Conditions'
+                                )}{' '}
+                                before you can purchase this product.
+                                <br />
+                            </Text>
                         </Flex>
-                    </Button>
+                    )}
 
-                    <Button
-                        onClick={async () => {
-                            if (isLoading || isNavigating) return; // Prevent SPAMMING the button
-
-                            setIsLoading(true);
-
-                            try {
+                    <Flex gap={2}>
+                        <Button
+                            disabled={
+                                (!inStock && !isWhitelisted) ||
+                                !cart ||
+                                (productTermsData?.require && !acceptedTerms)
+                            }
+                            onClick={() => {
                                 if (!inStock && isWhitelisted) {
-                                    await handleAddToCart(false);
-                                    router.push('/checkout?step=address');
-                                    setIsNavigating(true);
+                                    handleAddToCart();
+                                    return;
                                 }
                                 if (inStock) {
-                                    await handleAddToCart(false);
-                                    router.push('/checkout?step=address');
-                                    setIsNavigating(true);
+                                    handleAddToCart();
+                                    return;
                                 }
                                 if (!inStock && !isWhitelisted) {
                                     toast.error('Out of stock');
                                 }
-                            } catch (error) {
-                                console.error('Error adding to cart:', error);
-                            } finally {
-                                setIsLoading(false);
-                            }
-                        }}
-                        height={'50px'}
-                        width={'100%'}
-                        borderRadius={'60px'}
-                        backgroundColor={'primary.green.900'}
-                        disabled={isLoading || !cart} // Disable button while loading or if cart doesn't exist
-                        fontSize={{ base: '12px', md: '18px' }}
-                    >
-                        {isLoading ? (
-                            <Spinner />
-                        ) : (
-                            <Flex flexDir={'column'}>
-                                <Text fontSize={'12px'}>Buy Now</Text>
-                                <Flex flexDir={'row'}>
-                                    <Image
-                                        className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center mr-1"
-                                        src={
-                                            currencyIcons[
-                                            preferred_currency_code ??
-                                            'usdc'
-                                            ]
-                                        }
-                                        alt={
-                                            preferred_currency_code?.toUpperCase() ??
-                                            'USDC'
-                                        }
-                                    />
-                                    <Text
-                                        alignSelf={'center'}
-                                        fontSize={'14px'}
-                                        color="black"
-                                    >
-                                        {formatCryptoPrice(
-                                            parseFloat(selectedPrice!),
-                                            preferred_currency_code ?? 'usdc'
-                                        )}
-                                    </Text>
-                                </Flex>
+                            }}
+                            width={'100%'}
+                            borderRadius={'6px'}
+                            height={'50px'}
+                            borderWidth={'1px'}
+                            color="white"
+                            border="none"
+                            backgroundColor={'#121212'}
+                            data-cy="add-to-cart-button"
+                            fontSize={'12px'}
+                            _hover={{
+                                color: 'black',
+                                bg: 'white',
+                                borderColor: 'white',
+                            }}
+                        >
+                            <Flex
+                                flexDir={'column'}
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlineShoppingCart size={14} />
+
+                                {!inStock && isWhitelisted
+                                    ? 'Add to cart'
+                                    : inStock
+                                      ? 'Add to Cart'
+                                      : 'Out of Stock'}
                             </Flex>
-                        )}
-                    </Button>
+                        </Button>
+
+                        <Button
+                            onClick={async () => {
+                                if (isLoading || isNavigating) return; // Prevent SPAMMING the button
+
+                                setIsLoading(true);
+
+                                try {
+                                    if (!inStock && isWhitelisted) {
+                                        await handleAddToCart(false);
+                                        router.push('/checkout?step=address');
+                                        setIsNavigating(true);
+                                    }
+                                    if (inStock) {
+                                        await handleAddToCart(false);
+                                        router.push('/checkout?step=address');
+                                        setIsNavigating(true);
+                                    }
+                                    if (!inStock && !isWhitelisted) {
+                                        toast.error('Out of stock');
+                                    }
+                                } catch (error) {
+                                    console.error(
+                                        'Error adding to cart:',
+                                        error
+                                    );
+                                } finally {
+                                    setIsLoading(false);
+                                }
+                            }}
+                            height={'50px'}
+                            width={'100%'}
+                            borderRadius={'60px'}
+                            backgroundColor={'primary.green.900'}
+                            disabled={
+                                isLoading ||
+                                !cart ||
+                                (productTermsData?.require && !acceptedTerms)
+                            }
+                            fontSize={{ base: '12px', md: '18px' }}
+                        >
+                            {isLoading ? (
+                                <Spinner />
+                            ) : (
+                                <Flex flexDir={'column'}>
+                                    <Text fontSize={'12px'}>Buy Now</Text>
+                                    <Flex flexDir={'row'}>
+                                        <Image
+                                            className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center mr-1"
+                                            src={
+                                                currencyIcons[
+                                                    preferred_currency_code ??
+                                                        'usdc'
+                                                ]
+                                            }
+                                            alt={
+                                                preferred_currency_code?.toUpperCase() ??
+                                                'USDC'
+                                            }
+                                        />
+                                        <Text
+                                            alignSelf={'center'}
+                                            fontSize={'14px'}
+                                            color="black"
+                                        >
+                                            {formatCryptoPrice(
+                                                parseFloat(selectedPrice!),
+                                                preferred_currency_code ??
+                                                    'usdc'
+                                            )}
+                                        </Text>
+                                    </Flex>
+                                </Flex>
+                            )}
+                        </Button>
+                    </Flex>
                 </Flex>
 
                 <CartPopup
