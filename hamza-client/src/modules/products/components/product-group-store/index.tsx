@@ -31,7 +31,7 @@ const ProductCardGroup = ({ storeName }: Props) => {
     const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categoryParam}&currency_code=${preferred_currency_code ?? 'usdc'}`;
 
     const { data, error, isLoading } = useQuery({
-        queryKey: ['products', selectedCategories],
+        queryKey: ['products', storeName, selectedCategories, preferred_currency_code],
         queryFn: async () => {
             console.log('Fetching data from URL:', url);
             const response = await axios.get(url);

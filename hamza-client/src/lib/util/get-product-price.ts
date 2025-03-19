@@ -105,7 +105,9 @@ export function formatCryptoPrice(
     try {
         if (!currencyCode?.length) currencyCode = 'usdc';
         if (!amount) amount = 0;
-        const displayPrecision = getCurrencyPrecision(currencyCode).db ?? 2;
+
+        const currencyPrecision = getCurrencyPrecision(currencyCode);
+        const displayPrecision = currencyPrecision.db ?? 2;
         amount = amount / 10 ** displayPrecision;
 
         let output =
@@ -113,13 +115,22 @@ export function formatCryptoPrice(
                 ? Number(amount).toFixed(2)
                 : parseFloat(Number(amount).toFixed(displayPrecision));
 
-        output =
-            displayPrecision <= 2
-                ? output
-                : limitPrecision(
-                      parseFloat(output.toString()),
-                      getCurrencyPrecision(currencyCode).display
-                  );
+        if (displayPrecision > 2) {
+            output = limitPrecision(
+                parseFloat(output.toString()),
+                currencyPrecision.display
+            );
+        }
+
+        const numericOutput =
+            typeof output === 'string' ? parseFloat(output) : output;
+
+        if (numericOutput > 999) {
+            output = numericOutput.toLocaleString(undefined, {
+                minimumFractionDigits: displayPrecision,
+                maximumFractionDigits: displayPrecision,
+            });
+        }
 
         return output;
     } catch (e) {
