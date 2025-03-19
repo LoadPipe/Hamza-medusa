@@ -60,7 +60,7 @@ interface PreviewCheckoutProps {
 
 type ProductTerms = {
     terms_and_conditions: string;
-    require_terms_and_conditions: boolean;
+    require: boolean;
 };
 
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
@@ -683,7 +683,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
                 <QuantityButton />
 
-                {productTermsData?.require_terms_and_conditions && (
+                {productTermsData?.require && (
                     <>
                         <Flex align="start" mt={4} mb={4}>
                             <Checkbox
@@ -793,8 +793,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     disabled={
                         isLoading ||
                         !cart ||
-                        (productTermsData?.require_terms_and_conditions &&
-                            !acceptedTerms)
+                        (productTermsData?.require && !acceptedTerms)
                     } // Disable button while loading or if cart doesn't exist
                     fontSize={{ base: '12px', md: '18px' }}
                     className="buy-now-button"
@@ -815,8 +814,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     disabled={
                         (!inStock && !isWhitelisted) ||
                         !cart ||
-                        (productTermsData?.require_terms_and_conditions &&
-                            !acceptedTerms)
+                        (productTermsData?.require && !acceptedTerms)
                     }
                     onClick={() => {
                         if (!inStock && isWhitelisted) {
@@ -870,18 +868,14 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     flexDirection={'column'} // Changed to column to stack checkbox above buttons
                     position="fixed"
                     bottom="0"
-                    height={
-                        productTermsData?.require_terms_and_conditions
-                            ? '150px'
-                            : '90px'
-                    }
+                    height={productTermsData?.require ? '150px' : '90px'}
                     width="100%"
                     backgroundColor="black"
                     zIndex="10"
                     display={{ base: 'flex', md: 'none' }} // Only show on mobile
                     padding="5"
                 >
-                    {productTermsData?.require_terms_and_conditions && (
+                    {productTermsData?.require && (
                         <Flex align="center" mb={2} px={2}>
                             <Checkbox
                                 isChecked={acceptedTerms}
@@ -921,8 +915,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             disabled={
                                 (!inStock && !isWhitelisted) ||
                                 !cart ||
-                                (productTermsData?.require_terms_and_conditions &&
-                                    !acceptedTerms)
+                                (productTermsData?.require && !acceptedTerms)
                             }
                             onClick={() => {
                                 if (!inStock && isWhitelisted) {
@@ -1003,8 +996,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             disabled={
                                 isLoading ||
                                 !cart ||
-                                (productTermsData?.require_terms_and_conditions &&
-                                    !acceptedTerms)
+                                (productTermsData?.require && !acceptedTerms)
                             }
                             fontSize={{ base: '12px', md: '18px' }}
                         >
