@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { toast } from 'react-hot-toast';
 import { Transaction } from '@solana/web3.js';
+import axios from 'axios';
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
 
@@ -14,12 +15,12 @@ export function Login() {
     >('initial');
 
     // Reset state if wallet changes or disconnects
-    React.useEffect(() => {
+    useEffect(() => {
         setSignState('initial');
     }, [publicKey]);
 
     // Automatically request a signature when in the initial state
-    React.useEffect(() => {
+    useEffect(() => {
         async function sign() {
             if (publicKey && signTransaction && signState === 'initial') {
                 setSignState('loading');
@@ -27,20 +28,19 @@ export function Login() {
 
                 try {
                     // Request signature transaction from the server
-                    const createRes = await fetch(
+                    const createRes = await axios.post(
                         `${MEDUSA_SERVER_URL}/custom/sign/create`,
+                        { publicKeyStr: publicKey.toBase58() },
                         {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                publicKeyStr: publicKey.toBase58(),
-                            }),
                             headers: {
-                                'Content-type':
+                                'Content-Type':
                                     'application/json; charset=UTF-8',
                             },
                         }
                     );
-                    const { tx: createTx } = await createRes.json();
+
+                    // To access the returned data:
+                    const { tx: createTx } = createRes.data;
                     const tx = Transaction.from(
                         Buffer.from(createTx, 'base64')
                     );
@@ -49,22 +49,17 @@ export function Login() {
                     const signedTx = await signTransaction(tx);
 
                     // Validate signed transaction via the server
-                    const validateRes = await fetch(
+                    const validateRes = await axios.post(
                         `${MEDUSA_SERVER_URL}/custom/sign/validate`,
+                        { signedTx: signedTx.serialize().toString('base64') },
                         {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                signedTx: signedTx
-                                    .serialize()
-                                    .toString('base64'),
-                            }),
                             headers: {
                                 'Content-type':
                                     'application/json; charset=UTF-8',
                             },
                         }
                     );
-                    await validateRes.json();
+                    await validateRes.data;
 
                     setSignState('success');
                     toast.success('Message signed', { id: signToastId });
