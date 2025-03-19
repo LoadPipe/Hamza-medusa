@@ -27,7 +27,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({ categoryName, url, sele
         }
     };
 
-    const isSelected = selectedCategories.includes(categoryName.toLowerCase());
+    const isSelected = selectedCategories.includes(categoryName.trim().replace(/[\s_]+/g, '-').toLowerCase());
 
     return (
         <Flex>

@@ -641,6 +641,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                             getValidValuesForOption(option.id);
 
                                         const updatedValues = option.values
+                                            .filter((val: any) =>
+                                                validValues.includes(val.value)
+                                            )
                                             .map((val: any) => {
                                                 const matchingVariant =
                                                     productData.variants.find(
@@ -649,16 +652,53 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                                             val.variant_id
                                                     );
 
+                                                const originalValue = val.value;
+
+                                                let displayValue =
+                                                    originalValue;
+                                                const regex = /(\d+(?:\.\d+)?)/;
+                                                const match =
+                                                    originalValue.match(regex);
+                                                if (match) {
+                                                    const num = parseFloat(
+                                                        match[0]
+                                                    );
+                                                    if (num > 999) {
+                                                        const fractionDigits =
+                                                            match[0].includes(
+                                                                '.'
+                                                            )
+                                                                ? match[0].split(
+                                                                      '.'
+                                                                  )[1].length
+                                                                : 0;
+                                                        const formattedNum =
+                                                            num.toLocaleString(
+                                                                undefined,
+                                                                {
+                                                                    minimumFractionDigits:
+                                                                        fractionDigits,
+                                                                    maximumFractionDigits:
+                                                                        fractionDigits,
+                                                                }
+                                                            );
+                                                        displayValue =
+                                                            originalValue.replace(
+                                                                regex,
+                                                                formattedNum
+                                                            );
+                                                    }
+                                                }
+
                                                 return {
                                                     ...val,
+                                                    originalValue,
+                                                    displayValue,
                                                     variant_rank:
                                                         matchingVariant?.variant_rank ??
                                                         null,
                                                 };
-                                            })
-                                            .filter((val: any) =>
-                                                validValues.includes(val.value)
-                                            );
+                                            });
 
                                         const augmentedOption = {
                                             ...option,

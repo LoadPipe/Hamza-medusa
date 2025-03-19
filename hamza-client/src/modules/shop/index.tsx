@@ -1,13 +1,63 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Flex, Box } from '@chakra-ui/react';
 import SideFilter from './components/desktop-side-filter/side-filter';
 import MobileFilter from '@modules/shop/components/mobile-filter-modal/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group';
 import StoreFilterDisplay from '@modules/shop/components/store-filter-display';
+import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-const ShopTemplate = () => {
+interface ShopTemplateProps {
+    category?: string;
+}
+
+interface Category {
+    id: string;
+    name: string;
+    handle: string;
+    metadata: {
+        icon_url: string;
+    };
+}
+
+const ShopTemplate = ({ category }: ShopTemplateProps) => {
+    const setSelectedCategories = useUnifiedFilterStore(
+        (state) => state.setSelectedCategories
+    );
+
+    const { data: categoryData } = useQuery<Category[]>({
+        queryKey: ['categories'],
+        queryFn: async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
+        },
+    });
+
+    useEffect(() => {
+        if (category && categoryData) {
+            const normalizedUrlCategory = category.toLowerCase();
+
+            const categoryExists = categoryData.some(
+                (cat) =>
+                    cat.handle.replace(/_/g, '-').toLowerCase() === normalizedUrlCategory
+            );
+
+            if (categoryExists) {
+                setSelectedCategories([normalizedUrlCategory]);
+            } else {
+                console.log(
+                    `Category "${category}" not found in the fetched list. Setting to all.`
+                );
+                setSelectedCategories(['all']);
+            }
+        }
+    }, [category, categoryData, setSelectedCategories]);
+
+
     return (
         <Flex justifyContent={'center'}>
             <Flex
