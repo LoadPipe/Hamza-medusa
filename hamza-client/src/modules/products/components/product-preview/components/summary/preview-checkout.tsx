@@ -760,7 +760,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         <Modal isOpen={isOpen} onClose={onClose} size="5xl">
                             <ModalOverlay />
                             <ModalContent
-                                bg="gray.900"
+                                bg="#181818"
                                 my="4" // Add small margin top/bottom
                                 maxH={{
                                     base: 'calc(100vh - 32px)',
