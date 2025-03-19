@@ -23,7 +23,20 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import { headers } from 'next/headers';
 import MobileNavContainer from './mobile-nav-container';
-import PhantomWalletButton from '@/components/providers/phantom/phantom-wallet-button';
+import dynamic from 'next/dynamic';
+
+const PhantomWalletButton = dynamic(
+    () => import('@/components/providers/phantom/phantom-wallet-button'),
+    { ssr: false }
+);
+const SignTransactionDynamic = dynamic(
+    async () =>
+        (await import('@/components/providers/phantom/SignTransaction'))
+            .SignTransaction,
+    {
+        ssr: false,
+    }
+);
 
 const fetchCart = async () => {
     const cart = await retrieveCart();
@@ -92,6 +105,9 @@ export default async function Nav() {
 
                         <Box ml={'auto'}>
                             <PhantomWalletButton />
+                        </Box>
+                        <Box ml={'auto'}>
+                            <SignTransactionDynamic />
                         </Box>
                         <Box ml={'auto'}>
                             <WalletConnectButton />

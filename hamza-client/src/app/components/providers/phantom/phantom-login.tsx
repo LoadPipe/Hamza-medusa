@@ -1,57 +1,54 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useRouter } from 'next/navigation';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import type { Adapter } from '@solana/wallet-adapter-base';
+import {
+    SolanaSignInInput,
+    SolanaSignInOutput,
+} from '@solana/wallet-standard-features';
 
 export default function PhantomLogin() {
-    const { publicKey, connected, signMessage } = useWallet();
-    const [nonce, setNonce] = useState<string | null>(null);
+    const { publicKey, connected } = useWallet();
+    // We assume the wallet adapter now has the SIWS signIn method.
+    const adapter = useWallet() as any;
     const [signed, setSigned] = useState<boolean>(false);
+    const { setCustomerAuthData } = useCustomerAuthStore();
+    const router = useRouter();
 
-    const getNonceFromServer = async (): Promise<string> => {
-        // Fetch a nonce from your backend endpoint
-        const response = await fetch('/api/get-nonce');
-        const data = await response.json();
-        return data.nonce;
-    };
+    // Auto SIWS sign-in flow callback
+    const handleLogin = useCallback(
+        async (adapter: Adapter) => {
+            if (!('signIn' in adapter)) return true;
 
-    const handleLogin = async () => {
-        if (!publicKey) return;
-        // Retrieve nonce and store it
-        const nonce = await getNonceFromServer();
-        setNonce(nonce);
-        // Create a message to sign
-        const message = `Sign in with Phantom. Nonce: ${nonce}`;
-        const encodedMessage = new TextEncoder().encode(message);
-        // Ask Phantom to sign the message
-        const signature = await signMessage(encodedMessage);
-        // Send the signature and message back to your server for verification
-        const verifyResponse = await fetch('/api/verify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                publicKey: publicKey.toBase58(),
-                message,
-                signature: Array.from(signature),
-            }),
-        });
-        const result = await verifyResponse.json();
-        if (result.success) {
-            setSigned(true);
-            // Handle successful login
-        }
-    };
+            if (!publicKey) return;
+            // 1. Verify that the wallet supports the signIn method.
+            // if (
+            //     !('signIn' in adapter) ||
+            //     typeof adapter.signIn !== 'function'
+            // ) {
+            //     throw new Error('Wallet does not support SIWS signIn');
+            // }
 
-    return (
-        <div>
-            <WalletMultiButton />
-            {connected && !signed && (
-                <button onClick={handleLogin}>Sign In with Phantom</button>
-            )}
-            {signed && <p>Successfully signed in!</p>}
-        </div>
+            // 2. Fetch the SIWS sign-in input from the backend.
+            //    This endpoint returns a SolanaSignInInput object.
+            const input: SolanaSignInInput = await getNonce(true);
+
+            // 3. Trigger the wallet's signIn method with the fetched input.
+            const output = await adapter.signIn(input);
+
+            // 4. Package input and output and send them to the backend for verification.
+            const constructPayload = JSON.stringify({ input, output });
+            const verifyResponse = await fetch('/custom/verify/phantom', {
+                method: 'POST',
+                body: constructPayload,
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const success = await verifyResponse.json();
+            if (!success) throw new Error('Sign In verification failed!');
+        },
+        [adapter, publicKey, setCustomerAuthData, router]
     );
 }
