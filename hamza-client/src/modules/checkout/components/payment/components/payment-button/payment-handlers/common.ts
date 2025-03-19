@@ -26,6 +26,7 @@ export type CheckoutOrderData = {
 
 // checkout data retrieved from server, to help in creating blockchain payments
 export type CheckoutData = {
+    checkout_mode: string;
     orders: CheckoutOrderData[];
 };
 
