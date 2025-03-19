@@ -8,12 +8,14 @@ const BASE_URL =
 import MedusaProvider from '@/components/providers/medusa/medusa-provider';
 import { RainbowWrapper } from '@/components/providers/rainbowkit/rainbow-provider';
 import { ChakraProvider } from '@chakra-ui/react';
+import { PhantomProvider } from '@/components/providers/phantom/phantom-provider';
+import { Login } from '@/components/providers/phantom/login';
 import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
 import FreeScoutWidget from './components/scripts/chat-widget';
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 // import { GoogleTagManager } from '@next/third-parties/google';
 export const metadata: Metadata = {
@@ -90,14 +92,16 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <body>
                 <div>
                     <MedusaProvider token={token}>
-                        {/* Pass token as prop */}
-                        <RainbowWrapper>
-                            <ChakraProvider theme={theme}>
-                                <main className={sora.className}>
-                                    {props.children}
-                                </main>
-                            </ChakraProvider>
-                        </RainbowWrapper>
+                        <PhantomProvider>
+                            {/* Pass token as prop */}
+                            <RainbowWrapper>
+                                <ChakraProvider theme={theme}>
+                                    <main className={sora.className}>
+                                        {props.children}
+                                    </main>
+                                </ChakraProvider>
+                            </RainbowWrapper>
+                        </PhantomProvider>
                     </MedusaProvider>
                     <div>
                         <Toaster position="top-right" />
@@ -106,7 +110,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 </div>
             </body>
             {/* Documentation on this problem and how to solve it: https://nextjs.org/docs/messages/next-script-for-ga*/}
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
+            <GoogleAnalytics
+                gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''}
+            />
         </html>
     );
 }
