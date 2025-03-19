@@ -757,14 +757,43 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             </Text>
                         </Flex>
 
-                        <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+                        <Modal isOpen={isOpen} onClose={onClose} size="5xl">
                             <ModalOverlay />
-                            <ModalContent bg="gray.900">
+                            <ModalContent
+                                bg="gray.900"
+                                my="4" // Add small margin top/bottom
+                                maxH={{
+                                    base: 'calc(100vh - 32px)',
+                                    md: 'calc(100vh - 64px)',
+                                }} // Adjust height based on screen size
+                                h={{
+                                    base: 'calc(100vh - 32px)',
+                                    md: 'calc(100vh - 64px)',
+                                }}
+                            >
                                 <ModalHeader color="white">
                                     Terms and Conditions
                                 </ModalHeader>
                                 <ModalCloseButton color="white" />
-                                <ModalBody color="white" pb={6}>
+                                <ModalBody
+                                    color="white"
+                                    pb={6}
+                                    mb={6}
+                                    mr={6}
+                                    overflowY="auto" // Enable vertical scrolling
+                                    css={{
+                                        '&::-webkit-scrollbar': {
+                                            width: '4px',
+                                        },
+                                        '&::-webkit-scrollbar-track': {
+                                            background: '#2D3748',
+                                        },
+                                        '&::-webkit-scrollbar-thumb': {
+                                            background: '#4A5568',
+                                            borderRadius: '24px',
+                                        },
+                                    }}
+                                >
                                     <Box
                                         sx={{
                                             '& h1, & h2, & h3, & h4, & h5, & h6':
