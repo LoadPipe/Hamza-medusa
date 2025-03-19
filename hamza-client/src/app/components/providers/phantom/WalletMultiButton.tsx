@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { BaseWalletMultiButton } from './BaseWalletMultiButton';
-import type { ButtonProps } from './Button';
-import dynamic from 'next/dynamic';
+import type { ButtonProps } from './Button.js';
 
 const LABELS = {
     'change-wallet': 'Change wallet',
@@ -15,13 +14,6 @@ const LABELS = {
     'no-wallet': 'Select Wallet',
 } as const;
 
-export default function PhantomWalletButton(props: ButtonProps) {
+export function WalletMultiButton(props: ButtonProps) {
     return <BaseWalletMultiButton {...props} labels={LABELS} />;
 }
-
-// https://github.com/vercel/next.js/issues/49454#issuecomment-1830053413
-export const WalletMultiButtonDynamic = dynamic(
-    async () =>
-        (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-    { ssr: false }
-);

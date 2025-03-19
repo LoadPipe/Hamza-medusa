@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@chakra-ui/react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
@@ -7,6 +8,7 @@ import {
 } from '@solana/web3.js';
 import bs58 from 'bs58';
 import type { FC } from 'react';
+import toast from 'react-hot-toast';
 import React, { useCallback } from 'react';
 
 export const SignTransaction: FC = () => {
@@ -43,12 +45,9 @@ export const SignTransaction: FC = () => {
             console.log('info', `Transaction signed: ${signature}`);
             if (!transaction.verifySignatures())
                 throw new Error(`Transaction signature invalid! ${signature}`);
-            console.log('success', `Transaction signature valid! ${signature}`);
+            toast.success(`Transaction signature valid! ${signature}`);
         } catch (error: any) {
-            console.log(
-                'error',
-                `Transaction signing failed! ${error?.message}`
-            );
+            toast.error(`Transaction signing failed! ${error?.message}`);
         }
     }, [publicKey, signTransaction, connection]);
 

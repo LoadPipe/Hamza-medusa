@@ -21,7 +21,6 @@ export default function PhantomWalletProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const { autoConnect } = useAutoConnect();
     const network = WalletAdapterNetwork.Devnet;
     const endpoint = useMemo(() => clusterApiUrl(network), [network]);
     // We assume the wallet adapter now has the SIWS signIn method.
@@ -34,31 +33,10 @@ export default function PhantomWalletProvider({
         [network]
     );
 
-    const autoSignIn = useCallback(async (adapter: Adapter) => {
-        if (!('signIn' in adapter)) return true;
-
-        const input: SolanaSignInInput = {
-            domain: window.location.host,
-            address: adapter.publicKey
-                ? adapter.publicKey.toBase58()
-                : undefined,
-            statement: 'Please sign in.',
-        };
-        const output = await adapter.signIn(input);
-
-        if (!verifySignIn(input, output))
-            throw new Error('Sign In verification failed!');
-
-        return false;
-    }, []);
-
     return (
         <AutoConnectProvider>
             <ConnectionProvider endpoint={endpoint}>
-                <WalletProvider
-                    wallets={wallets}
-                    autoConnect={autoConnect && autoSignIn}
-                >
+                <WalletProvider wallets={wallets} autoConnect>
                     <WalletModalProvider>{children}</WalletModalProvider>
                 </WalletProvider>
             </ConnectionProvider>
