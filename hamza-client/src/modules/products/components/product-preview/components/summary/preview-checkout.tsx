@@ -819,7 +819,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     height={{ base: '40px', md: '55px' }}
                     width="100%"
                     backgroundColor={'primary.green.900'}
-                    disabled={isLoading || !cart} // Disable button while loading or if cart doesn't exist
+                    disabled={
+                        isLoading ||
+                        !cart ||
+                        (productTermsData?.require && !acceptedTerms)
+                    } // Disable button while loading or if cart doesn't exist
                     fontSize={{ base: '12px', md: '18px' }}
                     className="buy-now-button"
                 >
@@ -836,7 +840,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <Button
                     className="preview-checkout-add-to-cart"
                     display={{ base: 'none', md: 'flex' }}
-                    disabled={(!inStock && !isWhitelisted) || !cart}
+                    disabled={
+                        (!inStock && !isWhitelisted) ||
+                        !cart ||
+                        (productTermsData?.require && !acceptedTerms)
+                    }
                     onClick={() => {
                         if (!inStock && isWhitelisted) {
                             handleAddToCart();
