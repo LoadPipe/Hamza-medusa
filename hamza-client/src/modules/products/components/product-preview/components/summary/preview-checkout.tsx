@@ -683,6 +683,111 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
                 <QuantityButton />
 
+                {productTermsData?.require && (
+                    <>
+                        <Flex align="start" mt={4} mb={4}>
+                            <Checkbox
+                                isChecked={acceptedTerms}
+                                onChange={(e) =>
+                                    setAcceptedTerms(e.target.checked)
+                                }
+                                colorScheme="green"
+                                mr={2}
+                                mt={1}
+                            />
+                            <Text
+                                color="white"
+                                fontSize="sm"
+                                fontWeight="bold"
+                                marginBottom="10px"
+                            >
+                                You must accept the{' '}
+                                {productTermsData?.terms_and_conditions ? (
+                                    <Link
+                                        color="primary.green.900"
+                                        onClick={onOpen}
+                                        textDecoration="underline"
+                                    >
+                                        Terms and Conditions
+                                    </Link>
+                                ) : (
+                                    'Terms and Conditions'
+                                )}{' '}
+                                before you can purchase this product.
+                            </Text>
+                        </Flex>
+
+                        <Modal isOpen={isOpen} onClose={onClose} size="5xl">
+                            <ModalOverlay />
+                            <ModalContent
+                                bg="#181818"
+                                my="4" // Add small margin top/bottom
+                                maxH={{
+                                    base: 'calc(100vh - 32px)',
+                                    md: 'calc(100vh - 64px)',
+                                }} // Adjust height based on screen size
+                                h={{
+                                    base: 'calc(100vh - 32px)',
+                                    md: 'calc(100vh - 64px)',
+                                }}
+                            >
+                                <ModalHeader color="white">
+                                    Terms and Conditions
+                                </ModalHeader>
+                                <ModalCloseButton color="white" />
+                                <ModalBody
+                                    color="white"
+                                    pb={6}
+                                    mb={6}
+                                    mr={6}
+                                    overflowY="auto" // Enable vertical scrolling
+                                    css={{
+                                        '&::-webkit-scrollbar': {
+                                            width: '4px',
+                                        },
+                                        '&::-webkit-scrollbar-track': {
+                                            background: '#2D3748',
+                                        },
+                                        '&::-webkit-scrollbar-thumb': {
+                                            background: '#4A5568',
+                                            borderRadius: '24px',
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            '& h1, & h2, & h3, & h4, & h5, & h6':
+                                                {
+                                                    fontSize: 'lg',
+                                                    fontWeight: 'bold',
+                                                    mb: 2,
+                                                    mt: 4,
+                                                },
+                                            '& p': {
+                                                mb: 2,
+                                            },
+                                            '& ul, & ol': {
+                                                pl: 4,
+                                                mb: 3,
+                                            },
+                                            '& li': {
+                                                mb: 1,
+                                            },
+                                            '& a': {
+                                                color: 'primary.green.900',
+                                                textDecoration: 'underline',
+                                            },
+                                        }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: productTermsData.terms_and_conditions,
+                                        }}
+                                    />
+                                </ModalBody>
+                            </ModalContent>
+                        </Modal>
+                    </>
+                )}
+
                 <Button
                     display={{ base: 'none', md: 'flex' }}
                     onClick={async () => {
