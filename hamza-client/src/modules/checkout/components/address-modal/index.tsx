@@ -240,7 +240,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         textAlign={'center'}
                         fontSize={'24px'}
                     >
-                        Shipping Address Test
+                        Shipping Address
                     </ModalHeader>
                     <ModalCloseButton color={'white'} />
                     <ModalBody>

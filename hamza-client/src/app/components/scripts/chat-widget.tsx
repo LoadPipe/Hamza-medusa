@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
+import DOMPurify from 'dompurify';
 
 const FreeScoutWidget = () => {
     const [shouldLoadScript, setShouldLoadScript] = useState(false);
@@ -21,13 +22,8 @@ const FreeScoutWidget = () => {
 
     if (!shouldLoadScript) return null;
 
-    return (
-        <Script
-            id="freescout-widget"
-            strategy="lazyOnload"
-            dangerouslySetInnerHTML={{
-                __html: `
-                    window.FreeScoutW = {
+    const scriptContent = `
+     window.FreeScoutW = {
                         s: {
                             "color": "#5ab334",
                             "position": "br",
@@ -42,8 +38,16 @@ const FreeScoutWidget = () => {
                         a.src = "https://support.hamza.market/modules/chat/js/widget.js?v=4239";
                         m.parentNode.insertBefore(a, m);
                     })(document, "script");
-                `,
-            }}
+    `;
+
+    // This is static and under our control, so we don't need to sanitize it, but why not lol
+    const sanitizedScript = DOMPurify.sanitize(scriptContent);
+
+    return (
+        <Script
+            id="freescout-widget"
+            strategy="lazyOnload"
+            dangerouslySetInnerHTML={{ __html: sanitizedScript }}
         />
     );
 };

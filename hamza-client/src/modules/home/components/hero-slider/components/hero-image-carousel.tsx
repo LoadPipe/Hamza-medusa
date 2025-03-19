@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Flex, Text, Box, Image as ChakraImage } from '@chakra-ui/react';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation'; // Use the correct hook for navigation
+import { useRouter } from 'next/navigation';
+import DOMPurify from 'dompurify'; // Use the correct hook for navigation
 
 interface HeroImageCarouselProps {
     imgSrc: string;
@@ -50,20 +51,24 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
         return firstParagraph ? firstParagraph.innerHTML : '';
     };
 
-    // Handle description rendering
-    const renderDescription = () => {
+    // Compute the sanitized description at the top level using useMemo
+    const sanitizedDescription = useMemo(() => {
         if (isHTML(description)) {
             const firstParagraph = extractFirstParagraph(description);
-            return (
-                <span
-                    dangerouslySetInnerHTML={{
-                        __html: firstParagraph || 'No description available.',
-                    }}
-                />
-            );
+            return DOMPurify.sanitize(firstParagraph);
         }
-        // For plain text descriptions
-        return description || 'No description available.';
+        return description;
+    }, [description]);
+
+    // Render description based on whether sanitized HTML is available
+    const renderDescription = () => {
+        return (
+            <span
+                dangerouslySetInnerHTML={{
+                    __html: sanitizedDescription || 'No description available.',
+                }}
+            />
+        );
     };
 
     return (
