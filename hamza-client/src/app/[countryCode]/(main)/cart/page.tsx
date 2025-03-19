@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import CartTemplate from '@/modules/cart/templates/cart-template';
 import { getHamzaCustomer } from '@/lib/server';
-import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
-
+import getQueryClient from '@/app/query-utils/getQueryClient';
 
 // Single source of truth
 // Supports both: Checkout && Cart
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default async function Cart() {
     // SSR So make sure to create a new queryClient instance, so we don't share the same instance between multiple requests
-    const queryClient = new QueryClient();
+    const queryClient = getQueryClient();
 
     // Prefetch cart with enrichment & checkout step
     await queryClient.prefetchQuery({
@@ -37,4 +37,3 @@ export default async function Cart() {
         </HydrationBoundary>
     );
 }
-
