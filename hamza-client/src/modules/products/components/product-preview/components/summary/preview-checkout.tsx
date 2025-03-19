@@ -58,6 +58,11 @@ interface PreviewCheckoutProps {
     handle: string;
 }
 
+type ProductTerms = {
+    terms_and_conditions: string;
+    require_terms_and_conditions: boolean;
+};
+
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
 const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     productId,
@@ -67,11 +72,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 }) => {
     const queryClient = useQueryClient();
     const product = queryClient.getQueryData<Product>(['product', handle]);
-
-    type ProductTerms = {
-        terms_and_conditions: string;
-        require_terms_and_conditions: boolean;
-    };
 
     const {
         data: productTermsData,
@@ -717,7 +717,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             </Text>
                         </Flex>
 
-                        <Modal isOpen={isOpen} onClose={onClose} size="xl">
+                        <Modal isOpen={isOpen} onClose={onClose} size="3xl">
                             <ModalOverlay />
                             <ModalContent bg="gray.900">
                                 <ModalHeader color="white">
@@ -725,7 +725,34 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                 </ModalHeader>
                                 <ModalCloseButton color="white" />
                                 <ModalBody color="white" pb={6}>
-                                    {productTermsData.terms_and_conditions}
+                                    <Box
+                                        sx={{
+                                            '& h1, & h2, & h3, & h4, & h5, & h6':
+                                                {
+                                                    fontSize: 'lg',
+                                                    fontWeight: 'bold',
+                                                    mb: 2,
+                                                    mt: 4,
+                                                },
+                                            '& p': {
+                                                mb: 2,
+                                            },
+                                            '& ul, & ol': {
+                                                pl: 4,
+                                                mb: 3,
+                                            },
+                                            '& li': {
+                                                mb: 1,
+                                            },
+                                            '& a': {
+                                                color: 'primary.green.900',
+                                                textDecoration: 'underline',
+                                            },
+                                        }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: productTermsData.terms_and_conditions,
+                                        }}
+                                    />
                                 </ModalBody>
                             </ModalContent>
                         </Modal>
@@ -843,7 +870,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     flexDirection={'column'} // Changed to column to stack checkbox above buttons
                     position="fixed"
                     bottom="0"
-                    height="150px"
+                    height={
+                        productTermsData?.require_terms_and_conditions
+                            ? '150px'
+                            : '90px'
+                    }
                     width="100%"
                     backgroundColor="black"
                     zIndex="10"
