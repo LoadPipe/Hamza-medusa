@@ -791,6 +791,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <Button
                     display={{ base: 'none', md: 'flex' }}
                     onClick={async () => {
+                        if (productData?.require && !acceptedTerms) return;
                         if (isLoading || isNavigating) return; // Prevent SPAMMING the button
 
                         setIsLoading(true);
@@ -842,6 +843,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         (productTermsData?.require && !acceptedTerms)
                     }
                     onClick={() => {
+                        if (productData?.require && !acceptedTerms) return;
                         if (!inStock && isWhitelisted) {
                             handleAddToCart();
                             return;
@@ -943,6 +945,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                 (productTermsData?.require && !acceptedTerms)
                             }
                             onClick={() => {
+                                if (productData?.require && !acceptedTerms)
+                                    return;
                                 if (!inStock && isWhitelisted) {
                                     handleAddToCart();
                                     return;
@@ -987,6 +991,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
                         <Button
                             onClick={async () => {
+                                if (productData?.require && !acceptedTerms)
+                                    return;
                                 if (isLoading || isNavigating) return; // Prevent SPAMMING the button
 
                                 setIsLoading(true);
