@@ -280,19 +280,13 @@ export async function deleteWishlistItem(
     });
 }
 
-// get product by id
-export async function getProductByProductId(productId: string) {
-    return get('/custom/product', {
-        product_id: productId,
-    });
-}
-
-export async function getProductByProductHandle(handle: string) {
-    const product = await get('/custom/product', {
+// get product terms
+export async function getProductTermsByProductHandle(handle: string) {
+    const product_terms = await get('/custom/product/terms', {
         handle: handle,
     });
 
-    return product.product;
+    return product_terms;
 }
 
 // Get Vendor Products
