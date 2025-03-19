@@ -820,7 +820,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     height={{ base: '40px', md: '55px' }}
                     width="100%"
                     backgroundColor={'primary.green.900'}
-                    disabled={isLoading || !cart || !productTermsData?.require} // Disable button while loading or if cart doesn't exist
+                    disabled={
+                        isLoading ||
+                        !cart ||
+                        (productTermsData?.require && !acceptedTerms)
+                    } // Disable button while loading or if cart doesn't exist
                     fontSize={{ base: '12px', md: '18px' }}
                     className="buy-now-button"
                 >
