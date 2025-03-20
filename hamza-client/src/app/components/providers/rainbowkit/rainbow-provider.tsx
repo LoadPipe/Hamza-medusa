@@ -277,28 +277,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
     });
 
-    // ***Ensures data is not shared between different users and requests***
-    // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
-    const queryClientRef = React.useRef<QueryClient>();
-
-    if (!queryClientRef.current) {
-        queryClientRef.current = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    staleTime: 2 * 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
-                    refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
-                    refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
-                    refetchOnMount: false, // 🚀 Prevents redundant fetches when remounting components
-                    retry: 2, // 🔄 Retries failed queries twice before throwing an error
-                },
-                mutations: {
-                    retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
-                },
-            },
-        });
-    }
-
-
     const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
         return <ProfileImage centered={true} />;
     };
@@ -306,22 +284,20 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     return (
         <div>
             <WagmiConfig config={config}>
-                <QueryClientProvider client={queryClientRef.current}>
-                    <RainbowKitAuthenticationProvider
-                        adapter={walletSignature}
-                        status={authData.status}
+                <RainbowKitAuthenticationProvider
+                    adapter={walletSignature}
+                    status={authData.status}
+                >
+                    <RainbowKitProvider
+                        avatar={CustomAvatar}
+                        theme={darkThemeConfig}
+                        chains={chains}
+                        modalSize="compact"
                     >
-                        <RainbowKitProvider
-                            avatar={CustomAvatar}
-                            theme={darkThemeConfig}
-                            chains={chains}
-                            modalSize="compact"
-                        >
-                            {children}
-                        </RainbowKitProvider>
-                    </RainbowKitAuthenticationProvider>
-                    <ReactQueryDevtools initialIsOpen={false} />
-                </QueryClientProvider>
+                        {children}
+                    </RainbowKitProvider>
+                </RainbowKitAuthenticationProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
             </WagmiConfig>
         </div>
     );

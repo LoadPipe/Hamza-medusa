@@ -14,17 +14,9 @@ import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import React from 'react';
-import { HydrationBoundary } from '@tanstack/react-query';
 import { OrderTabsStyle } from './order-tabs-style';
 
-
-const OrderOverview = ({
-    customer,
-    dehydratedState,
-}: {
-    customer: any;
-    dehydratedState: any;
-}) => {
+const OrderOverview = ({ customer }: { customer: any }) => {
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const setOrderActiveTab = useOrderTabStore(
@@ -83,7 +75,7 @@ const OrderOverview = ({
                     ))}
                 </ButtonGroup>
             )}
-            <HydrationBoundary state={dehydratedState}>{renderTabContent()}</HydrationBoundary>
+            {renderTabContent()}
         </Flex>
     );
 };

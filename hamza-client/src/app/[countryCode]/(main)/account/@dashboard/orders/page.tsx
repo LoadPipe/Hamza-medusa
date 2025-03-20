@@ -4,7 +4,7 @@ import { getHamzaCustomer, getOrderBucket } from '@/lib/server';
 import { notFound } from 'next/navigation';
 import { Flex } from '@chakra-ui/react';
 import getQueryClient from '@/app/query-utils/getQueryClient';
-import { dehydrate } from '@tanstack/react-query';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 export const metadata: Metadata = {
     title: 'Orders',
@@ -22,25 +22,22 @@ export default async function Orders() {
         },
     });
 
-    const dehydratedOrders = dehydrate(queryClient);
-
     if (!customer) {
         notFound();
     }
     return (
-        <Flex
-            maxW={{ md: '600px', lg: '927px' }}
-            width="100%"
-            backgroundColor={'#121212'}
-            flexDirection={'column'}
-            color="white"
-            p={6}
-            rounded="lg"
-        >
-            <OrderOverview
-                customer={customer}
-                dehydratedState={dehydratedOrders}
-            />
-        </Flex>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <Flex
+                maxW={{ md: '600px', lg: '927px' }}
+                width="100%"
+                backgroundColor={'#121212'}
+                flexDirection={'column'}
+                color="white"
+                p={6}
+                rounded="lg"
+            >
+                <OrderOverview customer={customer} />
+            </Flex>
+        </HydrationBoundary>
     );
 }
