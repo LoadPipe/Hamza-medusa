@@ -221,12 +221,24 @@ const AddressModal: React.FC<AddressModalProps> = ({
         } finally {
             onClose();
 
-            // alert(cart?.id);
-            // alert(preferred_currency_code);
-            queryClient.refetchQueries({
-                queryKey: ['shippingCost', cart?.id, preferred_currency_code],
-            });
+            // Ensure address update completes before invalidating queries
             await setAddresses(formPayload);
+
+            // Invalidate and refetch AFTER addresses are updated
+            await queryClient.invalidateQueries({
+                queryKey: [
+                    'shippingCost',
+                    cart?.shipping_address,
+                    preferred_currency_code,
+                ],
+            });
+            await queryClient.refetchQueries({
+                queryKey: [
+                    'shippingCost',
+                    cart?.shipping_address,
+                    preferred_currency_code,
+                ],
+            });
         }
     };
 
@@ -240,7 +252,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         textAlign={'center'}
                         fontSize={'24px'}
                     >
-                        Shipping Address Test
+                        Shipping Address
                     </ModalHeader>
                     <ModalCloseButton color={'white'} />
                     <ModalBody>

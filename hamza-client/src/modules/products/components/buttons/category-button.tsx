@@ -14,7 +14,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
 }) => {
     const { selectedCategories, setSelectedCategories } = useUnifiedFilterStore();
 
-    const identifier = categoryName.toLowerCase();
+    const identifier = categoryName.trim().replace(/[\s_]+/g, '-').toLowerCase();
     const isSelected = selectedCategories.includes(identifier);
 
     const toggleCategorySelection = (category: string) => {

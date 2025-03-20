@@ -40,11 +40,17 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     });
 
     const { data: shippingCost, isLoading: loading } = useQuery({
-        queryKey: ['shippingCost', cart?.id, preferred_currency_code], // Unique key per cart
+        queryKey: [
+            'shippingCost',
+            cart?.shipping_address,
+            preferred_currency_code,
+        ],
         queryFn: () => updateShippingCost(cart!.id), // Only fetch when cart exists
         enabled: !!cart?.id, // Prevents fetching if no cart ID is available
-        staleTime: 0, // Cache shipping cost for 5 minutes
+        staleTime: 0,
+        gcTime: 0, // Were not caching the shipping
     });
+    // alert(shippingCost);
 
     // Refactor: Imperative code to Declarative subset (Functional) code
     const getCartSubtotal = (

@@ -280,6 +280,15 @@ export async function deleteWishlistItem(
     });
 }
 
+// get product terms
+export async function getProductTermsByProductHandle(handle: string) {
+    const product_terms = await get('/custom/product/terms', {
+        handle: handle,
+    });
+
+    return product_terms;
+}
+
 // Get Vendor Products
 export async function getProductsByStoreName(storeName: string) {
     return get('/custom/store/products', {
