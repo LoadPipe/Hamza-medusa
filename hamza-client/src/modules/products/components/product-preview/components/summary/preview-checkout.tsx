@@ -897,7 +897,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <Flex
                     mx="-1rem"
                     gap={2}
-                    flexDirection={'row'}
+                    flexDirection={'column'}
                     position="fixed"
                     bottom="0"
                     height={productTermsData?.require ? '150px' : '90px'}
