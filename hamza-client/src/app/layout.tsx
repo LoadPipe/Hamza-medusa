@@ -13,7 +13,8 @@ import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
 import Script from 'next/script';
 import FreeScoutWidget from './components/scripts/chat-widget';
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { GoogleAnalytics } from '@next/third-parties/google';
+import T5QueryProvider from '@/components/providers/t5-query-provider';
 
 // import { GoogleTagManager } from '@next/third-parties/google';
 export const metadata: Metadata = {
@@ -89,8 +90,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 )} */}
             <body>
                 <div>
-                    <MedusaProvider token={token}>
-                        {/* Pass token as prop */}
+                    <T5QueryProvider>
                         <RainbowWrapper>
                             <ChakraProvider theme={theme}>
                                 <main className={sora.className}>
@@ -98,7 +98,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                                 </main>
                             </ChakraProvider>
                         </RainbowWrapper>
-                    </MedusaProvider>
+                    </T5QueryProvider>
                     <div>
                         <Toaster position="top-right" />
                     </div>
@@ -106,7 +106,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 </div>
             </body>
             {/* Documentation on this problem and how to solve it: https://nextjs.org/docs/messages/next-script-for-ga*/}
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
+            <GoogleAnalytics
+                gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''}
+            />
         </html>
     );
 }
