@@ -791,6 +791,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <Button
                     display={{ base: 'none', md: 'flex' }}
                     onClick={async () => {
+                        if (productTermsData?.require && !acceptedTerms) return;
                         if (isLoading || isNavigating) return; // Prevent SPAMMING the button
 
                         setIsLoading(true);
@@ -846,6 +847,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         (productTermsData?.require && !acceptedTerms)
                     }
                     onClick={() => {
+                        if (productTermsData?.require && !acceptedTerms) return;
                         if (!inStock && isWhitelisted) {
                             handleAddToCart();
                             return;
@@ -895,7 +897,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <Flex
                     mx="-1rem"
                     gap={2}
-                    flexDirection={'row'}
+                    flexDirection={'column'}
                     position="fixed"
                     bottom="0"
                     height={productTermsData?.require ? '150px' : '90px'}
@@ -947,6 +949,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                 (productTermsData?.require && !acceptedTerms)
                             }
                             onClick={() => {
+                                if (productTermsData?.require && !acceptedTerms)
+                                    return;
                                 if (!inStock && isWhitelisted) {
                                     handleAddToCart();
                                     return;
@@ -991,6 +995,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
                         <Button
                             onClick={async () => {
+                                if (productTermsData?.require && !acceptedTerms)
+                                    return;
                                 if (isLoading || isNavigating) return; // Prevent SPAMMING the button
 
                                 setIsLoading(true);
