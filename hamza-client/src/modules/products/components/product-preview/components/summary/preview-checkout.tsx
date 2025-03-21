@@ -247,7 +247,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : (preferred_currency_code ?? 'usdc')
+                            : preferred_currency_code ?? 'usdc'
                     );
 
                     // Update USD price if the preferred currency is 'eth'
@@ -978,7 +978,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             </Text>
                         </Flex>
                     )}
-
                     <Flex gap={2}>
                         <Button
                             disabled={
@@ -1105,7 +1104,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         </Button>
                     </Flex>
                 </Flex>
-
                 <CartPopup
                     open={cartModalOpen}
                     productName={product.title}
