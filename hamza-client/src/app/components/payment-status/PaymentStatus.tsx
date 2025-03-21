@@ -10,8 +10,8 @@ import {
     Collapse,
     Spinner,
 } from '@chakra-ui/react';
-import { FaShieldAlt, FaBox, FaCopy } from 'react-icons/fa';
-import { CheckCircleIcon } from '@chakra-ui/icons';
+import { FaBox, FaCopy } from 'react-icons/fa';
+import { LuShieldCheck } from 'react-icons/lu';
 import { useState } from 'react';
 import StatusStep from './StatusStep';
 
@@ -82,8 +82,8 @@ const PaymentStatus = ({
             (step) => step.status === stepStatus
         );
 
-        if (stepIndex < statusIndex) return 'green.400';
-        if (stepIndex === statusIndex) return 'green.400';
+        if (stepIndex < statusIndex) return 'primary.green.900';
+        if (stepIndex === statusIndex) return 'primary.green.900';
         return 'gray.600';
     };
 
@@ -108,152 +108,194 @@ const PaymentStatus = ({
     };
 
     return (
-        <Box bg="gray.900" p={6} borderRadius="xl">
-            <VStack spacing={6} align="stretch">
-                {/* Payment Header */}
-                <HStack justify="space-between">
-                    <Text fontSize="2xl" color="white" fontWeight="bold">
-                        Payment Status
-                    </Text>
-                    <Box
-                        bg="green.900"
-                        px={3}
-                        py={1}
-                        borderRadius="3xl"
-                        border="2px"
-                        borderStyle="solid"
-                        borderColor="green.400"
+        <>
+            <Box bg="gray.900" p={6} borderRadius="xl">
+                <VStack spacing={6} align="stretch">
+                    {/* Payment Header */}
+                    <HStack justify="space-between">
+                        <Text fontSize="2xl" color="white" fontWeight="bold">
+                            Payment Status
+                        </Text>
+                        <Box
+                            bg="green.900"
+                            px={3}
+                            py={1}
+                            borderRadius="3xl"
+                            border="2px"
+                            borderStyle="solid"
+                            borderColor="primary.green.900"
+                        >
+                            <Text color="white" fontWeight="bold">
+                                In Escrow
+                            </Text>
+                        </Box>
+                    </HStack>
+
+                    <Text color="gray.300">Payment #{paymentId}</Text>
+
+                    {/* Status Steps */}
+                    <HStack
+                        spacing={4}
+                        justify="space-between"
+                        align="flex-start"
                     >
-                        <Text color="white" fontWeight="bold">
-                            In Escrow
-                        </Text>
-                    </Box>
-                </HStack>
-
-                <Text color="gray.300">Payment #{paymentId}</Text>
-
-                {/* Status Steps */}
-                <HStack spacing={4} justify="space-between" align="flex-start">
-                    {statusSteps.map((step, index) => (
-                        <StatusStep
-                            key={step.status}
-                            step={step}
-                            currentStatus={status}
-                            index={index}
-                            progress={progress}
-                            getStatusColor={getStatusColor}
-                        />
-                    ))}
-                </HStack>
-
-                {/* Escrow Info */}
-                <Box bg="gray.800" p={4} borderRadius="lg">
-                    <HStack spacing={3}>
-                        <Icon as={FaShieldAlt} color="green.400" />
-                        <Text fontWeight="semibold" color="white">
-                            Funds in Escrow
-                        </Text>
-                    </HStack>
-                    <Text fontSize="sm" color="white" mt={2}>
-                        Your funds are secured in escrow. They will be released
-                        to the seller once you confirm receipt of your order.
-                    </Text>
-
-                    <HStack mt={4} spacing={8}>
-                        <VStack align="start" spacing={1}>
-                            <Text color="gray.500" fontSize="sm">
-                                Created
-                            </Text>
-                            <Text color="white">{createdAt}</Text>
-                        </VStack>
-                        <VStack align="start" spacing={1}>
-                            <Text color="gray.500" fontSize="sm">
-                                Total Amount:
-                            </Text>
-                            <Text color="white">Ξ {totalAmount}</Text>
-                        </VStack>
-                        <VStack align="start" spacing={1}>
-                            <Text color="gray.500" fontSize="sm">
-                                Total Orders:
-                            </Text>
-                            <Text color="white">{totalOrders} items</Text>
-                        </VStack>
+                        {statusSteps.map((step, index) => (
+                            <StatusStep
+                                key={step.status}
+                                step={step}
+                                currentStatus={status}
+                                index={index}
+                                progress={progress}
+                                getStatusColor={getStatusColor}
+                            />
+                        ))}
                     </HStack>
 
-                    <VStack align="start" spacing={1} mt={4}>
-                        <Text color="gray.500" fontSize="sm">
-                            Payment address
-                        </Text>
-                        <HStack spacing={2}>
-                            <Text
-                                fontSize="sm"
-                                fontFamily="monospace"
+                    <Box height="1px" bg="gray.600" my={4} w="100%" />
+
+                    {/* Escrow Info */}
+                    <VStack spacing={0} align="start">
+                        <HStack align="start">
+                            <Icon
+                                as={LuShieldCheck}
                                 color="white"
-                            >
-                                {paymentAddress}
-                            </Text>
+                                w={6}
+                                h={6}
+                            />
+                            <VStack spacing={0} align="start">
+                                <Text fontWeight="semibold" color="white">
+                                    Funds in Escrow
+                                </Text>
+                                <Text color="white" fontSize="sm">
+                                    Funds are held in escrow until the
+                                    transaction is finalized.
+                                </Text>
+                            </VStack>
+                        </HStack>
+
+                        <HStack mt={4} spacing={8}>
+                            <VStack align="start" spacing={1}>
+                                <Text color="gray.500" fontSize="sm">
+                                    Created
+                                </Text>
+                                <Text color="white">{createdAt}</Text>
+                            </VStack>
+                            <VStack align="start" spacing={1}>
+                                <Text color="gray.500" fontSize="sm">
+                                    Total Amount:
+                                </Text>
+                                <Text color="white">Ξ {totalAmount}</Text>
+                            </VStack>
+                            <VStack align="start" spacing={1}>
+                                <Text color="gray.500" fontSize="sm">
+                                    Total Orders:
+                                </Text>
+                                <Text color="white">{totalOrders} items</Text>
+                            </VStack>
+                        </HStack>
+                    </VStack>
+
+                    <Box bg="gray.800" p={4} borderRadius="lg">
+                        <HStack justify="space-between">
+                            <VStack align="start" spacing={1}>
+                                <Text color="white" fontSize="sm">
+                                    Payment address
+                                </Text>
+                                <HStack spacing={2}>
+                                    <Text
+                                        fontSize="sm"
+                                        fontFamily="monospace"
+                                        color="white"
+                                    >
+                                        {paymentAddress}
+                                    </Text>
+                                </HStack>
+                            </VStack>
+
                             <Button
                                 size="sm"
-                                variant="ghost"
-                                leftIcon={<FaCopy />}
+                                bg="gray.700"
+                                color="white"
+                                borderRadius="2rem"
+                                leftIcon={<FaCopy color="white" />}
+                                _hover={{ bg: 'gray.600' }}
+                                p={6}
                             >
                                 Copy
                             </Button>
                         </HStack>
-                    </VStack>
-                </Box>
+                    </Box>
+                </VStack>
+            </Box>
 
-                {/* Orders Section */}
-                <Box>
-                    <Text fontSize="xl" fontWeight="bold" mb={4} color="white">
-                        Orders
-                    </Text>
-                    <VStack spacing={3} align="stretch">
-                        {orders.map((order) => (
-                            <Box
-                                key={order.id}
-                                bg="gray.800"
-                                p={4}
-                                borderRadius="lg"
-                                cursor="pointer"
-                                onClick={() => toggleOrder(order.id)}
-                            >
-                                <HStack justify="space-between">
-                                    <HStack spacing={3}>
-                                        <Icon as={FaBox} />
+            <Box bg="gray.900" mt={8} p={6} borderRadius="xl">
+                <VStack spacing={6} align="stretch">
+                    {/* Orders Section */}
+                    <Box>
+                        <Text
+                            fontSize="xl"
+                            fontWeight="bold"
+                            mb={4}
+                            color="white"
+                        >
+                            Orders
+                        </Text>
+                        <VStack spacing={3} align="stretch">
+                            {orders.map((order) => (
+                                <Box
+                                    key={order.id}
+                                    bg="gray.800"
+                                    p={4}
+                                    borderRadius="lg"
+                                    cursor="pointer"
+                                    onClick={() => toggleOrder(order.id)}
+                                >
+                                    <HStack justify="space-between">
+                                        <HStack spacing={3}>
+                                            <Icon as={FaBox} />
+                                            <Text color="white">
+                                                {order.id} - {order.storeName}
+                                            </Text>
+                                        </HStack>
                                         <Text color="white">
-                                            {order.id} - {order.storeName}
+                                            Ξ {order.amount}
                                         </Text>
                                     </HStack>
-                                    <Text color="white">Ξ {order.amount}</Text>
-                                </HStack>
 
-                                <Collapse in={openOrders[order.id]}>
-                                    {order.details && (
-                                        <Box mt={4} pl={8}>
-                                            <Text
-                                                fontWeight="semibold"
-                                                color="white"
-                                            >
-                                                {order.details.name}
-                                            </Text>
-                                            <Text fontSize="sm" color="white">
-                                                {order.details.specs}
-                                            </Text>
-                                        </Box>
-                                    )}
-                                </Collapse>
-                            </Box>
-                        ))}
-                    </VStack>
+                                    <Collapse in={openOrders[order.id]}>
+                                        {order.details && (
+                                            <Box mt={4} pl={8}>
+                                                <Text
+                                                    fontWeight="semibold"
+                                                    color="white"
+                                                >
+                                                    {order.details.name}
+                                                </Text>
+                                                <Text
+                                                    fontSize="sm"
+                                                    color="white"
+                                                >
+                                                    {order.details.specs}
+                                                </Text>
+                                            </Box>
+                                        )}
+                                    </Collapse>
+                                </Box>
+                            ))}
+                        </VStack>
 
-                    <HStack justify="space-between" mt={4}>
-                        <Text color="white">Total Orders: {totalOrders}</Text>
-                        <Text color="white">Total Amount: Ξ {totalAmount}</Text>
-                    </HStack>
-                </Box>
-            </VStack>
-        </Box>
+                        <HStack justify="space-between" mt={4}>
+                            <Text color="white">
+                                Total Orders: {totalOrders}
+                            </Text>
+                            <Text color="white">
+                                Total Amount: Ξ {totalAmount}
+                            </Text>
+                        </HStack>
+                    </Box>
+                </VStack>
+            </Box>
+        </>
     );
 };
 

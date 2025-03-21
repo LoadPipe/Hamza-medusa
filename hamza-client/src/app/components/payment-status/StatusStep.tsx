@@ -48,8 +48,8 @@ const StatusStep = ({
                             borderRadius="5px"
                             background={
                                 progress === 100
-                                    ? '#48BB78'
-                                    : 'linear-gradient(to right, #48BB78, #FFFFFF)'
+                                    ? '#94D42A'
+                                    : 'linear-gradient(to right, #94D42A, #FFFFFF)'
                             }
                             w={`${progress}%`}
                             position="absolute"
