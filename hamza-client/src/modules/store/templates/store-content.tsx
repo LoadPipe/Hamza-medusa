@@ -129,7 +129,10 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                             )}
 
                             <Flex flexDir={'column'} alignSelf={'center'}>
-                                <Text fontSize={{ base: '12px', md: '24px' }} className="store-name">
+                                <Text
+                                    fontSize={{ base: '12px', md: '24px' }}
+                                    className="store-name"
+                                >
                                     {storeName}{' '}
                                     {/* Display the capitalized slug */}
                                 </Text>
@@ -272,7 +275,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
 
                         {/* Chat / Report */}
                         <Flex
-                            ml={'auto'}
+                            ml={{ base: '0', md: 'auto' }}
                             flexDir={'column'}
                             gap="16px"
                             justifyContent={'center'}
@@ -285,7 +288,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                                 target="_blank"
                             >
                                 <Flex
-                                    display={{ base: 'none', md: 'flex' }}
+                                    display={'flex'}
                                     height={{ base: '33px', md: '47px' }}
                                     width={{ base: '120px', md: '190px' }}
                                     borderColor={'primary.indigo.900'}

@@ -6,7 +6,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 
 type StoreProps = {
     storeName: string;
-    storeHandle:string;
+    storeHandle: string;
     icon: string;
 };
 
@@ -24,10 +24,12 @@ const StoreBanner = (props: StoreProps) => {
             backgroundColor={'#121212'}
             maxWidth="1280px"
             width="100%"
-            height={{ base: '99px', md: '165.78px' }}
+            height={{ base: '110px', md: '165.78px' }}
             borderRadius={'16px'}
             p={{ base: '1rem', md: '2rem' }}
+            flexWrap="wrap" // Ensures wrapping on mobile
             className="store-banner"
+            justifyContent="space-between" // Ensures separation between text & buttons
         >
             <Flex gap={{ base: '10px', md: '20px' }}>
                 <Flex flexShrink={0} alignSelf="center">
@@ -66,7 +68,7 @@ const StoreBanner = (props: StoreProps) => {
                             {props.storeName}
                         </Text>
                         <Flex
-                            display={{ base: 'none', md: 'flex' }}
+                            display={'flex'}
                             alignSelf={'center'}
                             fontSize={{ base: '10px', md: '20px' }}
                         >
@@ -90,57 +92,65 @@ const StoreBanner = (props: StoreProps) => {
             </Flex>
 
             <Flex
-                ml="auto"
+                ml={{ base: '0', md: 'auto' }}
                 alignSelf="center"
                 flexDirection={'column'}
-                gap={'16px'}
+                gap={{ base: '8px', md: '16px' }}
             >
-                <a
-                    href={
-                        process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK ??
-                        'https://support.hamza.market/help/1568263160'
-                    }
-                    target="_blank"
+                <Flex
+                    flexDirection={{ base: 'row', md: 'column' }} // Column for mobile, Row for desktop
+                    gap={{ base: '10px', md: '16px' }}
+                    justifyContent="center"
+                    pt={{ base: '12px', md: '0' }} // Adds top padding only on mobile
+                    // mb={{ base: '12px', md: '0' }} // Adds bottom padding only on mobile
                 >
+                    <a
+                        href={
+                            process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK ??
+                            'https://support.hamza.market/help/1568263160'
+                        }
+                        target="_blank"
+                    >
+                        <Flex
+                            display={{ base: 'flex' }}
+                            height={{ base: '33px', md: '47px' }}
+                            width={{ base: '120px', md: '190px' }}
+                            borderColor={'primary.green.900'}
+                            borderWidth={'1px'}
+                            borderRadius={'37px'}
+                            justifyContent={'center'}
+                            cursor={'pointer'}
+                            fontSize={{ base: '12px', md: '16px' }}
+                        >
+                            <Text
+                                alignSelf={'center'}
+                                color="primary.green.900"
+                                fontWeight={700}
+                            >
+                                Chat with them
+                            </Text>
+                        </Flex>
+                    </a>
                     <Flex
-                        display={{ base: 'none', md: 'flex' }}
+                        onClick={navigateToVendor}
                         height={{ base: '33px', md: '47px' }}
                         width={{ base: '120px', md: '190px' }}
-                        borderColor={'primary.green.900'}
+                        borderColor={'transparent'}
+                        backgroundColor={'primary.green.900'}
                         borderWidth={'1px'}
                         borderRadius={'37px'}
                         justifyContent={'center'}
                         cursor={'pointer'}
-                        fontSize={{ base: '12px', md: '16px' }}
                     >
                         <Text
                             alignSelf={'center'}
-                            color="primary.green.900"
+                            color="#121212"
                             fontWeight={700}
+                            fontSize={{ base: '12px', md: '16px' }}
                         >
-                            Chat with them
+                            Visit Store
                         </Text>
                     </Flex>
-                </a>
-                <Flex
-                    onClick={navigateToVendor}
-                    height={{ base: '33px', md: '47px' }}
-                    width={{ base: '120px', md: '190px' }}
-                    borderColor={'transparent'}
-                    backgroundColor={'primary.green.900'}
-                    borderWidth={'1px'}
-                    borderRadius={'37px'}
-                    justifyContent={'center'}
-                    cursor={'pointer'}
-                >
-                    <Text
-                        alignSelf={'center'}
-                        color="#121212"
-                        fontWeight={700}
-                        fontSize={{ base: '12px', md: '16px' }}
-                    >
-                        Visit Store
-                    </Text>
                 </Flex>
             </Flex>
         </Flex>

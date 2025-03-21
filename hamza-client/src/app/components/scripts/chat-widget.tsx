@@ -1,26 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import DOMPurify from 'dompurify';
 
 const FreeScoutWidget = () => {
-    const [shouldLoadScript, setShouldLoadScript] = useState(false);
-
-    useEffect(() => {
-        const checkScreenSize = () => {
-            setShouldLoadScript(window.innerWidth > 480); // Adjust breakpoint as needed
-        };
-
-        checkScreenSize(); // Initial check
-        window.addEventListener('resize', checkScreenSize);
-
-        return () => {
-            window.removeEventListener('resize', checkScreenSize);
-        };
-    }, []);
-
-    if (!shouldLoadScript) return null;
+    // const [shouldLoadScript, setShouldLoadScript] = useState(false);
+    //
+    // useEffect(() => {
+    //     const checkScreenSize = () => {
+    //         setShouldLoadScript(window.innerWidth > 480); // Adjust breakpoint as needed
+    //     };
+    //
+    //     checkScreenSize(); // Initial check
+    //     window.addEventListener('resize', checkScreenSize);
+    //
+    //     return () => {
+    //         window.removeEventListener('resize', checkScreenSize);
+    //     };
+    // }, []);
+    //
+    // if (!shouldLoadScript) return null;
 
     const scriptContent = `
      window.FreeScoutW = {
