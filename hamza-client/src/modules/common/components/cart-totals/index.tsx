@@ -2,7 +2,7 @@
 // import { Cart, Order, LineItem } from '@medusajs/medusa';
 // import { useCartShippingOptions } from 'medusa-react';
 // import { getClientCookie } from '@lib/util/get-client-cookies';
-import React from 'react';
+import React, { useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
 import Image from 'next/image';
@@ -59,29 +59,80 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     });
     // alert(shippingCost);
 
+    // function for calculating discount AFTER Item variant price
+    // It makes sure the store_id is matching...
+    // Is solving this in frontend sub optimal, yes, but the discount its grabbing
+    // is odd..I can only access it in the client
+    // Lets just create a pseudo code like function first
+    // 1. Takes the cart.items array / object
+    // 2. Nested for loop, for items go through discountObject,
+    // 3. IF store_id matches, check type FIXED || Percentage, do calculate
+    // 4. Return discount Amount for it...
+    // 5. Test with multiple stores, discount should only apply to store with the discount...
+    const [discount, setDiscount] = useState(0);
+
+    function calculateItemDiscount(
+        itemVariantPrice: number,
+        itemStoreId: string,
+        discountObject: any[]
+    ): number {
+        return discountObject.reduce((totalDiscount, discount) => {
+            const ruleType = discount.rule.type;
+            const discountValue = discount.rule.value;
+            const store = discount.store_id;
+            console.log(`RULE IS: ${JSON.stringify(ruleType)}`);
+            console.log(`DISCOUNT STORE: ${store}`);
+            console.log(`itemVariantPrice: ${itemVariantPrice}`);
+            console.log(`RULE VALUE IS: ${discountValue}`);
+
+            if (store === itemStoreId) {
+                console.log(`STORE ID MATCHES ${store} == ${itemStoreId}`);
+                if (ruleType === 'percentage') {
+                    totalDiscount += (itemVariantPrice * discountValue) / 100;
+                } else if (ruleType === 'fixed') {
+                    // Add fixed discount logic here if needed:
+                    totalDiscount += discountValue;
+                }
+                console.log(`TOTAL DISCOUNT so far: ${totalDiscount}`);
+            }
+            return totalDiscount;
+        }, 0);
+    }
+
     // Refactor: Imperative code to Declarative subset (Functional) code
     const getCartSubtotal = (
         cart: CartWithCheckoutStep | null,
         currencyCode: string
     ) => {
-        if (!cart?.items) return { currency: currencyCode, amount: 0 };
+        if (!cart?.items)
+            return { currency: currencyCode, amount: 0, discount: 0 };
+        console.log(
+            `Discount total on item: ${JSON.stringify(cart.discounts)}`
+        );
 
+        console.log(
+            `Cart items store_id? total on item: ${JSON.stringify(cart.items)}`
+        );
         return cart.items.reduce(
             (total, item) => {
                 const itemPrice = getPriceByCurrency(
                     item.variant.prices,
                     currencyCode
                 );
+                const itemStoreId = item.variant.store_id;
                 console.log(`Processing item: ${item.id}`);
                 console.log(`  Item variant price: ${itemPrice}`);
                 console.log(`  Quantity: ${item.quantity}`);
-                console.log(
-                    `  Discount total on item: ${item.discount_total ?? 0}`
+                console.log(`  Discount total on item: ${item.discounts}`);
+
+                let discountVal = calculateItemDiscount(
+                    Number(itemPrice),
+                    itemStoreId,
+                    cart.discounts
                 );
 
                 const calculatedItemTotal =
-                    Number(itemPrice) * item.quantity -
-                    (item.discount_total ?? 0);
+                    Number(itemPrice) * item.quantity - (discountVal ?? 0);
                 console.log(`  Calculated item total: ${calculatedItemTotal}`);
 
                 const newSubtotal = total.amount + calculatedItemTotal;
@@ -90,9 +141,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                 return {
                     currency: currencyCode,
                     amount: newSubtotal,
+                    discount: discountVal,
                 };
             },
-            { currency: currencyCode, amount: 0 }
+            { currency: currencyCode, amount: 0, discount: 0 }
         );
     };
 
@@ -105,6 +157,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
+    console.log(`finalSubtotal.discount ${finalSubtotal.discount}`);
     const { data: convertedPrice, isLoading: isConverting } = useQuery({
         queryKey: ['convertedPrice', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
         queryFn: async () => {
@@ -157,11 +210,21 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                     </Flex>
                 )}
 
-                {!!cart.discount_total && (
-                    <Text fontSize={{ base: '14px', md: '16px' }}>
-                        <span>Discount</span>
-                    </Text>
+                {finalSubtotal.discount > 0 && (
+                    <Flex justifyContent={'space-between'}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            Discount
+                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            -
+                            {formatCryptoPrice(
+                                finalSubtotal.discount,
+                                displayCurrency
+                            )}
+                        </Text>
+                    </Flex>
                 )}
+
                 {!!cart.gift_card_total && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
                         Gift Card
