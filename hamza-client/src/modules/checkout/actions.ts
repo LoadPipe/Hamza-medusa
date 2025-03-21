@@ -100,7 +100,7 @@ export async function submitDiscountForm(
 
     try {
         await applyDiscount(code).catch(async (err) => {
-            await applyGiftCard(code);
+            console.log(err);
         });
         return null;
     } catch (error: any) {

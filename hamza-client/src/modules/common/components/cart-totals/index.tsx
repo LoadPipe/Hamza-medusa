@@ -1,35 +1,42 @@
 'use client';
-
-import Image from 'next/image';
-import { Cart, Order, LineItem } from '@medusajs/medusa';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { convertPrice } from '@/lib/util/price-conversion';
+// import { Cart, Order, LineItem } from '@medusajs/medusa';
+// import { useCartShippingOptions } from 'medusa-react';
+// import { getClientCookie } from '@lib/util/get-client-cookies';
 import React from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
+import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import { useQuery } from '@tanstack/react-query';
+
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { convertPrice } from '@/lib/util/price-conversion';
 import { getCartShippingCost, updateShippingCost } from '@lib/server';
-import { useCartShippingOptions } from 'medusa-react';
-import { getClientCookie } from '@lib/util/get-client-cookies';
+
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import { CartWithCheckoutStep } from '@/types/global';
-import { useQuery } from '@tanstack/react-query';
 
 type CartTotalsProps = {
     cartId?: string; // Option, cartId for checkout flow...
     useCartStyle: boolean;
 };
 
-type ExtendedLineItem = LineItem & {
-    currency_code?: string;
-};
+// type ExtendedLineItem = LineItem & {
+//     currency_code?: string;
+// };
 
 const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
+
+    /*
+        Ok we need a gameplan, pretty sure discount is going based off the big ass value which makes no sense,
+
+        It should be applied to convertedPrice
+     */
 
     // Determine which fetch function to use based on cartId presence
     const { data: cart } = useQuery<CartWithCheckoutStep | null>({
@@ -65,12 +72,24 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                     item.variant.prices,
                     currencyCode
                 );
+                console.log(`Processing item: ${item.id}`);
+                console.log(`  Item variant price: ${itemPrice}`);
+                console.log(`  Quantity: ${item.quantity}`);
+                console.log(
+                    `  Discount total on item: ${item.discount_total ?? 0}`
+                );
+
+                const calculatedItemTotal =
+                    Number(itemPrice) * item.quantity -
+                    (item.discount_total ?? 0);
+                console.log(`  Calculated item total: ${calculatedItemTotal}`);
+
+                const newSubtotal = total.amount + calculatedItemTotal;
+                console.log(`  Running subtotal: ${newSubtotal}`);
+
                 return {
                     currency: currencyCode,
-                    amount:
-                        total.amount +
-                        (Number(itemPrice) * item.quantity -
-                            (item.discount_total ?? 0)),
+                    amount: newSubtotal,
                 };
             },
             { currency: currencyCode, amount: 0 }

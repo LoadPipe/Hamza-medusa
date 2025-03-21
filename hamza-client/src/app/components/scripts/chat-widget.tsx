@@ -41,13 +41,13 @@ const FreeScoutWidget = () => {
     `;
 
     // This is static and under our control, so we don't need to sanitize it, but why not lol
-    const sanitizedScript = DOMPurify.sanitize(scriptContent);
+    // const sanitizedScript = DOMPurify.sanitize(scriptContent);
 
     return (
         <Script
             id="freescout-widget"
             strategy="lazyOnload"
-            dangerouslySetInnerHTML={{ __html: sanitizedScript }}
+            dangerouslySetInnerHTML={{ __html: scriptContent }}
         />
     );
 };
