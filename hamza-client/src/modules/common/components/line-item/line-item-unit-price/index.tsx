@@ -1,7 +1,6 @@
 import { LineItem } from '@medusajs/medusa';
 import { clx } from '@medusajs/ui';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
-import { CalculatedVariant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { LineItemUnitPriceDisplay } from './line-item-display';
@@ -30,34 +29,34 @@ const LineItemUnitPrice = ({
     useChakra = false,
 }: LineItemUnitPriceProps) => {
     const { preferred_currency_code } = useCustomerAuthStore();
-    const [convertedPrice, setConvertedPrice] = useState<number | null>(null);
+    const currency = preferred_currency_code ?? 'usdc';
+    const [price, setPrice] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [reducedPrice, setReducedPrice] = useState<number | null>(null);
+    const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
 
-    const unitPrice = item.variant.prices
-        ? ((item.variant as CalculatedVariant).prices.find(
-            (p) => p.currency_code === item.currency_code
-        )?.amount ?? 0)
-        : ((item.variant as CalculatedVariant)?.original_price ?? 0);
-
-    const price = unitPrice * item.quantity;
-    const hasReducedPrice = (price || 0) > (item.total || 0);
-    const originalReducedPrice = hasReducedPrice ? (item.total || 0) / item.quantity! : null;
-
-    // Convert price to preferred currency
     useEffect(() => {
         const fetchConvertedPrice = async () => {
             setIsLoading(true);
             try {
-                const currentUnitPrice = Number(getPriceByCurrency(
-                    item.variant.prices,
-                    preferred_currency_code ?? 'usdc'
-                ));
+                const itemPrice = getPriceByCurrency(item.variant.prices, currency);
+                const subTotal = Number(itemPrice) * item.quantity;
+                setPrice(subTotal);
 
-                const priceToDisplay = hasReducedPrice && originalReducedPrice !== null
-                    ? (currentUnitPrice * (originalReducedPrice / unitPrice))
-                    : currentUnitPrice;
-
-                setConvertedPrice(Number(priceToDisplay));
+                // Calculate discount based on original_total and discount_total
+                const originalTotal = item.original_total ?? null;
+                const discountTotal = item.discount_total ?? null;
+                if (
+                    discountTotal !== null &&
+                    originalTotal !== null &&
+                    discountTotal < originalTotal
+                ) {
+                    setHasReducedPrice(true);
+                    setReducedPrice(originalTotal);
+                } else {
+                    setHasReducedPrice(false);
+                    setReducedPrice(null);
+                }
             } catch (error) {
                 console.error('Error converting price:', error);
             } finally {
@@ -66,47 +65,41 @@ const LineItemUnitPrice = ({
         };
 
         fetchConvertedPrice();
-    }, [item, preferred_currency_code, unitPrice, originalReducedPrice, hasReducedPrice]);
+    }, [item, currency]);
 
-    const displayPrice = () => {
-        if (isLoading) return "Loading...";
+    // Calculate unit prices (for display purposes)
+    const unitPrice = price / item.quantity;
+    const originalUnitPrice = reducedPrice !== null ? reducedPrice / item.quantity : null;
 
-        const price =
-            formatCryptoPrice(
-                convertedPrice || 0,
-                preferred_currency_code ?? 'usdc'
-            ) +
-            (displayCurrencyLetters
-                ? ' ' + (preferred_currency_code ?? 'usdc').toUpperCase()
-                : '');
-        return price;
+    const buildDisplayPrice = (): string => {
+        if (isLoading) return 'Loading…';
+        const baseFormatted = formatCryptoPrice(price, currency);
+        return displayCurrencyLetters ? `${baseFormatted} ${currency.toUpperCase()}` : String(baseFormatted);
     };
-
-    // console.log('preferred_currency_code: ', preferred_currency_code);
 
     return (
         <div className="flex flex-col text-ui-fg-muted justify-center h-full line-item-unit-price">
-            {displayReducedPrice && hasReducedPrice && originalReducedPrice !== null && (
+            {displayReducedPrice && hasReducedPrice && originalUnitPrice !== null && (
                 <>
                     <p>
                         {style === 'default' && (
                             <span className="text-ui-fg-muted">Original: </span>
                         )}
                         <span className="line-through">
-                            {formatCryptoPrice(unitPrice, item.currency_code ?? '')} {item.currency_code?.toUpperCase() ?? ''}
+                            {formatCryptoPrice(originalUnitPrice, currency)} {currency.toUpperCase()}
                         </span>
                     </p>
                     {style === 'default' && (
                         <span className="text-ui-fg-interactive">
-                            -{getPercentageDiff(unitPrice, originalReducedPrice)}%
+                            -{getPercentageDiff(originalUnitPrice, unitPrice)}%
                         </span>
                     )}
                 </>
             )}
 
             <LineItemUnitPriceDisplay
-                price={displayPrice().toString()}
-                preferredCurrencyCode={preferred_currency_code ?? 'usdc'}
+                price={buildDisplayPrice()}
+                preferredCurrencyCode={currency}
                 useChakra={useChakra}
                 classNames={clx('text-base-regular', {
                     'text-ui-fg-interactive': hasReducedPrice,
