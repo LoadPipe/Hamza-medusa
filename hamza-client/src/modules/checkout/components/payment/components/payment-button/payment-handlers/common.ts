@@ -19,14 +19,15 @@ export type CheckoutOrderData = {
     escrow_metadata: any;
     currency_code: string;
     amount: string;
-    massmarket_amount: string;
-    massmarket_order_id: string;
-    massmarket_ttl: string;
+    //massmarket_amount: string;
+    //massmarket_order_id: string;
+    //massmarket_ttl: string;
 };
 
 // checkout data retrieved from server, to help in creating blockchain payments
 export type CheckoutData = {
     checkout_mode: string;
+    payment_address: string;
     orders: CheckoutOrderData[];
 };
 

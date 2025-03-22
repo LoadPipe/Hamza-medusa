@@ -28,7 +28,7 @@ export class AsyncPaymentHandler implements IWalletPaymentHandler {
         const paymentGroups = this.createPaymentGroups(data, chainId);
         let transaction_id = '';
         let payer_address = '';
-        let receiver_address = data.orders[0].wallet_address;
+        let payment_address = data.payment_address;
 
         if (signer && provider) {
             for (const currency in paymentGroups) {
@@ -66,7 +66,7 @@ export class AsyncPaymentHandler implements IWalletPaymentHandler {
                 //handle native payment
                 if (currency === 'eth') {
                     tx = await signer.sendTransaction({
-                        to: receiver_address,
+                        to: payment_address,
                         value: amount,
                     });
                 }
@@ -76,11 +76,11 @@ export class AsyncPaymentHandler implements IWalletPaymentHandler {
                     const currencyAddr = getCurrencyAddress(currency, chainId);
                     const token = getTokenContract(signer, currencyAddr);
                     console.log(
-                        `calling ${currencyAddr}.transfer(${receiver_address}, ${amount})`
+                        `calling ${currencyAddr}.transfer(${payment_address}, ${amount})`
                     );
 
                     if (token) {
-                        tx = await token.transfer(receiver_address, amount);
+                        tx = await token.transfer(payment_address, amount);
                     }
                 }
 
