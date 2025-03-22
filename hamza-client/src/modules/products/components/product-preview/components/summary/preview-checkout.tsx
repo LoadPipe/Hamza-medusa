@@ -247,7 +247,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : (preferred_currency_code ?? 'usdc')
+                            : preferred_currency_code ?? 'usdc'
                     );
 
                     // Update USD price if the preferred currency is 'eth'
@@ -831,6 +831,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <Button
                     display={{ base: 'none', md: 'flex' }}
                     onClick={async () => {
+                        if (productTermsData?.require && !acceptedTerms) return;
                         if (isLoading || isNavigating) return; // Prevent SPAMMING the button
 
                         setIsLoading(true);
@@ -886,6 +887,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         (productTermsData?.require && !acceptedTerms)
                     }
                     onClick={() => {
+                        if (productTermsData?.require && !acceptedTerms) return;
                         if (!inStock && isWhitelisted) {
                             handleAddToCart();
                             return;
@@ -934,7 +936,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 {/* Mobile Sticky Footer */}
                 <Flex
                     mx="-1rem"
-                    flexDirection={'column'} // Changed to column to stack checkbox above buttons
+                    gap={2}
+                    flexDirection={'column'}
                     position="fixed"
                     bottom="0"
                     height={productTermsData?.require ? '150px' : '90px'}
@@ -978,7 +981,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             </Text>
                         </Flex>
                     )}
-
                     <Flex gap={2}>
                         <Button
                             disabled={
@@ -987,6 +989,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                 (productTermsData?.require && !acceptedTerms)
                             }
                             onClick={() => {
+                                if (productTermsData?.require && !acceptedTerms)
+                                    return;
                                 if (!inStock && isWhitelisted) {
                                     handleAddToCart();
                                     return;
@@ -1031,6 +1035,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
                         <Button
                             onClick={async () => {
+                                if (productTermsData?.require && !acceptedTerms)
+                                    return;
                                 if (isLoading || isNavigating) return; // Prevent SPAMMING the button
 
                                 setIsLoading(true);
@@ -1105,7 +1111,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         </Button>
                     </Flex>
                 </Flex>
-
                 <CartPopup
                     open={cartModalOpen}
                     productName={product.title}
