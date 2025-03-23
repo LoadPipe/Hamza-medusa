@@ -225,7 +225,7 @@ const CryptoPaymentButton = ({
                 // Finalize the checkout, if wallet payment was successful
                 if (output?.success) {
                     console.log('finalizing checkout');
-                    await finalizeCheckout(
+                    const response = await finalizeCheckout(
                         cartId,
                         output.transaction_id,
                         output.payer_address,
@@ -241,12 +241,16 @@ const CryptoPaymentButton = ({
                     await clearCart();
 
                     // Redirect to confirmation page
+                    //if (response.status == 100) {
+                    // TODO: here, reredirect to payment status page
+                    //} else if (response.status == 200) {
                     console.log('redirecting to confirmation page');
                     redirectToOrderConfirmation(
                         data?.orders?.length ? data.orders[0].order_id : null,
                         cart.id,
                         countryCode
                     );
+                    //}
                 } else {
                     setLoaderVisible(false);
                     displayError(
