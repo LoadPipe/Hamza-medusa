@@ -69,13 +69,14 @@ const LineItemUnitPrice = ({
     const discountPerUnit = discounts
         ? calculateUnitDiscount(unitPrice, item.variant.store_id, discounts)
         : 0;
-
-    const hasReducedPrice = (price || 0) > (item.total || 0);
+    const hasReducedPrice = discountPerUnit > 0;
     console.log(`hasReducedPrice ${hasReducedPrice}`);
-    const originalReducedPrice = hasReducedPrice
-        ? (item.total || 0) / item.quantity!
-        : null;
-    console.log(`originalReducedPrice ${originalReducedPrice}`);
+
+    // Reduced unit price = original unit price minus per-unit discount.
+    const reducedUnitPrice = hasReducedPrice
+        ? unitPrice - discountPerUnit
+        : unitPrice;
+    console.log(`Reduced Unit Price ${reducedUnitPrice}`);
 
     // Convert price to preferred currency
     useEffect(() => {
@@ -89,10 +90,14 @@ const LineItemUnitPrice = ({
                     )
                 );
 
-                const priceToDisplay =
-                    hasReducedPrice && originalReducedPrice !== null
-                        ? currentUnitPrice * (originalReducedPrice / unitPrice)
-                        : currentUnitPrice;
+                const priceToDisplay = hasReducedPrice
+                    ? currentUnitPrice -
+                      calculateUnitDiscount(
+                          currentUnitPrice,
+                          item.variant.store_id,
+                          discounts || []
+                      )
+                    : currentUnitPrice;
 
                 setConvertedPrice(Number(priceToDisplay));
             } catch (error) {
@@ -103,18 +108,12 @@ const LineItemUnitPrice = ({
         };
 
         fetchConvertedPrice();
-    }, [
-        item,
-        preferred_currency_code,
-        unitPrice,
-        originalReducedPrice,
-        hasReducedPrice,
-    ]);
+    }, [item, preferred_currency_code, unitPrice, hasReducedPrice]);
 
     const displayPrice = () => {
         if (isLoading) return 'Loading...';
 
-        const price =
+        const priceStr =
             formatCryptoPrice(
                 convertedPrice || 0,
                 preferred_currency_code ?? 'usdc'
@@ -122,43 +121,34 @@ const LineItemUnitPrice = ({
             (displayCurrencyLetters
                 ? ' ' + (preferred_currency_code ?? 'usdc').toUpperCase()
                 : '');
-        return price;
+        return priceStr;
     };
 
     // console.log('preferred_currency_code: ', preferred_currency_code);
 
     return (
         <div className="flex flex-col text-ui-fg-muted justify-center h-full line-item-unit-price">
-            {displayReducedPrice &&
-                hasReducedPrice &&
-                originalReducedPrice !== null && (
-                    <>
-                        <p>
-                            {style === 'default' && (
-                                <span className="text-ui-fg-muted">
-                                    Original:{' '}
-                                </span>
-                            )}
-                            <span className="line-through">
-                                {formatCryptoPrice(
-                                    unitPrice,
-                                    item.currency_code ?? ''
-                                )}{' '}
-                                {item.currency_code?.toUpperCase() ?? ''}
-                            </span>
-                        </p>
+            {displayReducedPrice && hasReducedPrice && (
+                <>
+                    <p>
                         {style === 'default' && (
-                            <span className="text-ui-fg-interactive">
-                                -
-                                {getPercentageDiff(
-                                    unitPrice,
-                                    originalReducedPrice
-                                )}
-                                %
-                            </span>
+                            <span className="text-ui-fg-muted">Original: </span>
                         )}
-                    </>
-                )}
+                        <span className="line-through">
+                            {formatCryptoPrice(
+                                unitPrice,
+                                item.currency_code ?? ''
+                            )}{' '}
+                            {item.currency_code?.toUpperCase() ?? ''}
+                        </span>
+                    </p>
+                    {style === 'default' && (
+                        <span className="text-ui-fg-interactive">
+                            -{getPercentageDiff(unitPrice, reducedUnitPrice)}%
+                        </span>
+                    )}
+                </>
+            )}
 
             <LineItemUnitPriceDisplay
                 price={displayPrice().toString()}
