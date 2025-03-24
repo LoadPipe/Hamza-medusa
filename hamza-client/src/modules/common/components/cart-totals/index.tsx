@@ -2,7 +2,7 @@
 // import { Cart, Order, LineItem } from '@medusajs/medusa';
 // import { useCartShippingOptions } from 'medusa-react';
 // import { getClientCookie } from '@lib/util/get-client-cookies';
-import React, { useState } from 'react';
+import React from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
 import Image from 'next/image';
@@ -69,8 +69,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     // 3. IF store_id matches, check type FIXED || Percentage, do calculate
     // 4. Return discount Amount for it...
     // 5. Test with multiple stores, discount should only apply to store with the discount...
-    const [discount, setDiscount] = useState(0);
-
     function calculateItemDiscount(
         itemVariantPrice: number,
         itemStoreId: string,

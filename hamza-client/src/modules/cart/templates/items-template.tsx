@@ -15,9 +15,7 @@ type ItemsTemplateProps = {
     currencyCode?: string;
 };
 
-const ItemsTemplate = ({
-                           currencyCode,
-                       }: ItemsTemplateProps) => {
+const ItemsTemplate = ({ currencyCode }: ItemsTemplateProps) => {
     const { data: cart } = useQuery({
         queryKey: ['cart'],
         queryFn: fetchCartForCart,
@@ -26,83 +24,77 @@ const ItemsTemplate = ({
 
     // TODO: We're repeating this in the child component...
     if (!cart || !cart.items) return;
-    (
-
+    <Flex
+        bgColor={'#121212'}
+        maxW={'825px'}
+        width={'100%'}
+        height={'auto'}
+        flexDir={'column'}
+        borderRadius={'16px'}
+        px={{ base: '16px', md: '60px' }}
+        py={{ base: '16px', md: '40px' }}
+    >
         <Flex
-            bgColor={'#121212'}
-            maxW={'825px'}
+            mt="1rem"
             width={'100%'}
-            height={'auto'}
             flexDir={'column'}
-            borderRadius={'16px'}
-            px={{ base: '16px', md: '60px' }}
-            py={{ base: '16px', md: '40px' }}
+            justifyContent={'center'}
+            alignItems={'center'}
+            color={'white'}
         >
+            <Divider borderColor="#3E3E3E" borderWidth={'1px'} />
             <Flex
-                mt="1rem"
+                mt={{ base: '0', md: '3.5rem' }}
+                maxW={'329px'}
+                height={{ base: '170px', md: '273px' }}
                 width={'100%'}
                 flexDir={'column'}
+                gap={{ base: 3, md: 30 }}
                 justifyContent={'center'}
                 alignItems={'center'}
-                color={'white'}
             >
-                <Divider borderColor="#3E3E3E" borderWidth={'1px'} />
                 <Flex
-                    mt={{ base: '0', md: '3.5rem' }}
-                    maxW={'329px'}
-                    height={{ base: '170px', md: '273px' }}
-                    width={'100%'}
                     flexDir={'column'}
-                    gap={{ base: 3, md: 30 }}
-                    justifyContent={'center'}
-                    alignItems={'center'}
+                    mt={{ base: '0', md: '-1rem' }}
+                    gap={{ base: 0, md: '8px' }}
                 >
                     <Flex
-                        flexDir={'column'}
-                        mt={{ base: '0', md: '-1rem' }}
-                        gap={{ base: 0, md: '8px' }}
+                        fontSize={{ base: '26px', md: '56px' }}
+                        alignSelf={'center'}
+                        mb="0.25rem"
                     >
-                        <Flex
-                            fontSize={{ base: '26px', md: '56px' }}
-                            alignSelf={'center'}
-                            mb="0.25rem"
-                        >
-                            <HiOutlineShoppingCart />
-                        </Flex>
-                        <Text
-                            textAlign={'center'}
-                            fontSize={{ base: '14px', md: '20px' }}
-                            fontWeight={600}
-                            color="primary.green.900"
-                        >
-                            Your cart is empty
-                        </Text>
-                        <Text
-                            fontSize={{ base: '14px', md: '16px' }}
-                            textAlign={'center'}
-                        >
-                            Looks like you haven't added anything to your
-                            cart yet.
-                        </Text>
+                        <HiOutlineShoppingCart />
                     </Flex>
-                    <Link
-                        href={'/shop'}
+                    <Text
                         textAlign={'center'}
-                        width={'100%'}
+                        fontSize={{ base: '14px', md: '20px' }}
+                        fontWeight={600}
+                        color="primary.green.900"
                     >
-                        <Button
-                            backgroundColor={'primary.green.900'}
-                            color="black"
-                            width={{ base: '100%', md: '174px' }}
-                            borderRadius={'30px'}
-                            height={{ base: '42px', md: '52px' }}
-                            fontSize={{ base: '14px', md: '16px' }}
-                        >
-                            Start Shopping
-                        </Button>
-                    </Link>
+                        Your cart is empty
+                    </Text>
+                    <Text
+                        fontSize={{ base: '14px', md: '16px' }}
+                        textAlign={'center'}
+                    >
+                        Looks like you haven't added anything to your cart yet.
+                    </Text>
                 </Flex>
-            </Flex></Flex>);
+                <Link href={'/shop'} textAlign={'center'} width={'100%'}>
+                    <Button
+                        backgroundColor={'primary.green.900'}
+                        color="black"
+                        width={{ base: '100%', md: '174px' }}
+                        borderRadius={'30px'}
+                        height={{ base: '42px', md: '52px' }}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Start Shopping
+                    </Button>
+                </Link>
+            </Flex>
+        </Flex>
+    </Flex>;
     return (
         <Flex
             flexDir={'column'}
@@ -135,6 +127,7 @@ const ItemsTemplate = ({
                         .map((item) => {
                             return (
                                 <Item
+                                    discount={cart.discounts}
                                     key={item.id}
                                     item={item}
                                     region={cart.region}

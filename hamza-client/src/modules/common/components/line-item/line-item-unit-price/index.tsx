@@ -1,4 +1,4 @@
-import { LineItem } from '@medusajs/medusa';
+import { Discount, LineItem } from '@medusajs/medusa';
 import { clx } from '@medusajs/ui';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { CalculatedVariant } from '@/types/medusa';
@@ -13,6 +13,7 @@ type ExtendedLineItem = LineItem & {
 };
 
 type LineItemUnitPriceProps = {
+    discounts: Discount[];
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     style?: 'default' | 'tight';
     currencyCode?: string;
@@ -22,7 +23,26 @@ type LineItemUnitPriceProps = {
     classNames?: string;
 };
 
+// Helper: calculate per-unit discount based on discount rules
+function calculateUnitDiscount(
+    itemVariantPrice: number,
+    itemStoreId: string,
+    discounts: any[] = []
+): number {
+    return discounts.reduce((totalDiscount, discount) => {
+        if (discount.store_id === itemStoreId) {
+            if (discount.rule.type === 'percentage') {
+                totalDiscount += (itemVariantPrice * discount.rule.value) / 100;
+            } else if (discount.rule.type === 'fixed') {
+                totalDiscount += discount.rule.value;
+            }
+        }
+        return totalDiscount;
+    }, 0);
+}
+
 const LineItemUnitPrice = ({
+    discounts,
     item,
     style = 'default',
     displayCurrencyLetters = true,
@@ -35,27 +55,44 @@ const LineItemUnitPrice = ({
 
     const unitPrice = item.variant.prices
         ? ((item.variant as CalculatedVariant).prices.find(
-            (p) => p.currency_code === item.currency_code
-        )?.amount ?? 0)
+              (p) => p.currency_code === item.currency_code
+          )?.amount ?? 0)
         : ((item.variant as CalculatedVariant)?.original_price ?? 0);
 
+    console.log(`UNITPRICE ${unitPrice}`);
+
     const price = unitPrice * item.quantity;
+    console.log(`PRICE ${price}`);
+
+    // Calculate discount per unit using our helper.
+    // Assuming item.discounts is available on the line item.
+    const discountPerUnit = discounts
+        ? calculateUnitDiscount(unitPrice, item.variant.store_id, discounts)
+        : 0;
+
     const hasReducedPrice = (price || 0) > (item.total || 0);
-    const originalReducedPrice = hasReducedPrice ? (item.total || 0) / item.quantity! : null;
+    console.log(`hasReducedPrice ${hasReducedPrice}`);
+    const originalReducedPrice = hasReducedPrice
+        ? (item.total || 0) / item.quantity!
+        : null;
+    console.log(`originalReducedPrice ${originalReducedPrice}`);
 
     // Convert price to preferred currency
     useEffect(() => {
         const fetchConvertedPrice = async () => {
             setIsLoading(true);
             try {
-                const currentUnitPrice = Number(getPriceByCurrency(
-                    item.variant.prices,
-                    preferred_currency_code ?? 'usdc'
-                ));
+                const currentUnitPrice = Number(
+                    getPriceByCurrency(
+                        item.variant.prices,
+                        preferred_currency_code ?? 'usdc'
+                    )
+                );
 
-                const priceToDisplay = hasReducedPrice && originalReducedPrice !== null
-                    ? (currentUnitPrice * (originalReducedPrice / unitPrice))
-                    : currentUnitPrice;
+                const priceToDisplay =
+                    hasReducedPrice && originalReducedPrice !== null
+                        ? currentUnitPrice * (originalReducedPrice / unitPrice)
+                        : currentUnitPrice;
 
                 setConvertedPrice(Number(priceToDisplay));
             } catch (error) {
@@ -66,10 +103,16 @@ const LineItemUnitPrice = ({
         };
 
         fetchConvertedPrice();
-    }, [item, preferred_currency_code, unitPrice, originalReducedPrice, hasReducedPrice]);
+    }, [
+        item,
+        preferred_currency_code,
+        unitPrice,
+        originalReducedPrice,
+        hasReducedPrice,
+    ]);
 
     const displayPrice = () => {
-        if (isLoading) return "Loading...";
+        if (isLoading) return 'Loading...';
 
         const price =
             formatCryptoPrice(
@@ -86,23 +129,36 @@ const LineItemUnitPrice = ({
 
     return (
         <div className="flex flex-col text-ui-fg-muted justify-center h-full line-item-unit-price">
-            {displayReducedPrice && hasReducedPrice && originalReducedPrice !== null && (
-                <>
-                    <p>
+            {displayReducedPrice &&
+                hasReducedPrice &&
+                originalReducedPrice !== null && (
+                    <>
+                        <p>
+                            {style === 'default' && (
+                                <span className="text-ui-fg-muted">
+                                    Original:{' '}
+                                </span>
+                            )}
+                            <span className="line-through">
+                                {formatCryptoPrice(
+                                    unitPrice,
+                                    item.currency_code ?? ''
+                                )}{' '}
+                                {item.currency_code?.toUpperCase() ?? ''}
+                            </span>
+                        </p>
                         {style === 'default' && (
-                            <span className="text-ui-fg-muted">Original: </span>
+                            <span className="text-ui-fg-interactive">
+                                -
+                                {getPercentageDiff(
+                                    unitPrice,
+                                    originalReducedPrice
+                                )}
+                                %
+                            </span>
                         )}
-                        <span className="line-through">
-                            {formatCryptoPrice(unitPrice, item.currency_code ?? '')} {item.currency_code?.toUpperCase() ?? ''}
-                        </span>
-                    </p>
-                    {style === 'default' && (
-                        <span className="text-ui-fg-interactive">
-                            -{getPercentageDiff(unitPrice, originalReducedPrice)}%
-                        </span>
-                    )}
-                </>
-            )}
+                    </>
+                )}
 
             <LineItemUnitPriceDisplay
                 price={displayPrice().toString()}

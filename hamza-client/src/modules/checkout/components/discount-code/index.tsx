@@ -67,7 +67,7 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
         <Flex mt="1rem">
             <div className="txt-medium">
                 {appliedDiscount ? (
-                    <div className="w-full flex items-center">
+                    <div className="w-full flex items-center text-white">
                         <div className="flex flex-col w-full">
                             <Heading className="txt-medium">
                                 Discount applied:
@@ -98,6 +98,7 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
                     <form action={formAction} className="w-full">
                         <Flex>
                             <Input
+                                color={'white'}
                                 borderLeftRadius={'16px'}
                                 style={{ height: '52px' }}
                                 placeholder="Discount Code"

@@ -43,7 +43,7 @@ const OrderSummary = ({ cartId }: { cartId: string }) => {
                 fontSize={'18px'}
                 fontWeight={600}
             >
-                Order Summary
+                Order Summary S
             </Text>
 
             {isCartEmpty ? (

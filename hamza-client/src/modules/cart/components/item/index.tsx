@@ -1,6 +1,6 @@
 'use client';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
-import { LineItem, Region } from '@medusajs/medusa';
+import { Discount, LineItem, Region } from '@medusajs/medusa';
 import DeleteButton from '@modules/common/components/delete-button';
 import LineItemOptions from '@/modules/common/components/line-item/line-item-options';
 import LineItemPrice from '@/modules/common/components/line-item/line-item-price';
@@ -24,6 +24,7 @@ type ItemProps = {
     type?: 'full' | 'preview';
     currencyCode?: string;
     cart_id: string;
+    discounts: Discount[];
 };
 
 const debouncedChangeQuantity = debounce(
@@ -34,7 +35,7 @@ const debouncedChangeQuantity = debounce(
     2000
 );
 
-const Item = ({ item, region, cart_id }: ItemProps) => {
+const Item = ({ item, region, cart_id, discounts }: ItemProps) => {
     const [quantity, setQuantity] = useState(item.quantity);
     const setIsUpdating = useCartStore((state) => state.setIsUpdating);
     const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -185,7 +186,9 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             width="100%"
                         >
                             <Flex>
+                                <Text color={'white'}>WRONG</Text>
                                 <LineItemUnitPrice
+                                    discounts={discounts}
                                     item={item}
                                     currencyCode={item.currency_code}
                                     useChakra={true}
@@ -194,6 +197,8 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 />
                             </Flex>
                             <Flex>
+                                <Text color={'white'}>RIGHT</Text>
+
                                 <LineItemPrice
                                     item={item}
                                     usdcOnDifferentLine={true}
