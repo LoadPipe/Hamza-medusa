@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { FaBox, FaCopy } from 'react-icons/fa';
 import { LuShieldCheck } from 'react-icons/lu';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import StatusStep from './StatusStep';
 
 interface PaymentStatusProps {
@@ -31,7 +31,8 @@ interface PaymentStatusProps {
             specs: string;
         };
     }>;
-    progress?: number;
+    start_time: number;
+    end_time: number;
 }
 
 const PaymentStatus = ({
@@ -42,9 +43,11 @@ const PaymentStatus = ({
     totalOrders,
     paymentAddress,
     orders,
-    progress = 100,
+    start_time,
+    end_time,
 }: PaymentStatusProps) => {
     const [openOrders, setOpenOrders] = useState<Record<string, boolean>>({});
+    const [progress, setProgress] = useState(0);
 
     const statusSteps = [
         {
@@ -106,6 +109,21 @@ const PaymentStatus = ({
             background: getStatusColor(stepStatus),
         };
     };
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const currentProgress =
+                ((Date.now() - start_time) / (end_time - start_time)) * 100;
+            setProgress(Math.min(Math.max(currentProgress, 0), 100));
+        }, 1000); // Update every second
+
+        // Initial calculation immediately
+        const initialProgress =
+            ((Date.now() - start_time) / (end_time - start_time)) * 100;
+        setProgress(Math.min(Math.max(initialProgress, 0), 100));
+
+        return () => clearInterval(timer); // Cleanup on unmount
+    }, []); // Empty dependency array since we don't need to watch any values
 
     return (
         <>

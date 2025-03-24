@@ -3,9 +3,12 @@ import { Container } from '@chakra-ui/react';
 
 export default function ProcessingPage() {
     // This would typically come from your API or state management
+
     const mockData = {
         paymentId: '01JC4F67Z990AB32',
-        status: 'received' as const,
+        status: 'initiated' as const,
+        start_time: Date.now() - 2 * 24 * 60 * 60 * 1000, // 2 days ago
+        end_time: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days (1 week) from now
         createdAt: 'Sunday, March 16 2025 • 10:02 am',
         totalAmount: 1619.01,
         totalOrders: 2,
