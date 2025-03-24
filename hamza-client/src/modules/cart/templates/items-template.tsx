@@ -127,7 +127,7 @@ const ItemsTemplate = ({ currencyCode }: ItemsTemplateProps) => {
                         .map((item) => {
                             return (
                                 <Item
-                                    discount={cart.discounts}
+                                    discounts={cart.discounts}
                                     key={item.id}
                                     item={item}
                                     region={cart.region}
