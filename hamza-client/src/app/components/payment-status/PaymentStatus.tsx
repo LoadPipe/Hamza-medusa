@@ -111,6 +111,11 @@ const PaymentStatus = ({
     };
 
     useEffect(() => {
+        if (status !== 'initiated') {
+            setProgress(100);
+            return;
+        }
+
         const timer = setInterval(() => {
             const currentProgress =
                 ((Date.now() - start_time) / (end_time - start_time)) * 100;
@@ -123,7 +128,7 @@ const PaymentStatus = ({
         setProgress(Math.min(Math.max(initialProgress, 0), 100));
 
         return () => clearInterval(timer); // Cleanup on unmount
-    }, []); // Empty dependency array since we don't need to watch any values
+    }, [status]); // Added status to dependencies since we use it
 
     return (
         <>
