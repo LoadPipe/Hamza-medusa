@@ -4,13 +4,6 @@ import { getCurrencyAddress } from '../../currency.config';
 import { escrowMulticallAbi } from '../abi/escrow-multicall-abi';
 import { erc20abi } from '../abi/erc20-abi';
 import { escrowAbi } from '../abi/escrow-abi';
-import {
-    Order as MedusaOrder,
-    Payment as MedusaPayment,
-    ShippingMethod,
-    Store as MedusaStore,
-    LineItem,
-} from '@medusajs/medusa';
 
 export type PaymentDefinition = {
     id: string;
@@ -39,28 +32,6 @@ export type MulticallPaymentInput = {
     payer: string;
     amount: BigNumberish;
 };
-
-interface BlockchainData {
-    escrow_address: string; //contract address
-    chain_id: number;
-}
-
-export interface Payment extends MedusaPayment {
-    blockchain_data: BlockchainData;
-}
-
-export interface Store extends MedusaStore {
-    icon: string;
-}
-
-export interface Order extends MedusaOrder {
-    escrow_status: string;
-    payments: Payment[];
-    store: Store;
-    shipping_methods: ShippingMethod[];
-    items: LineItem[];
-    histories: any[];
-}
 
 export class EscrowMulticallClient {
     contractAddress: string;
