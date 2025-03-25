@@ -3,6 +3,7 @@ import OrderSummary from './order-summary';
 import PaymentSummary from './payment-summary';
 import CheckoutDetails from './checkout-details';
 import { Flex } from '@chakra-ui/react';
+import PaymentStatus from '@/modules/payment-status';
 
 const CheckoutTemplate = ({ cartId }: { cartId: string }) => {
     return (
@@ -14,11 +15,12 @@ const CheckoutTemplate = ({ cartId }: { cartId: string }) => {
             flexDir={{ base: 'column', md: 'row' }}
             gap={{ base: 3, md: 5 }}
         >
-            <Flex width="100%" flexDir="column" gap={{ base: 3, md: '41px' }}>
+            <PaymentStatus />
+            {/* <Flex width="100%" flexDir="column" gap={{ base: 3, md: '41px' }}>
                 <CheckoutDetails cartId={cartId} />
                 <OrderSummary cartId={cartId} />
             </Flex>
-            <PaymentSummary cartId={cartId } />
+            <PaymentSummary cartId={cartId } /> */}
         </Flex>
     );
 };
