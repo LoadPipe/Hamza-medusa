@@ -20,9 +20,17 @@ function PaymentStatus() {
 
             <Flex justify={'space-between'}>
                 <Text>Payment Status</Text>
-                <Box>
+                <Flex
+                    height={'32px'}
+                    width="108px"
+                    borderRadius={'36px'}
+                    borderColor={'#94D42A'}
+                    borderWidth={'1px'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                >
                     <Text fontSize={'12px'}>In Escrow</Text>
-                </Box>
+                </Flex>
             </Flex>
 
             <Flex>
@@ -136,8 +144,8 @@ function PaymentStatus() {
 
             <hr style={{ height: '1px', color: 'grey' }} />
 
-            <Flex flexDir={'row'}>
-                <IoShieldCheckmarkOutline size={'34px'} />
+            <Flex flexDir={'row'} gap={2}>
+                <IoShieldCheckmarkOutline size={'30px'} />
                 <Flex flexDir={'column'}>
                     <Text fontSize={'24px'} fontWeight={700}>
                         Funds in Escrow
