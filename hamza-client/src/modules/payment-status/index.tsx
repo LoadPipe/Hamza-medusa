@@ -1,6 +1,7 @@
-import { Flex, Text, Box } from '@chakra-ui/react';
+import { Flex, Text, Box, Button } from '@chakra-ui/react';
 import React from 'react';
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
+import { IoShieldCheckmarkOutline } from 'react-icons/io5';
 
 function PaymentStatus() {
     return (
@@ -135,21 +136,29 @@ function PaymentStatus() {
 
             <hr style={{ height: '1px', color: 'grey' }} />
 
-            <Flex flexDir={'column'}>
-                <Text fontSize={'24px'} fontWeight={700}>
-                    Funds in Escrow
-                </Text>
-
-                <Text>
-                    Your funds are secured in escrow. They will be released to
-                    the seller once you confirm reeceipt of your order
-                </Text>
+            <Flex flexDir={'row'}>
+                <IoShieldCheckmarkOutline size={'34px'} />
+                <Flex flexDir={'column'}>
+                    <Text fontSize={'24px'} fontWeight={700}>
+                        Funds in Escrow
+                    </Text>
+                    <Text>
+                        Your funds are secured in escrow. They will be released
+                        to the seller once you confirm reeceipt of your order
+                    </Text>
+                </Flex>
             </Flex>
 
             <Flex gap={4}>
-                <Text fontSize={'14px'}>Created</Text>
-                <Text fontSize={'14px'}>Total Amount:</Text>
-                <Text fontSize={'14px'}>Total Orders:</Text>
+                <Text fontSize={'14px'} color="#C2C2C2">
+                    Created
+                </Text>
+                <Text fontSize={'14px'} color="#C2C2C2">
+                    Total Amount:
+                </Text>
+                <Text fontSize={'14px'} color="#C2C2C2">
+                    Total Orders:
+                </Text>
             </Flex>
 
             <Flex
@@ -158,8 +167,11 @@ function PaymentStatus() {
                 height="88px"
                 borderRadius={'16px'}
                 padding={'16px 24px 16px 24px'}
+                mt="auto"
+                justify={'space-between'}
             >
                 <Text fontWeight={700}>Payment Address</Text>
+                <Button my="auto">Copy</Button>
             </Flex>
         </Flex>
     );
