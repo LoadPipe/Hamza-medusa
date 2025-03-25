@@ -157,16 +157,27 @@ function PaymentStatus() {
                 </Flex>
             </Flex>
 
-            <Flex gap={4}>
-                <Text fontSize={'14px'} color="#C2C2C2">
-                    Created
-                </Text>
-                <Text fontSize={'14px'} color="#C2C2C2">
-                    Total Amount:
-                </Text>
-                <Text fontSize={'14px'} color="#C2C2C2">
-                    Total Orders:
-                </Text>
+            <Flex gap={8} mt="1rem">
+                <Flex flexDir={'column'}>
+                    <Text fontSize={'14px'} color="#C2C2C2">
+                        Created
+                    </Text>
+                    <Text>lorem</Text>
+                </Flex>
+
+                <Flex flexDir={'column'}>
+                    <Text fontSize={'14px'} color="#C2C2C2">
+                        Total Amount:
+                    </Text>
+                    <Text>lorem</Text>
+                </Flex>
+
+                <Flex flexDir={'column'}>
+                    <Text fontSize={'14px'} color="#C2C2C2">
+                        Total Orders:
+                    </Text>
+                    <Text>lorem</Text>
+                </Flex>
             </Flex>
 
             <Flex
