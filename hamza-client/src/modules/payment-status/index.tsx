@@ -1,4 +1,4 @@
-import { Flex, Text, Box, Button } from '@chakra-ui/react';
+import { Flex, Text, Box, Button, Divider } from '@chakra-ui/react';
 import React from 'react';
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
 import { IoShieldCheckmarkOutline } from 'react-icons/io5';
@@ -142,7 +142,7 @@ function PaymentStatus() {
                 </Flex>
             </Flex>
 
-            <hr style={{ height: '1px', color: 'grey' }} />
+            <Divider style={{ height: '1px', color: 'grey' }} my="1rem" />
 
             <Flex flexDir={'row'} gap={2}>
                 <IoShieldCheckmarkOutline size={'30px'} />
