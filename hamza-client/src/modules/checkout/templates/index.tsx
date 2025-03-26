@@ -3,7 +3,7 @@ import OrderSummary from './order-summary';
 import PaymentSummary from './payment-summary';
 import CheckoutDetails from './checkout-details';
 import { Flex } from '@chakra-ui/react';
-import PaymentStatus from '@/modules/payment-status';
+import PaymentStatus from '@/modules/payment-status/components/payment-status';
 
 const CheckoutTemplate = ({ cartId }: { cartId: string }) => {
     return (
