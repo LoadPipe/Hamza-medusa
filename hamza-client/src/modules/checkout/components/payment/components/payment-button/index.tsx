@@ -112,29 +112,28 @@ const CryptoPaymentButton = ({
      * @returns {transaction_id, payer_address, escrow_contract_address, success }
      */
     const doWalletPayment = async (data: any) => {
-        const checkoutMode = 'SWITCH'; //await getCheckoutMode();
+        const checkoutMode = data?.checkout_mode;
         console.log('checkout mode is', checkoutMode);
 
         //select the right handler based on payment mode
         let handler: IWalletPaymentHandler = new FakeWalletPaymentHandler();
-        if (data?.checkout_mode === 'async') {
-            handler = new AsyncPaymentHandler();
-        } else {
-            switch (checkoutMode?.toUpperCase()) {
-                case 'MASSMARKET':
-                    handler = new MassmarketWalletPaymentHandler();
-                    break;
-                case 'DIRECT':
-                    handler = new DirectWalletPaymentHandler();
-                    break;
-                case 'SWITCH':
-                    //if (data?.orders[0]?.escrow_metadata?.version === '1.0') {
-                    handler = new EscrowWalletPaymentHandler();
-                    break;
-                //}
-                //handler = new LiteSwitchWalletPaymentHandler();
-                //break;
-            }
+        switch (checkoutMode?.toUpperCase()) {
+            case 'ASYNC':
+                handler = new AsyncPaymentHandler();
+                break;
+            case 'MASSMARKET':
+                handler = new MassmarketWalletPaymentHandler();
+                break;
+            case 'DIRECT':
+                handler = new DirectWalletPaymentHandler();
+                break;
+            case 'SWITCH':
+                //if (data?.orders[0]?.escrow_metadata?.version === '1.0') {
+                handler = new EscrowWalletPaymentHandler();
+                break;
+            //}
+            //handler = new LiteSwitchWalletPaymentHandler();
+            //break;
         }
 
         try {
