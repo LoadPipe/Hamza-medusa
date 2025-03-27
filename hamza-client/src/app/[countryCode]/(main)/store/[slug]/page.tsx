@@ -25,6 +25,8 @@ export default async function StorePage({
         redirect('/en/store/onlyprints');
     if (params.slug?.toLowerCase() === 'stanzo')
         redirect('/en/store/onlyprints');
+    if (params.slug?.toLowerCase() === 'bigwater')
+        redirect('/en/store/bigwater-depin-devices');
 
     //params.slug = 'onlyprints';
     return (
