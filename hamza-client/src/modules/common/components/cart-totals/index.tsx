@@ -139,9 +139,18 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                 )}
 
                 {!!cart.discount_total && (
-                    <Text fontSize={{ base: '14px', md: '16px' }}>
-                        <span>Discount</span>
-                    </Text>
+                    <Flex justifyContent={'space-between'}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            Discount
+                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            -
+                            {formatCryptoPrice(
+                                cart.discount_total,
+                                displayCurrency
+                            )}
+                        </Text>
+                    </Flex>
                 )}
                 {!!cart.gift_card_total && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
