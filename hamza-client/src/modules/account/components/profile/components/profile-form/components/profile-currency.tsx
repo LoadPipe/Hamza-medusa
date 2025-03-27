@@ -14,16 +14,19 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Image from 'next/image';
+import { setCurrency } from '@lib/server';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 type ProfileCurrencyProps = {
-    preferred_currency_code: string | null;
+    preferredCurrencyCode: string | null;
+    defaultCurrency?: string;
     setCustomerPreferredCurrency: (currency: string) => void;
     isProfile?: boolean;
     className?: string;
 };
 
 const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
-    preferred_currency_code,
+    preferredCurrencyCode,
     setCustomerPreferredCurrency,
     isProfile,
     className,
@@ -33,13 +36,15 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
         { code: 'usdt', label: 'USDT' },
         { code: 'eth', label: 'ETH' },
     ];
+    const authData = useCustomerAuthStore((state) => state.authData);
 
     const currentCurrency = currencies.find(
-        (currency) => currency.code === preferred_currency_code
+        (currency) => currency.code === preferredCurrencyCode
     );
 
-    const handleCurrencySelect = (currencyCode: string) => {
+    const handleCurrencySelect = async (currencyCode: string) => {
         setCustomerPreferredCurrency(currencyCode);
+        await setCurrency(currencyCode, authData.customer_id);
     };
 
     return (
