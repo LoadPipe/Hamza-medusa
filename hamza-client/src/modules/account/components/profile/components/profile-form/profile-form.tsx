@@ -132,7 +132,7 @@ const ProfileForm: React.FC<any> = ({ customer }) => {
                     }
                 >
                     <ProfileCurrency
-                        preferred_currency_code={preferred_currency_code}
+                        preferredCurrencyCode={preferred_currency_code}
                         setCustomerPreferredCurrency={
                             setCustomerPreferredCurrency
                         }
