@@ -13,6 +13,9 @@ import {
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { setCurrency } from '@/lib/server';
 import currencyIcons from '@/images/currencies/crypto-currencies';
+import { useQueryClient } from '@tanstack/react-query';
+import { Cart } from '@medusajs/medusa';
+import { removeDiscount } from '@modules/checkout/actions';
 
 interface CurrencySelectorProps {
     preferredCurrencyCode?: string;
@@ -42,7 +45,14 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     usdtBalanceData,
 }) => {
     const authData = useCustomerAuthStore((state) => state.authData);
-    const setCustomerPreferredCurrency = useCustomerAuthStore((state) => state.setCustomerPreferredCurrency);
+    const setCustomerPreferredCurrency = useCustomerAuthStore(
+        (state) => state.setCustomerPreferredCurrency
+    );
+    const queryClient = useQueryClient();
+    const cart = queryClient.getQueryData<Cart>(['cart']);
+    // If cart exists, you can extract the discount code
+    const discountCode = cart?.discounts?.[0]?.code;
+    console.log(`DISCOUNT CODE IS ${discountCode}`);
 
     useEffect(() => {
         if (!isOpen) {
@@ -79,6 +89,7 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
 
     const handleCurrencySelection = async (currencyCode: string) => {
         try {
+            await removeDiscount(discountCode);
             setSelectedCurrency(currencyCode);
             setCustomerPreferredCurrency(currencyCode);
             await setCurrency(currencyCode, authData.customer_id);
@@ -106,7 +117,10 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                                 <Radio
                                     value={c.code}
                                     colorScheme="whiteAlpha"
-                                    _checked={{ bg: 'white', borderColor: 'white' }}
+                                    _checked={{
+                                        bg: 'white',
+                                        borderColor: 'white',
+                                    }}
                                     pointerEvents="none"
                                 />
                                 <Flex alignItems="center" gap="6px">

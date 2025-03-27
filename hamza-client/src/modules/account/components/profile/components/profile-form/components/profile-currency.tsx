@@ -16,7 +16,9 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import Image from 'next/image';
 import { setCurrency } from '@lib/server';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-
+import { useQueryClient } from '@tanstack/react-query';
+import { Cart } from '@medusajs/medusa';
+import { removeDiscount } from '@modules/checkout/actions';
 type ProfileCurrencyProps = {
     preferredCurrencyCode: string | null;
     defaultCurrency?: string;
@@ -37,12 +39,19 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
         { code: 'eth', label: 'ETH' },
     ];
     const authData = useCustomerAuthStore((state) => state.authData);
+    const queryClient = useQueryClient();
+    const cart = queryClient.getQueryData<Cart>(['cart']);
+    // If cart exists, you can extract the discount code
+    const discountCode = cart?.discounts?.[0]?.code;
 
     const currentCurrency = currencies.find(
         (currency) => currency.code === preferredCurrencyCode
     );
 
     const handleCurrencySelect = async (currencyCode: string) => {
+        if (discountCode) {
+            await removeDiscount(discountCode);
+        }
         setCustomerPreferredCurrency(currencyCode);
         await setCurrency(currencyCode, authData.customer_id);
     };
