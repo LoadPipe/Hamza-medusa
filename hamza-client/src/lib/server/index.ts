@@ -530,6 +530,12 @@ export async function getStoreReviews(store_id: string) {
     });
 }
 
+export async function getPaymentData(cart_id: string) {
+    return getSecure('/custom/checkout/payment', {
+        cart_id,
+    });
+}
+
 export async function getCheckoutData(cart_id: string) {
     return getSecure('/custom/checkout', {
         cart_id,
