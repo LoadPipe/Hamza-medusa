@@ -7,14 +7,13 @@ import {
     Text,
     Icon,
     Button,
-    Collapse,
-    Spinner,
     Flex,
 } from '@chakra-ui/react';
 import { FaBox, FaCopy } from 'react-icons/fa';
 import { LuShieldCheck } from 'react-icons/lu';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import StatusStep from './StatusStep';
+import OrderItem from './OrderItem';
 
 import { PaymentsDataProps } from '@/app/[countryCode]/(main)/order/processing/[id]/page';
 import Image from 'next/image';
@@ -22,11 +21,15 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 
 const PaymentStatus = ({
+    startTimestamp,
+    endTimestamp,
     paymentsData,
     cartId,
 }: {
     paymentsData: PaymentsDataProps[];
     cartId: string;
+    startTimestamp: number;
+    endTimestamp: number;
 }) => {
     const paymentData = paymentsData[0];
 
@@ -37,29 +40,24 @@ const PaymentStatus = ({
 
     const statusSteps = [
         {
-            label: 'Initiated',
+            label: 'Created',
             subLabel: 'Payment request created',
-            status: 'initiated',
+            status: 'created',
         },
         {
-            label: 'Pending',
-            subLabel: 'Waiting for payment',
-            status: 'pending',
+            label: 'Waiting',
+            subLabel: 'Payment request created',
+            status: 'waiting',
         },
         {
             label: 'Received',
-            subLabel: 'Full payment received',
+            subLabel: 'Payment received',
             status: 'received',
         },
         {
             label: 'In Escrow',
             subLabel: 'Funds secured in escrow',
             status: 'in_escrow',
-        },
-        {
-            label: 'Complete',
-            subLabel: 'Transaction Finalized',
-            status: 'complete',
         },
     ];
 
@@ -83,14 +81,14 @@ const PaymentStatus = ({
         }));
     };
 
-    const calculateProgress = () => {
-        const usedTime = Date.now() - paymentData.startTimestamp;
-        const totalTime = paymentData.endTimestamp - paymentData.startTimestamp;
+    const calculateProgress = useCallback(() => {
+        const usedTime = Date.now() - startTimestamp;
+        const totalTime = endTimestamp - startTimestamp;
         return Math.min(Math.max((usedTime / totalTime) * 100, 0), 100);
-    };
+    }, [startTimestamp, endTimestamp]);
 
     useEffect(() => {
-        if (paymentData.status !== 'initiated') {
+        if (paymentData.status !== 'waiting') {
             setProgress(100);
             return;
         }
@@ -99,13 +97,12 @@ const PaymentStatus = ({
             const currentProgress = calculateProgress();
             setProgress(currentProgress);
             console.log(currentProgress);
-        }, 1000); // Update every second
+        }, 1000);
 
-        // Initial calculation immediately
         setProgress(calculateProgress());
 
-        return () => clearInterval(timer); // Cleanup on unmount
-    }, [paymentData.status]); // Added status to dependencies since we use it
+        return () => clearInterval(timer);
+    }, [paymentData.status, calculateProgress]);
 
     return (
         <>
@@ -275,156 +272,13 @@ const PaymentStatus = ({
                         </Text>
                         <VStack spacing={3} align="stretch">
                             {paymentData.orders.map((order) => (
-                                <Box
+                                <OrderItem
                                     key={order.id}
-                                    bg="gray.800"
-                                    p={4}
-                                    borderRadius="lg"
-                                    cursor="pointer"
-                                    onClick={() => toggleOrder(order.id)}
-                                >
-                                    <HStack justify="space-between">
-                                        <HStack spacing={3}>
-                                            <Icon as={FaBox} color="white" />
-                                            <Text color="white">
-                                                {order.id} - {order.store.name}
-                                            </Text>
-                                        </HStack>
-                                        <Flex>
-                                            <Image
-                                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                                src={
-                                                    currencyIcons[
-                                                        currencyCode ?? 'usdc'
-                                                    ]
-                                                }
-                                                alt={currencyCode ?? 'usdc'}
-                                            />
-                                            <Text ml="0.4rem" color="white">
-                                                {formatCryptoPrice(
-                                                    order.payments[0].amount,
-                                                    order.currency_code
-                                                )}
-                                            </Text>
-                                        </Flex>
-                                    </HStack>
-
-                                    <Collapse in={openOrders[order.id]}>
-                                        {order.detail && (
-                                            <Box mt={4} pl={8}>
-                                                {order.detail.items.map(
-                                                    (item) => (
-                                                        <HStack
-                                                            key={item.id}
-                                                            mb={2}
-                                                        >
-                                                            <Box>
-                                                                <HStack>
-                                                                    <Image
-                                                                        src={
-                                                                            item.thumbnail
-                                                                        }
-                                                                        alt={
-                                                                            item.title
-                                                                        }
-                                                                        width={
-                                                                            50
-                                                                        }
-                                                                        height={
-                                                                            50
-                                                                        }
-                                                                    />
-                                                                    <VStack>
-                                                                        <Text color="white">
-                                                                            {
-                                                                                item.title
-                                                                            }
-                                                                        </Text>
-                                                                        <Text
-                                                                            color="gray.500"
-                                                                            fontSize="sm"
-                                                                        >
-                                                                            {
-                                                                                item
-                                                                                    .variant
-                                                                                    .title
-                                                                            }
-                                                                        </Text>
-                                                                    </VStack>
-                                                                </HStack>
-                                                            </Box>
-                                                            <Box>
-                                                                <VStack>
-                                                                    <Text color="gray.500">
-                                                                        Sold by:
-                                                                    </Text>
-                                                                    <HStack>
-                                                                        <Image
-                                                                            src={
-                                                                                order
-                                                                                    .store
-                                                                                    .icon
-                                                                            }
-                                                                            alt={
-                                                                                order
-                                                                                    .store
-                                                                                    .name
-                                                                            }
-                                                                            width={
-                                                                                20
-                                                                            }
-                                                                            height={
-                                                                                20
-                                                                            }
-                                                                        />
-                                                                        <Text color="white">
-                                                                            {
-                                                                                order
-                                                                                    .store
-                                                                                    .name
-                                                                            }
-                                                                        </Text>
-                                                                    </HStack>
-                                                                </VStack>
-                                                            </Box>
-                                                            <Box>
-                                                                <VStack>
-                                                                    <Text color="gray.500">
-                                                                        Amount:
-                                                                    </Text>
-                                                                    <Flex>
-                                                                        <Image
-                                                                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                                                            src={
-                                                                                currencyIcons[
-                                                                                    item.currency_code ??
-                                                                                        'usdc'
-                                                                                ]
-                                                                            }
-                                                                            alt={
-                                                                                item.currency_code ??
-                                                                                'usdc'
-                                                                            }
-                                                                        />
-                                                                        <Text
-                                                                            ml="0.4rem"
-                                                                            color="white"
-                                                                        >
-                                                                            {formatCryptoPrice(
-                                                                                item.total,
-                                                                                item.currency_code
-                                                                            )}
-                                                                        </Text>
-                                                                    </Flex>
-                                                                </VStack>
-                                                            </Box>
-                                                        </HStack>
-                                                    )
-                                                )}
-                                            </Box>
-                                        )}
-                                    </Collapse>
-                                </Box>
+                                    order={order}
+                                    isOpen={openOrders[order.id]}
+                                    onToggle={() => toggleOrder(order.id)}
+                                    currencyCode={currencyCode}
+                                />
                             ))}
                         </VStack>
 

@@ -4,7 +4,7 @@ import { enrichLineItems } from '@/modules/cart/actions';
 import { Container } from '@chakra-ui/react';
 import {
     Cart,
-    LineItem,
+    LineItem as MedusaLineItem,
     Order as MedusaOrder,
     Store as MedusaStore,
 } from '@medusajs/medusa';
@@ -72,14 +72,29 @@ interface Store extends MedusaStore {
     icon: string;
 }
 
+export interface LineItem extends MedusaLineItem {
+    thumbnail: string;
+    currency_code: string;
+}
+
+interface orderDetail extends MedusaOrder {
+    items: LineItem[];
+}
+
 interface Order extends MedusaOrder {
     store: Store;
     payments: Payment[];
-    detail: Order;
+    detail: orderDetail;
 }
 
 export interface PaymentsDataProps {
-    status: 'initiated' | 'pending' | 'received' | 'in_escrow' | 'complete';
+    status:
+        | 'created'
+        | 'waiting'
+        | 'partial'
+        | 'received'
+        | 'in_escrow'
+        | 'expired';
     totalAmount: number;
     paymentAddress: string;
     expiresInSeconds: number; // ms
@@ -92,9 +107,16 @@ export default async function ProcessingPage({ params }: Props) {
     const cartId = params.id;
 
     let paymentsData: PaymentsDataProps[] = await getPaymentData(cartId);
-    paymentsData[0].startTimestamp = Date.now() - 2 * 60 * 60 * 1000;
-    paymentsData[0].endTimestamp =
-        Date.now() + Number(paymentsData[0].expiresInSeconds) * 1000;
+    const startTimestamp =
+        paymentsData[0].startTimestamp > 0
+            ? paymentsData[0].startTimestamp
+            : new Date(paymentsData[0].orders[0].created_at).getTime();
+    const endTimestamp =
+        paymentsData[0].startTimestamp > 0
+            ? paymentsData[0].startTimestamp
+            : Date.now() + Number(paymentsData[0].expiresInSeconds) * 1000;
+
+    console.log('paymentsData: ', JSON.stringify(paymentsData));
 
     //loop through paymentsData array.  Then paymentData.order
     await Promise.all(
@@ -111,7 +133,12 @@ export default async function ProcessingPage({ params }: Props) {
 
     return (
         <Container maxW="container.lg" py={8}>
-            <PaymentStatus paymentsData={paymentsData} cartId={cartId} />
+            <PaymentStatus
+                startTimestamp={startTimestamp}
+                endTimestamp={endTimestamp}
+                paymentsData={paymentsData}
+                cartId={cartId}
+            />
         </Container>
     );
 }

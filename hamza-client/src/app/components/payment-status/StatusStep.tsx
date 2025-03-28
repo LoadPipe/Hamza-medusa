@@ -32,7 +32,7 @@ const StatusStep = ({
                         h="10px"
                         borderRadius="5px"
                         bg={
-                            step.status === 'initiated'
+                            step.status === 'waiting'
                                 ? 'gray.600'
                                 : getStatusColor(step.status)
                         }
@@ -41,8 +41,8 @@ const StatusStep = ({
                         left={0}
                     />
 
-                    {/* Progress line (green) - only shown for initiated status */}
-                    {step.status === 'initiated' && (
+                    {/* Progress line (green) - only shown for waiting status */}
+                    {step.status === 'waiting' && (
                         <Box
                             h="10px"
                             borderRadius="5px"
@@ -61,7 +61,7 @@ const StatusStep = ({
 
                 {/* Status Icon and Text */}
                 <HStack spacing={2} align="flex-start">
-                    {step.status === 'initiated' && progress < 100 ? (
+                    {step.status === 'waiting' && progress < 100 ? (
                         <Spinner
                             color={getStatusColor(step.status)}
                             size="sm"
