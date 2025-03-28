@@ -193,6 +193,21 @@ const CryptoPaymentButton = ({
     };
 
     /**
+     * Redirects to payment processing page
+     * @param cartId
+     * @param countryCode
+     */
+    const redirectToPaymentProcessing = (
+        cartId: string,
+        countryCode: string
+    ) => {
+        //finally, if all good, redirect to order confirmation page
+        if (cartId?.length) {
+            router.push(`/${countryCode}/order/processing/${cartId}/`);
+        }
+    };
+
+    /**
      * Does most of checkout:
      * - sends payment to wallet
      * - updates orders & payments after successful wallet payment
@@ -243,12 +258,19 @@ const CryptoPaymentButton = ({
                     //if (response.status == 100) {
                     // TODO: here, reredirect to payment status page
                     //} else if (response.status == 200) {
-                    console.log('redirecting to confirmation page');
-                    redirectToOrderConfirmation(
-                        data?.orders?.length ? data.orders[0].order_id : null,
-                        cart.id,
-                        countryCode
-                    );
+                    if (data.checkout_mode === 'ASYNC') {
+                        console.log('redirecting to payments page');
+                        redirectToPaymentProcessing(cart.id, countryCode);
+                    } else {
+                        console.log('redirecting to confirmation page');
+                        redirectToOrderConfirmation(
+                            data?.orders?.length
+                                ? data.orders[0].order_id
+                                : null,
+                            cart.id,
+                            countryCode
+                        );
+                    }
                     //}
                 } else {
                     setLoaderVisible(false);
