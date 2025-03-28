@@ -26,10 +26,6 @@ describe('Metamask login then user profile', () => {
 
         cy.wait(3000);
 
-        buttonClickByElementText('Save Changes');
-
-        cy.wait(3000);
-
         elementCheckByElementClass('.product-card', {
             findByChild: 'USDC',
             scrollIntoView: false,
@@ -46,10 +42,6 @@ describe('Metamask login then user profile', () => {
             beVisible: false,
             forceClick: true,
         });
-
-        cy.wait(3000);
-
-        buttonClickByElementText('Save Changes');
 
         cy.wait(3000);
 
@@ -72,10 +64,6 @@ describe('Metamask login then user profile', () => {
 
         cy.wait(3000);
 
-        buttonClickByElementText('Save Changes');
-
-        cy.wait(3000);
-
         elementCheckByElementClass('.product-card', {
             findByChild: 'USDT',
             scrollIntoView: false,
@@ -92,10 +80,6 @@ describe('Metamask login then user profile', () => {
             beVisible: false,
             forceClick: true,
         });
-
-        cy.wait(3000);
-
-        buttonClickByElementText('Save Changes');
 
         cy.wait(3000);
 
