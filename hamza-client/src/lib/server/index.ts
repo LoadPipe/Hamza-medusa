@@ -540,15 +540,19 @@ export async function finalizeCheckout(
     cart_id: string,
     transaction_id: string,
     payer_address: string,
-    chain_id: number
-    //cart_products: any
+    chain_id: number,
+    returnRaw: boolean = false
 ) {
-    return postSecure('/custom/checkout', {
-        cart_id,
-        transaction_id,
-        payer_address,
-        chain_id,
-    });
+    return postSecure(
+        '/custom/checkout',
+        {
+            cart_id,
+            transaction_id,
+            payer_address,
+            chain_id,
+        },
+        returnRaw
+    );
 }
 
 export async function getCartEmail(cart_id: string) {

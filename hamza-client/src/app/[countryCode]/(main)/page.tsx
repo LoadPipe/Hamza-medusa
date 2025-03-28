@@ -1,10 +1,9 @@
-import {Metadata} from 'next';
-import {getAllProducts} from '@/lib/server';
-import {getRegion} from '@/app/actions';
+import { Metadata } from 'next';
+import { getAllProducts } from '@/lib/server';
+import { getRegion } from '@/app/actions';
 import SearchAndFilterPanel from '@modules/home/components/search-and-filter-panel';
-import {Box} from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
-import getQueryClient from '@/app/query-utils/getQueryClient';
 import {
     QueryClient,
     dehydrate,
@@ -47,8 +46,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Home({
-                                       params: {countryCode},
-                                   }: {
+    params: { countryCode },
+}: {
     params: { countryCode: string };
 }) {
     const queryClient = new QueryClient();
@@ -69,11 +68,10 @@ export default async function Home({
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <Box backgroundColor={'transparent'}>
-                <HeroBanner/>
-                <HeroSlider/>
-                <SearchAndFilterPanel/>
+                <HeroBanner />
+                <HeroSlider />
+                <SearchAndFilterPanel />
             </Box>
         </HydrationBoundary>
-
     );
 }
