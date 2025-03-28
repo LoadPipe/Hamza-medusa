@@ -18,7 +18,7 @@ import { setCurrency } from '@lib/server';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { Cart } from '@medusajs/medusa';
-import { removeDiscount } from '@modules/checkout/actions';
+import { applyDiscount, removeDiscount } from '@modules/checkout/actions';
 type ProfileCurrencyProps = {
     preferredCurrencyCode: string | null;
     defaultCurrency?: string;
@@ -50,10 +50,16 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
 
     const handleCurrencySelect = async (currencyCode: string) => {
         if (discountCode) {
-            await removeDiscount(discountCode);
+            // await removeDiscount(discountCode);
+            await applyDiscount(discountCode).catch(async (err) => {
+                console.log(err);
+            });
         }
         setCustomerPreferredCurrency(currencyCode);
         await setCurrency(currencyCode, authData.customer_id);
+
+        await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
+        await queryClient.refetchQueries<Cart>({ queryKey: ['cart'] });
     };
 
     return (

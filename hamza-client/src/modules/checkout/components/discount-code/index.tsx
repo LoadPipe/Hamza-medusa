@@ -28,7 +28,8 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
         queryKey: ['cart'],
         queryFn: () =>
             cartId ? fetchCartForCheckout(cartId) : fetchCartForCart(),
-        staleTime: 1000 * 60 * 5, // ✅ Cache cart data for 5 minutes
+        staleTime: 0,
+        gcTime: 0,
     });
 
     const appliedDiscount = useMemo(() => {
