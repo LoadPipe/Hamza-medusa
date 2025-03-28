@@ -30,7 +30,10 @@ const LineItemUnitPrice = ({
 }: LineItemUnitPriceProps) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const currency = preferred_currency_code ?? 'usdc';
-    const [price, setPrice] = useState<number>(0);
+    const [unitPrice, setUnitPrice] = useState<number>(0);
+    const [originalUnitPrice, setOriginalUnitPrice] = useState<number | null>(
+        0
+    );
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [reducedPrice, setReducedPrice] = useState<number | null>(null);
     const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
@@ -39,9 +42,16 @@ const LineItemUnitPrice = ({
         const fetchConvertedPrice = async () => {
             setIsLoading(true);
             try {
-                const itemPrice = getPriceByCurrency(item.variant.prices, currency);
-                const subTotal = Number(itemPrice) * item.quantity;
-                setPrice(subTotal);
+                const itemPrice = getPriceByCurrency(
+                    item.variant.prices,
+                    currency
+                );
+
+                // Calculate unit prices (for display purposes)
+                setUnitPrice(Number(itemPrice));
+                setOriginalUnitPrice(
+                    reducedPrice !== null ? reducedPrice / item.quantity : null
+                );
 
                 // Calculate discount based on original_total and discount_total
                 const originalTotal = item.original_total ?? null;
@@ -67,35 +77,43 @@ const LineItemUnitPrice = ({
         fetchConvertedPrice();
     }, [item, currency]);
 
-    // Calculate unit prices (for display purposes)
-    const unitPrice = price / item.quantity;
-    const originalUnitPrice = reducedPrice !== null ? reducedPrice / item.quantity : null;
-
     const buildDisplayPrice = (): string => {
         if (isLoading) return 'Loading…';
-        const baseFormatted = formatCryptoPrice(price, currency);
-        return displayCurrencyLetters ? `${baseFormatted} ${currency.toUpperCase()}` : String(baseFormatted);
+        const baseFormatted = formatCryptoPrice(unitPrice, currency);
+        return displayCurrencyLetters
+            ? `${baseFormatted} ${currency.toUpperCase()}`
+            : String(baseFormatted);
     };
 
     return (
         <div className="flex flex-col text-ui-fg-muted justify-center h-full line-item-unit-price">
-            {displayReducedPrice && hasReducedPrice && originalUnitPrice !== null && (
-                <>
-                    <p>
+            {displayReducedPrice &&
+                hasReducedPrice &&
+                originalUnitPrice !== null && (
+                    <>
+                        <p>
+                            {style === 'default' && (
+                                <span className="text-ui-fg-muted">
+                                    Original:{' '}
+                                </span>
+                            )}
+                            <span className="line-through">
+                                {formatCryptoPrice(originalUnitPrice, currency)}{' '}
+                                {currency.toUpperCase()}
+                            </span>
+                        </p>
                         {style === 'default' && (
-                            <span className="text-ui-fg-muted">Original: </span>
+                            <span className="text-ui-fg-interactive">
+                                -
+                                {getPercentageDiff(
+                                    originalUnitPrice,
+                                    unitPrice
+                                )}
+                                %
+                            </span>
                         )}
-                        <span className="line-through">
-                            {formatCryptoPrice(originalUnitPrice, currency)} {currency.toUpperCase()}
-                        </span>
-                    </p>
-                    {style === 'default' && (
-                        <span className="text-ui-fg-interactive">
-                            -{getPercentageDiff(originalUnitPrice, unitPrice)}%
-                        </span>
-                    )}
-                </>
-            )}
+                    </>
+                )}
 
             <LineItemUnitPriceDisplay
                 price={buildDisplayPrice()}
