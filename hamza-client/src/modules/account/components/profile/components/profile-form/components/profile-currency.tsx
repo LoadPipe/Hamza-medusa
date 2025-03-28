@@ -59,7 +59,6 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
         await setCurrency(currencyCode, authData.customer_id);
 
         await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
-        await queryClient.refetchQueries<Cart>({ queryKey: ['cart'] });
     };
 
     return (

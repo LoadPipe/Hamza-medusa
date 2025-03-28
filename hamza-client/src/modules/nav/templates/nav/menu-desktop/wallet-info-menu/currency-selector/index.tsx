@@ -15,7 +15,7 @@ import { setCurrency } from '@/lib/server';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { useQueryClient } from '@tanstack/react-query';
 import { Cart } from '@medusajs/medusa';
-import { removeDiscount } from '@modules/checkout/actions';
+import { applyDiscount, removeDiscount } from '@modules/checkout/actions';
 
 interface CurrencySelectorProps {
     preferredCurrencyCode?: string;
@@ -89,10 +89,17 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
 
     const handleCurrencySelection = async (currencyCode: string) => {
         try {
-            await removeDiscount(discountCode);
+            if (discountCode) {
+                // await removeDiscount(discountCode);
+                await applyDiscount(discountCode).catch(async (err) => {
+                    console.log(err);
+                });
+            }
             setSelectedCurrency(currencyCode);
             setCustomerPreferredCurrency(currencyCode);
             await setCurrency(currencyCode, authData.customer_id);
+
+            await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
         } catch (error) {
             console.error('Error updating currency:', error);
         }
