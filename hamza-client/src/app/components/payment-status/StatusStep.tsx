@@ -112,16 +112,17 @@ const StatusStep = ({
                         >
                             {step.label}
                         </Text>
-                        {step.status === 'waiting' && (
-                            <Text fontSize="sm" color="primary.green.900">
-                                Time remaining:{' '}
-                                {formatTimeRemaining(
-                                    progress,
-                                    endTimestamp,
-                                    startTimestamp
-                                )}
-                            </Text>
-                        )}
+                        {step.status === 'waiting' &&
+                            currentStatus === 'waiting' && (
+                                <Text fontSize="sm" color="primary.green.900">
+                                    Time remaining:{' '}
+                                    {formatTimeRemaining(
+                                        progress,
+                                        endTimestamp,
+                                        startTimestamp
+                                    )}
+                                </Text>
+                            )}
                         <Text fontSize="xs" color="gray.500">
                             {step.subLabel}
                         </Text>
