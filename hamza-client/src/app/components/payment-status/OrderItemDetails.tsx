@@ -8,20 +8,25 @@ interface OrderItemDetailsProps {
     item: LineItem;
     storeName: string;
     storeIcon: string;
+    isLastItem: boolean;
 }
 
 const OrderItemDetails = ({
     item,
     storeName,
     storeIcon,
+    isLastItem,
 }: OrderItemDetailsProps) => {
     return (
         <HStack
             key={item.id}
-            mb={2}
+            pt={8}
+            pb={isLastItem ? 0 : 8}
             justify="space-between"
             width="100%"
             spacing={4}
+            borderBottom={isLastItem ? 'none' : '1px solid'}
+            borderColor="gray.700"
         >
             <Box flex="1">
                 <HStack>

@@ -8,6 +8,7 @@ import {
     Flex,
 } from '@chakra-ui/react';
 import { FaBox } from 'react-icons/fa';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import Image from 'next/image';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
@@ -42,18 +43,25 @@ const OrderItem = ({
                         {order.id} - {order.store.name}
                     </Text>
                 </HStack>
-                <Flex>
-                    <Image
-                        className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                        src={currencyIcons[currencyCode ?? 'usdc']}
-                        alt={currencyCode ?? 'usdc'}
+                <Flex alignItems="center" gap={2}>
+                    <Flex>
+                        <Image
+                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                            src={currencyIcons[currencyCode ?? 'usdc']}
+                            alt={currencyCode ?? 'usdc'}
+                        />
+                        <Text ml="0.4rem" color="white">
+                            {formatCryptoPrice(
+                                order.payments[0].amount,
+                                order.currency_code
+                            )}
+                        </Text>
+                    </Flex>
+                    <Icon
+                        as={isOpen ? ChevronUpIcon : ChevronDownIcon}
+                        color="white"
+                        boxSize={5}
                     />
-                    <Text ml="0.4rem" color="white">
-                        {formatCryptoPrice(
-                            order.payments[0].amount,
-                            order.currency_code
-                        )}
-                    </Text>
                 </Flex>
             </HStack>
 
@@ -66,6 +74,12 @@ const OrderItem = ({
                                 item={item}
                                 storeName={order.store.name}
                                 storeIcon={order.store.icon}
+                                isLastItem={
+                                    item.id ===
+                                    order.detail.items[
+                                        order.detail.items.length - 1
+                                    ].id
+                                }
                             />
                         ))}
                     </Box>

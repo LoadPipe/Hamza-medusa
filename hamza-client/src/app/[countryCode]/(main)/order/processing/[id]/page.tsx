@@ -107,6 +107,11 @@ export default async function ProcessingPage({ params }: Props) {
     const cartId = params.id;
 
     let paymentsData: PaymentsDataProps[] = await getPaymentData(cartId);
+
+    if (!paymentsData) {
+        return notFound();
+    }
+
     const startTimestamp =
         paymentsData[0].startTimestamp > 0
             ? paymentsData[0].startTimestamp
@@ -115,8 +120,6 @@ export default async function ProcessingPage({ params }: Props) {
         paymentsData[0].startTimestamp > 0
             ? paymentsData[0].startTimestamp
             : Date.now() + Number(paymentsData[0].expiresInSeconds) * 1000;
-
-    console.log('paymentsData: ', JSON.stringify(paymentsData));
 
     //loop through paymentsData array.  Then paymentData.order
     await Promise.all(

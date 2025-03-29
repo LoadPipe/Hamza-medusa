@@ -9,7 +9,7 @@ import {
     Button,
     Flex,
 } from '@chakra-ui/react';
-import { FaBox, FaCopy } from 'react-icons/fa';
+import { FaCopy } from 'react-icons/fa';
 import { LuShieldCheck } from 'react-icons/lu';
 import { useState, useEffect, useCallback } from 'react';
 import StatusStep from './StatusStep';
@@ -46,7 +46,7 @@ const PaymentStatus = ({
         },
         {
             label: 'Waiting',
-            subLabel: 'Payment request created',
+            subLabel: 'Waiting for payment to arrive',
             status: 'waiting',
         },
         {
@@ -178,7 +178,7 @@ const PaymentStatus = ({
                         <HStack mt={4} spacing={8}>
                             <VStack align="start" spacing={1}>
                                 <Text color="gray.500" fontSize="sm">
-                                    Created
+                                    Created:
                                 </Text>
                                 <Text color="white">
                                     {new Date(paymentData.orders[0].created_at)
