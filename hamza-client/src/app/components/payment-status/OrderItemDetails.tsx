@@ -21,7 +21,7 @@ const OrderItemDetails = ({
         <HStack
             key={item.id}
             pt={8}
-            pb={isLastItem ? 0 : 8}
+            pb={isLastItem ? 4 : 8}
             justify="space-between"
             width="100%"
             spacing={4}
@@ -72,7 +72,7 @@ const OrderItemDetails = ({
                     </HStack>
                 </VStack>
             </Box>
-            <Box width="150px" flexShrink={0}>
+            <Box width="100px" flexShrink={0}>
                 <VStack alignItems="flex-end" gap={0}>
                     <Text color="gray.500">Amount:</Text>
                     <Flex>

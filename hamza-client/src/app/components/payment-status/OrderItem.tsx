@@ -1,12 +1,4 @@
-import {
-    Box,
-    HStack,
-    Icon,
-    Text,
-    Collapse,
-    VStack,
-    Flex,
-} from '@chakra-ui/react';
+import { Box, HStack, Icon, Text, Collapse, Flex } from '@chakra-ui/react';
 import { FaBox } from 'react-icons/fa';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import Image from 'next/image';
@@ -67,7 +59,7 @@ const OrderItem = ({
 
             <Collapse in={isOpen}>
                 {order.detail && (
-                    <Box mt={4} pl={8}>
+                    <Box mt={4}>
                         {order.detail.items.map((item: LineItem) => (
                             <OrderItemDetails
                                 key={item.id}
