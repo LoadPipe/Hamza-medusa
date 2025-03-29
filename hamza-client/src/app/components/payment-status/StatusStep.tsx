@@ -13,7 +13,25 @@ interface StatusStepProps {
     index: number;
     progress?: number;
     getStatusColor: (status: string) => string;
+    endTimestamp: number;
+    startTimestamp: number;
 }
+
+const formatTimeRemaining = (
+    progress: number,
+    endTimestamp: number,
+    startTimestamp: number
+) => {
+    const timeRemaining = Math.floor(
+        (((100 - progress) / 100) * (endTimestamp - startTimestamp)) / 1000
+    );
+
+    const hours = Math.floor(timeRemaining / 3600);
+    const minutes = Math.floor((timeRemaining % 3600) / 60);
+    const seconds = Math.floor(timeRemaining % 60);
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
 
 const StatusStep = ({
     step,
@@ -21,6 +39,8 @@ const StatusStep = ({
     index,
     progress = 0,
     getStatusColor,
+    endTimestamp,
+    startTimestamp,
 }: StatusStepProps) => {
     return (
         <Box flex={1}>
@@ -92,6 +112,16 @@ const StatusStep = ({
                         >
                             {step.label}
                         </Text>
+                        {step.status === 'waiting' && (
+                            <Text fontSize="sm" color="primary.green.900">
+                                Time remaining:{' '}
+                                {formatTimeRemaining(
+                                    progress,
+                                    endTimestamp,
+                                    startTimestamp
+                                )}
+                            </Text>
+                        )}
                         <Text fontSize="xs" color="gray.500">
                             {step.subLabel}
                         </Text>

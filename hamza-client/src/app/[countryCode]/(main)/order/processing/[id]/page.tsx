@@ -108,10 +108,6 @@ export default async function ProcessingPage({ params }: Props) {
 
     let paymentsData: PaymentsDataProps[] = await getPaymentData(cartId);
 
-    if (!paymentsData) {
-        return notFound();
-    }
-
     const startTimestamp =
         paymentsData[0].startTimestamp > 0
             ? paymentsData[0].startTimestamp

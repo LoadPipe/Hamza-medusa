@@ -149,6 +149,8 @@ const PaymentStatus = ({
                                 index={index}
                                 progress={progress}
                                 getStatusColor={getStatusColor}
+                                endTimestamp={endTimestamp}
+                                startTimestamp={startTimestamp}
                             />
                         ))}
                     </HStack>
