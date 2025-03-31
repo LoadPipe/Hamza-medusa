@@ -42,7 +42,9 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     usdtBalanceData,
 }) => {
     const authData = useCustomerAuthStore((state) => state.authData);
-    const setCustomerPreferredCurrency = useCustomerAuthStore((state) => state.setCustomerPreferredCurrency);
+    const setCustomerPreferredCurrency = useCustomerAuthStore(
+        (state) => state.setCustomerPreferredCurrency
+    );
 
     useEffect(() => {
         if (!isOpen) {
@@ -100,13 +102,17 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                             justifyContent="space-between"
                             alignItems="center"
                             cursor="pointer"
+                            className="currency-selector-item"
                             onClick={() => handleCurrencySelection(c.code)}
                         >
                             <Flex alignItems="center" gap="8px">
                                 <Radio
                                     value={c.code}
                                     colorScheme="whiteAlpha"
-                                    _checked={{ bg: 'white', borderColor: 'white' }}
+                                    _checked={{
+                                        bg: 'white',
+                                        borderColor: 'white',
+                                    }}
                                     pointerEvents="none"
                                 />
                                 <Flex alignItems="center" gap="6px">
