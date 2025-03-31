@@ -38,7 +38,9 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
         { code: 'usdt', label: 'USDT' },
         { code: 'eth', label: 'ETH' },
     ];
-    const authData = useCustomerAuthStore((state) => state.authData);
+    const customerId = useCustomerAuthStore(
+        (state) => state.authData.customer_id
+    );
     const queryClient = useQueryClient();
     const cart = queryClient.getQueryData<Cart>(['cart']);
     // If cart exists, you can extract the discount code
@@ -56,7 +58,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
             });
         }
         setCustomerPreferredCurrency(currencyCode);
-        await setCurrency(currencyCode, authData.customer_id);
+        await setCurrency(currencyCode, customerId);
 
         await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
     };

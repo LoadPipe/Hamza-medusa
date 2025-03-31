@@ -44,7 +44,9 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     usdcBalanceData,
     usdtBalanceData,
 }) => {
-    const authData = useCustomerAuthStore((state) => state.authData);
+    const customerId = useCustomerAuthStore(
+        (state) => state.authData.customer_id
+    );
     const setCustomerPreferredCurrency = useCustomerAuthStore(
         (state) => state.setCustomerPreferredCurrency
     );
@@ -97,7 +99,7 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
             }
             setSelectedCurrency(currencyCode);
             setCustomerPreferredCurrency(currencyCode);
-            await setCurrency(currencyCode, authData.customer_id);
+            await setCurrency(currencyCode, customerId);
 
             await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
         } catch (error) {

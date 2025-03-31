@@ -50,7 +50,9 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     const discountCode = cart?.discounts?.[0]?.code;
     console.log(`DISCOUNT CODE IS ${discountCode}`);
 
-    const authData = useCustomerAuthStore((state) => state.authData);
+    const customerId = useCustomerAuthStore(
+        (state) => state.authData.customer_id
+    );
     const setCustomerPreferredCurrency = useCustomerAuthStore(
         (state) => state.setCustomerPreferredCurrency
     );
@@ -97,7 +99,7 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
             }
             setSelectedCurrency(code);
             setCustomerPreferredCurrency(code);
-            await setCurrency(code, authData.customer_id);
+            await setCurrency(code, customerId);
 
             await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
         } catch (error) {
