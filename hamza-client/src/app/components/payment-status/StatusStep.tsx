@@ -3,6 +3,13 @@
 import { Box, VStack, HStack, Text, Icon, Spinner } from '@chakra-ui/react';
 import { CheckCircleIcon } from '@chakra-ui/icons';
 
+enum StepDisplayState {
+    COMPLETED = 'completed',
+    ACTIVE = 'active',
+    ACTIVE_WITH_TIMER = 'active_with_timer',
+    INACTIVE = 'inactive',
+}
+
 interface StatusStepProps {
     step: {
         label: string;
@@ -33,6 +40,37 @@ const formatTimeRemaining = (
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
+const getStepDisplayState = (
+    stepStatus: string,
+    currentStatus: string,
+    progress: number,
+    endTimestamp: number,
+    startTimestamp: number
+): StepDisplayState => {
+    // If this step is completed (status is before current status)
+    if (stepStatus === 'created' || stepStatus === 'completed') {
+        return StepDisplayState.COMPLETED;
+    }
+
+    // If this is the current step
+    if (stepStatus === currentStatus) {
+        // If it's waiting and has time remaining
+        if (stepStatus === 'waiting' && progress < 100) {
+            const timeRemaining = Math.floor(
+                (((100 - progress) / 100) * (endTimestamp - startTimestamp)) /
+                    1000
+            );
+            return timeRemaining > 0
+                ? StepDisplayState.ACTIVE_WITH_TIMER
+                : StepDisplayState.ACTIVE;
+        }
+        return StepDisplayState.ACTIVE;
+    }
+
+    // If this step is after the current status
+    return StepDisplayState.INACTIVE;
+};
+
 const StatusStep = ({
     step,
     currentStatus,
@@ -42,35 +80,71 @@ const StatusStep = ({
     endTimestamp,
     startTimestamp,
 }: StatusStepProps) => {
+    const displayState = getStepDisplayState(
+        step.status,
+        currentStatus,
+        progress,
+        endTimestamp,
+        startTimestamp
+    );
+
+    const getLineColor = () => {
+        switch (displayState) {
+            case StepDisplayState.COMPLETED:
+                return '#94D42A';
+            case StepDisplayState.ACTIVE:
+            case StepDisplayState.ACTIVE_WITH_TIMER:
+                return '#94D42A';
+            case StepDisplayState.INACTIVE:
+                return 'gray.600';
+        }
+    };
+
+    const getIconColor = () => {
+        switch (displayState) {
+            case StepDisplayState.COMPLETED:
+                return '#94D42A';
+            case StepDisplayState.ACTIVE:
+            case StepDisplayState.ACTIVE_WITH_TIMER:
+                return 'white';
+            case StepDisplayState.INACTIVE:
+                return getStatusColor(step.status);
+        }
+    };
+
+    const getTextColor = () => {
+        switch (displayState) {
+            case StepDisplayState.COMPLETED:
+                return '#94D42A';
+            case StepDisplayState.ACTIVE:
+            case StepDisplayState.ACTIVE_WITH_TIMER:
+                return 'white';
+            case StepDisplayState.INACTIVE:
+                return getStatusColor(step.status);
+        }
+    };
+
     return (
         <Box flex={1}>
             <VStack spacing={2} align="start">
                 {/* Status Line */}
                 <Box position="relative" w="100%" h="10px">
-                    {/* Background line (gray) */}
+                    {/* Background line */}
                     <Box
                         h="10px"
                         borderRadius="5px"
-                        bg={
-                            step.status === 'waiting'
-                                ? 'gray.600'
-                                : getStatusColor(step.status)
-                        }
+                        bg={getLineColor()}
                         w="100%"
                         position={index === 0 ? 'relative' : 'absolute'}
                         left={0}
                     />
 
-                    {/* Progress line (green) - only shown for waiting status */}
-                    {step.status === 'waiting' && (
+                    {/* Progress line - only shown for active with timer */}
+                    {displayState === StepDisplayState.ACTIVE_WITH_TIMER && (
                         <Box
                             h="10px"
                             borderRadius="5px"
-                            background={
-                                progress === 100
-                                    ? '#94D42A'
-                                    : 'linear-gradient(to right, #94D42A, #FFFFFF)'
-                            }
+                            background="linear-gradient(to right, #94D42A, #FFFFFF)"
                             w={`${progress}%`}
                             position="absolute"
                             left={0}
@@ -81,9 +155,9 @@ const StatusStep = ({
 
                 {/* Status Icon and Text */}
                 <HStack spacing={2} align="flex-start">
-                    {step.status === 'waiting' && progress < 100 ? (
+                    {displayState === StepDisplayState.ACTIVE_WITH_TIMER ? (
                         <Spinner
-                            color={getStatusColor(step.status)}
+                            color={getIconColor()}
                             size="sm"
                             thickness="2px"
                             speed="0.8s"
@@ -91,11 +165,7 @@ const StatusStep = ({
                     ) : (
                         <Icon
                             as={CheckCircleIcon}
-                            color={
-                                step.status === currentStatus
-                                    ? 'white'
-                                    : getStatusColor(step.status)
-                            }
+                            color={getIconColor()}
                             boxSize={5}
                             bg="gray.900"
                         />
@@ -103,26 +173,22 @@ const StatusStep = ({
                     <VStack spacing={1} align="start" gap={0}>
                         <Text
                             fontSize="sm"
-                            color={
-                                step.status === currentStatus
-                                    ? 'white'
-                                    : getStatusColor(step.status)
-                            }
+                            color={getTextColor()}
                             fontWeight="bold"
                         >
                             {step.label}
                         </Text>
-                        {step.status === 'waiting' &&
-                            currentStatus === 'waiting' && (
-                                <Text fontSize="sm" color="primary.green.900">
-                                    Time remaining:{' '}
-                                    {formatTimeRemaining(
-                                        progress,
-                                        endTimestamp,
-                                        startTimestamp
-                                    )}
-                                </Text>
-                            )}
+                        {displayState ===
+                            StepDisplayState.ACTIVE_WITH_TIMER && (
+                            <Text fontSize="sm" color="primary.green.900">
+                                Time remaining:{' '}
+                                {formatTimeRemaining(
+                                    progress,
+                                    endTimestamp,
+                                    startTimestamp
+                                )}
+                            </Text>
+                        )}
                         <Text fontSize="xs" color="gray.500">
                             {step.subLabel}
                         </Text>
