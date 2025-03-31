@@ -1,9 +1,8 @@
 import PaymentStatus from '@/app/components/payment-status/PaymentStatus';
-import { getCart, getPaymentData, retrieveOrder } from '@/lib/server';
+import { getPaymentData, retrieveOrder } from '@/lib/server';
 import { enrichLineItems } from '@/modules/cart/actions';
 import { Container } from '@chakra-ui/react';
 import {
-    Cart,
     LineItem as MedusaLineItem,
     Order as MedusaOrder,
     Store as MedusaStore,
@@ -75,6 +74,7 @@ interface Store extends MedusaStore {
 export interface LineItem extends MedusaLineItem {
     thumbnail: string;
     currency_code: string;
+    total: number;
 }
 
 interface orderDetail extends MedusaOrder {

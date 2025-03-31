@@ -10,7 +10,6 @@ import {
     Flex,
 } from '@chakra-ui/react';
 import { FaCopy } from 'react-icons/fa';
-import { LuShieldCheck } from 'react-icons/lu';
 import { useState, useEffect, useCallback } from 'react';
 import StatusStep from './StatusStep';
 import OrderItem from './OrderItem';
@@ -37,7 +36,21 @@ const PaymentStatus = ({
     const [openOrders, setOpenOrders] = useState<Record<string, boolean>>({});
     const [progress, setProgress] = useState(0);
     const totalOrders = paymentData.orders.length;
-    const currencyCode = paymentData.orders[0].currency_code;
+    const totalItems = paymentData.orders.reduce((total, order) => {
+        const orderTotalItems = order.items.reduce(
+            (totalItems, item) => totalItems + item.quantity,
+            0
+        );
+        return total + orderTotalItems;
+    }, 0);
+    const paymentTotal = initialPaymentData.orders.reduce((total, order) => {
+        const orderTotal = order.detail.payments.reduce(
+            (paymentTotal, payment) => paymentTotal + payment.amount,
+            0
+        );
+        return total + orderTotal;
+    }, 0);
+    const currencyCode = initialPaymentData.orders[0].currency_code;
 
     const toggleOrder = (orderId: string) => {
         setOpenOrders((prev) => ({
@@ -151,24 +164,6 @@ const PaymentStatus = ({
 
                     {/* Escrow Info */}
                     <VStack spacing={0} align="start">
-                        <HStack align="start">
-                            <Icon
-                                as={LuShieldCheck}
-                                color="white"
-                                w={6}
-                                h={6}
-                            />
-                            <VStack spacing={0} align="start">
-                                <Text fontWeight="semibold" color="white">
-                                    Funds in Escrow
-                                </Text>
-                                <Text color="white" fontSize="sm">
-                                    Funds are held in escrow until the
-                                    transaction is finalized.
-                                </Text>
-                            </VStack>
-                        </HStack>
-
                         <HStack mt={4} spacing={8}>
                             <VStack align="start" spacing={1}>
                                 <Text color="gray.500" fontSize="sm">
@@ -204,7 +199,7 @@ const PaymentStatus = ({
                                     />
                                     <Text ml="0.4rem" color="white">
                                         {formatCryptoPrice(
-                                            paymentData.totalAmount,
+                                            paymentTotal,
                                             currencyCode
                                         )}
                                     </Text>
@@ -212,9 +207,9 @@ const PaymentStatus = ({
                             </VStack>
                             <VStack align="start" spacing={1}>
                                 <Text color="gray.500" fontSize="sm">
-                                    Total Orders:
+                                    Total Items:
                                 </Text>
-                                <Text color="white">{totalOrders} items</Text>
+                                <Text color="white">{totalItems} items</Text>
                             </VStack>
                         </HStack>
                     </VStack>
@@ -289,7 +284,7 @@ const PaymentStatus = ({
                                 />
                                 <Text ml="0.4rem" color="white">
                                     {formatCryptoPrice(
-                                        paymentData.totalAmount,
+                                        paymentTotal,
                                         currencyCode
                                     )}
                                 </Text>
