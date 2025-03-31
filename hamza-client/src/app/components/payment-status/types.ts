@@ -15,7 +15,6 @@ export interface StatusStepDisplayProps {
     step: StatusStep;
     index: number;
     progress?: number;
-    statusColor: string;
     displayState: StepDisplayState;
     timeRemaining?: string;
 }
@@ -66,16 +65,28 @@ export const calculateStepState = (
     endTimestamp: number,
     startTimestamp: number
 ): { displayState: StepDisplayState; timeRemaining?: string } => {
+    // Map special statuses to their base status
+    const effectiveStatus = (() => {
+        switch (currentStatus) {
+            case 'expired':
+                return 'waiting';
+            case 'partial':
+                return 'received';
+            default:
+                return currentStatus;
+        }
+    })();
+
     // Get the indices of the current step and current status in STATUS_STEPS
     const currentStepIndex = STATUS_STEPS.findIndex(
         (step) => step.status === stepStatus
     );
     const currentStatusIndex = STATUS_STEPS.findIndex(
-        (step) => step.status === currentStatus
+        (step) => step.status === effectiveStatus
     );
 
     // If this is the current step
-    if (stepStatus === currentStatus) {
+    if (stepStatus === effectiveStatus) {
         // If it's waiting and has time remaining
         if (stepStatus === 'waiting' && progress < 100) {
             const timeRemaining = Math.floor(
@@ -111,20 +122,49 @@ export const calculateStepState = (
 
 export const getStepColors = (
     displayState: StepDisplayState,
-    statusColor: string
+    stepStatus: string,
+    currentStatus: string
 ) => {
+    // Map special statuses to their base status
+    const effectiveStatus = (() => {
+        switch (currentStatus) {
+            case 'expired':
+                return 'waiting';
+            case 'partial':
+                return 'received';
+            default:
+                return currentStatus;
+        }
+    })();
+
+    const statusIndex = STATUS_STEPS.findIndex(
+        (step) => step.status === effectiveStatus
+    );
+    const stepIndex = STATUS_STEPS.findIndex(
+        (step) => step.status === stepStatus
+    );
+
+    const isCompletedOrActive = stepIndex <= statusIndex;
+    const isExpired = currentStatus === 'expired' && stepStatus === 'waiting';
+    const isPartial = currentStatus === 'partial' && stepStatus === 'received';
+
     const lineColor = (() => {
+        if (isExpired) return '#E53E3E'; // red.500
+        if (isPartial) return '#F6AD55'; // orange.400
         switch (displayState) {
             case StepDisplayState.COMPLETED:
-            case StepDisplayState.ACTIVE:
-            case StepDisplayState.ACTIVE_WITH_TIMER:
                 return '#94D42A';
+            case StepDisplayState.ACTIVE:
+                return '#94D42A';
+            case StepDisplayState.ACTIVE_WITH_TIMER:
             case StepDisplayState.INACTIVE:
                 return 'gray.600';
         }
     })();
 
     const iconColor = (() => {
+        if (isExpired) return '#E53E3E'; // red.500
+        if (isPartial) return '#F6AD55'; // orange.400
         switch (displayState) {
             case StepDisplayState.COMPLETED:
                 return '#94D42A';
@@ -132,11 +172,13 @@ export const getStepColors = (
             case StepDisplayState.ACTIVE_WITH_TIMER:
                 return 'white';
             case StepDisplayState.INACTIVE:
-                return statusColor;
+                return isCompletedOrActive ? 'primary.green.900' : 'gray.600';
         }
     })();
 
     const textColor = (() => {
+        if (isExpired) return '#E53E3E'; // red.500
+        if (isPartial) return '#F6AD55'; // orange.400
         switch (displayState) {
             case StepDisplayState.COMPLETED:
                 return '#94D42A';
@@ -144,7 +186,7 @@ export const getStepColors = (
             case StepDisplayState.ACTIVE_WITH_TIMER:
                 return 'white';
             case StepDisplayState.INACTIVE:
-                return statusColor;
+                return isCompletedOrActive ? 'primary.green.900' : 'gray.600';
         }
     })();
 

@@ -12,13 +12,14 @@ const StatusStep = ({
     step,
     index,
     progress = 0,
-    statusColor,
     displayState,
     timeRemaining,
-}: StatusStepDisplayProps) => {
+    currentStatus,
+}: StatusStepDisplayProps & { currentStatus: string }) => {
     const { lineColor, iconColor, textColor } = getStepColors(
         displayState,
-        statusColor
+        step.status,
+        currentStatus
     );
 
     return (
@@ -69,7 +70,13 @@ const StatusStep = ({
                     )}
                     <VStack spacing={1} align="start" gap={0}>
                         <Text fontSize="sm" color={textColor} fontWeight="bold">
-                            {step.label}
+                            {step.status === 'waiting' &&
+                            currentStatus === 'expired'
+                                ? 'Expired'
+                                : step.status === 'received' &&
+                                    currentStatus === 'partial'
+                                  ? 'Partial'
+                                  : step.label}
                         </Text>
                         {displayState === StepDisplayState.ACTIVE_WITH_TIMER &&
                             timeRemaining && (

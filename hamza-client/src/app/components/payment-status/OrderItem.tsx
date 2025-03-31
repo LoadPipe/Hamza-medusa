@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, HStack, Icon, Text, Collapse, Flex } from '@chakra-ui/react';
 import { FaBox } from 'react-icons/fa';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
@@ -6,6 +8,7 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { LineItem } from '@/app/[countryCode]/(main)/order/processing/[id]/page';
 import OrderItemDetails from './OrderItemDetails';
+import { isServer } from '@tanstack/react-query';
 
 interface OrderItemProps {
     order: any; // Replace with proper type

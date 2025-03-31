@@ -32,25 +32,12 @@ const PaymentStatus = ({
     startTimestamp: number;
     endTimestamp: number;
 }) => {
-    const paymentData = paymentsData[0];
-
+    const initialPaymentData = paymentsData[0];
+    const [paymentData, setPaymentData] = useState(initialPaymentData);
     const [openOrders, setOpenOrders] = useState<Record<string, boolean>>({});
     const [progress, setProgress] = useState(0);
     const totalOrders = paymentData.orders.length;
     const currencyCode = paymentData.orders[0].currency_code;
-
-    const getStatusColor = (stepStatus: string) => {
-        const statusIndex = STATUS_STEPS.findIndex(
-            (step) => step.status === paymentData.status
-        );
-        const stepIndex = STATUS_STEPS.findIndex(
-            (step) => step.status === stepStatus
-        );
-
-        if (stepIndex < statusIndex) return 'primary.green.900';
-        if (stepIndex === statusIndex) return 'primary.green.900';
-        return 'gray.600';
-    };
 
     const toggleOrder = (orderId: string) => {
         setOpenOrders((prev) => ({
@@ -74,7 +61,15 @@ const PaymentStatus = ({
         const timer = setInterval(() => {
             const currentProgress = calculateProgress();
             setProgress(currentProgress);
-            console.log(currentProgress);
+
+            // If progress reaches 100% (timer is done), change status to expired
+            if (currentProgress >= 100) {
+                setPaymentData((prev) => ({
+                    ...prev,
+                    status: 'expired',
+                }));
+                clearInterval(timer);
+            }
         }, 1000);
 
         setProgress(calculateProgress());
@@ -92,21 +87,36 @@ const PaymentStatus = ({
                             Payment Status
                         </Text>
                         <Box
-                            bg="green.900"
+                            bg={
+                                paymentData.status === 'expired'
+                                    ? 'red.900'
+                                    : paymentData.status === 'partial'
+                                      ? 'orange.900'
+                                      : 'green.900'
+                            }
                             px={3}
                             py={1}
                             borderRadius="3xl"
                             border="2px"
                             borderStyle="solid"
-                            borderColor="primary.green.900"
+                            borderColor={
+                                paymentData.status === 'expired'
+                                    ? 'red.500'
+                                    : paymentData.status === 'partial'
+                                      ? 'orange.400'
+                                      : 'primary.green.900'
+                            }
                         >
                             <Text color="white" fontWeight="bold">
-                                {
-                                    STATUS_STEPS.find(
-                                        (step) =>
-                                            step.status === paymentData.status
-                                    )?.label
-                                }
+                                {paymentData.status === 'expired'
+                                    ? 'Expired'
+                                    : paymentData.status === 'partial'
+                                      ? 'Partial'
+                                      : STATUS_STEPS.find(
+                                            (step) =>
+                                                step.status ===
+                                                paymentData.status
+                                        )?.label}
                             </Text>
                         </Box>
                     </HStack>
@@ -125,7 +135,7 @@ const PaymentStatus = ({
                                 step={step}
                                 index={index}
                                 progress={progress}
-                                statusColor={getStatusColor(step.status)}
+                                currentStatus={paymentData.status}
                                 {...calculateStepState(
                                     step.status,
                                     paymentData.status,

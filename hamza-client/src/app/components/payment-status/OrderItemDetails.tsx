@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, HStack, VStack, Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import currencyIcons from '@/images/currencies/crypto-currencies';
