@@ -64,8 +64,13 @@ const OrderItem = ({
             <HStack justify="space-between">
                 <HStack spacing={3}>
                     <Icon as={FaBox} color="white" />
-                    <Text color="white">
-                        {order.id} - {order.store.name}
+                    <Text color="white" display={{ base: 'none', md: 'block' }}>
+                        {`${order.id} - ${order.store.name}`}
+                    </Text>
+                    <Text color="white" display={{ base: 'block', md: 'none' }}>
+                        {`...${order.id.slice(-10)}`}
+                        <br />
+                        {order.store.name}
                     </Text>
                 </HStack>
                 <Flex alignItems="center" gap={2}>
