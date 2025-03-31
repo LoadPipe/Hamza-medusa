@@ -97,24 +97,28 @@ const PaymentStatus = ({
 
     // handling polling of payments endpoint for status updates
     useEffect(() => {
-        const timer = setInterval(async () => {
-            try {
-                const payments = await getPaymentData(cartId);
-                const payment = payments[0];
+        const timer = setInterval(
+            async () => {
+                try {
+                    // console.log('Polling payment status...');
+                    const payments = await getPaymentData(cartId);
+                    const payment = payments[0];
 
-                // Update local payment data with server data
-                // setPaymentData(payment);
+                    // Update local payment data with server data
+                    // setPaymentData(payment);
 
-                // Redirect if payment is in escrow
-                if (payment.status === 'in_escrow') {
-                    router.push(
-                        `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
-                    );
+                    // Redirect if payment is in escrow
+                    if (payment.status === 'in_escrow') {
+                        router.push(
+                            `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
+                        );
+                    }
+                } catch (error) {
+                    console.error('Error polling payment status:', error);
                 }
-            } catch (error) {
-                console.error('Error polling payment status:', error);
-            }
-        }, 1000);
+            },
+            Number(process.env.NEXT_PUBLIC_PAYMENT_POLLING_INTERVAL) || 5000
+        );
 
         return () => clearInterval(timer);
     }, [cartId, router]);
