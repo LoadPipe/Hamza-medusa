@@ -19,6 +19,7 @@ import { PaymentsDataProps } from '@/app/[countryCode]/(main)/order/processing/[
 import Image from 'next/image';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
+import { calculateStepState, STATUS_STEPS } from './types';
 
 const PaymentStatus = ({
     startTimestamp,
@@ -38,34 +39,11 @@ const PaymentStatus = ({
     const totalOrders = paymentData.orders.length;
     const currencyCode = paymentData.orders[0].currency_code;
 
-    const statusSteps = [
-        {
-            label: 'Created',
-            subLabel: 'Payment request created',
-            status: 'created',
-        },
-        {
-            label: 'Waiting',
-            subLabel: 'Waiting for payment to arrive',
-            status: 'waiting',
-        },
-        {
-            label: 'Received',
-            subLabel: 'Payment received',
-            status: 'received',
-        },
-        {
-            label: 'In Escrow',
-            subLabel: 'Funds secured in escrow',
-            status: 'in_escrow',
-        },
-    ];
-
     const getStatusColor = (stepStatus: string) => {
-        const statusIndex = statusSteps.findIndex(
+        const statusIndex = STATUS_STEPS.findIndex(
             (step) => step.status === paymentData.status
         );
-        const stepIndex = statusSteps.findIndex(
+        const stepIndex = STATUS_STEPS.findIndex(
             (step) => step.status === stepStatus
         );
 
@@ -124,7 +102,7 @@ const PaymentStatus = ({
                         >
                             <Text color="white" fontWeight="bold">
                                 {
-                                    statusSteps.find(
+                                    STATUS_STEPS.find(
                                         (step) =>
                                             step.status === paymentData.status
                                     )?.label
@@ -141,16 +119,20 @@ const PaymentStatus = ({
                         justify="space-between"
                         align="flex-start"
                     >
-                        {statusSteps.map((step, index) => (
+                        {STATUS_STEPS.map((step, index) => (
                             <StatusStep
                                 key={step.status}
                                 step={step}
-                                currentStatus={paymentData.status}
                                 index={index}
                                 progress={progress}
-                                getStatusColor={getStatusColor}
-                                endTimestamp={endTimestamp}
-                                startTimestamp={startTimestamp}
+                                statusColor={getStatusColor(step.status)}
+                                {...calculateStepState(
+                                    step.status,
+                                    paymentData.status,
+                                    progress,
+                                    endTimestamp,
+                                    startTimestamp
+                                )}
                             />
                         ))}
                     </HStack>
