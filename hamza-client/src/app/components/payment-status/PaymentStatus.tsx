@@ -8,6 +8,7 @@ import {
     Icon,
     Button,
     Flex,
+    Stack,
 } from '@chakra-ui/react';
 import { FaCopy } from 'react-icons/fa';
 import { useState, useEffect, useCallback } from 'react';
@@ -165,10 +166,34 @@ const PaymentStatus = ({
                     <Text color="gray.300">Payment #{cartId}</Text>
 
                     {/* Status Steps */}
+                    <Box display={{ base: 'block', md: 'none' }}>
+                        {STATUS_STEPS.map(
+                            (step, index) =>
+                                (step.status === paymentData.status ||
+                                    (step.status === 'waiting' &&
+                                        paymentData.status === 'expired')) && (
+                                    <StatusStep
+                                        key={step.status}
+                                        step={step}
+                                        index={index}
+                                        progress={progress}
+                                        currentStatus={paymentData.status}
+                                        {...calculateStepState(
+                                            step.status,
+                                            paymentData.status,
+                                            progress,
+                                            endTimestamp,
+                                            startTimestamp
+                                        )}
+                                    />
+                                )
+                        )}
+                    </Box>
                     <HStack
                         spacing={4}
                         justify="space-between"
                         align="flex-start"
+                        display={{ base: 'none', md: 'flex' }}
                     >
                         {STATUS_STEPS.map((step, index) => (
                             <StatusStep
@@ -192,7 +217,12 @@ const PaymentStatus = ({
 
                     {/* Escrow Info */}
                     <VStack spacing={0} align="start">
-                        <HStack mt={4} spacing={8}>
+                        <Stack
+                            mt={4}
+                            spacing={8}
+                            direction={{ base: 'column', md: 'row' }}
+                            align={{ base: 'stretch', md: 'flex-start' }}
+                        >
                             <VStack align="start" spacing={1}>
                                 <Text color="gray.500" fontSize="sm">
                                     Created:
@@ -239,7 +269,7 @@ const PaymentStatus = ({
                                 </Text>
                                 <Text color="white">{totalItems} items</Text>
                             </VStack>
-                        </HStack>
+                        </Stack>
                     </VStack>
 
                     <Box bg="gray.800" p={4} borderRadius="lg">
@@ -253,8 +283,18 @@ const PaymentStatus = ({
                                         fontSize="sm"
                                         fontFamily="monospace"
                                         color="white"
+                                        display={{ base: 'none', md: 'block' }}
                                     >
                                         {paymentData.paymentAddress}
+                                    </Text>
+                                    <Text
+                                        fontSize="sm"
+                                        fontFamily="monospace"
+                                        color="white"
+                                        display={{ base: 'block', md: 'none' }}
+                                    >
+                                        ...
+                                        {paymentData.paymentAddress.slice(-10)}
                                     </Text>
                                 </HStack>
                             </VStack>

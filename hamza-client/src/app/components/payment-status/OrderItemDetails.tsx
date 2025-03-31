@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, HStack, VStack, Text, Flex } from '@chakra-ui/react';
+import { Box, HStack, VStack, Text, Flex, Stack } from '@chakra-ui/react';
 import Image from 'next/image';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
@@ -20,12 +20,11 @@ const OrderItemDetails = ({
     isLastItem,
 }: OrderItemDetailsProps) => {
     return (
-        <HStack
+        <Stack
             key={item.id}
             pt={8}
             pb={isLastItem ? 4 : 8}
-            justify="space-between"
-            width="100%"
+            direction={{ base: 'column', md: 'row' }}
             spacing={4}
             borderBottom={isLastItem ? 'none' : '1px solid'}
             borderColor="gray.700"
@@ -53,8 +52,11 @@ const OrderItemDetails = ({
                     </VStack>
                 </HStack>
             </Box>
-            <Box width="200px" flexShrink={0}>
-                <VStack alignItems="flex-start" gap={0}>
+            <Box width={{ base: '100%', md: '200px' }} flexShrink={0}>
+                <VStack
+                    alignItems={{ base: 'flex-start', md: 'flex-start' }}
+                    gap={0}
+                >
                     <Text color="gray.500">Sold by:</Text>
                     <HStack>
                         <Image
@@ -74,8 +76,11 @@ const OrderItemDetails = ({
                     </HStack>
                 </VStack>
             </Box>
-            <Box width="100px" flexShrink={0}>
-                <VStack alignItems="flex-end" gap={0}>
+            <Box width={{ base: '100%', md: '100px' }} flexShrink={0}>
+                <VStack
+                    alignItems={{ base: 'flex-start', md: 'flex-end' }}
+                    gap={0}
+                >
                     <Text color="gray.500">Amount:</Text>
                     <Flex>
                         <Image
@@ -92,7 +97,7 @@ const OrderItemDetails = ({
                     </Flex>
                 </VStack>
             </Box>
-        </HStack>
+        </Stack>
     );
 };
 
