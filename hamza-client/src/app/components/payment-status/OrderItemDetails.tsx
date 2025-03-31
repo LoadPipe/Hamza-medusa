@@ -45,7 +45,7 @@ const OrderItemDetails = ({
                     />
                     <VStack alignItems="flex-start" gap={0}>
                         <Text color="white" noOfLines={1}>
-                            {item.title}
+                            {item.quantity} x {item.title}
                         </Text>
                         <Text color="gray.500" fontSize="sm" noOfLines={1}>
                             {item.variant.title}
