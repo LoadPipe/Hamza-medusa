@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { FaCopy } from 'react-icons/fa';
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import StatusStep from './StatusStep';
 import OrderItem from './OrderItem';
 
@@ -19,6 +20,7 @@ import Image from 'next/image';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { calculateStepState, STATUS_STEPS } from './types';
+import { getPaymentData } from '@/lib/server';
 
 const PaymentStatus = ({
     startTimestamp,
@@ -31,6 +33,7 @@ const PaymentStatus = ({
     startTimestamp: number;
     endTimestamp: number;
 }) => {
+    const router = useRouter();
     const initialPaymentData = paymentsData[0];
     const [paymentData, setPaymentData] = useState(initialPaymentData);
     const [openOrders, setOpenOrders] = useState<Record<string, boolean>>({});
@@ -65,6 +68,7 @@ const PaymentStatus = ({
         return Math.min(Math.max((usedTime / totalTime) * 100, 0), 100);
     }, [startTimestamp, endTimestamp]);
 
+    // handling progress bar timer
     useEffect(() => {
         if (paymentData.status !== 'waiting') {
             setProgress(100);
@@ -89,6 +93,30 @@ const PaymentStatus = ({
 
         return () => clearInterval(timer);
     }, [paymentData.status, calculateProgress]);
+
+    // handling polling of payments endpoint for status updates
+    useEffect(() => {
+        const timer = setInterval(async () => {
+            try {
+                const payments = await getPaymentData(cartId);
+                const payment = payments[0];
+
+                // Update local payment data with server data
+                // setPaymentData(payment);
+
+                // Redirect if payment is in escrow
+                if (payment.status === 'in_escrow') {
+                    router.push(
+                        `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
+                    );
+                }
+            } catch (error) {
+                console.error('Error polling payment status:', error);
+            }
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [cartId, router]);
 
     return (
         <>

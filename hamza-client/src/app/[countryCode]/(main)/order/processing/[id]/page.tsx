@@ -103,25 +103,23 @@ export interface PaymentsDataProps {
     orders: Order[];
 }
 
-export default async function ProcessingPage({ params }: Props) {
-    const cartId = params.id;
-
-    let paymentsData: PaymentsDataProps[] = await getPaymentData(cartId);
+const buildPaymentsData = async (cartId: string) => {
+    const paymentsData = await getPaymentData(cartId);
 
     const startTimestamp =
         paymentsData[0].startTimestamp > 0
             ? paymentsData[0].startTimestamp
             : new Date(paymentsData[0].orders[0].created_at).getTime();
+
     const endTimestamp =
         paymentsData[0].startTimestamp > 0
             ? paymentsData[0].startTimestamp
             : Date.now() + Number(paymentsData[0].expiresInSeconds) * 1000;
 
-    //loop through paymentsData array.  Then paymentData.order
     await Promise.all(
-        paymentsData.map(async (paymentData) => {
+        paymentsData.map(async (paymentData: PaymentsDataProps) => {
             await Promise.all(
-                paymentData.orders.map(async (order) => {
+                paymentData.orders.map(async (order: Order) => {
                     const enrichedOrder = await getOrder(order.id);
                     order.items = enrichedOrder.order.items;
                     order.detail = enrichedOrder.order;
@@ -129,6 +127,15 @@ export default async function ProcessingPage({ params }: Props) {
             );
         })
     );
+
+    return { paymentsData, startTimestamp, endTimestamp };
+};
+
+export default async function ProcessingPage({ params }: Props) {
+    const cartId = params.id;
+
+    const { paymentsData, startTimestamp, endTimestamp } =
+        await buildPaymentsData(cartId);
 
     return (
         <Container maxW="container.lg" py={8}>
