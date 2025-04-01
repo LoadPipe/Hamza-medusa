@@ -13,6 +13,9 @@ import {
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { setCurrency } from '@/lib/server';
 import currencyIcons from '@/images/currencies/crypto-currencies';
+import { useQueryClient } from '@tanstack/react-query';
+import { Cart } from '@medusajs/medusa';
+import { applyDiscount, removeDiscount } from '@modules/checkout/actions';
 
 interface CurrencySelectorProps {
     preferredCurrencyCode?: string;
@@ -42,9 +45,19 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     usdtBalanceData,
 }) => {
     const authData = useCustomerAuthStore((state) => state.authData);
+    const customerId = useCustomerAuthStore(
+        (state) => state.authData.customer_id
+    );
     const setCustomerPreferredCurrency = useCustomerAuthStore(
         (state) => state.setCustomerPreferredCurrency
     );
+  
+    const queryClient = useQueryClient();
+    const cart = queryClient.getQueryData<Cart>(['cart']);
+    // If cart exists, you can extract the discount code
+    const discountCode = cart?.discounts?.[0]?.code;
+    console.log(`DISCOUNT CODE IS ${discountCode}`);
+
 
     useEffect(() => {
         if (!isOpen) {
@@ -81,9 +94,17 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
 
     const handleCurrencySelection = async (currencyCode: string) => {
         try {
+            if (discountCode) {
+                // await removeDiscount(discountCode);
+                await applyDiscount(discountCode).catch(async (err) => {
+                    console.log(err);
+                });
+            }
             setSelectedCurrency(currencyCode);
             setCustomerPreferredCurrency(currencyCode);
-            await setCurrency(currencyCode, authData.customer_id);
+            await setCurrency(currencyCode, customerId);
+
+            await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
         } catch (error) {
             console.error('Error updating currency:', error);
         }

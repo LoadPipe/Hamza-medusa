@@ -4,7 +4,7 @@ import { Cart } from '@medusajs/medusa';
 import React, { useMemo } from 'react';
 import { useFormState } from 'react-dom';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 // import Input from '@modules/common/components/input';
@@ -28,8 +28,10 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
         queryKey: ['cart'],
         queryFn: () =>
             cartId ? fetchCartForCheckout(cartId) : fetchCartForCart(),
-        staleTime: 1000 * 60 * 5, // ✅ Cache cart data for 5 minutes
+        staleTime: 0,
+        gcTime: 0,
     });
+    const queryClient = useQueryClient();
 
     const appliedDiscount = useMemo(() => {
         if (!cart?.discounts || !cart?.discounts.length) {
@@ -57,9 +59,23 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
 
     const removeDiscountCode = async () => {
         await removeDiscount(cart?.discounts[0].code);
+        await queryClient.invalidateQueries({ queryKey: ['cart'] });
     };
 
-    const [message, formAction] = useFormState(submitDiscountForm, null);
+    // Creating a wrapper function that calls the discount form function
+    // and invalidates the cart query after completion
+    // Create a wrapper around submitDiscountForm
+    const handleSubmitDiscountForm = async (
+        currentState: unknown,
+        formData: FormData
+    ) => {
+        const result = await submitDiscountForm(currentState, formData);
+        // Invalidate the cart query once the discount form has been processed
+        await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        return result;
+    };
+
+    const [message, formAction] = useFormState(handleSubmitDiscountForm, null);
 
     if (!cart) return null; // ✅ Hide component if no cart data    const [isOpen, setIsOpen] = React.useState(false);
 

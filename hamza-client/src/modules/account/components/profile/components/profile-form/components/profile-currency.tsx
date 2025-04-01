@@ -14,16 +14,21 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Image from 'next/image';
-
+import { setCurrency } from '@lib/server';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useQueryClient } from '@tanstack/react-query';
+import { Cart } from '@medusajs/medusa';
+import { applyDiscount, removeDiscount } from '@modules/checkout/actions';
 type ProfileCurrencyProps = {
-    preferred_currency_code: string | null;
+    preferredCurrencyCode: string | null;
+    defaultCurrency?: string;
     setCustomerPreferredCurrency: (currency: string) => void;
     isProfile?: boolean;
     className?: string;
 };
 
 const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
-    preferred_currency_code,
+    preferredCurrencyCode,
     setCustomerPreferredCurrency,
     isProfile,
     className,
@@ -33,13 +38,29 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
         { code: 'usdt', label: 'USDT' },
         { code: 'eth', label: 'ETH' },
     ];
+    const customerId = useCustomerAuthStore(
+        (state) => state.authData.customer_id
+    );
+    const queryClient = useQueryClient();
+    const cart = queryClient.getQueryData<Cart>(['cart']);
+    // If cart exists, you can extract the discount code
+    const discountCode = cart?.discounts?.[0]?.code;
 
     const currentCurrency = currencies.find(
-        (currency) => currency.code === preferred_currency_code
+        (currency) => currency.code === preferredCurrencyCode
     );
 
-    const handleCurrencySelect = (currencyCode: string) => {
+    const handleCurrencySelect = async (currencyCode: string) => {
+        if (discountCode) {
+            // await removeDiscount(discountCode);
+            await applyDiscount(discountCode).catch(async (err) => {
+                console.log(err);
+            });
+        }
         setCustomerPreferredCurrency(currencyCode);
+        await setCurrency(currencyCode, customerId);
+
+        await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
     };
 
     return (

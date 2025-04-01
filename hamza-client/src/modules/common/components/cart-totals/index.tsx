@@ -55,22 +55,28 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     // Refactor: Imperative code to Declarative subset (Functional) code
     const getCartSubtotal = (
         cart: CartWithCheckoutStep | null,
-        currencyCode: string
+        currencyCode: string,
+        options?: { includeDiscounts?: boolean }
     ) => {
         if (!cart?.items) return { currency: currencyCode, amount: 0 };
 
         return cart.items.reduce(
             (total, item) => {
+                const applyDiscounts = options?.includeDiscounts ?? true;
+
                 const itemPrice = getPriceByCurrency(
                     item.variant.prices,
                     currencyCode
                 );
+
+                const discount = applyDiscounts
+                    ? (item.discount_total ?? 0)
+                    : 0;
+                const baseAmount = Number(itemPrice) * item.quantity;
+
                 return {
                     currency: currencyCode,
-                    amount:
-                        total.amount +
-                        (Number(itemPrice) * item.quantity -
-                            (item.discount_total ?? 0)),
+                    amount: total.amount + (baseAmount - (discount ?? 0)),
                 };
             },
             { currency: currencyCode, amount: 0 }
@@ -79,10 +85,16 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
 
     const finalSubtotal = getCartSubtotal(
         cart ?? null,
-        preferred_currency_code ?? 'usdc'
+        preferred_currency_code ?? 'usdc',
+        { includeDiscounts: false }
+    );
+    const finalTotal = getCartSubtotal(
+        cart ?? null,
+        preferred_currency_code ?? 'usdc',
+        { includeDiscounts: true }
     );
     const taxTotal = cart?.tax_total ?? 0;
-    const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
+    const grandTotal = (finalTotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
