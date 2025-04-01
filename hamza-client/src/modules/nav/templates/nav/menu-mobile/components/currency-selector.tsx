@@ -101,7 +101,7 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
             setCustomerPreferredCurrency(code);
             await setCurrency(code, customerId);
 
-            await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
+            await queryClient.invalidateQueries({ queryKey: ['cart'] });
         } catch (error) {
             console.error('Error updating currency:', error);
         }

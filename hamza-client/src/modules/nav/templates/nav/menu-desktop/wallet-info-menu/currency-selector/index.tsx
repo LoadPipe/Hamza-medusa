@@ -51,13 +51,12 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     const setCustomerPreferredCurrency = useCustomerAuthStore(
         (state) => state.setCustomerPreferredCurrency
     );
-  
+
     const queryClient = useQueryClient();
     const cart = queryClient.getQueryData<Cart>(['cart']);
     // If cart exists, you can extract the discount code
     const discountCode = cart?.discounts?.[0]?.code;
     console.log(`DISCOUNT CODE IS ${discountCode}`);
-
 
     useEffect(() => {
         if (!isOpen) {
@@ -104,7 +103,7 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
             setCustomerPreferredCurrency(currencyCode);
             await setCurrency(currencyCode, customerId);
 
-            await queryClient.invalidateQueries<Cart>({ queryKey: ['cart'] });
+            await queryClient.invalidateQueries({ queryKey: ['cart'] });
         } catch (error) {
             console.error('Error updating currency:', error);
         }
