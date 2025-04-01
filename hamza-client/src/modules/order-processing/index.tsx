@@ -19,10 +19,11 @@ import { PaymentsDataProps } from '@/app/[countryCode]/(main)/order/processing/[
 import Image from 'next/image';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
-import { calculateStepState, STATUS_STEPS } from './types';
+import { STATUS_STEPS } from './types';
 import { getPaymentData } from '@/lib/server';
 import { useAccount } from 'wagmi';
 import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet-connect';
+import { calculateStepState } from './utils';
 
 const PaymentStatus = ({
     startTimestamp,
@@ -30,10 +31,10 @@ const PaymentStatus = ({
     paymentsData,
     cartId,
 }: {
-    paymentsData: PaymentsDataProps[];
     cartId: string;
     startTimestamp: number;
     endTimestamp: number;
+    paymentsData: PaymentsDataProps[];
 }) => {
     const router = useRouter();
     const initialPaymentData = paymentsData[0];

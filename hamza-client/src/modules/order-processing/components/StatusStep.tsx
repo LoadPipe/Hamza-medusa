@@ -2,12 +2,8 @@
 
 import { Box, VStack, HStack, Text, Icon, Spinner } from '@chakra-ui/react';
 import { CheckCircleIcon } from '@chakra-ui/icons';
-import {
-    StatusStepDisplayProps,
-    StepDisplayState,
-    getStepColors,
-} from '../types';
-
+import { StatusStepDisplayProps, StepDisplayState } from '../types';
+import { getStepColors } from '../utils';
 const StatusStep = ({
     step,
     index,

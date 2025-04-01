@@ -1,14 +1,13 @@
 import PaymentStatus from '@/modules/order-processing';
-import { getPaymentData, retrieveOrder } from '@/lib/server';
-import { enrichLineItems } from '@/modules/cart/actions';
 import { Container } from '@chakra-ui/react';
 import {
     LineItem as MedusaLineItem,
     Order as MedusaOrder,
     Store as MedusaStore,
 } from '@medusajs/medusa';
-import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { buildPaymentsData } from '@/modules/order-processing/utils';
+import { QueryClient } from '@tanstack/react-query';
 
 export const metadata: Metadata = {
     title: 'Order Processing',
@@ -18,26 +17,6 @@ export const metadata: Metadata = {
 type Props = {
     params: { id: string };
 };
-
-async function getOrder(id: string) {
-    const order = await retrieveOrder(id);
-
-    if (!order) {
-        console.log('order', id, ' not found');
-        return notFound();
-    }
-
-    // console.log(`ORDERS ${JSON.stringify(order)}`);
-
-    const enrichedItems = await enrichLineItems(order.items, order.region_id);
-
-    return {
-        order: {
-            ...order,
-            items: enrichedItems as LineItem[],
-        } as Order,
-    };
-}
 
 interface BlockchainData {
     chain_id: number;
@@ -87,7 +66,7 @@ interface orderDetail extends MedusaOrder {
     items: LineItem[];
 }
 
-interface Order extends MedusaOrder {
+export interface Order extends MedusaOrder {
     store: Store;
     payments: Payment[];
     detail: orderDetail;
@@ -109,46 +88,17 @@ export interface PaymentsDataProps {
     orders: Order[];
 }
 
-const buildPaymentsData = async (cartId: string) => {
-    const paymentsData = await getPaymentData(cartId);
-
-    const startTimestamp =
-        paymentsData[0].startTimestamp > 0
-            ? paymentsData[0].startTimestamp
-            : new Date(paymentsData[0].orders[0].created_at).getTime();
-
-    const endTimestamp =
-        paymentsData[0].startTimestamp > 0
-            ? paymentsData[0].startTimestamp
-            : Date.now() + Number(paymentsData[0].expiresInSeconds) * 1000;
-
-    await Promise.all(
-        paymentsData.map(async (paymentData: PaymentsDataProps) => {
-            await Promise.all(
-                paymentData.orders.map(async (order: Order) => {
-                    const enrichedOrder = await getOrder(order.id);
-                    order.items = enrichedOrder.order.items;
-                    order.detail = enrichedOrder.order;
-                })
-            );
-        })
-    );
-
-    return { paymentsData, startTimestamp, endTimestamp };
-};
-
 export default async function ProcessingPage({ params }: Props) {
     const cartId = params.id;
 
-    const { paymentsData, startTimestamp, endTimestamp } =
-        await buildPaymentsData(cartId);
+    const paymentsData = await buildPaymentsData(cartId);
 
     return (
         <Container maxW="container.lg" py={8}>
             <PaymentStatus
-                startTimestamp={startTimestamp}
-                endTimestamp={endTimestamp}
-                paymentsData={paymentsData}
+                startTimestamp={paymentsData.startTimestamp}
+                endTimestamp={paymentsData.endTimestamp}
+                paymentsData={paymentsData.paymentsData}
                 cartId={cartId}
             />
         </Container>
