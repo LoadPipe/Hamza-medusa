@@ -44,17 +44,20 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     usdcBalanceData,
     usdtBalanceData,
 }) => {
+    const authData = useCustomerAuthStore((state) => state.authData);
     const customerId = useCustomerAuthStore(
         (state) => state.authData.customer_id
     );
     const setCustomerPreferredCurrency = useCustomerAuthStore(
         (state) => state.setCustomerPreferredCurrency
     );
+  
     const queryClient = useQueryClient();
     const cart = queryClient.getQueryData<Cart>(['cart']);
     // If cart exists, you can extract the discount code
     const discountCode = cart?.discounts?.[0]?.code;
     console.log(`DISCOUNT CODE IS ${discountCode}`);
+
 
     useEffect(() => {
         if (!isOpen) {
@@ -120,6 +123,7 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
                             justifyContent="space-between"
                             alignItems="center"
                             cursor="pointer"
+                            className="currency-selector-item"
                             onClick={() => handleCurrencySelection(c.code)}
                         >
                             <Flex alignItems="center" gap="8px">

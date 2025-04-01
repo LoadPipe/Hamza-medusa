@@ -109,6 +109,7 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                         flexGrow={0}
                         width="auto"
                         height="48px"
+                        className="currency-selector"
                         p={0}
                     >
                         <Flex

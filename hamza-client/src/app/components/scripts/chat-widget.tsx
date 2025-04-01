@@ -2,20 +2,31 @@
 
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
+import DOMPurify from 'dompurify';
 
 const FreeScoutWidget = () => {
     const [sanitizedScript, setSanitizedScript] = useState<string>('');
-    const scriptContent = `(function(w,d,s,o,f,js,fjs){
-        w['FreeScoutWidgetObject']=o;w[o]=w[o]||function(){
-        (w[o].q=w[o].q||[]).push(arguments)};
-        js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];
-        js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);
-    }(window,document,'script','fs'));`;
+    const scriptContent = `
+    window.FreeScoutW = {
+                       s: {
+                           "color": "#5ab334",
+                           "position": "br",
+                           "id": 2009307235
+                       }
+                   };
+                   (function(d, e, s) {
+                       if (d.getElementById("freescout-w")) return;
+                       var a = d.createElement(e), m = d.getElementsByTagName(e)[0];
+                       a.async = 1;
+                       a.id = "freescout-w";
+                       a.src = "https://support.hamza.market/modules/chat/js/widget.js?v=4239";
+                       m.parentNode.insertBefore(a, m);
+                   })(document, "script");
+   `;
 
     useEffect(() => {
         const sanitizeContent = async () => {
             if (typeof window !== 'undefined') {
-                const DOMPurify = (await import('dompurify')).default;
                 setSanitizedScript(DOMPurify.sanitize(scriptContent));
             }
         };
