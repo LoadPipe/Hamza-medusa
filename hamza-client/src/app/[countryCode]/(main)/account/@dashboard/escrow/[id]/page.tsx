@@ -6,7 +6,6 @@ import {
 } from '@tanstack/react-query';
 
 import { Escrow } from '@/modules/order/templates/escrow';
-import { headers } from 'next/headers';
 import { getCustomerOrder, getHamzaCustomer } from '@/lib/server';
 import { notFound } from 'next/navigation';
 import { Order } from '@/web3/contracts/escrow';
