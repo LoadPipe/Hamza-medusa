@@ -8,6 +8,12 @@ import {
     Store as MedusaStore,
 } from '@medusajs/medusa';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Order Processing',
+    description: 'You purchase is being processed',
+};
 
 type Props = {
     params: { id: string };
