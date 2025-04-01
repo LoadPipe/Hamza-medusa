@@ -6,7 +6,7 @@ import {
     StatusStepDisplayProps,
     StepDisplayState,
     getStepColors,
-} from './types';
+} from '../types';
 
 const StatusStep = ({
     step,

@@ -13,8 +13,8 @@ import {
 import { FaCopy } from 'react-icons/fa';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import StatusStep from './StatusStep';
-import OrderItem from './OrderItem';
+import StatusStep from './components/StatusStep';
+import OrderItem from './components/OrderItem';
 
 import { PaymentsDataProps } from '@/app/[countryCode]/(main)/order/processing/[id]/page';
 import Image from 'next/image';

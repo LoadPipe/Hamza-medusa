@@ -1,4 +1,4 @@
-import PaymentStatus from '@/app/components/payment-status/PaymentStatus';
+import PaymentStatus from '@/modules/order-processing';
 import { getPaymentData, retrieveOrder } from '@/lib/server';
 import { enrichLineItems } from '@/modules/cart/actions';
 import { Container } from '@chakra-ui/react';

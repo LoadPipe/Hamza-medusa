@@ -16,7 +16,6 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { LineItem } from '@/app/[countryCode]/(main)/order/processing/[id]/page';
 import OrderItemDetails from './OrderItemDetails';
-import { isServer } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Payment } from '@medusajs/medusa';
 
