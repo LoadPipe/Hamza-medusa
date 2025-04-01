@@ -108,16 +108,21 @@ const PaymentStatus = ({
                 try {
                     // console.log('Polling payment status...');
                     const payments = await getPaymentData(cartId);
-                    const payment = payments[0];
+                    if (payments && payments.length > 0) {
+                        const payment = payments[0];
 
-                    // Update local payment data with server data
-                    // setPaymentData(payment);
+                        // Stop polling if payment is expired
+                        if (payment.status === 'expired') {
+                            clearInterval(timer);
+                            return;
+                        }
 
-                    // Redirect if payment is in escrow
-                    if (payment.status === 'in_escrow') {
-                        router.push(
-                            `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
-                        );
+                        // Redirect if payment is in escrow
+                        if (payment.status === 'in_escrow') {
+                            router.push(
+                                `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
+                            );
+                        }
                     }
                 } catch (error) {
                     console.error('Error polling payment status:', error);
