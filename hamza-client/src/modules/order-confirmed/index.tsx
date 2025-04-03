@@ -9,7 +9,6 @@ import { BsBox } from 'react-icons/bs';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { EscrowStatusString } from '@/lib/server/enums';
 import currencyIcons from '@/images/currencies/crypto-currencies';
-import { divide } from 'lodash';
 
 // Define types for the component
 interface LineItem {
@@ -46,6 +45,11 @@ interface ExtendedOrder {
     discounts?: Array<{
         code: string;
     }>;
+    cart?: {
+        discounts?: Array<{
+            code: string;
+        }>;
+    };
 }
 
 interface OrderConfirmedProps {
@@ -56,7 +60,7 @@ interface OrderConfirmedProps {
 }
 
 const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
-    // calculate total
+    // calculate totals
     const cartOrderTotal = orders.reduce(
         (total: number, order: ExtendedOrder) =>
             total +
@@ -79,7 +83,28 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
         0
     );
 
-    const totalPaid = cartOrderTotal + cartShippingTotal;
+    const cartSubTotal = cartOrderTotal + cartShippingTotal;
+
+    const totalPaid = orders.reduce(
+        (totalPaid: number, order: ExtendedOrder) =>
+            totalPaid +
+            (order.payments || []).reduce(
+                (paymentTotal: number, payment: any) =>
+                    paymentTotal + (payment.amount ?? 0),
+                0
+            ),
+        0
+    );
+
+    const cartDiscountTotal = cartSubTotal - totalPaid;
+
+    const cartDiscountCode = Array.from(
+        new Set(
+            orders
+                .flatMap((order) => order.cart?.discounts || [])
+                .map((discount) => discount.code)
+        )
+    ).join(', ');
 
     const currencyCode = orders[0].currency_code;
 
@@ -174,6 +199,9 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                     </Text>
 
                                     <Button
+                                        as={Link}
+                                        href={`/account/escrow/${order.id}`}
+                                        target="_blank"
                                         size="sm"
                                         bg="gray.700"
                                         color="white"
@@ -181,7 +209,7 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                         _hover={{ bg: 'gray.600' }}
                                         p={3}
                                     >
-                                        Release Escrow
+                                        View Escrow
                                     </Button>
                                 </Flex>
 
@@ -253,8 +281,7 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                                             item.unit_price *
                                                                 item.quantity,
                                                             order.currency_code
-                                                        )}{' '}
-                                                        {order.currency_code.toUpperCase()}
+                                                        )}
                                                     </Text>
                                                 </HStack>
                                             </Flex>
@@ -280,7 +307,9 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                     </Text>
                                 </HStack>
                                 <HStack>
-                                    <Text color="gray.500">Shipping Cost:</Text>
+                                    <Text color="gray.500">
+                                        Shipping Cost - Discount:
+                                    </Text>
                                     <Flex>
                                         <Image
                                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
@@ -314,19 +343,37 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                 <Flex direction="column" gap={3}>
                     <Flex justify="space-between" color="gray.300">
                         <Text>Total Order Cost:</Text>
-                        <Text>
-                            {formatCryptoPrice(cartOrderTotal, currencyCode)}{' '}
-                            {currencyCode.toUpperCase()}
-                        </Text>
+                        <HStack>
+                            <Image
+                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                src={currencyIcons[currencyCode ?? 'usdc']}
+                                alt={currencyCode ?? 'usdc'}
+                            />
+                            <Text>
+                                {formatCryptoPrice(
+                                    cartOrderTotal,
+                                    currencyCode
+                                )}
+                            </Text>
+                        </HStack>
                     </Flex>
                     <Flex justify="space-between" color="gray.300">
                         <Text>Total Shipping Cost:</Text>
-                        <Text>
-                            {formatCryptoPrice(cartShippingTotal, currencyCode)}{' '}
-                            {currencyCode.toUpperCase()}
-                        </Text>
+                        <HStack>
+                            <Image
+                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                src={currencyIcons[currencyCode ?? 'usdc']}
+                                alt={currencyCode ?? 'usdc'}
+                            />
+                            <Text>
+                                {formatCryptoPrice(
+                                    cartShippingTotal,
+                                    currencyCode
+                                )}
+                            </Text>
+                        </HStack>
                     </Flex>
-                    <Flex justify="space-between" color="gray.300">
+                    {/* <Flex justify="space-between" color="gray.300">
                         <Text>Taxes:</Text>
                         <Text>
                             {formatCryptoPrice(
@@ -336,45 +383,49 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                     0
                                 ),
                                 currencyCode
-                            )}{' '}
-                            {currencyCode.toUpperCase()}
+                            )}
                         </Text>
-                    </Flex>
-                    {orders.some(
-                        (order) => order.discounts && order.discounts.length > 0
-                    ) && (
+                    </Flex> */}
+                    {cartDiscountTotal > 0 && (
                         <>
                             <Flex justify="space-between" color="gray.300">
                                 <Text>Applied Discount Code:</Text>
-                                <Text>
-                                    {orders
-                                        .map((order) =>
-                                            order.discounts?.map(
-                                                (discount) => discount.code
-                                            )
-                                        )
-                                        .flat()
-                                        .join(', ')}
-                                </Text>
+                                <Flex gap={2}>
+                                    {cartDiscountCode
+                                        .split(',')
+                                        .map((code, index) => (
+                                            <Box
+                                                key={index}
+                                                bg="gray.700"
+                                                px={2}
+                                                py={0.2}
+                                                borderRadius="5px"
+                                            >
+                                                <Text>{code.trim()}</Text>
+                                            </Box>
+                                        ))}
+                                </Flex>
                             </Flex>
                             <Flex justify="space-between" color="gray.300">
                                 <Text>Discount:</Text>
-                                <Text>
-                                    -{' '}
-                                    {formatCryptoPrice(
-                                        orders.reduce(
-                                            (
-                                                total: number,
-                                                order: ExtendedOrder
-                                            ) =>
-                                                total +
-                                                (order.discount_total || 0),
-                                            0
-                                        ),
-                                        currencyCode
-                                    )}{' '}
-                                    {currencyCode.toUpperCase()}
-                                </Text>
+                                <HStack>
+                                    <Image
+                                        className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                        src={
+                                            currencyIcons[
+                                                currencyCode ?? 'usdc'
+                                            ]
+                                        }
+                                        alt={currencyCode ?? 'usdc'}
+                                    />
+                                    <Text>
+                                        -{' '}
+                                        {formatCryptoPrice(
+                                            cartDiscountTotal,
+                                            currencyCode
+                                        )}
+                                    </Text>
+                                </HStack>
                             </Flex>
                         </>
                     )}
@@ -385,10 +436,16 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                         mt={2}
                     >
                         <Text>Total Amount Paid:</Text>
-                        <Text>
-                            {formatCryptoPrice(totalPaid, currencyCode)}{' '}
-                            {currencyCode.toUpperCase()}
-                        </Text>
+                        <HStack>
+                            <Image
+                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                src={currencyIcons[currencyCode ?? 'usdc']}
+                                alt={currencyCode ?? 'usdc'}
+                            />
+                            <Text>
+                                {formatCryptoPrice(totalPaid, currencyCode)}
+                            </Text>
+                        </HStack>
                     </Flex>
                 </Flex>
             </Box>
@@ -402,6 +459,7 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                     color="black"
                     fontSize="16px"
                     fontWeight="600"
+                    borderRadius="2rem"
                     _hover={{ backgroundColor: '#86C01E' }}
                 >
                     Check Status
