@@ -777,6 +777,12 @@ export async function getCartShippingCost() {
     });
 }
 
+export async function getCartCompletedOrders(cart_id: string) {
+    return getSecure('/custom/cart/complete', {
+        cart_id,
+    });
+}
+
 // Order actions
 export async function retrieveOrder(id: string) {
     const headers = getMedusaHeaders(['order']);
