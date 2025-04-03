@@ -49,6 +49,7 @@ interface ExtendedOrder {
         discounts?: Array<{
             code: string;
         }>;
+        id: string;
     };
 }
 
@@ -135,8 +136,19 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
 
             {/* Payment ID */}
             <Flex justify="space-between" align="center">
-                <Text fontSize="18px" fontWeight="500">
-                    Payment #{params.id}
+                <Text
+                    fontSize="18px"
+                    fontWeight="500"
+                    display={{ base: 'none', md: 'block' }}
+                >
+                    Payment #{orders[0].cart?.id}
+                </Text>
+                <Text
+                    fontSize="18px"
+                    fontWeight="500"
+                    display={{ base: 'block', md: 'none' }}
+                >
+                    #...{orders[0].cart?.id.slice(-10)}
                 </Text>
                 <Box
                     bg="green.900"
@@ -192,11 +204,21 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                     align="center"
                                     gap={2}
                                     justify="space-between"
+                                    flexWrap={{
+                                        base: 'wrap',
+                                        md: 'nowrap',
+                                    }}
                                 >
-                                    <Text>
-                                        <Icon as={BsBox} mr={2} />
-                                        {order.id} - {order.store?.name}
-                                    </Text>
+                                    <Flex>
+                                        <Icon
+                                            as={BsBox}
+                                            width={6}
+                                            height={6}
+                                            mr={2}
+                                        />
+                                        <Text>#...{order.id.slice(-10)}</Text> -{' '}
+                                        {order.store?.name}
+                                    </Flex>
 
                                     <Button
                                         as={Link}
@@ -206,6 +228,10 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                         bg="gray.700"
                                         color="white"
                                         borderRadius="2rem"
+                                        width={{
+                                            base: '100%',
+                                            md: 'auto',
+                                        }}
                                         _hover={{ bg: 'gray.600' }}
                                         p={3}
                                     >
@@ -293,6 +319,10 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                 justifyContent="space-between"
                                 gap={3}
                                 mt={4}
+                                flexWrap={{
+                                    base: 'wrap',
+                                    md: 'nowrap',
+                                }}
                                 // borderTop="1px solid rgba(255, 255, 255, 0.1)"
                                 // pt={4}
                             >
