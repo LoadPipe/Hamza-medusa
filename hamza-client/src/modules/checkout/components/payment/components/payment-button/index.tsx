@@ -399,7 +399,11 @@ const CryptoPaymentButton = ({
                 backgroundColor={'white'}
                 isLoading={submitting}
                 isDisabled={disableButton}
-                onClick={() => alert('test')}
+                onClick={() =>
+                    router.push(
+                        `/order/processing/${cart.id}?paywith=bitcoin&openqrmodal=true`
+                    )
+                }
             >
                 <Flex alignItems="center" gap={2}>
                     <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
