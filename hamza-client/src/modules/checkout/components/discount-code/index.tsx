@@ -80,7 +80,7 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
     if (!cart) return null; // ✅ Hide component if no cart data    const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-        <Flex mt="1rem">
+        <Flex mt="1rem" mb="1rem">
             <div className="txt-medium">
                 {appliedDiscount ? (
                     <div className="w-full flex items-center text-white">

@@ -6,7 +6,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
 import React from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
+import { Flex, Text, Divider, Spinner, VStack } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { getCartShippingCost, updateShippingCost } from '@lib/server';
 import { useCartShippingOptions } from 'medusa-react';
@@ -83,6 +83,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
         );
     };
 
+    const convertToBTC = (amount: number) => {
+        return amount / 100000000;
+    };
+
     const finalSubtotal = getCartSubtotal(
         cart ?? null,
         preferred_currency_code ?? 'usdc',
@@ -93,6 +97,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
         preferred_currency_code ?? 'usdc',
         { includeDiscounts: true }
     );
+    const convertBtcTotal = convertToBTC(finalTotal.amount ?? 0);
+
     const taxTotal = cart?.tax_total ?? 0;
     const grandTotal = (finalTotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =
@@ -231,49 +237,57 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                     {loading ? (
                         <Spinner size="sm" color="white" />
                     ) : (
-                        <Flex flexDirection="column" alignItems="flex-end">
-                            <Flex flexDirection={'row'} alignItems="center">
-                                <Flex alignItems={'center'}>
-                                    <Image
-                                        className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                        src={currencyIcons[displayCurrency]}
-                                        alt={displayCurrency}
-                                    />
-                                </Flex>
-                                <Text
-                                    ml={{ base: '0.4rem', md: '0.5rem' }}
-                                    fontSize={{ base: '15px', md: '24px' }}
-                                    fontWeight={700}
-                                    lineHeight="1.1"
-                                    position="relative"
-                                    top="1px"
-                                    className="cart-totals-total"
-                                >
-                                    {formatCryptoPrice(
-                                        grandTotal,
-                                        displayCurrency
-                                    )}
-                                </Text>
-                            </Flex>
-                            {preferred_currency_code === 'eth' && (
-                                <Flex justifyContent="flex-end" width="100%">
+                        <VStack alignItems="flex-end">
+                            <Flex flexDirection="column" alignItems="flex-end">
+                                <Flex flexDirection={'row'} alignItems="center">
+                                    <Flex alignItems={'center'}>
+                                        <Image
+                                            className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                                            src={currencyIcons[displayCurrency]}
+                                            alt={displayCurrency}
+                                        />
+                                    </Flex>
                                     <Text
-                                        as="h3"
-                                        variant="semibold"
-                                        color="white"
-                                        mt={2}
-                                        fontSize={{
-                                            base: '15px',
-                                            md: '18px',
-                                        }}
+                                        ml={{ base: '0.4rem', md: '0.5rem' }}
+                                        fontSize={{ base: '15px', md: '24px' }}
                                         fontWeight={700}
-                                        textAlign="right"
+                                        lineHeight="1.1"
+                                        position="relative"
+                                        top="1px"
+                                        className="cart-totals-total"
                                     >
-                                        {`≅ $${convertedPrice} USD`}
+                                        {formatCryptoPrice(
+                                            grandTotal,
+                                            displayCurrency
+                                        )}
                                     </Text>
                                 </Flex>
-                            )}
-                        </Flex>
+                                {preferred_currency_code === 'eth' && (
+                                    <Flex
+                                        justifyContent="flex-end"
+                                        width="100%"
+                                    >
+                                        <Text
+                                            as="h3"
+                                            variant="semibold"
+                                            color="white"
+                                            mt={2}
+                                            fontSize={{
+                                                base: '15px',
+                                                md: '18px',
+                                            }}
+                                            fontWeight={700}
+                                            textAlign="right"
+                                        >
+                                            {`≅ $${convertedPrice} USD`}
+                                        </Text>
+                                    </Flex>
+                                )}
+                            </Flex>
+                            <Flex>
+                                <Text>≅ {convertBtcTotal} BTC</Text>
+                            </Flex>
+                        </VStack>
                     )}
                 </Flex>
             )}
