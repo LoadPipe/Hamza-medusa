@@ -8,7 +8,7 @@ import {
     EscrowWalletPaymentHandler,
     AsyncPaymentHandler,
 } from './payment-handlers';
-import { Button } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, Text, Icon } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
@@ -25,6 +25,7 @@ import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
 import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
+import { FaBitcoin } from 'react-icons/fa';
 
 //TODO: we need a global common function to replace this
 
@@ -357,7 +358,7 @@ const CryptoPaymentButton = ({
         if (isCartEmpty) return 'Add products to order';
         if (isMissingAddress) return 'Add address to order';
         if (isUpdating) return <Spinner />;
-        return 'Confirm Order';
+        return 'Pay with Crypto Wallet';
     };
 
     return (
@@ -367,14 +368,43 @@ const CryptoPaymentButton = ({
                 borderRadius={'full'}
                 height={{ base: '42px', md: '58px' }}
                 opacity={1}
-                color={'white'}
+                color={'black'}
                 _hover={{ opacity: 0.5 }}
-                backgroundColor={'primary.indigo.900'}
+                backgroundColor={'primary.green.900'}
                 isLoading={submitting}
                 isDisabled={disableButton}
                 onClick={handlePayment}
             >
                 {getButtonText()}
+            </Button>
+
+            <Flex alignItems="center" my="5px">
+                <Box flex="1">
+                    <Divider borderColor="gray.500" />
+                </Box>
+                <Text mx="4" color="white">
+                    OR
+                </Text>
+                <Box flex="1">
+                    <Divider borderColor="gray.500" />
+                </Box>
+            </Flex>
+
+            <Button
+                borderRadius={'full'}
+                height={{ base: '42px', md: '58px' }}
+                opacity={1}
+                color={'black'}
+                _hover={{ opacity: 0.5 }}
+                backgroundColor={'white'}
+                isLoading={submitting}
+                isDisabled={disableButton}
+                onClick={() => alert('test')}
+            >
+                <Flex alignItems="center" gap={2}>
+                    <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
+                    Pay with Bitcoin
+                </Flex>
             </Button>
         </>
     );
