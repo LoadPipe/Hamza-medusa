@@ -14,6 +14,8 @@ import {
     polygon,
     arbitrum,
     base,
+    bsc,
+    bscTestnet,
 } from 'wagmi/chains';
 import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -80,19 +82,23 @@ if (allowedChains.length === 0) {
     allowedChains.push('sepolia');
 } else {
     const chainConfig = {
-        optimism: optimism,
+        optimism,
         10: optimism,
-        polygon: polygon,
+        polygon,
         137: polygon,
-        mainnet: mainnet,
+        mainnet,
         1: mainnet,
-        sepolia: sepolia,
+        sepolia,
         11155111: sepolia,
-        amoy: amoy,
+        amoy,
         80002: amoy,
-        base: base,
+        base,
         8453: base,
-        arbitrum: arbitrum,
+        arbitrum,
+        bsc,
+        56: bsc,
+        bscTestnet,
+        97: bscTestnet,
         42161: arbitrum,
     };
 
