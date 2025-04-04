@@ -7,7 +7,6 @@ import {
 } from '@medusajs/medusa';
 import { Metadata } from 'next';
 import { buildPaymentsData } from '@/modules/order-processing/utils';
-import { QueryClient } from '@tanstack/react-query';
 
 export const metadata: Metadata = {
     title: 'Order Processing',
@@ -16,6 +15,7 @@ export const metadata: Metadata = {
 
 type Props = {
     params: { id: string };
+    searchParams: { paywith?: string; openqrmodal?: string };
 };
 
 interface BlockchainData {
@@ -88,8 +88,14 @@ export interface PaymentsDataProps {
     orders: Order[];
 }
 
-export default async function ProcessingPage({ params }: Props) {
+export default async function ProcessingPage({ params, searchParams }: Props) {
     const cartId = params.id;
+
+    const paywith = searchParams.paywith;
+    const openqrmodal =
+        !searchParams.openqrmodal || searchParams.paywith !== 'bitcoin'
+            ? 'false'
+            : searchParams.openqrmodal;
 
     const paymentsData = await buildPaymentsData(cartId);
 
@@ -100,6 +106,8 @@ export default async function ProcessingPage({ params }: Props) {
                 endTimestamp={paymentsData.endTimestamp}
                 paymentsData={paymentsData.paymentsData}
                 cartId={cartId}
+                paywith={paywith}
+                openqrmodal={openqrmodal}
             />
         </Container>
     );

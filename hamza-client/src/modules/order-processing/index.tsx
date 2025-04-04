@@ -8,12 +8,19 @@ import {
     Button,
     Flex,
     Stack,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure,
 } from '@chakra-ui/react';
-import { FaCopy } from 'react-icons/fa';
+import { FaBitcoin, FaCopy, FaRegCheckCircle } from 'react-icons/fa';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import StatusStep from './components/StatusStep';
 import OrderItem from './components/OrderItem';
+import QRCode from 'react-qr-code';
 
 import { PaymentsDataProps } from '@/app/[countryCode]/(main)/order/processing/[id]/page';
 import Image from 'next/image';
@@ -30,11 +37,15 @@ const PaymentStatus = ({
     endTimestamp,
     paymentsData,
     cartId,
+    paywith,
+    openqrmodal,
 }: {
     cartId: string;
     startTimestamp: number;
     endTimestamp: number;
     paymentsData: PaymentsDataProps[];
+    paywith?: string;
+    openqrmodal?: string;
 }) => {
     const router = useRouter();
     const initialPaymentData = paymentsData[0];
@@ -43,6 +54,7 @@ const PaymentStatus = ({
     const [progress, setProgress] = useState(0);
     const { isConnected } = useAccount();
     const [isClient, setIsClient] = useState<boolean>(false);
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const totalOrders = paymentData.orders.length;
     const totalItems = paymentData.orders.reduce((total, order) => {
         const orderTotalItems = order.items.reduce(
@@ -59,6 +71,7 @@ const PaymentStatus = ({
         return total + orderTotal;
     }, 0);
     const currencyCode = initialPaymentData.orders[0].currency_code;
+    const [hasCopied, setHasCopied] = useState(false);
 
     const toggleOrder = (orderId: string) => {
         setOpenOrders((prev) => ({
@@ -134,11 +147,18 @@ const PaymentStatus = ({
         return () => clearInterval(timer);
     }, [cartId, router]);
 
+    // Update the useEffect to run on mount and handle the initial state
+    useEffect(() => {
+        if (openqrmodal === 'true' && paywith === 'bitcoin') {
+            onOpen();
+        }
+    }, []); // Empty dependency array to run only on mount
+
     if (!isClient) {
         return (
             <ModalCoverWalletConnect
-                title="Proceed to Escrow"
-                message="To view order processing details, please connect your wallet"
+                title="Proceed to Payment Processing"
+                message="To view payment processing details, please connect your wallet"
                 pageIsLoading={isClient}
             />
         ); // Render nothing on the server
@@ -148,8 +168,8 @@ const PaymentStatus = ({
         <div>
             {!isConnected ? (
                 <ModalCoverWalletConnect
-                    title="Proceed to Escrow"
-                    message="To view escrow details, please connect your wallet"
+                    title="Proceed to Payment Processing"
+                    message="To view payment processing details, please connect your wallet"
                     pageIsLoading={isClient}
                 />
             ) : (
@@ -354,21 +374,158 @@ const PaymentStatus = ({
                                         </HStack>
                                     </VStack>
 
-                                    <Button
-                                        size="sm"
-                                        bg="gray.700"
-                                        color="white"
-                                        borderRadius="2rem"
-                                        leftIcon={<FaCopy color="white" />}
-                                        _hover={{ bg: 'gray.600' }}
-                                        p={6}
+                                    <Stack
+                                        direction={{
+                                            base: 'column',
+                                            md: 'row',
+                                        }}
+                                        spacing={2}
                                     >
-                                        Copy
-                                    </Button>
+                                        {paywith === 'bitcoin' && (
+                                            <Button
+                                                size={{ base: 'xs', md: 'sm' }}
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    <FaBitcoin
+                                                        size={24}
+                                                        color="#F7931A"
+                                                    />
+                                                }
+                                                _hover={{ bg: 'gray.600' }}
+                                                p={{ base: 4, md: 6 }}
+                                                onClick={onOpen}
+                                            >
+                                                BTC QR Code
+                                            </Button>
+                                        )}
+
+                                        <Button
+                                            size={{ base: 'xs', md: 'sm' }}
+                                            bg="gray.700"
+                                            color="white"
+                                            borderRadius="2rem"
+                                            leftIcon={
+                                                hasCopied ? (
+                                                    <FaRegCheckCircle color="white" />
+                                                ) : (
+                                                    <FaCopy color="white" />
+                                                )
+                                            }
+                                            _hover={{ bg: 'gray.600' }}
+                                            p={{ base: 4, md: 6 }}
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(
+                                                    paymentData.paymentAddress
+                                                );
+                                                setHasCopied(true);
+                                                setTimeout(
+                                                    () => setHasCopied(false),
+                                                    2000
+                                                );
+                                            }}
+                                        >
+                                            {hasCopied ? 'Copied!' : 'Copy'}
+                                        </Button>
+                                    </Stack>
                                 </HStack>
                             </Box>
                         </VStack>
                     </Box>
+
+                    {/* QR Code Modal */}
+                    {paywith === 'bitcoin' && (
+                        <Modal
+                            isOpen={isOpen}
+                            onClose={onClose}
+                            size="md"
+                            isCentered
+                        >
+                            <ModalOverlay />
+                            <ModalContent bg="gray.900">
+                                <ModalCloseButton color="white" />
+                                <ModalBody py={8}>
+                                    <VStack spacing={6}>
+                                        <Text
+                                            color="white"
+                                            fontSize="xl"
+                                            fontWeight="bold"
+                                        >
+                                            Pay with BTC
+                                        </Text>
+                                        <Text
+                                            color="gray.400"
+                                            fontSize="sm"
+                                            textAlign="left"
+                                        >
+                                            Bitcoin payments are processed
+                                            separately from EVM wallets. If you
+                                            choose Bitcoin, you'll receive a
+                                            unique payment address and
+                                            instructions. This method is
+                                            independent of your EVM wallet
+                                            balance. To complete your payment,
+                                            simply scan the QR code using your
+                                            Bitcoin wallet.
+                                        </Text>
+                                        <Box bg="white" p={4} borderRadius="lg">
+                                            <QRCode
+                                                value={
+                                                    paymentData.paymentAddress
+                                                }
+                                                size={256}
+                                                style={{
+                                                    height: 'auto',
+                                                    maxWidth: '100%',
+                                                    width: '100%',
+                                                }}
+                                            />
+                                        </Box>
+
+                                        <Text
+                                            color="gray.400"
+                                            fontSize="sm"
+                                            textAlign="center"
+                                            wordBreak="break-all"
+                                        >
+                                            {paymentData.paymentAddress}
+                                            <br />
+
+                                            <Button
+                                                size={{ base: 'xs', md: 'sm' }}
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    hasCopied ? (
+                                                        <FaRegCheckCircle color="white" />
+                                                    ) : (
+                                                        <FaCopy color="white" />
+                                                    )
+                                                }
+                                                _hover={{ bg: 'gray.600' }}
+                                                p={{ base: 4, md: 6 }}
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(
+                                                        paymentData.paymentAddress
+                                                    );
+                                                    setHasCopied(true);
+                                                    setTimeout(
+                                                        () =>
+                                                            setHasCopied(false),
+                                                        2000
+                                                    );
+                                                }}
+                                            >
+                                                {hasCopied ? 'Copied!' : 'Copy'}
+                                            </Button>
+                                        </Text>
+                                    </VStack>
+                                </ModalBody>
+                            </ModalContent>
+                        </Modal>
+                    )}
 
                     <Box bg="gray.900" mt={8} p={6} borderRadius="xl">
                         <VStack spacing={6} align="stretch">
