@@ -103,7 +103,8 @@ const PaymentStatus = ({
 
     // handling polling of payments endpoint for status updates
     useEffect(() => {
-        const timer = setInterval(
+        let timer: NodeJS.Timer;
+        timer = setInterval(
             async () => {
                 try {
                     // console.log('Polling payment status...');
@@ -119,9 +120,12 @@ const PaymentStatus = ({
 
                         // Redirect if payment is in escrow
                         if (payment.status === 'in_escrow') {
-                            router.push(
-                                `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
-                            );
+                            setTimeout(() => {
+                                clearInterval(timer);
+                                router.push(
+                                    `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
+                                );
+                            }, 3000);
                         }
                     }
                 } catch (error) {
