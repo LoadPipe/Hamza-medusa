@@ -284,9 +284,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                                     </Flex>
                                 )}
                             </Flex>
-                            <Flex>
-                                <Text>≅ {convertBtcTotal} BTC</Text>
-                            </Flex>
+                            {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN ===
+                                'true' && (
+                                <Flex>
+                                    <Text>≅ {convertBtcTotal} BTC</Text>
+                                </Flex>
+                            )}
                         </VStack>
                     )}
                 </Flex>
