@@ -14,6 +14,9 @@ import {
     polygon,
     arbitrum,
     base,
+    scroll,
+    mantle,
+    bsc,
 } from 'wagmi/chains';
 import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
