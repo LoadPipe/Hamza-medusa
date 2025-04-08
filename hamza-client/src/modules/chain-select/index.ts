@@ -5,7 +5,7 @@ import ethLogo from '@/images/chains/ethereum-eth-logo.png';
 import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
 import polygonLogo from '@/images/chains/polygon-matic-logo.png';
 import baseLogo from '@/images/chains/base-logo-in-blue.png';
-import bscLogo from '@/images/chains/base-logo-in-blue.png';
+import bscLogo from '@/images/chains/bnb-logo.png';
 
 export const chainMap: {
     [key: string]: { id: number; logo: any; linkUrl: string };
