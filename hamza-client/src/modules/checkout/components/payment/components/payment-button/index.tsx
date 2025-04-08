@@ -378,38 +378,42 @@ const CryptoPaymentButton = ({
                 {getButtonText()}
             </Button>
 
-            <Flex alignItems="center" my="5px">
-                <Box flex="1">
-                    <Divider borderColor="gray.500" />
-                </Box>
-                <Text mx="4" color="white">
-                    OR
-                </Text>
-                <Box flex="1">
-                    <Divider borderColor="gray.500" />
-                </Box>
-            </Flex>
+            {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true' && (
+                <>
+                    <Flex alignItems="center" my="5px">
+                        <Box flex="1">
+                            <Divider borderColor="gray.500" />
+                        </Box>
+                        <Text mx="4" color="white">
+                            OR
+                        </Text>
+                        <Box flex="1">
+                            <Divider borderColor="gray.500" />
+                        </Box>
+                    </Flex>
 
-            <Button
-                borderRadius={'full'}
-                height={{ base: '42px', md: '58px' }}
-                opacity={1}
-                color={'black'}
-                _hover={{ opacity: 0.5 }}
-                backgroundColor={'white'}
-                isLoading={submitting}
-                isDisabled={disableButton}
-                onClick={() =>
-                    router.push(
-                        `/order/processing/${cart.id}?paywith=bitcoin&openqrmodal=true`
-                    )
-                }
-            >
-                <Flex alignItems="center" gap={2}>
-                    <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
-                    Pay with Bitcoin
-                </Flex>
-            </Button>
+                    <Button
+                        borderRadius={'full'}
+                        height={{ base: '42px', md: '58px' }}
+                        opacity={1}
+                        color={'black'}
+                        _hover={{ opacity: 0.5 }}
+                        backgroundColor={'white'}
+                        isLoading={submitting}
+                        isDisabled={disableButton}
+                        onClick={() =>
+                            router.push(
+                                `/order/processing/${cart.id}?paywith=bitcoin&openqrmodal=true`
+                            )
+                        }
+                    >
+                        <Flex alignItems="center" gap={2}>
+                            <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
+                            Pay with Bitcoin
+                        </Flex>
+                    </Button>
+                </>
+            )}
         </>
     );
 };
