@@ -5,6 +5,7 @@ import ethLogo from '@/images/chains/ethereum-eth-logo.png';
 import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
 import polygonLogo from '@/images/chains/polygon-matic-logo.png';
 import baseLogo from '@/images/chains/base-logo-in-blue.png';
+import bscLogo from '@/images/chains/base-logo-in-blue.png';
 
 export const chainMap: {
     [key: string]: { id: number; logo: any; linkUrl: string };
@@ -20,6 +21,17 @@ export const chainMap: {
         linkUrl:
             'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism',
     },
+    'BNB Smart Chain': {
+        id: 56,
+        logo: bscLogo,
+        linkUrl: 'https://www.bnbchain.org/en/bnb-chain-bridge',
+    },
+    Polygon: {
+        id: 137,
+        logo: polygonLogo,
+        linkUrl:
+            'https://coinmarketcap.com/academy/article/how-to-bridge-to-polygon',
+    },
     Base: {
         id: 8453,
         logo: baseLogo,
@@ -31,11 +43,6 @@ export const chainMap: {
         logo: arbLogo,
         linkUrl:
             'https://coinmarketcap.com/academy/article/how-to-bridge-to-arbitrum',
-    },
-    Polygon: {
-        id: 137,
-        logo: polygonLogo,
-        linkUrl: '',
     },
 };
 
