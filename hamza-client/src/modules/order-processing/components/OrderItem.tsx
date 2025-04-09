@@ -17,7 +17,7 @@ import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { LineItem } from '@/app/[countryCode]/(main)/order/processing/[id]/page';
 import OrderItemDetails from './OrderItemDetails';
 import { useEffect, useState } from 'react';
-import { Payment } from '@medusajs/medusa';
+import { Payment, ShippingMethod } from '@medusajs/medusa';
 
 interface OrderItemProps {
     order: any; // Replace with proper type
@@ -35,7 +35,8 @@ const OrderItem = ({
     // calculate totals
     // const [orderTotal, setOrderTotal] = useState(0);
     // const [paymentTotal, setPaymentTotal] = useState(0);
-    const [shippingCost, setShippingCost] = useState(0);
+    const [shippingTotal, setShippingTotal] = useState(0);
+    const [discountTotal, setDiscountTotal] = useState(0);
 
     useEffect(() => {
         const orderTotal = order.detail.items.reduce(
@@ -48,8 +49,17 @@ const OrderItem = ({
             0
         );
 
-        const shippingCost = paymentTotal - orderTotal;
-        setShippingCost(shippingCost);
+        const shippingTotal = order.detail.shipping_methods.reduce(
+            (acc: number, shippingMethod: ShippingMethod) =>
+                acc + (shippingMethod.price ?? 0),
+            0
+        );
+        setShippingTotal(shippingTotal);
+
+        const orderSubTotal = orderTotal + shippingTotal;
+
+        const discountTotal = orderSubTotal - paymentTotal;
+        setDiscountTotal(discountTotal);
     }, [order]);
 
     return (
@@ -133,13 +143,39 @@ const OrderItem = ({
                                     />
                                     <Text ml="0.4rem" color="white">
                                         {formatCryptoPrice(
-                                            shippingCost ?? 0,
+                                            shippingTotal ?? 0,
                                             order.currency_code
                                         )}
                                     </Text>
                                 </Flex>
                             </HStack>
                         </Box>
+                        {discountTotal > 0 && (
+                            <Box borderColor="gray.700">
+                                <HStack justifyContent="flex-end" gap={3}>
+                                    <Text color="gray.500">Discount:</Text>
+                                    <Flex>
+                                        <Image
+                                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                            src={
+                                                currencyIcons[
+                                                    order.currency_code ??
+                                                        'usdc'
+                                                ]
+                                            }
+                                            alt={order.currency_code ?? 'usdc'}
+                                        />
+                                        <Text ml="0.4rem" color="white">
+                                            -{' '}
+                                            {formatCryptoPrice(
+                                                discountTotal ?? 0,
+                                                order.currency_code
+                                            )}
+                                        </Text>
+                                    </Flex>
+                                </HStack>
+                            </Box>
+                        )}
                     </>
                 )}
             </Collapse>
