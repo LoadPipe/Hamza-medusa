@@ -15,14 +15,21 @@ import { SolanaSignInInput } from '@solana/wallet-standard-features';
 import axios from 'axios';
 import { AutoConnectProvider, useAutoConnect } from './auto-connect-provider';
 import { verifySignIn } from '@solana/wallet-standard-util';
+import { CustomWalletModalProvider } from './custom-wallet-modal-provider';
 
 export default function PhantomWalletProvider({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    //Devnet
     const network = WalletAdapterNetwork.Devnet;
     const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+    
+    // Testnet
+    // const network = WalletAdapterNetwork.Testnet;
+    // const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
     // We assume the wallet adapter now has the SIWS signIn method.
     const wallets = useMemo(
         () => [
@@ -37,7 +44,11 @@ export default function PhantomWalletProvider({
         <AutoConnectProvider>
             <ConnectionProvider endpoint={endpoint}>
                 <WalletProvider wallets={wallets} autoConnect>
-                    <WalletModalProvider>{children}</WalletModalProvider>
+                    <WalletModalProvider>
+                        <CustomWalletModalProvider>
+                            {children}
+                        </CustomWalletModalProvider>
+                    </WalletModalProvider>
                 </WalletProvider>
             </ConnectionProvider>
         </AutoConnectProvider>

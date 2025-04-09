@@ -1430,3 +1430,26 @@ export async function getProductsByCategoryHandle({
         nextPage,
     };
 }
+
+
+// Solana wallet authentication
+export async function getTransactionToSign(publicKeyStr: string): Promise<string> {
+    try {
+        const response = await postSecure('/custom/sign/create', { publicKeyStr });
+        return response.tx;
+    } catch (error) {
+        console.error('Error fetching transaction to sign:', error);
+        throw error;
+    }
+}
+
+// Verify a signed transaction with the server
+export async function verifySignedTransaction(signedTx: string): Promise<boolean> {
+    try {
+        await postSecure('/custom/sign/validate', { signedTx });
+        return true;
+    } catch (error) {
+        console.error('Error verifying transaction:', error);
+        return false;
+    }
+}

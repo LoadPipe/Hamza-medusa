@@ -1,10 +1,20 @@
 'use client';
 
+import React, {
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    useCallback,
+} from 'react';
 import { useWalletMultiButton } from '@solana/wallet-adapter-base-ui';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { BaseWalletConnectionButton } from './BaseWalletConnectionButton';
 import type { ButtonProps } from './Button';
 import { useWalletModal } from './useWalletModal';
+
+import { Transaction } from '@solana/web3.js';
+import { getTransactionToSign, verifySignedTransaction } from '@/lib/server';
 
 type Props = ButtonProps & {
     labels: Omit<
@@ -36,8 +46,11 @@ export function BaseWalletMultiButton({ children, labels, ...props }: Props) {
             setModalVisible(true);
         },
     });
+    const { connected, signTransaction } = useWallet();
     const [copied, setCopied] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [hasSignedIn, setHasSignedIn] = useState(false);
+
     const ref = useRef<HTMLUListElement>(null);
     useEffect(() => {
         const listener = (event: MouseEvent | TouchEvent) => {
@@ -57,6 +70,56 @@ export function BaseWalletMultiButton({ children, labels, ...props }: Props) {
             document.removeEventListener('touchstart', listener);
         };
     }, []);
+
+    useEffect(() => {
+        // This needs to run when connected AND publicKey are both available
+        if (connected && publicKey) {
+            // Check if we have a stored authentication token
+            const storedAuth = localStorage.getItem(`wallet-auth-${publicKey.toBase58()}`);
+            if (storedAuth) {
+                // If we have a stored token and the wallet is connected, consider them signed in
+                setHasSignedIn(true);
+            } else if (!hasSignedIn) {
+                // Only trigger sign-in if we haven't signed in yet and don't have a stored token
+                handleSignIn();
+            }
+        }
+    }, [connected, publicKey, hasSignedIn]);
+
+    // 1) The sign-in function
+    const handleSignIn = useCallback(async () => {
+        if (!publicKey || !signTransaction) {
+            return;
+        }
+        try {
+            // 2a) call backend for a transaction
+            const resp = await getTransactionToSign(publicKey.toBase58());
+            if (!resp) {
+                return;
+            }
+            const txBase64 = resp;
+            // decode
+            const transactionBuffer = Buffer.from(txBase64, 'base64');
+            const transaction = Transaction.from(transactionBuffer);
+
+            // 2b) sign locally
+            const signedTx = await signTransaction(transaction);
+            const signedTxBase64 = signedTx.serialize().toString('base64');
+
+            // 2c) verify on backend
+            const verified = await verifySignedTransaction(signedTxBase64);
+
+            if (verified) {
+                setHasSignedIn(true);
+                localStorage.setItem(`wallet-auth-${publicKey.toBase58()}`, 'true');
+
+            } else {
+            }
+        } catch (err: any) {
+            console.error(err);
+        }
+    }, [publicKey, signTransaction]);
+
     const content = useMemo(() => {
         if (children) {
             return children;
@@ -72,6 +135,20 @@ export function BaseWalletMultiButton({ children, labels, ...props }: Props) {
             return labels['no-wallet'];
         }
     }, [buttonState, children, labels, publicKey]);
+
+    const handleDisconnect = useCallback(() => {
+        if (onDisconnect) {
+            onDisconnect();
+            setHasSignedIn(false);
+
+            if (publicKey) {
+                localStorage.removeItem(`wallet-auth-${publicKey.toBase58()}`);
+            }
+
+            setMenuOpen(false);
+        }
+    }, [onDisconnect, publicKey]);
+
     return (
         <div className="wallet-adapter-dropdown">
             <BaseWalletConnectionButton
@@ -115,11 +192,11 @@ export function BaseWalletMultiButton({ children, labels, ...props }: Props) {
                                 publicKey.toBase58()
                             );
                             setCopied(true);
-                            setTimeout(() => setCopied(false), 400);
+                            setTimeout(() => setCopied(false), 500);
                         }}
                         role="menuitem"
                     >
-                        {copied ? labels['copied'] : labels['copy-address']}
+                        {copied ? labels.copied : labels['copy-address']}
                     </li>
                 ) : null}
                 <li
@@ -132,18 +209,15 @@ export function BaseWalletMultiButton({ children, labels, ...props }: Props) {
                 >
                     {labels['change-wallet']}
                 </li>
-                {onDisconnect ? (
+                {onDisconnect && (
                     <li
                         className="wallet-adapter-dropdown-list-item"
-                        onClick={() => {
-                            onDisconnect();
-                            setMenuOpen(false);
-                        }}
+                        onClick={handleDisconnect}
                         role="menuitem"
                     >
-                        {labels['disconnect']}
+                        {labels.disconnect}
                     </li>
-                ) : null}
+                )}
             </ul>
         </div>
     );
