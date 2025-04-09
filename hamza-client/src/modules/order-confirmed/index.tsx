@@ -3,7 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Box, Button, Flex, HStack, Icon, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    HStack,
+    Icon,
+    Text,
+    VStack,
+} from '@chakra-ui/react';
 import { MdCheckCircle } from 'react-icons/md';
 import { BsBox } from 'react-icons/bs';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
@@ -185,7 +193,16 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                     );
 
                     // #TODO: need to consider discount total as well.
-                    const orderShippingTotal = orderPaymentTotal - orderTotal;
+                    const orderShippingTotal = order.shipping_methods.reduce(
+                        (total: number, method: any) =>
+                            total + (method.price ?? 0),
+                        0
+                    );
+
+                    const orderSubTotal = orderTotal + orderShippingTotal;
+
+                    const orderDiscountTotal =
+                        orderSubTotal - orderPaymentTotal;
 
                     return (
                         <Box
@@ -336,29 +353,62 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                             : ''}
                                     </Text>
                                 </HStack>
-                                <HStack>
-                                    <Text color="gray.500">
-                                        Shipping Cost - Discount:
-                                    </Text>
-                                    <Flex>
-                                        <Image
-                                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                            src={
-                                                currencyIcons[
-                                                    order.currency_code ??
-                                                        'usdc'
-                                                ]
-                                            }
-                                            alt={order.currency_code ?? 'usdc'}
-                                        />
-                                        <Text ml="0.4rem" color="white">
-                                            {formatCryptoPrice(
-                                                orderShippingTotal,
-                                                order.currency_code
-                                            )}
+                                <VStack align="flex-end">
+                                    <HStack>
+                                        <Text color="gray.500">
+                                            Shipping Cost:
                                         </Text>
-                                    </Flex>
-                                </HStack>
+                                        <Flex>
+                                            <Image
+                                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                                src={
+                                                    currencyIcons[
+                                                        order.currency_code ??
+                                                            'usdc'
+                                                    ]
+                                                }
+                                                alt={
+                                                    order.currency_code ??
+                                                    'usdc'
+                                                }
+                                            />
+                                            <Text ml="0.4rem" color="white">
+                                                {formatCryptoPrice(
+                                                    orderShippingTotal,
+                                                    order.currency_code
+                                                )}
+                                            </Text>
+                                        </Flex>
+                                    </HStack>
+                                    {orderDiscountTotal > 0 && (
+                                        <HStack>
+                                            <Text color="gray.500">
+                                                Discount:
+                                            </Text>
+                                            <Flex>
+                                                <Image
+                                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                                    src={
+                                                        currencyIcons[
+                                                            order.currency_code ??
+                                                                'usdc'
+                                                        ]
+                                                    }
+                                                    alt={
+                                                        order.currency_code ??
+                                                        'usdc'
+                                                    }
+                                                />
+                                                <Text ml="0.4rem" color="white">
+                                                    {formatCryptoPrice(
+                                                        orderDiscountTotal,
+                                                        order.currency_code
+                                                    )}
+                                                </Text>
+                                            </Flex>
+                                        </HStack>
+                                    )}
+                                </VStack>
                             </HStack>
                         </Box>
                     );

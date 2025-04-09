@@ -32,7 +32,7 @@ import { useAccount } from 'wagmi';
 import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet-connect';
 import { calculateStepState } from './utils';
 
-const PaymentStatus = ({
+const OrderProcessing = ({
     startTimestamp,
     endTimestamp,
     paymentsData,
@@ -589,4 +589,4 @@ const PaymentStatus = ({
     );
 };
 
-export default PaymentStatus;
+export default OrderProcessing;
