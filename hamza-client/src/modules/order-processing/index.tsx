@@ -143,8 +143,10 @@ const OrderProcessing = ({
                             payment.status === COMPLETED_PAYMENT_STATUS &&
                             fromCheckout
                         ) {
+                            clearInterval(timer);
+
+                            //pause 3 seconds before redirecting
                             setTimeout(() => {
-                                clearInterval(timer);
                                 router.push(
                                     `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
                                 );
