@@ -1,10 +1,25 @@
-import { Box, Flex, Text, Button, Link, Divider } from '@chakra-ui/react';
-import { LineItem, Region } from '@medusajs/medusa';
+import {
+    Box,
+    Flex,
+    Text,
+    Button,
+    Link,
+    Divider,
+    HStack,
+    Image as ChakraImage,
+} from '@chakra-ui/react';
+import {
+    LineItem,
+    Region,
+    Store as MedusaStoreImport,
+    Store,
+} from '@medusajs/medusa';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import Item from '@modules/cart/components/item';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import React from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -14,11 +29,30 @@ type ItemsTemplateProps = {
     currencyCode?: string;
 };
 
+type MedusaStore = Store & {
+    icon: string;
+};
+
+type StoreWithItems = MedusaStore & {
+    items: LineItem[];
+};
+
 const ItemsTemplate = ({ currencyCode }: ItemsTemplateProps) => {
     const { data: cart } = useQuery({
         queryKey: ['cart'],
         queryFn: fetchCartForCart,
         staleTime: 1000 * 60 * 5,
+    });
+
+    let stores: StoreWithItems[] = [];
+    cart?.items.forEach((item) => {
+        const store = item.variant.product.store;
+        let storeIndex = stores.findIndex((s) => s.name === store.name);
+        if (storeIndex === -1) {
+            stores.push({ ...store, items: [item] });
+        } else {
+            stores[storeIndex].items.push(item);
+        }
     });
 
     return (
@@ -46,21 +80,67 @@ const ItemsTemplate = ({ currencyCode }: ItemsTemplateProps) => {
             </Flex>
             <Box mt="1rem" minHeight={{ base: '170px', md: '400px' }}>
                 {cart?.items && cart?.items.length > 0 && cart?.region ? (
-                    cart?.items
-                        .sort((a, b) => {
-                            return a.created_at > b.created_at ? -1 : 1;
-                        })
-                        .map((item) => {
-                            return (
-                                <Item
-                                    key={item.id}
-                                    item={item}
-                                    region={cart?.region}
-                                    cart_id={cart?.id}
-                                    currencyCode={currencyCode}
-                                />
-                            );
-                        })
+                    <>
+                        {stores.map((store) => (
+                            <Box
+                                key={store.id}
+                                my={12}
+                                pt={6}
+                                borderTop="1px solid #3E3E3E"
+                            >
+                                <Box>
+                                    <HStack>
+                                        <ChakraImage
+                                            src={store.icon}
+                                            alt="Light Logo"
+                                            boxSize={{ base: '32px' }}
+                                            borderRadius="full"
+                                        />
+                                        <Text fontWeight={600}>
+                                            {store.name}
+                                        </Text>
+                                        <FaCheckCircle color="#3196DF" />
+                                    </HStack>
+                                </Box>
+                                <Box>
+                                    {store.items.map((item) => (
+                                        <Item
+                                            key={item.id}
+                                            item={item}
+                                            region={cart?.region}
+                                            cart_id={cart?.id}
+                                            currencyCode={currencyCode}
+                                        />
+                                    ))}
+                                </Box>
+                                {cart.discounts.some(
+                                    (discount) => discount.store_id === store.id
+                                ) && (
+                                    <Box>
+                                        <Box
+                                            px={3}
+                                            py={2}
+                                            backgroundColor="#242424"
+                                            display={'inline-block'}
+                                            borderRadius={'10px'}
+                                        >
+                                            Discount applied:{' '}
+                                            {cart.discounts
+                                                .filter(
+                                                    (discount) =>
+                                                        discount.store_id ===
+                                                        store.id
+                                                )
+                                                .map(
+                                                    (discount) => discount.code
+                                                )
+                                                .join(',')}
+                                        </Box>
+                                    </Box>
+                                )}
+                            </Box>
+                        ))}
+                    </>
                 ) : (
                     <Flex
                         width={'100%'}

@@ -92,13 +92,11 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
 
     return (
         <Flex
-            height={{ base: '150px', md: '210px' }}
+            // height={{ base: '150px', md: '210px' }}
             width={'100%'}
             flexDirection={'column'}
         >
-            <Divider borderColor="#3E3E3E" />
-
-            <Flex my="auto" className="cart-item-container">
+            <Flex my="6" className="cart-item-container">
                 {/* <Radio mr="2rem" /> */}
 
                 <LocalizedClientLink href={`/products/${handle}`}>

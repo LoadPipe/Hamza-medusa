@@ -140,7 +140,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                             alignSelf={'center'}
                             fontSize={{ base: '14px', md: '16px' }}
                         >
-                            Subtotal
+                            Subtotal ({cart.items.length} items)
                         </Text>
 
                         <Text
@@ -182,7 +182,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                             alignSelf={'center'}
                             fontSize={{ base: '14px', md: '16px' }}
                         >
-                            Shipping
+                            Shipping Fee
                         </Text>
 
                         {loading ? (
