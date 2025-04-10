@@ -32,8 +32,6 @@ import { useAccount } from 'wagmi';
 import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet-connect';
 import { calculateStepState } from './utils';
 
-const COMPLETED_PAYMENT_STATUS = 'received';
-
 const OrderProcessing = ({
     startTimestamp,
     endTimestamp,
@@ -140,17 +138,17 @@ const OrderProcessing = ({
 
                         // Redirect if payment is in escrow
                         if (
-                            payment.status === COMPLETED_PAYMENT_STATUS &&
+                            (payment.status === 'received' ||
+                                payment.status === 'in_escrow') &&
                             fromCheckout
                         ) {
+                            //pause 2 seconds before redirecting
                             clearInterval(timer);
-
-                            //pause 3 seconds before redirecting
                             setTimeout(() => {
                                 router.push(
                                     `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
                                 );
-                            }, 3000);
+                            }, 2000);
                         }
                     }
                 } catch (error) {
