@@ -21,13 +21,10 @@ const ItemsTemplate = ({ currencyCode }: ItemsTemplateProps) => {
         staleTime: 1000 * 60 * 5,
     });
 
-    // TODO: We're repeating this in the child component...
-    if (!cart || !cart.items) return;
-
     return (
         <Flex
             flexDir={'column'}
-            maxW={cart.items && cart.items.length > 0 ? '830px' : '100%'}
+            maxW={cart?.items && cart?.items.length > 0 ? '830px' : '100%'}
             width={'100%'}
             height={'auto'}
             alignSelf={'self-start'}
@@ -48,8 +45,8 @@ const ItemsTemplate = ({ currencyCode }: ItemsTemplateProps) => {
                 </Text>
             </Flex>
             <Box mt="1rem" minHeight={{ base: '170px', md: '400px' }}>
-                {cart.items && cart.items.length > 0 && cart.region ? (
-                    cart.items
+                {cart?.items && cart?.items.length > 0 && cart?.region ? (
+                    cart?.items
                         .sort((a, b) => {
                             return a.created_at > b.created_at ? -1 : 1;
                         })
@@ -58,8 +55,8 @@ const ItemsTemplate = ({ currencyCode }: ItemsTemplateProps) => {
                                 <Item
                                     key={item.id}
                                     item={item}
-                                    region={cart.region}
-                                    cart_id={cart.id}
+                                    region={cart?.region}
+                                    cart_id={cart?.id}
                                     currencyCode={currencyCode}
                                 />
                             );
