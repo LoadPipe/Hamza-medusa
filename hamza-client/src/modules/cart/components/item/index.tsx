@@ -31,9 +31,10 @@ const Item = ({ item }: ItemProps) => {
     const queryClient = useQueryClient();
 
     const changeQuantity = async (newQuantity: number) => {
-        setQuantity(newQuantity);
-        setIsUpdating(true);
         try {
+            setQuantity(newQuantity);
+            setIsUpdating(true);
+
             // Create a debounced invalidation
             const timeoutId = setTimeout(async () => {
                 await updateLineItem({
