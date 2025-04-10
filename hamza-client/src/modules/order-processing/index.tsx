@@ -39,6 +39,7 @@ const OrderProcessing = ({
     cartId,
     paywith,
     openqrmodal,
+    fromCheckout,
 }: {
     cartId: string;
     startTimestamp: number;
@@ -46,6 +47,7 @@ const OrderProcessing = ({
     paymentsData: PaymentsDataProps[];
     paywith?: string;
     openqrmodal?: string;
+    fromCheckout?: boolean;
 }) => {
     const router = useRouter();
     const initialPaymentData = paymentsData[0];
@@ -72,6 +74,7 @@ const OrderProcessing = ({
     }, 0);
     const currencyCode = initialPaymentData.orders[0].currency_code;
     const [hasCopied, setHasCopied] = useState(false);
+    const [currentStatus, setCurrentStatus] = useState('waiting');
 
     const toggleOrder = (orderId: string) => {
         setOpenOrders((prev) => ({
@@ -125,6 +128,8 @@ const OrderProcessing = ({
                     if (payments && payments.length > 0) {
                         const payment = payments[0];
 
+                        setCurrentStatus(payment?.status);
+
                         // Stop polling if payment is expired
                         if (payment.status === 'expired') {
                             clearInterval(timer);
@@ -132,7 +137,7 @@ const OrderProcessing = ({
                         }
 
                         // Redirect if payment is in escrow
-                        if (payment.status === 'in_escrow') {
+                        if (payment.status === 'in_escrow' && fromCheckout) {
                             setTimeout(() => {
                                 clearInterval(timer);
                                 router.push(
@@ -191,9 +196,9 @@ const OrderProcessing = ({
                                 </Text>
                                 <Box
                                     bg={
-                                        paymentData.status === 'expired'
+                                        currentStatus === 'expired'
                                             ? 'red.900'
-                                            : paymentData.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'orange.900'
                                               : 'green.900'
                                     }
@@ -203,22 +208,22 @@ const OrderProcessing = ({
                                     border="2px"
                                     borderStyle="solid"
                                     borderColor={
-                                        paymentData.status === 'expired'
+                                        currentStatus === 'expired'
                                             ? 'red.500'
-                                            : paymentData.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'orange.400'
                                               : 'primary.green.900'
                                     }
                                 >
                                     <Text color="white" fontWeight="bold">
-                                        {paymentData.status === 'expired'
+                                        {currentStatus === 'expired'
                                             ? 'Expired'
-                                            : paymentData.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'Partial'
                                               : STATUS_STEPS.find(
                                                     (step) =>
                                                         step.status ===
-                                                        paymentData.status
+                                                        currentStatus
                                                 )?.label}
                                     </Text>
                                 </Box>
@@ -230,21 +235,19 @@ const OrderProcessing = ({
                             <Box display={{ base: 'block', md: 'none' }}>
                                 {STATUS_STEPS.map(
                                     (step, index) =>
-                                        (step.status === paymentData.status ||
+                                        (step.status === currentStatus ||
                                             (step.status === 'waiting' &&
-                                                paymentData.status ===
+                                                currentStatus ===
                                                     'expired')) && (
                                             <StatusStep
                                                 key={step.status}
                                                 step={step}
                                                 index={index}
                                                 progress={progress}
-                                                currentStatus={
-                                                    paymentData.status
-                                                }
+                                                currentStatus={currentStatus}
                                                 {...calculateStepState(
                                                     step.status,
-                                                    paymentData.status,
+                                                    currentStatus,
                                                     progress,
                                                     endTimestamp,
                                                     startTimestamp
@@ -265,10 +268,10 @@ const OrderProcessing = ({
                                         step={step}
                                         index={index}
                                         progress={progress}
-                                        currentStatus={paymentData.status}
+                                        currentStatus={currentStatus}
                                         {...calculateStepState(
                                             step.status,
-                                            paymentData.status,
+                                            currentStatus,
                                             progress,
                                             endTimestamp,
                                             startTimestamp
