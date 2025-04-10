@@ -21,29 +21,32 @@ import {
     fetchCartForCart,
     organizeCartItemsByStore,
 } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import { CartWithCheckoutStep } from '@/types/global';
 import EmptyCart from '@modules/cart/components/empty-cart';
 import StoreItems from '@modules/cart/components/store-items';
 
-type ExtendedLineItem = LineItem & {
-    currency_code?: string;
-};
-
 type ItemsTemplateProps = {
     currencyCode?: string;
+    cart: CartWithCheckoutStep;
 };
 
-const ItemsTemplate = ({ currencyCode }: ItemsTemplateProps) => {
-    const { isLoading: cartIsLoading, data: cart } = useQuery({
-        queryKey: ['cart'],
-        queryFn: fetchCartForCart,
-        staleTime: 1000 * 60 * 5,
-    });
+const ItemsTemplate = ({ currencyCode, cart }: ItemsTemplateProps) => {
+    // const { isLoading: cartIsLoading, data: cart } = useQuery({
+    //     queryKey: ['cart'],
+    //     queryFn: fetchCartForCart,
+    //     staleTime: 1000 * 60 * 5,
+    // });
+    const [stores, setStores] = useState<
+        { id: string; name: string; icon: string; items: any[] }[]
+    >([]);
 
     // refactor organization of store with items
-    const stores = organizeCartItemsByStore(cart as CartWithCheckoutStep);
+    useEffect(() => {
+        const stores = organizeCartItemsByStore(cart as CartWithCheckoutStep);
+        setStores(stores);
+    }, [cart]);
 
     return (
         <Flex

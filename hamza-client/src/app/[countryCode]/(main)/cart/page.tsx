@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
 import CartTemplate from '@/modules/cart/templates/cart-template';
 import { getHamzaCustomer } from '@/lib/server';
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
-import getQueryClient from '@/app/query-utils/getQueryClient';
+import EmptyCart from '@/modules/cart/components/empty-cart';
 
 // Single source of truth
 // Supports both: Checkout && Cart
@@ -18,22 +17,13 @@ export const metadata: Metadata = {
 // 1. Improve perceived performance
 
 export default async function Cart() {
-    // SSR So make sure to create a new queryClient instance, so we don't share the same instance between multiple requests
-    const queryClient = getQueryClient();
-
-    // Prefetch cart with enrichment & checkout step
-    await queryClient.prefetchQuery({
-        queryKey: ['cart'],
-        queryFn: fetchCartForCart,
-        staleTime: 1000 * 60 * 5,
-    });
-
     // Fetch customer details
     const customer = await getHamzaCustomer();
+    const cart = await fetchCartForCart();
 
-    return (
-        <HydrationBoundary state={dehydrate(queryClient)}>
-            <CartTemplate customer={customer} />
-        </HydrationBoundary>
-    );
+    if (!cart) {
+        return <EmptyCart />;
+    }
+
+    return <CartTemplate customer={customer} cart={cart} />;
 }

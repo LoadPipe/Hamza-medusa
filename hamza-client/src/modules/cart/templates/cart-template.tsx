@@ -4,11 +4,12 @@ import ItemsTemplate from './items-template';
 import Summary from './summary';
 import SignInPrompt from '../components/sign-in-prompt';
 import Divider from '@modules/common/components/divider';
-import { Customer } from '@medusajs/medusa';
+import { Cart, Customer } from '@medusajs/medusa';
 import { Flex } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import { CartWithCheckoutStep } from '@/types/global';
 
 /**
  * @param initialCart - CartWithCheckoutStep | null (if initialCart prop changes and ANY re-renders
@@ -21,17 +22,24 @@ import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-ca
  */
 const CartTemplate = ({
     customer,
+    cart,
 }: {
     customer: Omit<Customer, 'password_hash'> | null;
+    cart: CartWithCheckoutStep;
 }) => {
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
 
-    const { data: initialCart, isLoading, isError } = useQuery({
+    const {
+        data: initialCart,
+        isLoading,
+        isError,
+    } = useQuery({
         queryKey: ['cart'],
         queryFn: fetchCartForCart,
         staleTime: 1000 * 60 * 5, // Cache cart for 5 minutes
-    })
+        initialData: cart,
+    });
 
     if (isLoading) {
         return <p>Loading cart...</p>; // ✅ Better UX
@@ -68,13 +76,14 @@ const CartTemplate = ({
                     {/* Cart Items */}
                     <ItemsTemplate
                         currencyCode={preferred_currency_code ?? 'usdc'}
+                        cart={initialCart as CartWithCheckoutStep}
                     />
                     {/* Shipping Address */}
                     {/* <CartShippingAddress customer={customer} /> */}
                 </Flex>
 
                 {initialCart?.items?.length !== 0 && initialCart?.region && (
-                    <Summary/>
+                    <Summary />
                 )}
             </Flex>
         </Flex>

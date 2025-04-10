@@ -2,7 +2,6 @@ import { Box, Text, HStack, Image as ChakraImage } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import Item from '@modules/cart/components/item';
 import { CartWithCheckoutStep } from '@/types/global';
-import { Store } from '@medusajs/medusa';
 
 type StoreItemsProps = {
     store: {
@@ -15,7 +14,7 @@ type StoreItemsProps = {
     currencyCode?: string;
 };
 
-const StoreItems = ({ store, cart, currencyCode }: StoreItemsProps) => {
+const StoreItems = ({ store, cart }: StoreItemsProps) => {
     return (
         <Box key={store.id} my={12} pt={6} borderTop="1px solid #3E3E3E">
             <Box>
@@ -34,13 +33,7 @@ const StoreItems = ({ store, cart, currencyCode }: StoreItemsProps) => {
             </Box>
             <Box>
                 {store.items.map((item) => (
-                    <Item
-                        key={item.id}
-                        item={item}
-                        region={cart?.region}
-                        cart_id={cart?.id}
-                        currencyCode={currencyCode}
-                    />
+                    <Item key={item.id} item={item} />
                 ))}
             </Box>
             {cart.discounts.some(
