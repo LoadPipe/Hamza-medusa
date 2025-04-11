@@ -30,7 +30,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
     const [loadingUSDPrice, setLoadingUSDPrice] = useState<boolean>(false);
     const { preferred_currency_code } = useCustomerAuthStore();
-    const isUpdating = useCartStore((state) => state.isUpdating);
+    const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
 
     useEffect(() => {
         setLoadingPrice(true);
@@ -136,7 +136,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         </Flex>
 
                         {/* Spinner or Base Price */}
-                        {loadingPrice || isUpdating ? (
+                        {loadingPrice || isUpdatingCart ? (
                             <Spinner
                                 size="sm"
                                 color="white"
@@ -160,7 +160,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         {/* Spinner or Converted Price */}
                         {preferred_currency_code === 'eth' && (
                             <>
-                                {loadingUSDPrice && isUpdating ? (
+                                {loadingUSDPrice && isUpdatingCart ? (
                                     <Spinner size="sm" color="white" ml={1} />
                                 ) : (
                                     <Text

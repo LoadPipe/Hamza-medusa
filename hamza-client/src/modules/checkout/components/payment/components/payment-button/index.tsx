@@ -71,7 +71,7 @@ const CryptoPaymentButton = ({
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
     const { data: walletClient, isError } = useWalletClient();
-    const { isUpdating } = useCartStore();
+    const { isUpdatingCart } = useCartStore();
     const router = useRouter();
     const { connect, connectors, error, isLoading, pendingConnector } =
         useConnect({
@@ -351,13 +351,13 @@ const CryptoPaymentButton = ({
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
         isCartEmpty ||
-        isUpdating ||
+        isUpdatingCart ||
         (isMissingAddress && isMissingShippingMethod);
 
     const getButtonText = () => {
         if (isCartEmpty) return 'Add products to order';
         if (isMissingAddress) return 'Add address to order';
-        if (isUpdating) return <Spinner />;
+        if (isUpdatingCart) return <Spinner />;
         return 'Pay with Crypto Wallet';
     };
 

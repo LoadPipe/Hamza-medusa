@@ -3,6 +3,7 @@ import { clx } from '@medusajs/ui';
 import { useState } from 'react';
 import { deleteLineItem } from '@modules/cart/actions';
 import { useQueryClient } from '@tanstack/react-query';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 
 const DeleteButton = ({
     id,
@@ -15,13 +16,17 @@ const DeleteButton = ({
 }) => {
     const [isDeleting, setIsDeleting] = useState(false);
     const queryClient = useQueryClient();
-
+    const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
     const handleDelete = async (id: string) => {
         setIsDeleting(true);
+        setIsUpdatingCart(true);
         await deleteLineItem(id).catch((err) => {
             setIsDeleting(false);
+            setIsUpdatingCart(false);
         });
         queryClient.invalidateQueries({ queryKey: ['cart'] });
+        setIsDeleting(false);
+        setIsUpdatingCart(false);
     };
 
     return (

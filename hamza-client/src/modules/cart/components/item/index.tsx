@@ -23,7 +23,7 @@ type ItemProps = {
 
 const Item = ({ item }: ItemProps) => {
     const [quantity, setQuantity] = useState(item.quantity);
-    const setIsUpdating = useCartStore((state) => state.setIsUpdating);
+    const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
     const [isMobile] = useMediaQuery('(max-width: 768px)');
 
     const { handle } = item.variant.product;
@@ -32,7 +32,7 @@ const Item = ({ item }: ItemProps) => {
     const changeQuantity = async (newQuantity: number) => {
         try {
             setQuantity(newQuantity);
-            setIsUpdating(true);
+            setIsUpdatingCart(true);
 
             // Create a debounced invalidation
             const timeoutId = setTimeout(async () => {
@@ -41,14 +41,14 @@ const Item = ({ item }: ItemProps) => {
                     quantity: newQuantity,
                 });
                 queryClient.invalidateQueries({ queryKey: ['cart'] });
-                setIsUpdating(false);
+                setIsUpdatingCart(false);
             }, 2000);
 
             // Clean up timeout if another call happens within 2 seconds
             return () => clearTimeout(timeoutId);
         } catch (error) {
             console.error('Error updating quantity:', error);
-            setIsUpdating(false);
+            setIsUpdatingCart(false);
         }
     };
 

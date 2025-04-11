@@ -26,7 +26,7 @@ const Summary = () => {
         (state) => state.setCustomerPreferredCurrency
     );
 
-    const isUpdating = useCartStore((state) => state.isUpdating);
+    const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
 
     return (
         <Flex
@@ -63,14 +63,14 @@ const Summary = () => {
                     height={{ base: '42px', md: '52px' }}
                     borderRadius={'full'}
                     fontSize={{ base: '14px', md: '16px' }}
-                    isDisabled={cart?.items?.length === 0 || isUpdating}
+                    isDisabled={cart?.items?.length === 0 || isUpdatingCart}
                     className="checkout-now-button"
                     _hover={{
                         backgroundColor: 'white',
                         color: 'black',
                     }}
                 >
-                    {isUpdating ? <Spinner /> : 'Checkout Now'}
+                    {isUpdatingCart ? <Spinner /> : 'Checkout Now'}
                 </Button>
             </LocalizedClientLink>
         </Flex>
