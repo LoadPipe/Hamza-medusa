@@ -27,6 +27,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
     // reveal more text mobile about
     const [showMore, setShowMore] = useState(3);
     const [storeName, setStoreName] = useState('');
+    const [storeHandle, setStoreHandle] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -46,6 +47,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                     JSON.stringify(reviewStats)
             ) {
                 setStoreName(response?.store?.name);
+                setStoreHandle(response?.store?.handle);
                 setReviewStats(response?.products);
             } else {
                 console.log('Response was null or no data changes');
@@ -282,8 +284,9 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                         >
                             <a
                                 href={
-                                    process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK ??
-                                    'https://support.hamza.market/help/1568263160'
+                                    process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK
+                                        ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?channel=${storeHandle}`
+                                        : 'https://support.hamza.market/help/1568263160'
                                 }
                                 target="_blank"
                             >
