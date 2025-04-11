@@ -162,29 +162,30 @@ export const getStepColors = (
 export const buildPaymentsData = async (cartId: string) => {
     const paymentsData = await getPaymentData(cartId);
 
-    const startTimestamp =
-        paymentsData[0].startTimestamp > 0
-            ? paymentsData[0].startTimestamp
-            : new Date(paymentsData[0].orders[0].created_at).getTime();
+    if (paymentsData?.length) {
+        const startTimestamp =
+            paymentsData[0]?.startTimestamp > 0
+                ? paymentsData[0]?.startTimestamp
+                : new Date(paymentsData[0].orders[0].created_at).getTime();
 
-    const endTimestamp =
-        paymentsData[0].startTimestamp > 0
-            ? paymentsData[0].startTimestamp
-            : Date.now() + Number(paymentsData[0].expiresInSeconds) * 1000;
+        const endTimestamp =
+            paymentsData[0]?.startTimestamp > 0
+                ? paymentsData[0]?.startTimestamp
+                : Date.now() + Number(paymentsData[0].expiresInSeconds) * 1000;
 
-    await Promise.all(
-        paymentsData.map(async (paymentData: PaymentsDataProps) => {
-            await Promise.all(
-                paymentData.orders.map(async (order: Order) => {
-                    const enrichedOrder = await getOrder(order.id);
-                    order.items = enrichedOrder.order.items;
-                    order.detail = enrichedOrder.order;
-                })
-            );
-        })
-    );
-
-    return { paymentsData, startTimestamp, endTimestamp };
+        await Promise.all(
+            paymentsData?.map(async (paymentData: PaymentsDataProps) => {
+                await Promise.all(
+                    paymentData.orders.map(async (order: Order) => {
+                        const enrichedOrder = await getOrder(order.id);
+                        order.items = enrichedOrder.order.items;
+                        order.detail = enrichedOrder.order;
+                    })
+                );
+            })
+        );
+        return { paymentsData, startTimestamp, endTimestamp };
+    }
 };
 
 async function getOrder(id: string) {

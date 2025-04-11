@@ -102,9 +102,9 @@ export default async function ProcessingPage({ params, searchParams }: Props) {
     return (
         <Container maxW="container.lg" py={8}>
             <PaymentStatus
-                startTimestamp={paymentsData.startTimestamp}
-                endTimestamp={paymentsData.endTimestamp}
-                paymentsData={paymentsData.paymentsData}
+                startTimestamp={paymentsData?.startTimestamp}
+                endTimestamp={paymentsData?.endTimestamp}
+                paymentsData={paymentsData?.paymentsData}
                 cartId={cartId}
                 paywith={paywith}
                 openqrmodal={openqrmodal}

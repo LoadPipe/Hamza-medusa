@@ -48,29 +48,29 @@ const OrderProcessing = ({
     openqrmodal?: string;
 }) => {
     const router = useRouter();
-    const initialPaymentData = paymentsData[0];
+    const initialPaymentData = paymentsData ? paymentsData[0] : null;
     const [paymentData, setPaymentData] = useState(initialPaymentData);
     const [openOrders, setOpenOrders] = useState<Record<string, boolean>>({});
     const [progress, setProgress] = useState(0);
     const { isConnected } = useAccount();
     const [isClient, setIsClient] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const totalOrders = paymentData.orders.length;
-    const totalItems = paymentData.orders.reduce((total, order) => {
+    const totalOrders = paymentData?.orders.length;
+    const totalItems = paymentData?.orders.reduce((total, order) => {
         const orderTotalItems = order.items.reduce(
             (totalItems, item) => totalItems + item.quantity,
             0
         );
         return total + orderTotalItems;
     }, 0);
-    const paymentTotal = initialPaymentData.orders.reduce((total, order) => {
+    const paymentTotal = initialPaymentData?.orders.reduce((total, order) => {
         const orderTotal = order.detail.payments.reduce(
             (paymentTotal, payment) => paymentTotal + payment.amount,
             0
         );
         return total + orderTotal;
     }, 0);
-    const currencyCode = initialPaymentData.orders[0].currency_code;
+    const currencyCode = initialPaymentData?.orders[0]?.currency_code ?? 'usdc';
     const [hasCopied, setHasCopied] = useState(false);
 
     const toggleOrder = (orderId: string) => {
@@ -90,7 +90,7 @@ const OrderProcessing = ({
     useEffect(() => {
         setIsClient(true);
 
-        if (paymentData.status !== 'waiting') {
+        if (paymentData?.status !== 'waiting') {
             setProgress(100);
             return;
         }
@@ -112,7 +112,7 @@ const OrderProcessing = ({
         setProgress(calculateProgress());
 
         return () => clearInterval(timer);
-    }, [paymentData.status, calculateProgress]);
+    }, [paymentData?.status, calculateProgress]);
 
     // handling polling of payments endpoint for status updates
     useEffect(() => {
@@ -122,6 +122,8 @@ const OrderProcessing = ({
                 try {
                     // console.log('Polling payment status...');
                     const payments = await getPaymentData(cartId);
+                    console.log(cartId);
+                    console.log(payments);
                     if (payments && payments.length > 0) {
                         const payment = payments[0];
 
@@ -296,7 +298,8 @@ const OrderProcessing = ({
                                         </Text>
                                         <Text color="white">
                                             {new Date(
-                                                paymentData.orders[0].created_at
+                                                paymentData?.orders[0]
+                                                    ?.created_at ?? ''
                                             )
                                                 .toLocaleDateString('en-US', {
                                                     weekday: 'long',
@@ -326,8 +329,8 @@ const OrderProcessing = ({
                                             />
                                             <Text ml="0.4rem" color="white">
                                                 {formatCryptoPrice(
-                                                    paymentTotal,
-                                                    currencyCode
+                                                    paymentTotal ?? 0,
+                                                    currencyCode ?? 'usdc'
                                                 )}
                                             </Text>
                                         </Flex>
@@ -359,7 +362,7 @@ const OrderProcessing = ({
                                                     md: 'block',
                                                 }}
                                             >
-                                                {paymentData.paymentAddress}
+                                                {paymentData?.paymentAddress}
                                             </Text>
                                             <Text
                                                 fontSize="sm"
@@ -371,7 +374,7 @@ const OrderProcessing = ({
                                                 }}
                                             >
                                                 ...
-                                                {paymentData.paymentAddress.slice(
+                                                {paymentData?.paymentAddress.slice(
                                                     -10
                                                 )}
                                             </Text>
@@ -421,7 +424,8 @@ const OrderProcessing = ({
                                             p={{ base: 4, md: 6 }}
                                             onClick={() => {
                                                 navigator.clipboard.writeText(
-                                                    paymentData.paymentAddress
+                                                    paymentData?.paymentAddress ??
+                                                        ''
                                                 );
                                                 setHasCopied(true);
                                                 setTimeout(
@@ -476,7 +480,8 @@ const OrderProcessing = ({
                                         <Box bg="white" p={4} borderRadius="lg">
                                             <QRCode
                                                 value={
-                                                    paymentData.paymentAddress
+                                                    paymentData?.paymentAddress ??
+                                                    ''
                                                 }
                                                 size={256}
                                                 style={{
@@ -493,7 +498,7 @@ const OrderProcessing = ({
                                             textAlign="center"
                                             wordBreak="break-all"
                                         >
-                                            {paymentData.paymentAddress}
+                                            {paymentData?.paymentAddress}
                                             <br />
 
                                             <Button
@@ -512,7 +517,8 @@ const OrderProcessing = ({
                                                 p={{ base: 4, md: 6 }}
                                                 onClick={() => {
                                                     navigator.clipboard.writeText(
-                                                        paymentData.paymentAddress
+                                                        paymentData?.paymentAddress ??
+                                                            ''
                                                     );
                                                     setHasCopied(true);
                                                     setTimeout(
@@ -544,7 +550,7 @@ const OrderProcessing = ({
                                     Orders
                                 </Text>
                                 <VStack spacing={3} align="stretch">
-                                    {paymentData.orders.map((order) => (
+                                    {paymentData?.orders.map((order) => (
                                         <OrderItem
                                             key={order.id}
                                             order={order}
@@ -552,7 +558,9 @@ const OrderProcessing = ({
                                             onToggle={() =>
                                                 toggleOrder(order.id)
                                             }
-                                            currencyCode={currencyCode}
+                                            currencyCode={
+                                                currencyCode ?? 'usdc'
+                                            }
                                         />
                                     ))}
                                 </VStack>
@@ -574,8 +582,8 @@ const OrderProcessing = ({
                                         />
                                         <Text ml="0.4rem" color="white">
                                             {formatCryptoPrice(
-                                                paymentTotal,
-                                                currencyCode
+                                                paymentTotal ?? 0,
+                                                currencyCode ?? 'usdc'
                                             )}
                                         </Text>
                                     </Flex>
