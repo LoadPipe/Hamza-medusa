@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ItemsTemplate from './items-template';
 import Summary from './summary';
 import SignInPrompt from '../components/sign-in-prompt';
@@ -7,7 +7,7 @@ import Divider from '@modules/common/components/divider';
 import { Cart, Customer } from '@medusajs/medusa';
 import { Flex } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import { CartWithCheckoutStep } from '@/types/global';
 
@@ -29,6 +29,7 @@ const CartTemplate = ({
 }) => {
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
+    const queryClient = useQueryClient();
 
     const {
         data: initialCart,
@@ -37,9 +38,12 @@ const CartTemplate = ({
     } = useQuery({
         queryKey: ['cart'],
         queryFn: fetchCartForCart,
-        staleTime: 1000 * 60 * 5, // Cache cart for 5 minutes
-        initialData: cart,
+        staleTime: 1000 * 60 * 5,
     });
+
+    useEffect(() => {
+        queryClient.invalidateQueries({ queryKey: ['cart'] });
+    }, []);
 
     if (isLoading) {
         return <p>Loading cart...</p>; // ✅ Better UX
