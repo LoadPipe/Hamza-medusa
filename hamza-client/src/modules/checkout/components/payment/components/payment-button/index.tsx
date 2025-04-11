@@ -200,11 +200,14 @@ const CryptoPaymentButton = ({
      */
     const redirectToPaymentProcessing = (
         cartId: string,
-        countryCode: string
+        countryCode: string,
+        fromCheckout: boolean = false
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (cartId?.length) {
-            router.push(`/${countryCode}/order/processing/${cartId}/`);
+            let url: string = `/${countryCode}/order/processing/${cartId}`;
+            if (fromCheckout) url += '?checkout=true';
+            router.push(url);
         }
     };
 
@@ -261,7 +264,7 @@ const CryptoPaymentButton = ({
                     //} else if (response.status == 200) {
                     if (data.checkout_mode === 'ASYNC') {
                         console.log('redirecting to payments page');
-                        redirectToPaymentProcessing(cart.id, countryCode);
+                        redirectToPaymentProcessing(cart.id, countryCode, true);
                     } else {
                         console.log('redirecting to confirmation page');
                         redirectToOrderConfirmation(
