@@ -7,6 +7,7 @@ import CheckoutTemplate from '@/modules/checkout/templates';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import getQueryClient from '@/app/query-utils/getQueryClient';
 import { RainbowWrapper } from '@/app/components/providers/rainbowkit/rainbow-provider';
+import EmptyCart from '@/modules/cart/components/empty-cart';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -26,18 +27,17 @@ export default async function Checkout(params: any) {
         return notFound();
     }
 
-    // Prefetch and hydrate the cart
-    await queryClient.prefetchQuery({
-        queryKey: ['cart', cartId],
-        queryFn: () => fetchCartForCheckout(cartId),
-        staleTime: 1000 * 60 * 5,
-    });
+    const cart = await fetchCartForCheckout(cartId);
+
+    if (!cart) {
+        return <EmptyCart />;
+    }
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <RainbowWrapper>
                 <Flex flexDir="row" maxW="1280px" width="100%">
-                    {<CheckoutTemplate cartId={cartId} />}
+                    {<CheckoutTemplate cart={cart} />}
                 </Flex>
             </RainbowWrapper>
         </HydrationBoundary>

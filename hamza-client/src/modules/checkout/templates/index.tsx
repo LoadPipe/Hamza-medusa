@@ -3,8 +3,9 @@ import OrderSummary from './order-summary';
 import PaymentSummary from './payment-summary';
 import CheckoutDetails from './checkout-details';
 import { Flex } from '@chakra-ui/react';
+import { CartWithCheckoutStep } from '@/types/global';
 
-const CheckoutTemplate = ({ cartId }: { cartId: string }) => {
+const CheckoutTemplate = ({ cart }: { cart: CartWithCheckoutStep }) => {
     return (
         <Flex
             maxW="1258px"
@@ -15,10 +16,10 @@ const CheckoutTemplate = ({ cartId }: { cartId: string }) => {
             gap={{ base: 3, md: 5 }}
         >
             <Flex width="100%" flexDir="column" gap={{ base: 3, md: '41px' }}>
-                <CheckoutDetails cartId={cartId} />
-                <OrderSummary cartId={cartId} />
+                <CheckoutDetails cart={cart} />
+                <OrderSummary cart={cart} />
             </Flex>
-            <PaymentSummary cartId={cartId } />
+            <PaymentSummary cart={cart} />
         </Flex>
     );
 };

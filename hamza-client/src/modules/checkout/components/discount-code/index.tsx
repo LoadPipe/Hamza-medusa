@@ -1,36 +1,18 @@
 'use client';
-
-import { Cart } from '@medusajs/medusa';
 import React, { useMemo } from 'react';
 import { useFormState } from 'react-dom';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
-import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import { useQueryClient } from '@tanstack/react-query';
 // import Input from '@modules/common/components/input';
 import { Button, Flex, Heading, Input } from '@chakra-ui/react';
-import {
-    removeDiscount,
-    removeGiftCard,
-    submitDiscountForm,
-} from '@modules/checkout/actions';
+import { removeDiscount, submitDiscountForm } from '@modules/checkout/actions';
 import { formatAmount } from '@lib/util/prices';
 import { Trash } from '@medusajs/icons';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { Text } from '@chakra-ui/react';
+import { CartWithCheckoutStep } from '@/types/global';
 
-type DiscountCodeProps = {
-    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
-};
-
-const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
-    const { data: cart } = useQuery({
-        queryKey: ['cart'],
-        queryFn: () =>
-            cartId ? fetchCartForCheckout(cartId) : fetchCartForCart(),
-        staleTime: 0,
-        gcTime: 0,
-    });
+const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
     const queryClient = useQueryClient();
 
     const appliedDiscount = useMemo(() => {
