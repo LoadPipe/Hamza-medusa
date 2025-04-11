@@ -22,23 +22,24 @@ import { CartWithCheckoutStep } from '@/types/global';
  */
 const CartTemplate = ({
     customer,
-    cart,
+    _cart,
 }: {
     customer: Omit<Customer, 'password_hash'> | null;
-    cart: CartWithCheckoutStep;
+    _cart: CartWithCheckoutStep;
 }) => {
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
     const queryClient = useQueryClient();
 
     const {
-        data: initialCart,
+        data: cart,
         isLoading,
         isError,
     } = useQuery({
         queryKey: ['cart'],
         queryFn: fetchCartForCart,
         staleTime: 1000 * 60 * 5,
+        initialData: _cart,
     });
 
     useEffect(() => {
@@ -80,14 +81,14 @@ const CartTemplate = ({
                     {/* Cart Items */}
                     <ItemsTemplate
                         currencyCode={preferred_currency_code ?? 'usdc'}
-                        cart={initialCart as CartWithCheckoutStep}
+                        cart={cart as CartWithCheckoutStep}
                     />
                     {/* Shipping Address */}
                     {/* <CartShippingAddress customer={customer} /> */}
                 </Flex>
 
-                {initialCart?.items?.length !== 0 && initialCart?.region && (
-                    <Summary cart={initialCart as CartWithCheckoutStep} />
+                {cart?.items?.length !== 0 && cart?.region && (
+                    <Summary cart={cart as CartWithCheckoutStep} />
                 )}
             </Flex>
         </Flex>

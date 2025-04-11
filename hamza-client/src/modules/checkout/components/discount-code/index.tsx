@@ -11,10 +11,11 @@ import { Trash } from '@medusajs/icons';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { Text } from '@chakra-ui/react';
 import { CartWithCheckoutStep } from '@/types/global';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 
 const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
     const queryClient = useQueryClient();
-
+    const { setIsUpdatingCart } = useCartStore();
     const appliedDiscount = useMemo(() => {
         if (!cart?.discounts || !cart?.discounts.length) {
             return undefined;
@@ -40,8 +41,10 @@ const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
     // };
 
     const removeDiscountCode = async () => {
+        setIsUpdatingCart(true);
         await removeDiscount(cart?.discounts[0].code);
         await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        setIsUpdatingCart(false);
     };
 
     // Creating a wrapper function that calls the discount form function
@@ -51,9 +54,11 @@ const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
         currentState: unknown,
         formData: FormData
     ) => {
+        setIsUpdatingCart(true);
         const result = await submitDiscountForm(currentState, formData);
         // Invalidate the cart query once the discount form has been processed
         await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        setIsUpdatingCart(false);
         return result;
     };
 
@@ -76,9 +81,9 @@ const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
                                     <span className="truncate">
                                         {cart?.discounts[0].code}
                                     </span>
-                                    <span className="min-w-fit">
+                                    {/* <span className="min-w-fit">
                                         ({appliedDiscount})
-                                    </span>
+                                    </span> */}
                                 </Text>
                                 <button
                                     className="flex items-center"

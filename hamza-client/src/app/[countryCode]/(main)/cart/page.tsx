@@ -25,5 +25,5 @@ export default async function Cart() {
         return <EmptyCart />;
     }
 
-    return <CartTemplate customer={customer} cart={cart} />;
+    return <CartTemplate customer={customer} _cart={cart} />;
 }
