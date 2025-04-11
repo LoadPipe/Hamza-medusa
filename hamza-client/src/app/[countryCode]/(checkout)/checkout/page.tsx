@@ -6,6 +6,7 @@ import { Flex } from '@chakra-ui/react';
 import CheckoutTemplate from '@/modules/checkout/templates';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import getQueryClient from '@/app/query-utils/getQueryClient';
+import { RainbowWrapper } from '@/app/components/providers/rainbowkit/rainbow-provider';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -34,9 +35,11 @@ export default async function Checkout(params: any) {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <Flex flexDir="row" maxW="1280px" width="100%">
-                {<CheckoutTemplate cartId={cartId} />}
-            </Flex>
+            <RainbowWrapper>
+                <Flex flexDir="row" maxW="1280px" width="100%">
+                    {<CheckoutTemplate cartId={cartId} />}
+                </Flex>
+            </RainbowWrapper>
         </HydrationBoundary>
     );
 }
