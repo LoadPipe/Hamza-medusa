@@ -12,13 +12,7 @@ import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-ca
 import ProfileCurrency from '@/modules/account/components/profile/components/profile-form/components/profile-currency';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
-const Summary = () => {
-    const { data: cart } = useQuery({
-        queryKey: ['cart'],
-        queryFn: fetchCartForCart,
-        staleTime: 1000 * 60 * 5,
-    });
-
+const Summary = ({ cart }: { cart: CartWithCheckoutStep }) => {
     const preferred_currency_code = useCustomerAuthStore(
         (state) => state.preferred_currency_code
     );

@@ -87,7 +87,7 @@ const CartTemplate = ({
                 </Flex>
 
                 {initialCart?.items?.length !== 0 && initialCart?.region && (
-                    <Summary />
+                    <Summary cart={initialCart as CartWithCheckoutStep} />
                 )}
             </Flex>
         </Flex>
