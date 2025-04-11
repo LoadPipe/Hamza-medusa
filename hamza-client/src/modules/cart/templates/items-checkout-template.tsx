@@ -53,15 +53,7 @@ const ItemsCheckoutTemplate = ({
                               return a.created_at > b.created_at ? -1 : 1;
                           })
                           .map((item) => {
-                              return (
-                                  <Item
-                                      key={item.id}
-                                      cart_id={cart_id}
-                                      item={item}
-                                      region={region}
-                                      currencyCode={currencyCode}
-                                  />
-                              );
+                              return <Item key={item.id} item={item} />;
                           })
                     : Array.from(Array(5).keys()).map((i) => {
                           return <SkeletonLineItem key={i} />;

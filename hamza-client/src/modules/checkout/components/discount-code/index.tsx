@@ -1,37 +1,23 @@
 'use client';
-
-import { Cart } from '@medusajs/medusa';
 import React, { useMemo } from 'react';
 import { useFormState } from 'react-dom';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
-import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import { useQueryClient } from '@tanstack/react-query';
 // import Input from '@modules/common/components/input';
 import { Button, Flex, Heading, Input } from '@chakra-ui/react';
-import {
-    removeDiscount,
-    removeGiftCard,
-    submitDiscountForm,
-} from '@modules/checkout/actions';
+import { removeDiscount, submitDiscountForm } from '@modules/checkout/actions';
 import { formatAmount } from '@lib/util/prices';
 import { Trash } from '@medusajs/icons';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { Text } from '@chakra-ui/react';
+import { CartWithCheckoutStep } from '@/types/global';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
-type DiscountCodeProps = {
-    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
-};
-
-const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
-    const { data: cart } = useQuery({
-        queryKey: ['cart'],
-        queryFn: () =>
-            cartId ? fetchCartForCheckout(cartId) : fetchCartForCart(),
-        staleTime: 0,
-        gcTime: 0,
-    });
+const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
     const queryClient = useQueryClient();
+    const { setIsUpdatingCart } = useCartStore();
+    const { authData } = useCustomerAuthStore();
 
     const appliedDiscount = useMemo(() => {
         if (!cart?.discounts || !cart?.discounts.length) {
@@ -58,8 +44,10 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
     // };
 
     const removeDiscountCode = async () => {
+        setIsUpdatingCart(true);
         await removeDiscount(cart?.discounts[0].code);
         await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        setIsUpdatingCart(false);
     };
 
     // Creating a wrapper function that calls the discount form function
@@ -69,15 +57,20 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
         currentState: unknown,
         formData: FormData
     ) => {
+        setIsUpdatingCart(true);
         const result = await submitDiscountForm(currentState, formData);
         // Invalidate the cart query once the discount form has been processed
         await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        setIsUpdatingCart(false);
         return result;
     };
 
     const [message, formAction] = useFormState(handleSubmitDiscountForm, null);
 
-    if (!cart) return null; // ✅ Hide component if no cart data    const [isOpen, setIsOpen] = React.useState(false);
+    // Return null if cart is not available or user is not authenticated
+    if (!cart || authData.status !== 'authenticated') {
+        return null;
+    }
 
     return (
         <Flex mt="1rem" mb="1rem">
@@ -94,9 +87,9 @@ const DiscountCode: React.FC<{ cartId?: string }> = ({ cartId }) => {
                                     <span className="truncate">
                                         {cart?.discounts[0].code}
                                     </span>
-                                    <span className="min-w-fit">
+                                    {/* <span className="min-w-fit">
                                         ({appliedDiscount})
-                                    </span>
+                                    </span> */}
                                 </Text>
                                 <button
                                     className="flex items-center"

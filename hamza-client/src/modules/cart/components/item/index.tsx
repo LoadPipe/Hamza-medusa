@@ -1,6 +1,6 @@
 'use client';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
-import { LineItem, Region } from '@medusajs/medusa';
+import { LineItem } from '@medusajs/medusa';
 import DeleteButton from '@modules/common/components/delete-button';
 import LineItemOptions from '@/modules/common/components/line-item/line-item-options';
 import LineItemPrice from '@/modules/common/components/line-item/line-item-price';
@@ -8,39 +8,49 @@ import Thumbnail from '@modules/products/components/thumbnail';
 import { updateLineItem, deleteLineItem } from '@modules/cart/actions';
 import { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text, Divider, useMediaQuery } from '@chakra-ui/react';
+import { Flex, Text, useMediaQuery } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
-import { debounce } from 'lodash';
 import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
 import ItemQuantityButton from './components/item-quantity-button';
-
+import { useQueryClient } from '@tanstack/react-query';
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
 
 type ItemProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
-    region: Region;
-    type?: 'full' | 'preview';
-    currencyCode?: string;
-    cart_id: string;
 };
 
-const debouncedChangeQuantity = debounce(
-    async (quantity: number, updateLineItemFn: Function) => {
-        await updateLineItemFn(quantity);
-        console.log('Server update triggered');
-    },
-    2000
-);
-
-const Item = ({ item, region, cart_id }: ItemProps) => {
+const Item = ({ item }: ItemProps) => {
     const [quantity, setQuantity] = useState(item.quantity);
-    const setIsUpdating = useCartStore((state) => state.setIsUpdating);
+    const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
     const [isMobile] = useMediaQuery('(max-width: 768px)');
 
     const { handle } = item.variant.product;
-    // console.log('item quantity: ', item.quantity);
+    const queryClient = useQueryClient();
+
+    const changeQuantity = async (newQuantity: number) => {
+        try {
+            setQuantity(newQuantity);
+            setIsUpdatingCart(true);
+
+            // Create a debounced invalidation
+            const timeoutId = setTimeout(async () => {
+                await updateLineItem({
+                    lineId: item.id,
+                    quantity: newQuantity,
+                });
+                queryClient.invalidateQueries({ queryKey: ['cart'] });
+                setIsUpdatingCart(false);
+            }, 2000);
+
+            // Clean up timeout if another call happens within 2 seconds
+            return () => clearTimeout(timeoutId);
+        } catch (error) {
+            console.error('Error updating quantity:', error);
+            setIsUpdatingCart(false);
+        }
+    };
 
     useEffect(() => {
         if (item?.variant?.inventory_quantity === 0) {
@@ -59,46 +69,17 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
         }
     }, [item?.variant?.inventory_quantity, item?.quantity]); // Track quantity and stock
 
-    const handleUpdateLineItem = async (qty: number) => {
-        const message = await updateLineItem({
-            lineId: item.id,
-            quantity: qty,
-        })
-            .catch((err) => {
-                toast.error('We ran into an issue, resetting');
-                setQuantity(item?.quantity); // Reset to original quantity if error
-            })
-            .finally(() => {
-                setIsUpdating(false);
-                // addDefaultShippingMethod(cart_id);
-            });
-
-        if (message) {
-            toast.error(message);
-        }
-    };
-
-    const changeQuantity = (newQuantity: number) => {
-        if (newQuantity !== quantity) {
-            setIsUpdating(true); // Update global loading state
-            setQuantity(newQuantity);
-            debouncedChangeQuantity(newQuantity, handleUpdateLineItem);
-        }
-    };
-
-    useEffect(() => {
-        console.log('changeQuantity called');
-    }, [changeQuantity]);
+    // useEffect(() => {
+    //     console.log('changeQuantity called');
+    // }, [changeQuantity]);
 
     return (
         <Flex
-            height={{ base: '150px', md: '210px' }}
+            // height={{ base: '150px', md: '210px' }}
             width={'100%'}
             flexDirection={'column'}
         >
-            <Divider borderColor="#3E3E3E" />
-
-            <Flex my="auto" className="cart-item-container">
+            <Flex my="6" className="cart-item-container">
                 {/* <Radio mr="2rem" /> */}
 
                 <LocalizedClientLink href={`/products/${handle}`}>
