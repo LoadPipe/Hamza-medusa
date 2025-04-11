@@ -4,7 +4,7 @@ import ItemsTemplate from './items-template';
 import Summary from './summary';
 import SignInPrompt from '../components/sign-in-prompt';
 import Divider from '@modules/common/components/divider';
-import { Cart, Customer } from '@medusajs/medusa';
+import { Customer } from '@medusajs/medusa';
 import { Flex } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

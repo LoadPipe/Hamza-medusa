@@ -25,6 +25,7 @@ const DeleteButton = ({
             setIsUpdatingCart(false);
         });
         queryClient.invalidateQueries({ queryKey: ['cart'] });
+        queryClient.invalidateQueries({ queryKey: ['shippingCost'] });
         setIsDeleting(false);
         setIsUpdatingCart(false);
     };

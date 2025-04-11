@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { LineItem } from '@medusajs/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
 import React from 'react';
@@ -10,30 +9,20 @@ import { Flex, Text, Divider, Spinner, VStack } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { updateShippingCost } from '@lib/server';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
-import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
-import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import { CartWithCheckoutStep } from '@/types/global';
 import { useQuery } from '@tanstack/react-query';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
 
 type CartTotalsProps = {
-    cartId?: string; // Option, cartId for checkout flow...
+    cart: CartWithCheckoutStep;
     useCartStyle: boolean;
 };
 
-const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
+const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
     const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
-
-    // Determine which fetch function to use based on cartId presence
-    const { data: cart } = useQuery<CartWithCheckoutStep | null>({
-        queryKey: cartId ? ['cart', cartId] : ['cart'],
-        queryFn: cartId ? () => fetchCartForCheckout(cartId) : fetchCartForCart,
-        staleTime: 1000 * 60 * 5,
-        enabled: true, // Always fetch
-    });
 
     const { data: shippingCost, isLoading: loading } = useQuery({
         queryKey: [

@@ -7,8 +7,6 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';
 import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
-import { useQuery } from '@tanstack/react-query'; // Import Zustand store
-import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import ProfileCurrency from '@/modules/account/components/profile/components/profile-form/components/profile-currency';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
@@ -46,7 +44,7 @@ const Summary = ({ cart }: { cart: CartWithCheckoutStep }) => {
                 preferredCurrencyCode={preferred_currency_code}
                 setCustomerPreferredCurrency={setCustomerPreferredCurrency}
             />
-            <CartTotals useCartStyle={false} />
+            <CartTotals useCartStyle={false} cart={cart} />
             <DiscountCode />
             <LocalizedClientLink href={'/checkout?step=' + cart?.checkout_step}>
                 <Button

@@ -1,6 +1,6 @@
 'use client';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
-import { LineItem, Region } from '@medusajs/medusa';
+import { LineItem } from '@medusajs/medusa';
 import DeleteButton from '@modules/common/components/delete-button';
 import LineItemOptions from '@/modules/common/components/line-item/line-item-options';
 import LineItemPrice from '@/modules/common/components/line-item/line-item-price';
@@ -8,7 +8,7 @@ import Thumbnail from '@modules/products/components/thumbnail';
 import { updateLineItem, deleteLineItem } from '@modules/cart/actions';
 import { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text, Divider, useMediaQuery } from '@chakra-ui/react';
+import { Flex, Text, useMediaQuery } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
 import ItemQuantityButton from './components/item-quantity-button';
