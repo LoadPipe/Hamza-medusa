@@ -11,12 +11,6 @@ type ItemsTemplateProps = {
 };
 
 const ItemsTemplate = ({ currencyCode, cart }: ItemsTemplateProps) => {
-    // const { isLoading: cartIsLoading, data: cart } = useQuery({
-    //     queryKey: ['cart'],
-    //     queryFn: fetchCartForCart,
-    //     staleTime: 1000 * 60 * 5,
-    // });
-
     // refactor organization of store with items
     const stores = organizeCartItemsByStore(cart as CartWithCheckoutStep);
 
