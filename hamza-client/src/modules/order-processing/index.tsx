@@ -55,22 +55,24 @@ const OrderProcessing = ({
     const { isConnected } = useAccount();
     const [isClient, setIsClient] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const totalOrders = paymentData?.orders.length;
-    const totalItems = paymentData?.orders.reduce((total, order) => {
+    const totalOrders = paymentData?.orders?.length ?? 0;
+    const totalItems = paymentData?.orders?.reduce((total, order) => {
         const orderTotalItems = order.items.reduce(
             (totalItems, item) => totalItems + item.quantity,
             0
         );
         return total + orderTotalItems;
     }, 0);
-    const paymentTotal = initialPaymentData?.orders.reduce((total, order) => {
+    const paymentTotal = initialPaymentData?.orders?.reduce((total, order) => {
         const orderTotal = order.detail.payments.reduce(
             (paymentTotal, payment) => paymentTotal + payment.amount,
             0
         );
         return total + orderTotal;
     }, 0);
-    const currencyCode = initialPaymentData?.orders[0]?.currency_code ?? 'usdc';
+    const currencyCode = initialPaymentData?.orders?.length
+        ? initialPaymentData.orders[0].currency_code
+        : 'usdc';
     const [hasCopied, setHasCopied] = useState(false);
 
     const toggleOrder = (orderId: string) => {
@@ -193,9 +195,9 @@ const OrderProcessing = ({
                                 </Text>
                                 <Box
                                     bg={
-                                        paymentData.status === 'expired'
+                                        paymentData?.status === 'expired'
                                             ? 'red.900'
-                                            : paymentData.status === 'partial'
+                                            : paymentData?.status === 'partial'
                                               ? 'orange.900'
                                               : 'green.900'
                                     }
@@ -205,22 +207,22 @@ const OrderProcessing = ({
                                     border="2px"
                                     borderStyle="solid"
                                     borderColor={
-                                        paymentData.status === 'expired'
+                                        paymentData?.status === 'expired'
                                             ? 'red.500'
-                                            : paymentData.status === 'partial'
+                                            : paymentData?.status === 'partial'
                                               ? 'orange.400'
                                               : 'primary.green.900'
                                     }
                                 >
                                     <Text color="white" fontWeight="bold">
-                                        {paymentData.status === 'expired'
+                                        {paymentData?.status === 'expired'
                                             ? 'Expired'
-                                            : paymentData.status === 'partial'
+                                            : paymentData?.status === 'partial'
                                               ? 'Partial'
                                               : STATUS_STEPS.find(
                                                     (step) =>
                                                         step.status ===
-                                                        paymentData.status
+                                                        paymentData?.status
                                                 )?.label}
                                     </Text>
                                 </Box>
@@ -232,9 +234,9 @@ const OrderProcessing = ({
                             <Box display={{ base: 'block', md: 'none' }}>
                                 {STATUS_STEPS.map(
                                     (step, index) =>
-                                        (step.status === paymentData.status ||
+                                        (step.status === paymentData?.status ||
                                             (step.status === 'waiting' &&
-                                                paymentData.status ===
+                                                paymentData?.status ===
                                                     'expired')) && (
                                             <StatusStep
                                                 key={step.status}
@@ -242,7 +244,7 @@ const OrderProcessing = ({
                                                 index={index}
                                                 progress={progress}
                                                 currentStatus={
-                                                    paymentData.status
+                                                    paymentData?.status
                                                 }
                                                 {...calculateStepState(
                                                     step.status,
@@ -267,10 +269,12 @@ const OrderProcessing = ({
                                         step={step}
                                         index={index}
                                         progress={progress}
-                                        currentStatus={paymentData.status}
+                                        currentStatus={
+                                            paymentData?.status ?? ''
+                                        }
                                         {...calculateStepState(
                                             step.status,
-                                            paymentData.status,
+                                            paymentData?.status ?? '',
                                             progress,
                                             endTimestamp,
                                             startTimestamp
@@ -298,8 +302,10 @@ const OrderProcessing = ({
                                         </Text>
                                         <Text color="white">
                                             {new Date(
-                                                paymentData?.orders[0]
-                                                    ?.created_at ?? ''
+                                                paymentData?.orders?.length
+                                                    ? paymentData.orders[0]
+                                                          ?.created_at
+                                                    : ''
                                             )
                                                 .toLocaleDateString('en-US', {
                                                     weekday: 'long',
@@ -374,7 +380,7 @@ const OrderProcessing = ({
                                                 }}
                                             >
                                                 ...
-                                                {paymentData?.paymentAddress.slice(
+                                                {paymentData?.paymentAddress?.slice(
                                                     -10
                                                 )}
                                             </Text>
@@ -550,7 +556,7 @@ const OrderProcessing = ({
                                     Orders
                                 </Text>
                                 <VStack spacing={3} align="stretch">
-                                    {paymentData?.orders.map((order) => (
+                                    {paymentData?.orders?.map((order) => (
                                         <OrderItem
                                             key={order.id}
                                             order={order}

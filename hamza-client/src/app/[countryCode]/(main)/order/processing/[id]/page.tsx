@@ -73,19 +73,19 @@ export interface Order extends MedusaOrder {
 }
 
 export interface PaymentsDataProps {
-    status:
+    status?:
         | 'created'
         | 'waiting'
         | 'partial'
         | 'received'
         | 'in_escrow'
         | 'expired';
-    totalAmount: number;
-    paymentAddress: string;
-    expiresInSeconds: number; // ms
-    startTimestamp: number; // ms
-    endTimestamp: number; // ms
-    orders: Order[];
+    totalAmount?: number;
+    paymentAddress?: string;
+    expiresInSeconds?: number; // ms
+    startTimestamp?: number; // ms
+    endTimestamp?: number; // ms
+    orders?: Order[];
 }
 
 export default async function ProcessingPage({ params, searchParams }: Props) {
