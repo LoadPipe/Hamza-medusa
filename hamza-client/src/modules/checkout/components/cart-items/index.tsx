@@ -46,7 +46,7 @@ const CartItems = ({
                             item?.variant?.product?.tags?.filter((t: any) =>
                                 t?.id?.startsWith('geo-restriction')
                             ) ?? [];
-                      
+
                         let geoRestricted: boolean = true;
                         for (let tag of tags) {
                             if (tag?.metadata?.country) {
@@ -99,15 +99,7 @@ const CartItems = ({
                               return a.created_at > b.created_at ? -1 : 1;
                           })
                           .map((item) => {
-                              return (
-                                  <Item
-                                      key={item?.id}
-                                      item={item}
-                                      region={region}
-                                      currencyCode={currencyCode}
-                                      cart_id={item?.cart_id}
-                                  />
-                              );
+                              return <Item key={item?.id} item={item} />;
                           })
                     : Array.from(Array(5).keys()).map((i) => {
                           return <SkeletonLineItem key={i} />;
