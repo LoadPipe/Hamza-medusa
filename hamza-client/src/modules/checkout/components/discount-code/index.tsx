@@ -12,10 +12,13 @@ import ErrorMessage from '@modules/checkout/components/error-message';
 import { Text } from '@chakra-ui/react';
 import { CartWithCheckoutStep } from '@/types/global';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
     const queryClient = useQueryClient();
     const { setIsUpdatingCart } = useCartStore();
+    const { authData } = useCustomerAuthStore();
+
     const appliedDiscount = useMemo(() => {
         if (!cart?.discounts || !cart?.discounts.length) {
             return undefined;
@@ -64,7 +67,10 @@ const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
 
     const [message, formAction] = useFormState(handleSubmitDiscountForm, null);
 
-    if (!cart) return null; // ✅ Hide component if no cart data    const [isOpen, setIsOpen] = React.useState(false);
+    // Return null if cart is not available or user is not authenticated
+    if (!cart || authData.status !== 'authenticated') {
+        return null;
+    }
 
     return (
         <Flex mt="1rem" mb="1rem">
