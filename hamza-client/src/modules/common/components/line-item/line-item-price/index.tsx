@@ -8,6 +8,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { convertCryptoPrice } from '@lib/util/get-product-price';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 
 // TODO: Can this be removed?
 type ExtendedLineItem = LineItem & {
@@ -29,6 +30,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
     const [loadingUSDPrice, setLoadingUSDPrice] = useState<boolean>(false);
     const { preferred_currency_code } = useCustomerAuthStore();
+    const isUpdating = useCartStore((state) => state.isUpdating);
 
     useEffect(() => {
         setLoadingPrice(true);
@@ -39,7 +41,6 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
 
         const subTotal = Number(itemPrice) * item.quantity;
         setPrice(subTotal);
-        setLoadingPrice(false);
 
         const originalTotal = item.original_total ?? null;
         const totalItemAmount =
@@ -47,6 +48,8 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         const discountTotal = item.discount_total ?? null;
 
         setReducedPrice(reducedPrice);
+
+        setLoadingPrice(false);
         if (
             discountTotal !== null &&
             originalTotal !== null &&
@@ -71,9 +74,9 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                     'usdc'
                 );
                 setConvertedUSDPrice(Number(result).toFixed(2));
+                setLoadingUSDPrice(false);
             } catch (error) {
                 console.error('Error converting price:', error);
-            } finally {
                 setLoadingUSDPrice(false);
             }
         };
@@ -133,7 +136,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         </Flex>
 
                         {/* Spinner or Base Price */}
-                        {loadingPrice ? (
+                        {loadingPrice || isUpdating ? (
                             <Spinner
                                 size="sm"
                                 color="white"
@@ -157,7 +160,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         {/* Spinner or Converted Price */}
                         {preferred_currency_code === 'eth' && (
                             <>
-                                {loadingUSDPrice ? (
+                                {loadingUSDPrice && isUpdating ? (
                                     <Spinner size="sm" color="white" ml={1} />
                                 ) : (
                                     <Text

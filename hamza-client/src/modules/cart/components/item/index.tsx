@@ -12,7 +12,6 @@ import { Flex, Text, Divider, useMediaQuery } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
 import ItemQuantityButton from './components/item-quantity-button';
-import { CartWithCheckoutStep } from '@/types/global';
 import { useQueryClient } from '@tanstack/react-query';
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -42,11 +41,13 @@ const Item = ({ item }: ItemProps) => {
                     quantity: newQuantity,
                 });
                 queryClient.invalidateQueries({ queryKey: ['cart'] });
+                setIsUpdating(false);
             }, 2000);
 
             // Clean up timeout if another call happens within 2 seconds
             return () => clearTimeout(timeoutId);
-        } finally {
+        } catch (error) {
+            console.error('Error updating quantity:', error);
             setIsUpdating(false);
         }
     };

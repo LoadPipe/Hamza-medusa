@@ -1,28 +1,6 @@
-import {
-    Box,
-    Flex,
-    Text,
-    Button,
-    Link,
-    Divider,
-    HStack,
-    Image as ChakraImage,
-} from '@chakra-ui/react';
-import {
-    LineItem,
-    Region,
-    Store as MedusaStoreImport,
-    Store,
-} from '@medusajs/medusa';
-import { HiOutlineShoppingCart } from 'react-icons/hi';
-import Item from '@modules/cart/components/item';
-import { useQuery } from '@tanstack/react-query';
-import {
-    fetchCartForCart,
-    organizeCartItemsByStore,
-} from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
-import React, { useEffect, useState } from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { organizeCartItemsByStore } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import React from 'react';
 import { CartWithCheckoutStep } from '@/types/global';
 import EmptyCart from '@modules/cart/components/empty-cart';
 import StoreItems from '@modules/cart/components/store-items';
@@ -38,15 +16,9 @@ const ItemsTemplate = ({ currencyCode, cart }: ItemsTemplateProps) => {
     //     queryFn: fetchCartForCart,
     //     staleTime: 1000 * 60 * 5,
     // });
-    const [stores, setStores] = useState<
-        { id: string; name: string; icon: string; items: any[] }[]
-    >([]);
 
     // refactor organization of store with items
-    useEffect(() => {
-        const stores = organizeCartItemsByStore(cart as CartWithCheckoutStep);
-        setStores(stores);
-    }, [cart]);
+    const stores = organizeCartItemsByStore(cart as CartWithCheckoutStep);
 
     return (
         <Flex

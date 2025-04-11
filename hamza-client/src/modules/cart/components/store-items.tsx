@@ -36,7 +36,7 @@ const StoreItems = ({ store, cart }: StoreItemsProps) => {
                     <Item key={item.id} item={item} />
                 ))}
             </Box>
-            {cart.discounts.some(
+            {cart.discounts?.some(
                 (discount) => discount.store_id === store.id
             ) && (
                 <Box>
