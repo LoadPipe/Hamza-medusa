@@ -57,14 +57,14 @@ const OrderProcessing = ({
     const { isOpen, onOpen, onClose } = useDisclosure();
     const totalOrders = paymentData?.orders?.length ?? 0;
     const totalItems = paymentData?.orders?.reduce((total, order) => {
-        const orderTotalItems = order.items.reduce(
+        const orderTotalItems = order?.items?.reduce(
             (totalItems, item) => totalItems + item.quantity,
             0
         );
         return total + orderTotalItems;
     }, 0);
     const paymentTotal = initialPaymentData?.orders?.reduce((total, order) => {
-        const orderTotal = order.detail.payments.reduce(
+        const orderTotal = order?.detail?.payments.reduce(
             (paymentTotal, payment) => paymentTotal + payment.amount,
             0
         );

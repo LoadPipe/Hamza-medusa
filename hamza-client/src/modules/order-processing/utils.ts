@@ -173,17 +173,19 @@ export const buildPaymentsData = async (cartId: string) => {
                 ? paymentsData[0]?.startTimestamp
                 : Date.now() + Number(paymentsData[0].expiresInSeconds) * 1000;
 
-        await Promise.all(
-            paymentsData?.map(async (paymentData: PaymentsDataProps) => {
-                await Promise.all(
-                    paymentData.orders.map(async (order: Order) => {
-                        const enrichedOrder = await getOrder(order.id);
-                        order.items = enrichedOrder.order.items;
-                        order.detail = enrichedOrder.order;
-                    })
-                );
-            })
-        );
+        if (paymentsData?.orders?.length) {
+            await Promise.all(
+                paymentsData?.map(async (paymentData: PaymentsDataProps) => {
+                    await Promise.all(
+                        paymentData?.orders?.map(async (order: Order) => {
+                            const enrichedOrder = await getOrder(order.id);
+                            order.items = enrichedOrder.order.items;
+                            order.detail = enrichedOrder.order;
+                        }) ?? []
+                    );
+                })
+            );
+        }
         return { paymentsData, startTimestamp, endTimestamp };
     }
 };

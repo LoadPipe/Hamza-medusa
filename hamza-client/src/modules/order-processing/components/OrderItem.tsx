@@ -39,21 +39,24 @@ const OrderItem = ({
     const [discountTotal, setDiscountTotal] = useState(0);
 
     useEffect(() => {
-        const orderTotal = order.detail.items.reduce(
-            (acc: number, item: LineItem) => acc + item.total,
-            0
-        );
+        const orderTotal =
+            order?.detail?.items?.reduce(
+                (acc: number, item: LineItem) => acc + item.total,
+                0
+            ) ?? 0;
 
-        const paymentTotal = order.detail.payments.reduce(
-            (acc: number, payment: Payment) => acc + payment.amount,
-            0
-        );
+        const paymentTotal =
+            order?.detail?.payments?.reduce(
+                (acc: number, payment: Payment) => acc + payment.amount,
+                0
+            ) ?? 0;
 
-        const shippingTotal = order.detail.shipping_methods.reduce(
-            (acc: number, shippingMethod: ShippingMethod) =>
-                acc + (shippingMethod.price ?? 0),
-            0
-        );
+        const shippingTotal =
+            order?.detail?.shipping_methods?.reduce(
+                (acc: number, shippingMethod: ShippingMethod) =>
+                    acc + (shippingMethod.price ?? 0),
+                0
+            ) ?? 0;
         setShippingTotal(shippingTotal);
 
         const orderSubTotal = orderTotal + shippingTotal;
