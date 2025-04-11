@@ -45,7 +45,7 @@ const Summary = ({ cart }: { cart: CartWithCheckoutStep }) => {
                 setCustomerPreferredCurrency={setCustomerPreferredCurrency}
             />
             <CartTotals useCartStyle={false} cart={cart} />
-            <DiscountCode />
+            <DiscountCode cart={cart} />
             <LocalizedClientLink href={'/checkout?step=' + cart?.checkout_step}>
                 <Button
                     mt="2rem"
