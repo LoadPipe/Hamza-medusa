@@ -11,21 +11,17 @@ import {
 import { redirect } from 'next/navigation';
 import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
-export default async function CheckoutDetails(params: any) {
-    const cartId = params.cartId;
-
-    if (!cartId) {
+export default async function CheckoutDetails({
+    cart,
+}: {
+    cart: CartWithCheckoutStep;
+}) {
+    if (!cart) {
         return null;
     }
 
     // create payment sessions and get cart
-    const cart = (await createPaymentSessions(cartId).then(
-        (cart) => cart
-    )) as CartWithCheckoutStep;
-
-    if (!cart) {
-        return null;
-    }
+    await createPaymentSessions(cart.id);
 
     cart.checkout_step = cart && getCheckoutStep(cart);
 

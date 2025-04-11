@@ -1,43 +1,28 @@
 'use client';
 
 import Image from 'next/image';
-import { Cart, Order, LineItem } from '@medusajs/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
 import React from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner, VStack } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
-import { getCartShippingCost, updateShippingCost } from '@lib/server';
-import { useCartShippingOptions } from 'medusa-react';
-import { getClientCookie } from '@lib/util/get-client-cookies';
+import { updateShippingCost } from '@lib/server';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
-import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
-import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import { CartWithCheckoutStep } from '@/types/global';
 import { useQuery } from '@tanstack/react-query';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 
 type CartTotalsProps = {
-    cartId?: string; // Option, cartId for checkout flow...
+    cart: CartWithCheckoutStep;
     useCartStyle: boolean;
 };
 
-type ExtendedLineItem = LineItem & {
-    currency_code?: string;
-};
-
-const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
+const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
+    const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
-
-    // Determine which fetch function to use based on cartId presence
-    const { data: cart } = useQuery<CartWithCheckoutStep | null>({
-        queryKey: cartId ? ['cart', cartId] : ['cart'],
-        queryFn: cartId ? () => fetchCartForCheckout(cartId) : fetchCartForCart,
-        staleTime: 1000 * 60 * 5,
-        enabled: true, // Always fetch
-    });
 
     const { data: shippingCost, isLoading: loading } = useQuery({
         queryKey: [
@@ -104,7 +89,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
-    const { data: convertedPrice, isLoading: isConverting } = useQuery({
+    const { data: convertedPrice } = useQuery({
         queryKey: ['convertedPrice', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
         queryFn: async () => {
             const result = await convertPrice(
@@ -140,19 +125,23 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                             alignSelf={'center'}
                             fontSize={{ base: '14px', md: '16px' }}
                         >
-                            Subtotal
+                            Subtotal ({cart.items.length} items)
                         </Text>
 
-                        <Text
-                            fontSize={{ base: '14px', md: '16px' }}
-                            alignSelf="center"
-                            className="cart-totals-subtotal"
-                        >
-                            {formatCryptoPrice(
-                                finalSubtotal.amount,
-                                displayCurrency
-                            )}
-                        </Text>
+                        {loading || isUpdatingCart ? (
+                            <Spinner size="sm" color="white" />
+                        ) : (
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                alignSelf="center"
+                                className="cart-totals-subtotal"
+                            >
+                                {formatCryptoPrice(
+                                    finalSubtotal.amount,
+                                    displayCurrency
+                                )}
+                            </Text>
+                        )}
                     </Flex>
                 )}
 
@@ -161,13 +150,17 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             Discount
                         </Text>
-                        <Text fontSize={{ base: '14px', md: '16px' }}>
-                            -
-                            {formatCryptoPrice(
-                                cart.discount_total,
-                                displayCurrency
-                            )}
-                        </Text>
+                        {loading || isUpdatingCart ? (
+                            <Spinner size="sm" color="white" />
+                        ) : (
+                            <Text fontSize={{ base: '14px', md: '16px' }}>
+                                -
+                                {formatCryptoPrice(
+                                    cart.discount_total,
+                                    displayCurrency
+                                )}
+                            </Text>
+                        )}
                     </Flex>
                 )}
                 {!!cart.gift_card_total && (
@@ -182,10 +175,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                             alignSelf={'center'}
                             fontSize={{ base: '14px', md: '16px' }}
                         >
-                            Shipping
+                            Shipping Fee
                         </Text>
 
-                        {loading ? (
+                        {loading || isUpdatingCart ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text
@@ -234,7 +227,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
                     >
                         Total
                     </Text>
-                    {loading ? (
+                    {loading || isUpdatingCart ? (
                         <Spinner size="sm" color="white" />
                     ) : (
                         <VStack alignItems="flex-end">

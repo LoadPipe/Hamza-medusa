@@ -1085,7 +1085,37 @@ export async function getProductsById({
 
     return medusaClient.products
         .list({ id: ids, region_id: regionId }, headers)
-        .then(({ products }) => products)
+        .then(async ({ products }) => {
+            // Fetch store data for each product
+            const productsWithStores = await Promise.all(
+                products.map(async (product) => {
+                    try {
+                        if (product.id) {
+                            const storeData = await getStore(product.id);
+                            return {
+                                ...product,
+                                store: storeData,
+                            };
+                        } else {
+                            return {
+                                ...product,
+                                store: null,
+                            };
+                        }
+                    } catch (error) {
+                        console.log(
+                            `Error fetching store for product ${product.id}:`,
+                            error
+                        );
+                        return {
+                            ...product,
+                            store: null,
+                        };
+                    }
+                })
+            );
+            return productsWithStores;
+        })
         .catch((err) => {
             console.log(err);
             return null;
