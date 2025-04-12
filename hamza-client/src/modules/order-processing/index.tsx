@@ -55,14 +55,18 @@ const OrderProcessing = ({
     const { isConnected } = useAccount();
     const [isClient, setIsClient] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const totalOrders = paymentData?.orders?.length ?? 0;
-    const totalItems = paymentData?.orders?.reduce((total, order) => {
+    const totalOrders = initialPaymentData?.orders?.length ?? 0;
+
+    //get total of items
+    const totalItems = initialPaymentData?.orders?.reduce((total, order) => {
         const orderTotalItems = order?.items?.reduce(
             (totalItems, item) => totalItems + item.quantity,
             0
         );
         return total + orderTotalItems;
     }, 0);
+
+    //get total cost
     const paymentTotal = initialPaymentData?.orders?.reduce((total, order) => {
         const orderTotal = order?.payments.reduce(
             (paymentTotal, payment) => paymentTotal + payment.amount,
@@ -70,7 +74,7 @@ const OrderProcessing = ({
         );
         return total + orderTotal;
     }, 0);
-    if (initialPaymentData) initialPaymentData.status = 'created';
+
     const currencyCode = initialPaymentData?.orders?.length
         ? initialPaymentData.orders[0].currency_code
         : 'usdc';
@@ -138,7 +142,10 @@ const OrderProcessing = ({
                         }
 
                         // Redirect if payment is in escrow
-                        if (payment.status === 'in_escrow') {
+                        if (
+                            payment.status === 'received' ||
+                            payment.status === 'in_escrow'
+                        ) {
                             setTimeout(() => {
                                 clearInterval(timer);
                                 router.push(
