@@ -84,7 +84,7 @@ export class AsyncPaymentHandler implements IWalletPaymentHandler {
                     }
                 }
 
-                //wait for tx to be confirmed
+                //don't wait for tx to be confirmed
                 if (tx) {
                     transaction_id = tx.hash;
                 }

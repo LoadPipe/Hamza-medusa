@@ -39,6 +39,7 @@ const OrderProcessing = ({
     cartId,
     paywith,
     openqrmodal,
+    fromCheckout,
 }: {
     cartId: string;
     startTimestamp: number;
@@ -46,6 +47,7 @@ const OrderProcessing = ({
     paymentsData: PaymentsDataProps[];
     paywith?: string;
     openqrmodal?: string;
+    fromCheckout?: boolean;
 }) => {
     const router = useRouter();
     const initialPaymentData = paymentsData ? paymentsData[0] : null;
@@ -79,6 +81,7 @@ const OrderProcessing = ({
         ? initialPaymentData.orders[0].currency_code
         : 'usdc';
     const [hasCopied, setHasCopied] = useState(false);
+    const [currentStatus, setCurrentStatus] = useState('waiting');
 
     const toggleOrder = (orderId: string) => {
         setOpenOrders((prev) => ({
@@ -134,6 +137,7 @@ const OrderProcessing = ({
                         const payment = payments[0];
 
                         setPaymentData(payment);
+                        setCurrentStatus(payment?.status);
 
                         // Stop polling if payment is expired
                         if (payment.status === 'expired') {
@@ -143,15 +147,17 @@ const OrderProcessing = ({
 
                         // Redirect if payment is in escrow
                         if (
-                            payment.status === 'received' ||
-                            payment.status === 'in_escrow'
+                            (payment.status === 'received' ||
+                                payment.status === 'in_escrow') &&
+                            fromCheckout
                         ) {
+                            //pause 2 seconds before redirecting
+                            clearInterval(timer);
                             setTimeout(() => {
-                                clearInterval(timer);
                                 router.push(
                                     `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
                                 );
-                            }, 3000);
+                            }, 2000);
                         }
                     }
                 } catch (error) {
@@ -204,9 +210,9 @@ const OrderProcessing = ({
                                 </Text>
                                 <Box
                                     bg={
-                                        paymentData?.status === 'expired'
+                                        currentStatus === 'expired'
                                             ? 'red.900'
-                                            : paymentData?.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'orange.900'
                                               : 'green.900'
                                     }
@@ -216,22 +222,22 @@ const OrderProcessing = ({
                                     border="2px"
                                     borderStyle="solid"
                                     borderColor={
-                                        paymentData?.status === 'expired'
+                                        currentStatus === 'expired'
                                             ? 'red.500'
-                                            : paymentData?.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'orange.400'
                                               : 'primary.green.900'
                                     }
                                 >
                                     <Text color="white" fontWeight="bold">
-                                        {paymentData?.status === 'expired'
+                                        {currentStatus === 'expired'
                                             ? 'Expired'
-                                            : paymentData?.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'Partial'
                                               : STATUS_STEPS.find(
                                                     (step) =>
                                                         step.status ===
-                                                        paymentData?.status
+                                                        currentStatus
                                                 )?.label}
                                     </Text>
                                 </Box>
@@ -243,21 +249,19 @@ const OrderProcessing = ({
                             <Box display={{ base: 'block', md: 'none' }}>
                                 {STATUS_STEPS.map(
                                     (step, index) =>
-                                        (step.status === paymentData?.status ||
+                                        (step.status === currentStatus ||
                                             (step.status === 'waiting' &&
-                                                paymentData?.status ===
+                                                currentStatus ===
                                                     'expired')) && (
                                             <StatusStep
                                                 key={step.status}
                                                 step={step}
                                                 index={index}
                                                 progress={progress}
-                                                currentStatus={
-                                                    paymentData?.status
-                                                }
+                                                currentStatus={currentStatus}
                                                 {...calculateStepState(
                                                     step.status,
-                                                    paymentData.status,
+                                                    currentStatus,
                                                     progress,
                                                     endTimestamp,
                                                     startTimestamp
@@ -278,12 +282,10 @@ const OrderProcessing = ({
                                         step={step}
                                         index={index}
                                         progress={progress}
-                                        currentStatus={
-                                            paymentData?.status ?? ''
-                                        }
+                                        currentStatus={currentStatus}
                                         {...calculateStepState(
                                             step.status,
-                                            paymentData?.status ?? '',
+                                            currentStatus,
                                             progress,
                                             endTimestamp,
                                             startTimestamp

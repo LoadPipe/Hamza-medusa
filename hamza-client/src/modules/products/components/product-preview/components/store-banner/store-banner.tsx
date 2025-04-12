@@ -106,8 +106,9 @@ const StoreBanner = (props: StoreProps) => {
                 >
                     <a
                         href={
-                            process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK ??
-                            'https://support.hamza.market/help/1568263160'
+                            process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK
+                                ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?channel=${props.storeHandle}`
+                                : 'https://support.hamza.market/help/1568263160'
                         }
                         target="_blank"
                     >
