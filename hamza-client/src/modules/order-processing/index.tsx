@@ -64,12 +64,13 @@ const OrderProcessing = ({
         return total + orderTotalItems;
     }, 0);
     const paymentTotal = initialPaymentData?.orders?.reduce((total, order) => {
-        const orderTotal = order?.detail?.payments.reduce(
+        const orderTotal = order?.payments.reduce(
             (paymentTotal, payment) => paymentTotal + payment.amount,
             0
         );
         return total + orderTotal;
     }, 0);
+    if (initialPaymentData) initialPaymentData.status = 'created';
     const currencyCode = initialPaymentData?.orders?.length
         ? initialPaymentData.orders[0].currency_code
         : 'usdc';
@@ -124,10 +125,11 @@ const OrderProcessing = ({
                 try {
                     // console.log('Polling payment status...');
                     const payments = await getPaymentData(cartId);
-                    console.log(cartId);
-                    console.log(payments);
+
                     if (payments && payments.length > 0) {
                         const payment = payments[0];
+
+                        setPaymentData(payment);
 
                         // Stop polling if payment is expired
                         if (payment.status === 'expired') {
