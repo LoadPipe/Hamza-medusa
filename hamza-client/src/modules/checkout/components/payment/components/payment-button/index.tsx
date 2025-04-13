@@ -221,8 +221,9 @@ const CryptoPaymentButton = ({
      */
     const executeCheckout = async (
         paymentMode: string,
-        cartId: string,
-        chainId: string
+        chainType: string,
+        chainId: string,
+        cartId: string
     ) => {
         try {
             // Retrieve data (cart id, currencies, amounts, etc.) needed for wallet checkout
@@ -275,7 +276,7 @@ const CryptoPaymentButton = ({
                     // TODO: here, reredirect to payment status page
                     //} else if (response.status == 200) {
                     if (data.checkout_mode === 'ASYNC') {
-                        const payWith: string = 'evm';
+                        const payWith: string = chainType;
                         const showQr: boolean = true;
                         console.log('redirecting to payments page');
                         redirectToPaymentProcessing(
@@ -294,7 +295,6 @@ const CryptoPaymentButton = ({
                             countryCode
                         );
                     }
-                    //}
                 } else {
                     setLoaderVisible(false);
                     displayError(
@@ -322,7 +322,7 @@ const CryptoPaymentButton = ({
      * Handles the click of the checkout button
      * @returns
      */
-    const handlePayment = async (paymentMode: string) => {
+    const handlePayment = async (paymentMode: string, chainType: string) => {
         if (!isConnected) {
             openConnectModal?.();
             return;
@@ -332,14 +332,18 @@ const CryptoPaymentButton = ({
             setSubmitting(true);
             setLoaderVisible(true);
             setErrorMessage('');
+
+            //TODO: have a better way to decide what bitcoin network to be on
             const chainId =
-                (await walletClient?.getChainId())?.toString() ?? '';
+                chainType === 'evm'
+                    ? (await walletClient?.getChainId())?.toString() ?? ''
+                    : process.env.BITCOIN_NETWORK ?? 'testnet';
 
             await new Promise((resolve, reject) => {
                 completeCart(
                     {
                         cartId: cart.id,
-                        chainType: 'evm',
+                        chainType,
                         chainId,
                     },
                     {
@@ -348,8 +352,9 @@ const CryptoPaymentButton = ({
                                 console.log('Finalizing Checkout...');
                                 await executeCheckout(
                                     paymentMode,
-                                    cart.id,
-                                    chainId
+                                    chainType,
+                                    chainId,
+                                    cart.id
                                 );
                                 resolve(1);
                             } catch (e) {
@@ -408,7 +413,7 @@ const CryptoPaymentButton = ({
                 backgroundColor={'primary.green.900'}
                 isLoading={submitting}
                 isDisabled={disableButton}
-                onClick={() => handlePayment('wallet')}
+                onClick={() => handlePayment('wallet', 'evm')}
             >
                 {getButtonText()}
             </Button>
@@ -436,7 +441,7 @@ const CryptoPaymentButton = ({
                         backgroundColor={'white'}
                         isLoading={submitting}
                         isDisabled={disableButton}
-                        onClick={() => handlePayment('direct')}
+                        onClick={() => handlePayment('direct', 'bitcoin')}
                     >
                         <Flex alignItems="center" gap={2}>
                             <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
