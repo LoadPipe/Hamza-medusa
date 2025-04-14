@@ -67,13 +67,13 @@ describe('Increment and decrement Quantity', () => {
 
         buttonClickByElementClass('.preview-checkout', {
             findByChild: '.quantity-button-increment',
-				});
+        });
 
         elementCheckByElementClass('.preview-checkout', {
             findByChild: '.quantity-display',
         }).should('have.text', '3');
-		
-				buttonClickByElementClass('.preview-checkout', {
+
+        buttonClickByElementClass('.preview-checkout', {
             findByChild: '.quantity-button-decrement',
         });
 
@@ -84,105 +84,108 @@ describe('Increment and decrement Quantity', () => {
 });
 
 describe('Link checks', () => {
-	beforeEach(() => {
-		cy.visit('/en/products/t-shirt');
-	});
+    beforeEach(() => {
+        cy.visit('/en/products/t-shirt');
+    });
 
-	it('Shipping policies', () => {
-		// wait till preview checkout add to cart button is visible
-		elementCheckByElementClass('.preview-checkout', {
-				findByChild: '.preview-checkout-add-to-cart',
-				disabled: false,
-		});
+    it('Shipping policies', () => {
+        // wait till preview checkout add to cart button is visible
+        elementCheckByElementClass('.preview-checkout', {
+            findByChild: '.preview-checkout-add-to-cart',
+            disabled: false,
+        });
 
-		buttonClickByElementText('See shipping policy');
+        buttonClickByElementText('See shipping policy');
 
-		// check for shipping policy modal title
-		elementCheckByElementClass('p', {
-			findByChild: 'Shipping & Delivery',
-			isVisible: true,
-		});
-	});
+        // check for shipping policy modal title
+        elementCheckByElementClass('p', {
+            findByChild: 'Shipping & Delivery',
+            isVisible: true,
+        });
+    });
 
-	it('Returns policy', () => {
-		// wait till preview checkout add to cart button is visible
-		elementCheckByElementClass('.preview-checkout', {
-				findByChild: '.preview-checkout-add-to-cart',
-				disabled: false,
-		});
-		
-		buttonClickByElementText('See returns policy');
+    it('Returns policy', () => {
+        // wait till preview checkout add to cart button is visible
+        elementCheckByElementClass('.preview-checkout', {
+            findByChild: '.preview-checkout-add-to-cart',
+            disabled: false,
+        });
 
-		// check for shipping policy modal title
-		elementCheckByElementClass('p', {
-			findByChild: 'Return Policy',
-			isVisible: true,
-		});
-	});
+        buttonClickByElementText('See returns policy');
 
-	it('Payment Policies and Cancellation', () => {
-		// wait till preview checkout add to cart button is visible
-		elementCheckByElementClass('.preview-checkout', {
-				findByChild: '.preview-checkout-add-to-cart',
-				disabled: false,
-		});
-		
-		buttonClickByElementText('See payment method policy');
+        // check for shipping policy modal title
+        elementCheckByElementClass('p', {
+            findByChild: 'Return Policy',
+            isVisible: true,
+        });
+    });
 
-		// check for shipping policy modal title
-		elementCheckByElementClass('p', {
-			findByChild: 'Payment Policies and Cancellation',
-			isVisible: true,
-		});
-	});
+    it('Payment Policies and Cancellation', () => {
+        // wait till preview checkout add to cart button is visible
+        elementCheckByElementClass('.preview-checkout', {
+            findByChild: '.preview-checkout-add-to-cart',
+            disabled: false,
+        });
 
-	it('Chat with them', () => {
-		// wait till preview checkout add to cart button is visible
-		elementCheckByElementClass('.preview-checkout', {
-				findByChild: '.preview-checkout-add-to-cart',
-				disabled: false,
-		});
+        buttonClickByElementText('See payment method policy');
 
-		// checks for external url
-		elementCheckByElementClass('a', {
-			findByChild: 'Chat with them',
-			isVisible: true,
-		}).parents('a').should('have.attr', 'href', 'https://support.hamza.market/help/1568263160');
-	});
+        // check for shipping policy modal title
+        elementCheckByElementClass('p', {
+            findByChild: 'Payment Policies and Cancellation',
+            isVisible: true,
+        });
+    });
 
-	it('Visit Store', () => {
-		// wait till preview checkout add to cart button is visible
-		elementCheckByElementClass('.preview-checkout', {
-				findByChild: '.preview-checkout-add-to-cart',
-				disabled: false,
-		});
+    it('Chat with them', () => {
+        // wait till preview checkout add to cart button is visible
+        elementCheckByElementClass('.preview-checkout', {
+            findByChild: '.preview-checkout-add-to-cart',
+            disabled: false,
+        });
 
-		cy.wait(3000);
+        // checks for external url
+        elementCheckByElementClass('a', {
+            findByChild: 'Chat with them',
+            isVisible: true,
+        })
+            .parents('a')
+            .should('have.attr', 'href')
+            .and('include', 'https://hns-chat.hamza.market');
+    });
 
-		// TODO: store link actually is not available until store has completely loaded.
-		// BUG: race condition related issue.
-		buttonClickByElementText('Visit Store');
-		
-		cy.url().should('include', '/en/store/medusa-merch');
+    it('Visit Store', () => {
+        // wait till preview checkout add to cart button is visible
+        elementCheckByElementClass('.preview-checkout', {
+            findByChild: '.preview-checkout-add-to-cart',
+            disabled: false,
+        });
 
-		elementCheckByElementClass('.store-name', {
-			findByChild: 'Medusa Merch',
-			isVisible: true,
-		});
-	});
+        cy.wait(3000);
+
+        // TODO: store link actually is not available until store has completely loaded.
+        // BUG: race condition related issue.
+        buttonClickByElementText('Visit Store');
+
+        cy.url().should('include', '/en/store/medusa-merch');
+
+        elementCheckByElementClass('.store-name', {
+            findByChild: 'Medusa Merch',
+            isVisible: true,
+        });
+    });
 });
 
 describe('Link check: product details back', () => {
-	beforeEach(() => {
-		cy.visit('/en/');
-	});
+    beforeEach(() => {
+        cy.visit('/en/');
+    });
 
-	it('back to results', () => {
-		cy.visit('/en/products/t-shirt');
+    it('back to results', () => {
+        cy.visit('/en/products/t-shirt');
 
-		buttonClickByElementText('Back to results');
+        buttonClickByElementText('Back to results');
 
-		// check if we're back to home page
-		cy.url().should('include', '/en');
-	});
+        // check if we're back to home page
+        cy.url().should('include', '/en');
+    });
 });
