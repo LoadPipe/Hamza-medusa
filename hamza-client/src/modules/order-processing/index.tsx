@@ -172,7 +172,7 @@ const OrderProcessing = ({
 
     // Update the useEffect to run on mount and handle the initial state
     useEffect(() => {
-        if (openqrmodal === 'true' && paywith === 'bitcoin') {
+        if (openqrmodal === 'true') {
             onOpen();
         }
     }, []); // Empty dependency array to run only on mount
@@ -460,7 +460,7 @@ const OrderProcessing = ({
                     </Box>
 
                     {/* QR Code Modal */}
-                    {paywith === 'bitcoin' && (
+                    {openqrmodal === 'true' && (
                         <Modal
                             isOpen={isOpen}
                             onClose={onClose}
