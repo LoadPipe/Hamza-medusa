@@ -448,6 +448,23 @@ const CryptoPaymentButton = ({
                             Pay with Bitcoin
                         </Flex>
                     </Button>
+
+                    <Button
+                        borderRadius={'full'}
+                        height={{ base: '42px', md: '58px' }}
+                        opacity={1}
+                        color={'black'}
+                        _hover={{ opacity: 0.5 }}
+                        backgroundColor={'white'}
+                        isLoading={submitting}
+                        isDisabled={disableButton}
+                        onClick={() => handlePayment('direct', 'evm')}
+                    >
+                        <Flex alignItems="center" gap={2}>
+                            <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
+                            Pay Direct
+                        </Flex>
+                    </Button>
                 </>
             )}
         </>
