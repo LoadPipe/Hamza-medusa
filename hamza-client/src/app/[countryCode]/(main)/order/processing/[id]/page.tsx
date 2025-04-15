@@ -73,29 +73,26 @@ export interface Order extends MedusaOrder {
 }
 
 export interface PaymentsDataProps {
-    status:
+    status?:
         | 'created'
         | 'waiting'
         | 'partial'
         | 'received'
         | 'in_escrow'
         | 'expired';
-    totalAmount: number;
-    paymentAddress: string;
-    expiresInSeconds: number; // ms
-    startTimestamp: number; // ms
-    endTimestamp: number; // ms
-    orders: Order[];
+    totalAmount?: number;
+    paymentAddress?: string;
+    expiresInSeconds?: number; // ms
+    startTimestamp?: number; // ms
+    endTimestamp?: number; // ms
+    orders?: Order[];
 }
 
 export default async function ProcessingPage({ params, searchParams }: Props) {
     const cartId = params.id;
 
     const paywith = searchParams.paywith;
-    const openqrmodal =
-        !searchParams.openqrmodal || searchParams.paywith !== 'bitcoin'
-            ? 'false'
-            : searchParams.openqrmodal;
+    const openqrmodal = searchParams.openqrmodal == 'true';
     const fromCheckout: boolean = searchParams.checkout == 'true';
 
     const paymentsData = await buildPaymentsData(cartId);
@@ -103,9 +100,9 @@ export default async function ProcessingPage({ params, searchParams }: Props) {
     return (
         <Container maxW="container.lg" py={8}>
             <PaymentStatus
-                startTimestamp={paymentsData.startTimestamp}
-                endTimestamp={paymentsData.endTimestamp}
-                paymentsData={paymentsData.paymentsData}
+                startTimestamp={paymentsData?.startTimestamp}
+                endTimestamp={paymentsData?.endTimestamp}
+                paymentsData={paymentsData?.paymentsData}
                 cartId={cartId}
                 paywith={paywith}
                 openqrmodal={openqrmodal}
