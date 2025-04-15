@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { MdOutlineHandshake } from 'react-icons/md';
 import { OrderComponent } from '@/modules/order/components/order-overview/order-component';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { ReleaseEscrowDialog } from '../components/escrow/release-escrow-dialog';
 import EscrowStatus from '../components/order-overview/escrow-status';
 import { Order, PaymentDefinition } from '@/web3/contracts/escrow';
@@ -23,6 +23,7 @@ import { Customer } from '@/app/[countryCode]/(main)/account/@dashboard/escrow/[
 import { getEscrowPayment } from '@/lib/util/order-escrow';
 import { useQuery } from '@tanstack/react-query';
 import { getChainId } from '@/web3';
+import { getEscrowPaymentData } from '@/lib/server';
 
 // TODO: need to get the escrow address and chain id for releasing
 // TODO: user must connect the chain id that belongs to the order?
@@ -76,20 +77,36 @@ export const Escrow = ({
         [switchNetwork, setIsCorrectNetwork, onOpen]
     );
 
-    const { data: escrowPayment, isLoading: isLoadingEscrowPayment } = useQuery<
-        PaymentDefinition | null,
-        boolean
+    const startTimeRef = useRef(Date.now());
+    
+    const { data: escrowPayment, isLoading: isLoadingEscrowPayment, isFetching } = useQuery<
+        PaymentDefinition | null
     >({
         queryKey: ['escrowPayment', id],
         queryFn: async () => {
             if (!order) return null;
-            return getEscrowPayment(order);
+
+            try {
+                const result = await getEscrowPaymentData(order.id);
+
+                return result;
+            } catch (error) {
+                console.error('Error fetching escrow payment:', error);
+                return null;
+            }
         },
         enabled:
             !!order &&
             !isLoadingSwitchNetwork &&
             isConnected &&
             isCorrectNetwork,
+        refetchInterval: () => {
+            const elapsed = Date.now() - startTimeRef.current;
+            if (elapsed > 120000) {
+                return false; 
+            }
+            return 15000; 
+        },
     });
 
     // TODO: right now, when switching chain on the same page, the
@@ -262,26 +279,48 @@ export const Escrow = ({
                     )}
 
                     {/* Escrow Payment Status */}
-                    {isLoadingSwitchNetwork || isLoadingEscrowPayment ? (
-                        <Text>Loading...</Text>
-                    ) : (
+                    {order && (
                         <>
-                            {order && !escrowPayment && (
-                                <Text>
-                                    Order found for ({order.id}) but escrow
-                                    payment not found
-                                </Text>
-                            )}
-
-                            {order && escrowPayment && (
+                            {(isLoadingEscrowPayment || isLoadingSwitchNetwork) && !escrowPayment ? (
+                                <Flex direction="column" align="center" justify="center" my={4}>
+                                    <Text mb={3}>Setting up escrow...</Text>
+                                    <Text fontSize="sm" color="whiteAlpha.700">
+                                        This may take a minute while blockchain transactions confirm
+                                    </Text>
+                                </Flex>
+                            ) : !escrowPayment && isFetching ? (
+                                <Flex direction="column" align="center" justify="center" my={4}>
+                                    <Text mb={3}>Checking for escrow payment...</Text>
+                                    <Text fontSize="sm" color="whiteAlpha.700">
+                                        Waiting for blockchain confirmation
+                                    </Text>
+                                </Flex>
+                            ) : (
                                 <>
-                                    {!escrowPayment.payerReleased && (
-                                        <ReleaseEscrowDialog
-                                            order={order}
-                                            escrowPayment={escrowPayment}
-                                        />
+                                    {!escrowPayment ? (
+                                        <Flex direction="column" align="center" justify="center" my={4} p={5}
+                                            borderWidth="1px" borderColor="whiteAlpha.300" borderRadius="md">
+                                            <Text mb={2}>
+                                                Order found ({order.id}), waiting for escrow setup to complete
+                                            </Text>
+                                            <Text fontSize="sm" color="whiteAlpha.700">
+                                                Your payment is being processed. This may take a few moments.
+                                            </Text>
+                                            <Text fontSize="sm" color="whiteAlpha.700" mt={2}>
+                                                The page will automatically update when ready.
+                                            </Text>
+                                        </Flex>
+                                    ) : (
+                                        <>
+                                            {!escrowPayment.payerReleased && (
+                                                <ReleaseEscrowDialog
+                                                    order={order}
+                                                    escrowPayment={escrowPayment}
+                                                />
+                                            )}
+                                            <EscrowStatus payment={escrowPayment} />
+                                        </>
                                     )}
-                                    <EscrowStatus payment={escrowPayment} />
                                 </>
                             )}
                         </>
