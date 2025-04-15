@@ -92,10 +92,7 @@ export default async function ProcessingPage({ params, searchParams }: Props) {
     const cartId = params.id;
 
     const paywith = searchParams.paywith;
-    const openqrmodal =
-        !searchParams.openqrmodal || searchParams.paywith !== 'bitcoin'
-            ? 'false'
-            : searchParams.openqrmodal;
+    const openqrmodal = searchParams.openqrmodal == 'true';
     const fromCheckout: boolean = searchParams.checkout == 'true';
 
     const paymentsData = await buildPaymentsData(cartId);

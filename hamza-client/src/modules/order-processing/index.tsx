@@ -46,7 +46,7 @@ const OrderProcessing = ({
     endTimestamp: number;
     paymentsData: PaymentsDataProps[];
     paywith?: string;
-    openqrmodal?: string;
+    openqrmodal?: boolean;
     fromCheckout?: boolean;
 }) => {
     const router = useRouter();
@@ -111,10 +111,10 @@ const OrderProcessing = ({
 
             // If progress reaches 100% (timer is done), change status to expired
             if (currentProgress >= 100) {
-                setPaymentData((prev) => ({
-                    ...prev,
-                    status: 'expired',
-                }));
+                //setPaymentData((prev) => ({
+                //    ...prev,
+                //    status: 'expired',
+                //}));
                 clearInterval(timer);
             }
         }, 1000);
@@ -172,7 +172,7 @@ const OrderProcessing = ({
 
     // Update the useEffect to run on mount and handle the initial state
     useEffect(() => {
-        if (openqrmodal === 'true') {
+        if (openqrmodal) {
             onOpen();
         }
     }, []); // Empty dependency array to run only on mount
@@ -460,7 +460,7 @@ const OrderProcessing = ({
                     </Box>
 
                     {/* QR Code Modal */}
-                    {openqrmodal === 'true' && (
+                    {openqrmodal && (
                         <Modal
                             isOpen={isOpen}
                             onClose={onClose}
