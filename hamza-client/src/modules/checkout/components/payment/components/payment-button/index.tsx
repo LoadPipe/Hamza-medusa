@@ -337,7 +337,7 @@ const CryptoPaymentButton = ({
             const chainId =
                 chainType === 'evm'
                     ? (await walletClient?.getChainId())?.toString() ?? ''
-                    : process.env.BITCOIN_NETWORK ?? 'testnet';
+                    : process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet';
 
             await new Promise((resolve, reject) => {
                 completeCart(
