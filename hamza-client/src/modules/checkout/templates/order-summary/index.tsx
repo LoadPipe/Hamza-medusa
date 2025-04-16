@@ -1,5 +1,5 @@
 'use client';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, Spinner } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React from 'react';
 import ForceWalletConnect from '@modules/common/components/force-wallet-connect';
@@ -8,8 +8,9 @@ import { CartWithCheckoutStep } from '@/types/global';
 import { organizeCartItemsByStore } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import EmptyCart from '@/modules/cart/components/empty-cart';
 import StoreItems from '@/modules/cart/components/store-items';
-
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 const OrderSummary = ({ cart }: { cart: CartWithCheckoutStep }) => {
+    const { isProcessingOrder } = useCartStore();
     const { preferred_currency_code } = useCustomerAuthStore();
 
     // State to control delay for showing ForceWalletConnect
@@ -20,6 +21,10 @@ const OrderSummary = ({ cart }: { cart: CartWithCheckoutStep }) => {
     }
 
     const stores = organizeCartItemsByStore(cart as CartWithCheckoutStep);
+
+    if (isProcessingOrder) {
+        return <Spinner />;
+    }
 
     return (
         <Flex
