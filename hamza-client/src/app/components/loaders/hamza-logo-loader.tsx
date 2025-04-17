@@ -3,7 +3,7 @@
 import { Box, Text } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import HamzaLogoBlack from '../../../../public/images/logo/hamza-logo-black.svg'; // Ensure this is a transparent image
 
 // Define the keyframes for the smooth infinite gradient animation
@@ -94,11 +94,20 @@ const HamzaLogoLoader: React.FC<HamzaLogoLoaderProps> = ({
             alignItems="center"
             backgroundColor="#040404"
             flexDirection={'column'}
+            overflow="hidden"
+            css={{
+                touchAction: 'none',
+                userSelect: 'none',
+                pointerEvents: 'none',
+                '& > *': {
+                    pointerEvents: 'auto',
+                },
+            }}
         >
             <Box
                 position="relative"
-                width="100px"
-                height="100px"
+                width={{ base: '80px', md: '100px' }}
+                height={{ base: '80px', md: '100px' }}
                 overflow="hidden"
                 borderRadius="12px"
                 display="flex"

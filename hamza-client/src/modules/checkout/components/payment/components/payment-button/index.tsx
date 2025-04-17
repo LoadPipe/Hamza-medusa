@@ -69,6 +69,7 @@ const CryptoPaymentButton = ({
     const { connector: activeConnector, isConnected } = useAccount();
     const { data: walletClient, isError } = useWalletClient();
     const { isUpdatingCart } = useCartStore();
+    const { setIsProcessingOrder } = useCartStore();
     const router = useRouter();
     const { connect, connectors, error, isLoading, pendingConnector } =
         useConnect({
@@ -184,6 +185,7 @@ const CryptoPaymentButton = ({
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (orderId?.length) {
+            setIsProcessingOrder(false);
             router.push(
                 `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`
             );
@@ -203,6 +205,7 @@ const CryptoPaymentButton = ({
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (cartId?.length) {
+            setIsProcessingOrder(false);
             router.push(
                 `/order/processing/${cartId}?paywith=${payWith}&openqrmodal=${showQrCode ? 'true' : 'false'}&checkout=${fromCheckout ? 'true' : 'false'}`
             );
@@ -297,6 +300,7 @@ const CryptoPaymentButton = ({
                     }
                 } else {
                     setLoaderVisible(false);
+                    setIsProcessingOrder(false);
                     displayError(
                         output?.message
                             ? output.message
@@ -306,6 +310,7 @@ const CryptoPaymentButton = ({
                 }
             } else {
                 setLoaderVisible(false);
+                setIsProcessingOrder(false);
                 await cancelOrderFromCart(cartId);
                 throw new Error('Checkout failed to complete.');
             }
@@ -331,13 +336,14 @@ const CryptoPaymentButton = ({
         try {
             setSubmitting(true);
             setLoaderVisible(true);
+            setIsProcessingOrder(true);
             setErrorMessage('');
 
             //TODO: have a better way to decide what bitcoin network to be on
             const chainId =
                 chainType === 'evm'
-                    ? (await walletClient?.getChainId())?.toString() ?? ''
-                    : process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet';
+                    ? ((await walletClient?.getChainId())?.toString() ?? '')
+                    : (process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet');
 
             await new Promise((resolve, reject) => {
                 completeCart(
@@ -377,10 +383,12 @@ const CryptoPaymentButton = ({
             console.error(e);
             displayError('Checkout was not completed');
             setLoaderVisible(false);
+            setIsProcessingOrder(false);
             await cancelOrderFromCart(cart.id);
         } finally {
             setSubmitting(false);
             setLoaderVisible(false);
+            setIsProcessingOrder(false);
         }
     };
 
