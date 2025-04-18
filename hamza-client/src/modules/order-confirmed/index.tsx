@@ -149,7 +149,7 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                     fontWeight="500"
                     display={{ base: 'none', md: 'block' }}
                 >
-                    Payment #{orders[0].cart?.id}
+                    Cart ID: {orders[0].cart?.id}
                 </Text>
                 <Text
                     fontSize="18px"
