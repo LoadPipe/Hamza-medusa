@@ -280,7 +280,7 @@ const CryptoPaymentButton = ({
                     //} else if (response.status == 200) {
                     if (data.checkout_mode === 'ASYNC') {
                         const payWith: string = chainType;
-                        const showQr: boolean = true;
+                        const showQr: boolean = paymentMode === 'direct';
                         console.log('redirecting to payments page');
                         redirectToPaymentProcessing(
                             cart.id,
