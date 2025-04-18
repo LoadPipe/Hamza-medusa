@@ -457,6 +457,14 @@ export async function updateOrderEscrowStatus(
     });
 }
 
+export async function getEscrowPaymentData(order_id: string) {
+    return getSecure('/custom/order/escrow', { order_id });
+ }
+ 
+ export async function releaseOrderEscrow(order_id: string) {
+    return putSecure('/custom/order/escrow', { order_id });
+ }
+
 export async function cancelOrder(order_id: string, cancel_reason: string) {
     return putSecure('/custom/order/cancel', { order_id, cancel_reason });
 }

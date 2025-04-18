@@ -366,7 +366,7 @@ const Processing = ({
                                                         >
                                                             Request Cancellation
                                                         </Button>
-                                                        {order.escrow_status &&
+                                                        {order.escrow_status !== 'buyer_released' &&
                                                             order.escrow_status !==
                                                                 'released' && (
                                                                 <Box
