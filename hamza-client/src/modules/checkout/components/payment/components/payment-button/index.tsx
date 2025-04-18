@@ -84,8 +84,6 @@ const CryptoPaymentButton = ({
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    console.log('Connected to Chain ID:', chainId);
-                    console.log('walletClient data:', walletClient);
                 } catch (error) {
                     console.error('Error fetching chain ID:', error);
                 }
@@ -115,7 +113,6 @@ const CryptoPaymentButton = ({
      */
     const doWalletPayment = async (data: any) => {
         const checkoutMode = data?.checkout_mode;
-        console.log('checkout mode is', checkoutMode);
 
         //select the right handler based on payment mode
         let handler: IWalletPaymentHandler = new FakeWalletPaymentHandler();
@@ -145,7 +142,6 @@ const CryptoPaymentButton = ({
             let provider: ethers.BrowserProvider | null = null;
 
             if (walletClient) {
-                // console.log('WALLET CLIENT');
                 chainId = await walletClient.getChainId();
                 provider = new ethers.BrowserProvider(walletClient, chainId);
                 signer = await provider.getSigner();
@@ -160,7 +156,6 @@ const CryptoPaymentButton = ({
             }
 
             //get the handler to return value
-            console.log('doing wallet payment');
             const output = await handler.doWalletPayment(
                 provider,
                 signer,
