@@ -8,7 +8,15 @@ import {
     EscrowWalletPaymentHandler,
     AsyncPaymentHandler,
 } from './payment-handlers';
-import { Box, Button, Divider, Flex, Text, Icon } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Text,
+    Icon,
+    useDisclosure,
+} from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
@@ -25,8 +33,9 @@ import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
 import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
-import { FaBitcoin } from 'react-icons/fa';
+import { FaBitcoin, FaEthereum } from 'react-icons/fa';
 import { WalletPaymentResponse } from './payment-handlers/common';
+import ChainSelectionInterstitial from '../chain-selector';
 
 //TODO: we need a global common function to replace this
 
@@ -65,6 +74,11 @@ const CryptoPaymentButton = ({
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
+    const [selectedChain, setSelectedChain] = useState<{
+        id: number;
+        name: string;
+    } | null>(null);
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
     const { data: walletClient, isError } = useWalletClient();
@@ -81,8 +95,6 @@ const CryptoPaymentButton = ({
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    console.log('Connected to Chain ID:', chainId);
-                    console.log('walletClient data:', walletClient);
                 } catch (error) {
                     console.error('Error fetching chain ID:', error);
                 }
@@ -91,12 +103,6 @@ const CryptoPaymentButton = ({
 
         fetchChainId();
     }, [walletClient]);
-
-    // Get the prescribed checkout mode from the server
-    const getCheckoutMode = async () => {
-        const response: any = await getServerConfig();
-        return response.checkout_mode?.trim()?.toUpperCase();
-    };
 
     //displays error to user
     const displayError = (errMsg: string) => {
@@ -112,7 +118,6 @@ const CryptoPaymentButton = ({
      */
     const doWalletPayment = async (data: any) => {
         const checkoutMode = data?.checkout_mode;
-        console.log('checkout mode is', checkoutMode);
 
         //select the right handler based on payment mode
         let handler: IWalletPaymentHandler = new FakeWalletPaymentHandler();
@@ -127,12 +132,8 @@ const CryptoPaymentButton = ({
                 handler = new DirectWalletPaymentHandler();
                 break;
             case 'SWITCH':
-                //if (data?.orders[0]?.escrow_metadata?.version === '1.0') {
                 handler = new EscrowWalletPaymentHandler();
                 break;
-            //}
-            //handler = new LiteSwitchWalletPaymentHandler();
-            //break;
         }
 
         try {
@@ -142,7 +143,6 @@ const CryptoPaymentButton = ({
             let provider: ethers.BrowserProvider | null = null;
 
             if (walletClient) {
-                // console.log('WALLET CLIENT');
                 chainId = await walletClient.getChainId();
                 provider = new ethers.BrowserProvider(walletClient, chainId);
                 signer = await provider.getSigner();
@@ -157,11 +157,10 @@ const CryptoPaymentButton = ({
             }
 
             //get the handler to return value
-            console.log('doing wallet payment');
             const output = await handler.doWalletPayment(
                 provider,
                 signer,
-                chainId,
+                selectedChain?.id || chainId,
                 data
             );
 
@@ -324,15 +323,21 @@ const CryptoPaymentButton = ({
 
     const { mutate: completeCart } = useCompleteCartCustom();
     /**
-     * Handles the click of the checkout button
-     * @returns
+     * Handles the selection of a chain from the interstitial
+     * @param chainId
+     * @param chainName
      */
-    const handlePayment = async (paymentMode: string, chainType: string) => {
-        if (!isConnected) {
-            openConnectModal?.();
-            return;
-        }
+    const handleChainSelect = (chainId: number, chainName: string) => {
+        setSelectedChain({ id: chainId, name: chainName });
+        proceedWithPayment('direct', 'evm', chainId.toString());
+        onClose();
+    };
 
+    const proceedWithPayment = async (
+        paymentMode: string,
+        chainType: string,
+        chainIdOverride?: string
+    ) => {
         try {
             setSubmitting(true);
             setLoaderVisible(true);
@@ -341,9 +346,10 @@ const CryptoPaymentButton = ({
 
             //TODO: have a better way to decide what bitcoin network to be on
             const chainId =
-                chainType === 'evm'
-                    ? ((await walletClient?.getChainId())?.toString() ?? '')
-                    : (process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet');
+                chainIdOverride ||
+                (chainType === 'evm'
+                    ? (await walletClient?.getChainId())?.toString() ?? ''
+                    : process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet');
 
             await new Promise((resolve, reject) => {
                 completeCart(
@@ -392,6 +398,22 @@ const CryptoPaymentButton = ({
         }
     };
 
+    const handlePayment = async (paymentMode: string, chainType: string) => {
+        if (!isConnected) {
+            openConnectModal?.();
+            return;
+        }
+
+        // For direct EVM payments, open the chain selection interstitial
+        if (paymentMode === 'direct' && chainType === 'evm') {
+            onOpen(); // Open the chain selection modal
+            return;
+        }
+
+        // For other payment types, proceed directly
+        await proceedWithPayment(paymentMode, chainType);
+    };
+
     const searchParams = useSearchParams();
     const step = searchParams.get('step');
     const isCartEmpty = cart?.items.length === 0;
@@ -412,6 +434,14 @@ const CryptoPaymentButton = ({
     return (
         <>
             {loaderVisible && <HamzaLogoLoader messages={MESSAGES} />}
+
+            {/* Chain Selection Interstitial */}
+            <ChainSelectionInterstitial
+                isOpen={isOpen}
+                onClose={onClose}
+                onChainSelect={handleChainSelect}
+            />
+
             <Button
                 borderRadius={'full'}
                 height={{ base: '42px', md: '58px' }}
@@ -469,8 +499,8 @@ const CryptoPaymentButton = ({
                         onClick={() => handlePayment('direct', 'evm')}
                     >
                         <Flex alignItems="center" gap={2}>
-                            <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
-                            Pay Direct
+                            <Icon as={FaEthereum} boxSize={7} color="#627EEA" />
+                            Pay with Ethereum
                         </Flex>
                     </Button>
                 </>
