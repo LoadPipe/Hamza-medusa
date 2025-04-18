@@ -243,7 +243,7 @@ const OrderProcessing = ({
                                 </Box>
                             </HStack>
 
-                            <Text color="gray.300">Payment #{cartId}</Text>
+                            <Text color="gray.300">Cart ID: {cartId}</Text>
 
                             {/* Status Steps */}
                             <Box display={{ base: 'block', md: 'none' }}>
