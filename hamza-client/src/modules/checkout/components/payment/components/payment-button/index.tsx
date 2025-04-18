@@ -330,6 +330,7 @@ const CryptoPaymentButton = ({
     const handleChainSelect = (chainId: number, chainName: string) => {
         setSelectedChain({ id: chainId, name: chainName });
         proceedWithPayment('direct', 'evm', chainId.toString());
+        onClose();
     };
 
     const proceedWithPayment = async (
