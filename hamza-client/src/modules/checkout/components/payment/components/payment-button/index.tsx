@@ -398,7 +398,7 @@ const CryptoPaymentButton = ({
         }
 
         // For direct EVM payments, open the chain selection interstitial
-        if (paymentMode === 'direct' && chainType === 'evm') {
+        if (paymentMode === 'wallet' && chainType === 'evm') {
             onOpen(); // Open the chain selection modal
             return;
         }
