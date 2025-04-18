@@ -8,7 +8,15 @@ import {
     EscrowWalletPaymentHandler,
     AsyncPaymentHandler,
 } from './payment-handlers';
-import { Box, Button, Divider, Flex, Text, Icon, useDisclosure } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Text,
+    Icon,
+    useDisclosure,
+} from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
@@ -66,7 +74,10 @@ const CryptoPaymentButton = ({
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
-    const [selectedChain, setSelectedChain] = useState<{ id: number, name: string } | null>(null);
+    const [selectedChain, setSelectedChain] = useState<{
+        id: number;
+        name: string;
+    } | null>(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
@@ -323,15 +334,19 @@ const CryptoPaymentButton = ({
     const { mutate: completeCart } = useCompleteCartCustom();
     /**
      * Handles the selection of a chain from the interstitial
-     * @param chainId 
-     * @param chainName 
+     * @param chainId
+     * @param chainName
      */
     const handleChainSelect = (chainId: number, chainName: string) => {
         setSelectedChain({ id: chainId, name: chainName });
         proceedWithPayment('direct', 'evm', chainId.toString());
     };
 
-    const proceedWithPayment = async (paymentMode: string, chainType: string, chainIdOverride?: string) => {
+    const proceedWithPayment = async (
+        paymentMode: string,
+        chainType: string,
+        chainIdOverride?: string
+    ) => {
         try {
             setSubmitting(true);
             setLoaderVisible(true);
@@ -339,7 +354,8 @@ const CryptoPaymentButton = ({
             setErrorMessage('');
 
             //TODO: have a better way to decide what bitcoin network to be on
-            const chainId = chainIdOverride ||
+            const chainId =
+                chainIdOverride ||
                 (chainType === 'evm'
                     ? (await walletClient?.getChainId())?.toString() ?? ''
                     : process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet');
@@ -398,7 +414,7 @@ const CryptoPaymentButton = ({
         }
 
         // For direct EVM payments, open the chain selection interstitial
-        if (paymentMode === 'wallet' && chainType === 'evm') {
+        if (paymentMode === 'direct' && chainType === 'evm') {
             onOpen(); // Open the chain selection modal
             return;
         }
