@@ -38,6 +38,7 @@ import {
     getProductTermsByProductHandle,
 } from '@/lib/server';
 import currencyIcons from '@/images/currencies/crypto-currencies';
+import shieldIcon from '@/images/icon/shield.png';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '@/modules/terms-of-service/templates/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
@@ -443,13 +444,44 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 >
                     {product.title}
                 </Heading>
-                <Heading
-                    display={{ base: 'none', md: 'block' }}
-                    fontSize={'24px'}
-                    color="primary.green.900"
+                <Flex
+                    width="100%"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    display={{ base: 'none', md: 'flex' }}
+                    mb={1}
                 >
-                    Listing Price
-                </Heading>
+                    <Heading
+                        display={{ base: 'none', md: 'block' }}
+                        fontSize={'24px'}
+                        color="primary.green.900"
+                    >
+                        Listing Price
+                    </Heading>
+                    <Flex
+                        alignItems="center"
+                        gap={1}
+                    >
+                        <Box color="primary.green.900">
+                            <Image
+                                src={shieldIcon}
+                                alt="Shield"
+                                width={12}
+                                height={12}
+                            />
+                        </Box>
+                        <Text fontSize={'18px'} fontWeight="normal" color="primary.green.900">
+                            Escrow
+                        </Text>
+                        <Box as="span" cursor="pointer" color="white">
+                            <Box as="svg" width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                <path d="M9 9a3 3 0 1 1 4 2.829 1 1 0 0 0-1 1V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                <circle cx="12" cy="17" r="1" fill="currentColor" />
+                            </Box>
+                        </Box>
+                    </Flex>
+                </Flex>
                 <Flex
                     gap={{ base: '5px', md: '10px' }}
                     mb={{ base: '0', md: '-0.5rem' }}
