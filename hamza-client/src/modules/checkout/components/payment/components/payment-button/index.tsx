@@ -104,12 +104,6 @@ const CryptoPaymentButton = ({
         fetchChainId();
     }, [walletClient]);
 
-    // Get the prescribed checkout mode from the server
-    const getCheckoutMode = async () => {
-        const response: any = await getServerConfig();
-        return response.checkout_mode?.trim()?.toUpperCase();
-    };
-
     //displays error to user
     const displayError = (errMsg: string) => {
         setErrorMessage(errMsg);
@@ -138,12 +132,8 @@ const CryptoPaymentButton = ({
                 handler = new DirectWalletPaymentHandler();
                 break;
             case 'SWITCH':
-                //if (data?.orders[0]?.escrow_metadata?.version === '1.0') {
                 handler = new EscrowWalletPaymentHandler();
                 break;
-            //}
-            //handler = new LiteSwitchWalletPaymentHandler();
-            //break;
         }
 
         try {
