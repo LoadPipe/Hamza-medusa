@@ -1,14 +1,19 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 type State = {
-    isUpdating: boolean;
+    isUpdatingCart: boolean;
+    isProcessingOrder: boolean;
 };
 
 type Action = {
-    setIsUpdating: (updating: boolean) => void;
+    setIsUpdatingCart: (updating: boolean) => void;
+    setIsProcessingOrder: (processing: boolean) => void;
 };
 
 export const useCartStore = create<State & Action>((set) => ({
-    isUpdating: false,
-    setIsUpdating: (updating: boolean) => set({ isUpdating: updating }),
+    isUpdatingCart: false,
+    isProcessingOrder: false,
+    setIsUpdatingCart: (updating: boolean) => set({ isUpdatingCart: updating }),
+    setIsProcessingOrder: (processing: boolean) =>
+        set({ isProcessingOrder: processing }),
 }));

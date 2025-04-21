@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 import { Flex } from '@chakra-ui/react';
 import CheckoutTemplate from '@/modules/checkout/templates';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
-import getQueryClient from '@/app/query-utils/getQueryClient';
+import { RainbowWrapper } from '@/app/components/providers/rainbowkit/rainbow-provider';
+import EmptyCart from '@/modules/cart/components/empty-cart';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -13,9 +13,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Checkout(params: any) {
-    // SSR So make sure to create a new queryClient instance, so we don't share the same instance between multiple requests
-    const queryClient = getQueryClient();
-
     let cartId = cookies().get('_medusa_cart_id')?.value;
     if (!cartId && params?.searchParams?.cart)
         cartId = params.searchParams.cart;
@@ -25,18 +22,17 @@ export default async function Checkout(params: any) {
         return notFound();
     }
 
-    // Prefetch and hydrate the cart
-    await queryClient.prefetchQuery({
-        queryKey: ['cart', cartId],
-        queryFn: () => fetchCartForCheckout(cartId),
-        staleTime: 1000 * 60 * 5,
-    });
+    const cart = await fetchCartForCheckout(cartId);
+
+    if (!cart) {
+        return <EmptyCart />;
+    }
 
     return (
-        <HydrationBoundary state={dehydrate(queryClient)}>
-            <Flex flexDir="row" maxW="1280px" width="100%">
-                {<CheckoutTemplate cartId={cartId} />}
+        <RainbowWrapper>
+            <Flex flexDir="row" maxW="1280px" width="100vw">
+                {<CheckoutTemplate cart={cart} />}
             </Flex>
-        </HydrationBoundary>
+        </RainbowWrapper>
     );
 }

@@ -7,7 +7,6 @@ import {
 } from '@medusajs/medusa';
 import { Metadata } from 'next';
 import { buildPaymentsData } from '@/modules/order-processing/utils';
-import { QueryClient } from '@tanstack/react-query';
 
 export const metadata: Metadata = {
     title: 'Order Processing',
@@ -16,6 +15,7 @@ export const metadata: Metadata = {
 
 type Props = {
     params: { id: string };
+    searchParams: { paywith?: string; openqrmodal?: string; checkout?: string };
 };
 
 interface BlockchainData {
@@ -73,33 +73,40 @@ export interface Order extends MedusaOrder {
 }
 
 export interface PaymentsDataProps {
-    status:
+    status?:
         | 'created'
         | 'waiting'
         | 'partial'
         | 'received'
         | 'in_escrow'
         | 'expired';
-    totalAmount: number;
-    paymentAddress: string;
-    expiresInSeconds: number; // ms
-    startTimestamp: number; // ms
-    endTimestamp: number; // ms
-    orders: Order[];
+    totalAmount?: number;
+    paymentAddress?: string;
+    expiresInSeconds?: number; // ms
+    startTimestamp?: number; // ms
+    endTimestamp?: number; // ms
+    orders?: Order[];
 }
 
-export default async function ProcessingPage({ params }: Props) {
+export default async function ProcessingPage({ params, searchParams }: Props) {
     const cartId = params.id;
+
+    const paywith = searchParams.paywith;
+    const openqrmodal = searchParams.openqrmodal == 'true';
+    const fromCheckout: boolean = searchParams.checkout == 'true';
 
     const paymentsData = await buildPaymentsData(cartId);
 
     return (
         <Container maxW="container.lg" py={8}>
             <PaymentStatus
-                startTimestamp={paymentsData.startTimestamp}
-                endTimestamp={paymentsData.endTimestamp}
-                paymentsData={paymentsData.paymentsData}
+                startTimestamp={paymentsData?.startTimestamp}
+                endTimestamp={paymentsData?.endTimestamp}
+                paymentsData={paymentsData?.paymentsData}
                 cartId={cartId}
+                paywith={paywith}
+                openqrmodal={openqrmodal}
+                fromCheckout={fromCheckout}
             />
         </Container>
     );

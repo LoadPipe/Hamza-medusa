@@ -7,7 +7,7 @@ import { PaymentDefinition } from '@/web3/contracts/escrow';
 import { Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Order } from '@/web3/contracts/escrow';
-import { updateOrderEscrowStatus } from '@/lib/server';
+import { updateOrderEscrowStatus, releaseOrderEscrow } from '@/lib/server';
 import { FaExclamationTriangle, FaQuestionCircle } from 'react-icons/fa';
 import { EscrowStatus } from '@/lib/server/enums';
 import GeneralModal from '../../../common/components/modal-confirm';
@@ -41,8 +41,8 @@ export const ReleaseEscrowDialog = ({
         setIsLoading(true);
 
         try {
-            const releaseData = await releaseEscrowPayment(order, 'buyer');
-            console.log('Escrow released data: ', releaseData);
+            //Release the escrow payment
+            await releaseOrderEscrow(order.id);
 
             //get escrowPayment to see if escrow contract completely released
             const escrowPayment = await getEscrowPayment(order);

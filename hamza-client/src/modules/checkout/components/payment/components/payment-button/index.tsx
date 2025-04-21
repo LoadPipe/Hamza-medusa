@@ -8,7 +8,15 @@ import {
     EscrowWalletPaymentHandler,
     AsyncPaymentHandler,
 } from './payment-handlers';
-import { Button } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Text,
+    Icon,
+    useDisclosure,
+} from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
@@ -25,6 +33,9 @@ import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
 import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
+import { FaBitcoin, FaEthereum } from 'react-icons/fa';
+import { WalletPaymentResponse } from './payment-handlers/common';
+import ChainSelectionInterstitial from '../chain-selector';
 
 //TODO: we need a global common function to replace this
 
@@ -50,8 +61,6 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
         !cart.email ||
         (cart.shipping_methods?.length ?? 0) > 0;
 
-    console.log(`1AHD IS THIS CART DATA?? ${JSON.stringify(cart)}`);
-
     return <CryptoPaymentButton notReady={notReady} cart={cart} />;
 };
 
@@ -65,12 +74,16 @@ const CryptoPaymentButton = ({
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
-    console.log(cart.id);
-    // const completeCart = useCompleteCart(cart.id);
+    const [selectedChain, setSelectedChain] = useState<{
+        id: number;
+        name: string;
+    } | null>(null);
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
     const { data: walletClient, isError } = useWalletClient();
-    const { isUpdating } = useCartStore();
+    const { isUpdatingCart } = useCartStore();
+    const { setIsProcessingOrder } = useCartStore();
     const router = useRouter();
     const { connect, connectors, error, isLoading, pendingConnector } =
         useConnect({
@@ -82,8 +95,6 @@ const CryptoPaymentButton = ({
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    console.log('Connected to Chain ID:', chainId);
-                    console.log('walletClient data:', walletClient);
                 } catch (error) {
                     console.error('Error fetching chain ID:', error);
                 }
@@ -92,12 +103,6 @@ const CryptoPaymentButton = ({
 
         fetchChainId();
     }, [walletClient]);
-
-    // Get the prescribed checkout mode from the server
-    const getCheckoutMode = async () => {
-        const response: any = await getServerConfig();
-        return response.checkout_mode?.trim()?.toUpperCase();
-    };
 
     //displays error to user
     const displayError = (errMsg: string) => {
@@ -113,7 +118,6 @@ const CryptoPaymentButton = ({
      */
     const doWalletPayment = async (data: any) => {
         const checkoutMode = data?.checkout_mode;
-        console.log('checkout mode is', checkoutMode);
 
         //select the right handler based on payment mode
         let handler: IWalletPaymentHandler = new FakeWalletPaymentHandler();
@@ -128,12 +132,8 @@ const CryptoPaymentButton = ({
                 handler = new DirectWalletPaymentHandler();
                 break;
             case 'SWITCH':
-                //if (data?.orders[0]?.escrow_metadata?.version === '1.0') {
                 handler = new EscrowWalletPaymentHandler();
                 break;
-            //}
-            //handler = new LiteSwitchWalletPaymentHandler();
-            //break;
         }
 
         try {
@@ -143,7 +143,6 @@ const CryptoPaymentButton = ({
             let provider: ethers.BrowserProvider | null = null;
 
             if (walletClient) {
-                // console.log('WALLET CLIENT');
                 chainId = await walletClient.getChainId();
                 provider = new ethers.BrowserProvider(walletClient, chainId);
                 signer = await provider.getSigner();
@@ -158,11 +157,10 @@ const CryptoPaymentButton = ({
             }
 
             //get the handler to return value
-            console.log('doing wallet payment');
             const output = await handler.doWalletPayment(
                 provider,
                 signer,
-                chainId,
+                selectedChain?.id || chainId,
                 data
             );
 
@@ -186,6 +184,7 @@ const CryptoPaymentButton = ({
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (orderId?.length) {
+            setIsProcessingOrder(false);
             router.push(
                 `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`
             );
@@ -199,11 +198,16 @@ const CryptoPaymentButton = ({
      */
     const redirectToPaymentProcessing = (
         cartId: string,
-        countryCode: string
+        fromCheckout: boolean = false,
+        payWith: string = 'evm',
+        showQrCode: boolean = false
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (cartId?.length) {
-            router.push(`/${countryCode}/order/processing/${cartId}/`);
+            setIsProcessingOrder(false);
+            router.push(
+                `/order/processing/${cartId}?paywith=${payWith}&openqrmodal=${showQrCode ? 'true' : 'false'}&checkout=${fromCheckout ? 'true' : 'false'}`
+            );
         }
     };
 
@@ -215,8 +219,14 @@ const CryptoPaymentButton = ({
      * - clears the cart
      * - redirects to the order confirmation
      * @param cartId
+     * @param chainId
      */
-    const completeCheckout = async (cartId: string) => {
+    const executeCheckout = async (
+        paymentMode: string,
+        chainType: string,
+        chainId: string,
+        cartId: string
+    ) => {
         try {
             // Retrieve data (cart id, currencies, amounts, etc.) needed for wallet checkout
             //onst data: CheckoutData = await getCheckoutData(cartId);
@@ -231,10 +241,19 @@ const CryptoPaymentButton = ({
             );
             const data = checkoutData.data;
 
+            let output: WalletPaymentResponse | undefined = {
+                chain_id: parseInt(chainId),
+                transaction_id: '',
+                payer_address: (await walletClient?.account.address) ?? '',
+                success: true,
+            };
+
             if (data) {
-                // Send the payment to the wallet for on-chain processing
-                const output = await doWalletPayment(data);
-                console.log('wallet payment output:', output);
+                if (paymentMode === 'wallet') {
+                    // Send the payment to the wallet for on-chain processing
+                    output = await doWalletPayment(data);
+                    console.log('wallet payment output:', output);
+                }
 
                 // Finalize the checkout, if wallet payment was successful
                 if (output?.success) {
@@ -259,8 +278,15 @@ const CryptoPaymentButton = ({
                     // TODO: here, reredirect to payment status page
                     //} else if (response.status == 200) {
                     if (data.checkout_mode === 'ASYNC') {
+                        const payWith: string = chainType;
+                        const showQr: boolean = paymentMode === 'direct';
                         console.log('redirecting to payments page');
-                        redirectToPaymentProcessing(cart.id, countryCode);
+                        redirectToPaymentProcessing(
+                            cart.id,
+                            true,
+                            payWith,
+                            showQr
+                        );
                     } else {
                         console.log('redirecting to confirmation page');
                         redirectToOrderConfirmation(
@@ -271,9 +297,9 @@ const CryptoPaymentButton = ({
                             countryCode
                         );
                     }
-                    //}
                 } else {
                     setLoaderVisible(false);
+                    setIsProcessingOrder(false);
                     displayError(
                         output?.message
                             ? output.message
@@ -283,6 +309,7 @@ const CryptoPaymentButton = ({
                 }
             } else {
                 setLoaderVisible(false);
+                setIsProcessingOrder(false);
                 await cancelOrderFromCart(cartId);
                 throw new Error('Checkout failed to complete.');
             }
@@ -296,51 +323,95 @@ const CryptoPaymentButton = ({
 
     const { mutate: completeCart } = useCompleteCartCustom();
     /**
-     * Handles the click of the checkout button
-     * @returns
+     * Handles the selection of a chain from the interstitial
+     * @param chainId
+     * @param chainName
      */
-    const handlePayment = async () => {
-        if (!isConnected) {
-            openConnectModal?.();
-            return;
-        }
+    const handleChainSelect = (chainId: number, chainName: string) => {
+        setSelectedChain({ id: chainId, name: chainName });
+        proceedWithPayment('direct', 'evm', chainId.toString());
+        onClose();
+    };
 
+    const proceedWithPayment = async (
+        paymentMode: string,
+        chainType: string,
+        chainIdOverride?: string
+    ) => {
         try {
             setSubmitting(true);
             setLoaderVisible(true);
+            setIsProcessingOrder(true);
             setErrorMessage('');
 
+            //TODO: have a better way to decide what bitcoin network to be on
+            const chainId =
+                chainIdOverride ||
+                (chainType === 'evm'
+                    ? (await walletClient?.getChainId())?.toString() ?? ''
+                    : process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet');
+
             await new Promise((resolve, reject) => {
-                completeCart(cart.id, {
-                    onSuccess: async () => {
-                        try {
-                            console.log('Finalizing Checkout...');
-                            await completeCheckout(cart.id);
-                            resolve(1);
-                        } catch (e) {
-                            console.error(e);
+                completeCart(
+                    {
+                        cartId: cart.id,
+                        chainType,
+                        chainId,
+                    },
+                    {
+                        onSuccess: async () => {
+                            try {
+                                console.log('Finalizing Checkout...');
+                                await executeCheckout(
+                                    paymentMode,
+                                    chainType,
+                                    chainId,
+                                    cart.id
+                                );
+                                resolve(1);
+                            } catch (e) {
+                                console.error(e);
+                                setSubmitting(false);
+                                displayError('Checkout was not completed');
+                                reject(e);
+                            }
+                        },
+                        onError: async (e) => {
+                            console.error('Error completing cart:', e);
                             setSubmitting(false);
                             displayError('Checkout was not completed');
                             reject(e);
-                        }
-                    },
-                    onError: async (e) => {
-                        console.error('Error completing cart:', e);
-                        setSubmitting(false);
-                        displayError('Checkout was not completed');
-                        reject(e);
-                    },
-                });
+                        },
+                    }
+                );
             });
         } catch (e) {
             console.error(e);
             displayError('Checkout was not completed');
             setLoaderVisible(false);
+            setIsProcessingOrder(false);
             await cancelOrderFromCart(cart.id);
         } finally {
             setSubmitting(false);
             setLoaderVisible(false);
+            setIsProcessingOrder(false);
         }
+    };
+
+    const handlePayment = async (paymentMode: string, chainType: string) => {
+        if (!isConnected) {
+            openConnectModal?.();
+            return;
+        }
+
+        // For direct EVM payments, open the chain selection interstitial
+        if (paymentMode === 'direct' && chainType === 'evm') {
+            onOpen(); // Open the chain selection modal
+            return;
+        }
+
+        // For other payment types, proceed directly
+        await proceedWithPayment(paymentMode, chainType);
     };
 
     const searchParams = useSearchParams();
@@ -350,32 +421,90 @@ const CryptoPaymentButton = ({
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
         isCartEmpty ||
-        isUpdating ||
+        isUpdatingCart ||
         (isMissingAddress && isMissingShippingMethod);
 
     const getButtonText = () => {
         if (isCartEmpty) return 'Add products to order';
         if (isMissingAddress) return 'Add address to order';
-        if (isUpdating) return <Spinner />;
-        return 'Confirm Order';
+        if (isUpdatingCart) return <Spinner />;
+        return 'Pay with Crypto Wallet';
     };
 
     return (
         <>
             {loaderVisible && <HamzaLogoLoader messages={MESSAGES} />}
+
+            {/* Chain Selection Interstitial */}
+            <ChainSelectionInterstitial
+                isOpen={isOpen}
+                onClose={onClose}
+                onChainSelect={handleChainSelect}
+            />
+
             <Button
                 borderRadius={'full'}
                 height={{ base: '42px', md: '58px' }}
                 opacity={1}
-                color={'white'}
+                color={'black'}
                 _hover={{ opacity: 0.5 }}
-                backgroundColor={'primary.indigo.900'}
+                backgroundColor={'primary.green.900'}
                 isLoading={submitting}
                 isDisabled={disableButton}
-                onClick={handlePayment}
+                onClick={() => handlePayment('wallet', 'evm')}
             >
                 {getButtonText()}
             </Button>
+
+            {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true' && (
+                <>
+                    <Flex alignItems="center" my="5px">
+                        <Box flex="1">
+                            <Divider borderColor="gray.500" />
+                        </Box>
+                        <Text mx="4" color="white">
+                            OR
+                        </Text>
+                        <Box flex="1">
+                            <Divider borderColor="gray.500" />
+                        </Box>
+                    </Flex>
+
+                    <Button
+                        borderRadius={'full'}
+                        height={{ base: '42px', md: '58px' }}
+                        opacity={1}
+                        color={'black'}
+                        _hover={{ opacity: 0.5 }}
+                        backgroundColor={'white'}
+                        isLoading={submitting}
+                        isDisabled={disableButton}
+                        onClick={() => handlePayment('direct', 'bitcoin')}
+                    >
+                        <Flex alignItems="center" gap={2}>
+                            <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
+                            Pay with Bitcoin
+                        </Flex>
+                    </Button>
+
+                    <Button
+                        borderRadius={'full'}
+                        height={{ base: '42px', md: '58px' }}
+                        opacity={1}
+                        color={'black'}
+                        _hover={{ opacity: 0.5 }}
+                        backgroundColor={'white'}
+                        isLoading={submitting}
+                        isDisabled={disableButton}
+                        onClick={() => handlePayment('direct', 'evm')}
+                    >
+                        <Flex alignItems="center" gap={2}>
+                            <Icon as={FaEthereum} boxSize={7} color="#627EEA" />
+                            Pay with Ethereum
+                        </Flex>
+                    </Button>
+                </>
+            )}
         </>
     );
 };

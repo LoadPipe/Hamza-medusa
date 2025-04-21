@@ -1,23 +1,17 @@
 'use client';
-import { Flex, Text, Button, Link, Divider } from '@chakra-ui/react';
-import { Cart } from '@medusajs/medusa';
-import CartItems from '@modules/checkout/components/cart-items';
+import { Flex, Text, Spinner } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React from 'react';
-import { HiOutlineShoppingCart } from 'react-icons/hi';
-import { useQuery } from '@tanstack/react-query';
-import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import ForceWalletConnect from '@modules/common/components/force-wallet-connect';
 import { useDelayedAuthCheck } from '@modules/common/components/force-wallet-connect/components/useDelayedAuthCheck';
-
-const OrderSummary = ({ cartId }: { cartId: string }) => {
-    const { preferred_currency_code, authData } = useCustomerAuthStore();
-    const { data: cart } = useQuery({
-        queryKey: ['cart', cartId],
-        queryFn: () => fetchCartForCheckout(cartId),
-        staleTime: 1000 * 60 * 5,
-        enabled: !!cartId,
-    });
+import { CartWithCheckoutStep } from '@/types/global';
+import { organizeCartItemsByStore } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import EmptyCart from '@/modules/cart/components/empty-cart';
+import StoreItems from '@/modules/cart/components/store-items';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
+const OrderSummary = ({ cart }: { cart: CartWithCheckoutStep }) => {
+    const { isProcessingOrder } = useCartStore();
+    const { preferred_currency_code } = useCustomerAuthStore();
 
     // State to control delay for showing ForceWalletConnect
     const { isAuthenticated, showAuthCheck } = useDelayedAuthCheck();
@@ -26,7 +20,12 @@ const OrderSummary = ({ cartId }: { cartId: string }) => {
         return <ForceWalletConnect />;
     }
 
-    const isCartEmpty = !cart?.items || cart.items.length === 0;
+    const stores = organizeCartItemsByStore(cart as CartWithCheckoutStep);
+
+    if (isProcessingOrder) {
+        return <Spinner />;
+    }
+
     return (
         <Flex
             bgColor={'#121212'}
@@ -46,81 +45,19 @@ const OrderSummary = ({ cartId }: { cartId: string }) => {
                 Order Summary
             </Text>
 
-            {isCartEmpty ? (
-                // Empty cart template
-                <Flex
-                    mt="1rem"
-                    width={'100%'}
-                    flexDir={'column'}
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    color={'white'}
-                >
-                    <Divider borderColor="#3E3E3E" borderWidth={'1px'} />
-                    <Flex
-                        mt={{ base: '0', md: '3.5rem' }}
-                        maxW={'329px'}
-                        height={{ base: '170px', md: '273px' }}
-                        width={'100%'}
-                        flexDir={'column'}
-                        gap={{ base: 3, md: 30 }}
-                        justifyContent={'center'}
-                        alignItems={'center'}
-                    >
-                        <Flex
-                            flexDir={'column'}
-                            mt={{ base: '0', md: '-1rem' }}
-                            gap={{ base: 0, md: '8px' }}
-                        >
-                            <Flex
-                                fontSize={{ base: '26px', md: '56px' }}
-                                alignSelf={'center'}
-                                mb="0.25rem"
-                            >
-                                <HiOutlineShoppingCart />
-                            </Flex>
-                            <Text
-                                textAlign={'center'}
-                                fontSize={{ base: '14px', md: '20px' }}
-                                fontWeight={600}
-                                color="primary.green.900"
-                            >
-                                Your cart is empty
-                            </Text>
-                            <Text
-                                fontSize={{ base: '14px', md: '16px' }}
-                                textAlign={'center'}
-                            >
-                                Looks like you haven't added anything to your
-                                cart yet.
-                            </Text>
-                        </Flex>
-                        <Link
-                            href={'/shop'}
-                            textAlign={'center'}
-                            width={'100%'}
-                        >
-                            <Button
-                                backgroundColor={'primary.green.900'}
-                                color="black"
-                                width={{ base: '100%', md: '174px' }}
-                                borderRadius={'30px'}
-                                height={{ base: '42px', md: '52px' }}
-                                fontSize={{ base: '14px', md: '16px' }}
-                            >
-                                Start Shopping
-                            </Button>
-                        </Link>
-                    </Flex>
-                </Flex>
+            {cart?.items && cart?.items.length > 0 && cart?.region ? (
+                <>
+                    {stores.map((store) => (
+                        <StoreItems
+                            key={store.id}
+                            store={store}
+                            cart={cart}
+                            currencyCode={preferred_currency_code ?? 'usdc'}
+                        />
+                    ))}
+                </>
             ) : (
-                // Cart items template
-                <CartItems
-                    cart={cart}
-                    region={cart?.region}
-                    items={cart?.items}
-                    currencyCode={preferred_currency_code ?? 'usdc'}
-                />
+                <EmptyCart />
             )}
         </Flex>
     );

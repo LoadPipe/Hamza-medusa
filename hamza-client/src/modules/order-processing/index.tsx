@@ -8,12 +8,19 @@ import {
     Button,
     Flex,
     Stack,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure,
 } from '@chakra-ui/react';
-import { FaCopy } from 'react-icons/fa';
+import { FaBitcoin, FaCopy, FaRegCheckCircle } from 'react-icons/fa';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import StatusStep from './components/StatusStep';
 import OrderItem from './components/OrderItem';
+import QRCode from 'react-qr-code';
 
 import { PaymentsDataProps } from '@/app/[countryCode]/(main)/order/processing/[id]/page';
 import Image from 'next/image';
@@ -25,40 +32,56 @@ import { useAccount } from 'wagmi';
 import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet-connect';
 import { calculateStepState } from './utils';
 
-const PaymentStatus = ({
+const OrderProcessing = ({
     startTimestamp,
     endTimestamp,
     paymentsData,
     cartId,
+    paywith,
+    openqrmodal,
+    fromCheckout,
 }: {
     cartId: string;
     startTimestamp: number;
     endTimestamp: number;
     paymentsData: PaymentsDataProps[];
+    paywith?: string;
+    openqrmodal?: boolean;
+    fromCheckout?: boolean;
 }) => {
     const router = useRouter();
-    const initialPaymentData = paymentsData[0];
+    const initialPaymentData = paymentsData ? paymentsData[0] : null;
     const [paymentData, setPaymentData] = useState(initialPaymentData);
     const [openOrders, setOpenOrders] = useState<Record<string, boolean>>({});
     const [progress, setProgress] = useState(0);
     const { isConnected } = useAccount();
     const [isClient, setIsClient] = useState<boolean>(false);
-    const totalOrders = paymentData.orders.length;
-    const totalItems = paymentData.orders.reduce((total, order) => {
-        const orderTotalItems = order.items.reduce(
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const totalOrders = initialPaymentData?.orders?.length ?? 0;
+
+    //get total of items
+    const totalItems = initialPaymentData?.orders?.reduce((total, order) => {
+        const orderTotalItems = order?.items?.reduce(
             (totalItems, item) => totalItems + item.quantity,
             0
         );
         return total + orderTotalItems;
     }, 0);
-    const paymentTotal = initialPaymentData.orders.reduce((total, order) => {
-        const orderTotal = order.detail.payments.reduce(
+
+    //get total cost
+    const paymentTotal = initialPaymentData?.orders?.reduce((total, order) => {
+        const orderTotal = order?.payments.reduce(
             (paymentTotal, payment) => paymentTotal + payment.amount,
             0
         );
         return total + orderTotal;
     }, 0);
-    const currencyCode = initialPaymentData.orders[0].currency_code;
+
+    const currencyCode = initialPaymentData?.orders?.length
+        ? initialPaymentData.orders[0].currency_code
+        : 'usdc';
+    const [hasCopied, setHasCopied] = useState(false);
+    const [currentStatus, setCurrentStatus] = useState('waiting');
 
     const toggleOrder = (orderId: string) => {
         setOpenOrders((prev) => ({
@@ -77,7 +100,7 @@ const PaymentStatus = ({
     useEffect(() => {
         setIsClient(true);
 
-        if (paymentData.status !== 'waiting') {
+        if (paymentData?.status !== 'waiting') {
             setProgress(100);
             return;
         }
@@ -88,10 +111,10 @@ const PaymentStatus = ({
 
             // If progress reaches 100% (timer is done), change status to expired
             if (currentProgress >= 100) {
-                setPaymentData((prev) => ({
-                    ...prev,
-                    status: 'expired',
-                }));
+                //setPaymentData((prev) => ({
+                //    ...prev,
+                //    status: 'expired',
+                //}));
                 clearInterval(timer);
             }
         }, 1000);
@@ -99,17 +122,22 @@ const PaymentStatus = ({
         setProgress(calculateProgress());
 
         return () => clearInterval(timer);
-    }, [paymentData.status, calculateProgress]);
+    }, [paymentData?.status, calculateProgress]);
 
     // handling polling of payments endpoint for status updates
     useEffect(() => {
-        const timer = setInterval(
+        let timer: NodeJS.Timer;
+        timer = setInterval(
             async () => {
                 try {
                     // console.log('Polling payment status...');
                     const payments = await getPaymentData(cartId);
+
                     if (payments && payments.length > 0) {
                         const payment = payments[0];
+
+                        setPaymentData(payment);
+                        setCurrentStatus(payment?.status);
 
                         // Stop polling if payment is expired
                         if (payment.status === 'expired') {
@@ -118,10 +146,18 @@ const PaymentStatus = ({
                         }
 
                         // Redirect if payment is in escrow
-                        if (payment.status === 'in_escrow') {
-                            router.push(
-                                `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
-                            );
+                        if (
+                            (payment.status === 'received' ||
+                                payment.status === 'in_escrow') &&
+                            fromCheckout
+                        ) {
+                            //pause 2 seconds before redirecting
+                            clearInterval(timer);
+                            setTimeout(() => {
+                                router.push(
+                                    `/order/confirmed/${payment.orders[0].id}?cart=${cartId}`
+                                );
+                            }, 2000);
                         }
                     }
                 } catch (error) {
@@ -134,11 +170,18 @@ const PaymentStatus = ({
         return () => clearInterval(timer);
     }, [cartId, router]);
 
+    // Update the useEffect to run on mount and handle the initial state
+    useEffect(() => {
+        if (openqrmodal) {
+            onOpen();
+        }
+    }, []); // Empty dependency array to run only on mount
+
     if (!isClient) {
         return (
             <ModalCoverWalletConnect
-                title="Proceed to Escrow"
-                message="To view order processing details, please connect your wallet"
+                title="Proceed to Payment Processing"
+                message="To view payment processing details, please connect your wallet"
                 pageIsLoading={isClient}
             />
         ); // Render nothing on the server
@@ -148,8 +191,8 @@ const PaymentStatus = ({
         <div>
             {!isConnected ? (
                 <ModalCoverWalletConnect
-                    title="Proceed to Escrow"
-                    message="To view escrow details, please connect your wallet"
+                    title="Proceed to Payment Processing"
+                    message="To view payment processing details, please connect your wallet"
                     pageIsLoading={isClient}
                 />
             ) : (
@@ -167,9 +210,9 @@ const PaymentStatus = ({
                                 </Text>
                                 <Box
                                     bg={
-                                        paymentData.status === 'expired'
+                                        currentStatus === 'expired'
                                             ? 'red.900'
-                                            : paymentData.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'orange.900'
                                               : 'green.900'
                                     }
@@ -179,48 +222,46 @@ const PaymentStatus = ({
                                     border="2px"
                                     borderStyle="solid"
                                     borderColor={
-                                        paymentData.status === 'expired'
+                                        currentStatus === 'expired'
                                             ? 'red.500'
-                                            : paymentData.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'orange.400'
                                               : 'primary.green.900'
                                     }
                                 >
                                     <Text color="white" fontWeight="bold">
-                                        {paymentData.status === 'expired'
+                                        {currentStatus === 'expired'
                                             ? 'Expired'
-                                            : paymentData.status === 'partial'
+                                            : currentStatus === 'partial'
                                               ? 'Partial'
                                               : STATUS_STEPS.find(
                                                     (step) =>
                                                         step.status ===
-                                                        paymentData.status
+                                                        currentStatus
                                                 )?.label}
                                     </Text>
                                 </Box>
                             </HStack>
 
-                            <Text color="gray.300">Payment #{cartId}</Text>
+                            <Text color="gray.300">Cart ID: {cartId}</Text>
 
                             {/* Status Steps */}
                             <Box display={{ base: 'block', md: 'none' }}>
                                 {STATUS_STEPS.map(
                                     (step, index) =>
-                                        (step.status === paymentData.status ||
+                                        (step.status === currentStatus ||
                                             (step.status === 'waiting' &&
-                                                paymentData.status ===
+                                                currentStatus ===
                                                     'expired')) && (
                                             <StatusStep
                                                 key={step.status}
                                                 step={step}
                                                 index={index}
                                                 progress={progress}
-                                                currentStatus={
-                                                    paymentData.status
-                                                }
+                                                currentStatus={currentStatus}
                                                 {...calculateStepState(
                                                     step.status,
-                                                    paymentData.status,
+                                                    currentStatus,
                                                     progress,
                                                     endTimestamp,
                                                     startTimestamp
@@ -241,10 +282,10 @@ const PaymentStatus = ({
                                         step={step}
                                         index={index}
                                         progress={progress}
-                                        currentStatus={paymentData.status}
+                                        currentStatus={currentStatus}
                                         {...calculateStepState(
                                             step.status,
-                                            paymentData.status,
+                                            currentStatus,
                                             progress,
                                             endTimestamp,
                                             startTimestamp
@@ -272,7 +313,10 @@ const PaymentStatus = ({
                                         </Text>
                                         <Text color="white">
                                             {new Date(
-                                                paymentData.orders[0].created_at
+                                                paymentData?.orders?.length
+                                                    ? paymentData.orders[0]
+                                                          ?.created_at
+                                                    : ''
                                             )
                                                 .toLocaleDateString('en-US', {
                                                     weekday: 'long',
@@ -302,8 +346,8 @@ const PaymentStatus = ({
                                             />
                                             <Text ml="0.4rem" color="white">
                                                 {formatCryptoPrice(
-                                                    paymentTotal,
-                                                    currencyCode
+                                                    paymentTotal ?? 0,
+                                                    currencyCode ?? 'usdc'
                                                 )}
                                             </Text>
                                         </Flex>
@@ -335,7 +379,7 @@ const PaymentStatus = ({
                                                     md: 'block',
                                                 }}
                                             >
-                                                {paymentData.paymentAddress}
+                                                {paymentData?.paymentAddress}
                                             </Text>
                                             <Text
                                                 fontSize="sm"
@@ -347,28 +391,168 @@ const PaymentStatus = ({
                                                 }}
                                             >
                                                 ...
-                                                {paymentData.paymentAddress.slice(
+                                                {paymentData?.paymentAddress?.slice(
                                                     -10
                                                 )}
                                             </Text>
                                         </HStack>
                                     </VStack>
 
-                                    <Button
-                                        size="sm"
-                                        bg="gray.700"
-                                        color="white"
-                                        borderRadius="2rem"
-                                        leftIcon={<FaCopy color="white" />}
-                                        _hover={{ bg: 'gray.600' }}
-                                        p={6}
+                                    <Stack
+                                        direction={{
+                                            base: 'column',
+                                            md: 'row',
+                                        }}
+                                        spacing={2}
                                     >
-                                        Copy
-                                    </Button>
+                                        {paywith === 'bitcoin' && (
+                                            <Button
+                                                size={{ base: 'xs', md: 'sm' }}
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    <FaBitcoin
+                                                        size={24}
+                                                        color="#F7931A"
+                                                    />
+                                                }
+                                                _hover={{ bg: 'gray.600' }}
+                                                p={{ base: 4, md: 6 }}
+                                                onClick={onOpen}
+                                            >
+                                                BTC QR Code
+                                            </Button>
+                                        )}
+
+                                        <Button
+                                            size={{ base: 'xs', md: 'sm' }}
+                                            bg="gray.700"
+                                            color="white"
+                                            borderRadius="2rem"
+                                            leftIcon={
+                                                hasCopied ? (
+                                                    <FaRegCheckCircle color="white" />
+                                                ) : (
+                                                    <FaCopy color="white" />
+                                                )
+                                            }
+                                            _hover={{ bg: 'gray.600' }}
+                                            p={{ base: 4, md: 6 }}
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(
+                                                    paymentData?.paymentAddress ??
+                                                        ''
+                                                );
+                                                setHasCopied(true);
+                                                setTimeout(
+                                                    () => setHasCopied(false),
+                                                    2000
+                                                );
+                                            }}
+                                        >
+                                            {hasCopied ? 'Copied!' : 'Copy'}
+                                        </Button>
+                                    </Stack>
                                 </HStack>
                             </Box>
                         </VStack>
                     </Box>
+
+                    {/* QR Code Modal */}
+                    {openqrmodal && (
+                        <Modal
+                            isOpen={isOpen}
+                            onClose={onClose}
+                            size="md"
+                            isCentered
+                        >
+                            <ModalOverlay />
+                            <ModalContent bg="gray.900">
+                                <ModalCloseButton color="white" />
+                                <ModalBody py={8}>
+                                    <VStack spacing={6}>
+                                        <Text
+                                            color="white"
+                                            fontSize="xl"
+                                            fontWeight="bold"
+                                        >
+                                            Pay with BTC
+                                        </Text>
+                                        <Text
+                                            color="gray.400"
+                                            fontSize="sm"
+                                            textAlign="left"
+                                        >
+                                            Bitcoin payments are processed
+                                            separately from EVM wallets. If you
+                                            choose Bitcoin, you'll receive a
+                                            unique payment address and
+                                            instructions. This method is
+                                            independent of your EVM wallet
+                                            balance. To complete your payment,
+                                            simply scan the QR code using your
+                                            Bitcoin wallet.
+                                        </Text>
+                                        <Box bg="white" p={4} borderRadius="lg">
+                                            <QRCode
+                                                value={
+                                                    paymentData?.paymentAddress ??
+                                                    ''
+                                                }
+                                                size={256}
+                                                style={{
+                                                    height: 'auto',
+                                                    maxWidth: '100%',
+                                                    width: '100%',
+                                                }}
+                                            />
+                                        </Box>
+
+                                        <Text
+                                            color="gray.400"
+                                            fontSize="sm"
+                                            textAlign="center"
+                                            wordBreak="break-all"
+                                        >
+                                            {paymentData?.paymentAddress}
+                                            <br />
+
+                                            <Button
+                                                size={{ base: 'xs', md: 'sm' }}
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    hasCopied ? (
+                                                        <FaRegCheckCircle color="white" />
+                                                    ) : (
+                                                        <FaCopy color="white" />
+                                                    )
+                                                }
+                                                _hover={{ bg: 'gray.600' }}
+                                                p={{ base: 4, md: 6 }}
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(
+                                                        paymentData?.paymentAddress ??
+                                                            ''
+                                                    );
+                                                    setHasCopied(true);
+                                                    setTimeout(
+                                                        () =>
+                                                            setHasCopied(false),
+                                                        2000
+                                                    );
+                                                }}
+                                            >
+                                                {hasCopied ? 'Copied!' : 'Copy'}
+                                            </Button>
+                                        </Text>
+                                    </VStack>
+                                </ModalBody>
+                            </ModalContent>
+                        </Modal>
+                    )}
 
                     <Box bg="gray.900" mt={8} p={6} borderRadius="xl">
                         <VStack spacing={6} align="stretch">
@@ -383,7 +567,7 @@ const PaymentStatus = ({
                                     Orders
                                 </Text>
                                 <VStack spacing={3} align="stretch">
-                                    {paymentData.orders.map((order) => (
+                                    {paymentData?.orders?.map((order) => (
                                         <OrderItem
                                             key={order.id}
                                             order={order}
@@ -391,7 +575,9 @@ const PaymentStatus = ({
                                             onToggle={() =>
                                                 toggleOrder(order.id)
                                             }
-                                            currencyCode={currencyCode}
+                                            currencyCode={
+                                                currencyCode ?? 'usdc'
+                                            }
                                         />
                                     ))}
                                 </VStack>
@@ -413,8 +599,8 @@ const PaymentStatus = ({
                                         />
                                         <Text ml="0.4rem" color="white">
                                             {formatCryptoPrice(
-                                                paymentTotal,
-                                                currencyCode
+                                                paymentTotal ?? 0,
+                                                currencyCode ?? 'usdc'
                                             )}
                                         </Text>
                                     </Flex>
@@ -428,4 +614,4 @@ const PaymentStatus = ({
     );
 };
 
-export default PaymentStatus;
+export default OrderProcessing;

@@ -20,54 +20,12 @@ import {
 import { TriangleDownIcon } from '@chakra-ui/icons';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
 import { chains } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
-import arbLogo from '@/images/chains/arbitrum-arb-logo.png';
-import ethLogo from '@/images/chains/ethereum-eth-logo.png';
-import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
-import polygonLogo from '@/images/chains/polygon-matic-logo.png';
-import baseLogo from '@/images/chains/base-logo-in-blue.png';
-import { StaticImageData } from 'next/image';
 import { RxQuestionMarkCircled } from 'react-icons/rx';
-
-/**
- * Mapping from network names to their chain IDs.
- */
-const chainNameToIdMap: Record<string, number> = {
-    Sepolia: 11155111,
-    'OP Mainnet': 10,
-    Base: 8453,
-    'Arbitrum One': 42161,
-};
-
-/**
- * Mapping from network names to their logos.
- */
-const chainLogoMap: Record<string, StaticImageData> = {
-    Sepolia: ethLogo,
-    'OP Mainnet': optimismLogo,
-    'Arbitrum One': arbLogo,
-    Base: baseLogo,
-    Polygon: polygonLogo,
-};
-
-/**
- * Mapping from network names to the "Learn more" URL.
- */
-const learnMoreUrlMap: Record<string, string> = {
-    'Arbitrum One':
-        'https://support.hamza.market/hc/1568263160/16/hamza-supports-the-arbitrum-second-layer-network?category_id=4',
-    'OP Mainnet':
-        'https://support.hamza.market/hc/1568263160/18/hamza-supports-the-optimism-second-layer-network?category_id=4',
-    Base: 'https://support.hamza.market/hc/1568263160/17/hamza-supports-the-base-second-layer-network?category_id=4',
-    Sepolia:
-        'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism',
-};
-
-/**
- * Returns the chain ID for a given network name.
- */
-const getChainIdFromName = (networkName: string): number | null => {
-    return chainNameToIdMap[networkName] ?? null;
-};
+import {
+    getChainIdFromName,
+    getChainInfoLinkUrlFromName,
+    getChainLogoFromName,
+} from '@/modules/chain-select';
 
 const ChainDropdown: React.FC = () => {
     const { chain } = useNetwork();
@@ -86,8 +44,8 @@ const ChainDropdown: React.FC = () => {
 
     // Determine the learn more URL based on the active chain.
     const learnMoreUrl =
-        activeChainName && learnMoreUrlMap[activeChainName]
-            ? learnMoreUrlMap[activeChainName]
+        activeChainName && getChainInfoLinkUrlFromName(activeChainName)
+            ? getChainInfoLinkUrlFromName(activeChainName)
             : 'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism';
 
     // alert(learnMoreUrl);
@@ -105,9 +63,9 @@ const ChainDropdown: React.FC = () => {
                 _active={{ bg: '#242424' }}
             >
                 <Flex alignItems="center" gap="8px">
-                    {chain?.name && chainLogoMap[chain.name] && (
+                    {chain?.name && getChainLogoFromName(chain.name) && (
                         <Image
-                            src={chainLogoMap[chain.name].src}
+                            src={getChainLogoFromName(chain.name).src}
                             alt={`${chain.name} logo`}
                             boxSize="20px"
                             borderRadius="full"
@@ -195,9 +153,12 @@ const ChainDropdown: React.FC = () => {
                                     }
                                 }}
                             >
-                                {chainLogoMap[network.name] && (
+                                {getChainLogoFromName(network.name) && (
                                     <Image
-                                        src={chainLogoMap[network.name].src}
+                                        src={
+                                            getChainLogoFromName(network.name)
+                                                .src
+                                        }
                                         alt={`${network.name} logo`}
                                         width="24px"
                                         height="24px"

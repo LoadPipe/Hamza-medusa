@@ -56,7 +56,7 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     const cart = queryClient.getQueryData<Cart>(['cart']);
     // If cart exists, you can extract the discount code
     const discountCode = cart?.discounts?.[0]?.code;
-    console.log(`DISCOUNT CODE IS ${discountCode}`);
+    //console.log(`DISCOUNT CODE IS ${discountCode}`);
 
     useEffect(() => {
         if (!isOpen) {

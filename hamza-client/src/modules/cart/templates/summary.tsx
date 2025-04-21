@@ -7,18 +7,10 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';
 import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
-import { useQuery } from '@tanstack/react-query'; // Import Zustand store
-import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import ProfileCurrency from '@/modules/account/components/profile/components/profile-form/components/profile-currency';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
-const Summary = () => {
-    const { data: cart } = useQuery({
-        queryKey: ['cart'],
-        queryFn: fetchCartForCart,
-        staleTime: 1000 * 60 * 5,
-    });
-
+const Summary = ({ cart }: { cart: CartWithCheckoutStep }) => {
     const preferred_currency_code = useCustomerAuthStore(
         (state) => state.preferred_currency_code
     );
@@ -26,7 +18,7 @@ const Summary = () => {
         (state) => state.setCustomerPreferredCurrency
     );
 
-    const isUpdating = useCartStore((state) => state.isUpdating);
+    const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
 
     return (
         <Flex
@@ -52,8 +44,8 @@ const Summary = () => {
                 preferredCurrencyCode={preferred_currency_code}
                 setCustomerPreferredCurrency={setCustomerPreferredCurrency}
             />
-            <CartTotals useCartStyle={false} />
-            <DiscountCode />
+            <CartTotals useCartStyle={false} cart={cart} />
+            <DiscountCode cart={cart} />
             <LocalizedClientLink href={'/checkout?step=' + cart?.checkout_step}>
                 <Button
                     mt="2rem"
@@ -63,14 +55,14 @@ const Summary = () => {
                     height={{ base: '42px', md: '52px' }}
                     borderRadius={'full'}
                     fontSize={{ base: '14px', md: '16px' }}
-                    isDisabled={cart?.items?.length === 0 || isUpdating}
+                    isDisabled={cart?.items?.length === 0 || isUpdatingCart}
                     className="checkout-now-button"
                     _hover={{
                         backgroundColor: 'white',
                         color: 'black',
                     }}
                 >
-                    {isUpdating ? <Spinner /> : 'Checkout Now'}
+                    {isUpdatingCart ? <Spinner /> : 'Checkout Now'}
                 </Button>
             </LocalizedClientLink>
         </Flex>

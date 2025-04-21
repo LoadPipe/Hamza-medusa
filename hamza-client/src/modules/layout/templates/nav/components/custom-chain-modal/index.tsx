@@ -21,56 +21,13 @@ import { RxQuestionMarkCircled } from 'react-icons/rx';
 import { MdClose } from 'react-icons/md';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
 
-import {
-    getAllowedChainsFromConfig,
-    getBlockchainNetworkName,
-    chains,
-} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { chains } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import Image, { StaticImageData } from 'next/image';
-import arbLogo from '@/images/chains/arbitrum-arb-logo.png';
-import ethLogo from '@/images/chains/ethereum-eth-logo.png';
-import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
-import polygonLogo from '@/images/chains/polygon-matic-logo.png';
-import baseLogo from '@/images/chains/base-logo-in-blue.png';
-
-/**
- * Mapping from network names to their chain IDs.
- */
-const chainNameToIdMap: Record<string, number> = {
-    Sepolia: 11155111,
-    'OP Mainnet': 10,
-    Base: 8453,
-    'Arbitrum One': 42161,
-};
-
-/**
- * Mapping from network names to their logos.
- */
-const chainLogoMap: Record<string, StaticImageData> = {
-    Sepolia: ethLogo,
-    'OP Mainnet': optimismLogo,
-    'Arbitrum One': arbLogo,
-    Base: baseLogo,
-    Polygon: polygonLogo, // Use this if your chains array includes "Polygon"
-};
-
-/**
- * Mapping from network names to the "Learn more" URL.
- */
-const learnMoreUrlMap: Record<string, string> = {
-    'Arbitrum One':
-        'https://coinmarketcap.com/academy/article/how-to-bridge-to-arbitrum',
-    'OP Mainnet':
-        'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism',
-    Base: 'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
-};
-
-/**
- * Returns the chain ID for a given network name.
- */
-const getChainIdFromName = (networkName: string): number | null => {
-    return chainNameToIdMap[networkName] ?? null;
-};
+import {
+    getChainIdFromName,
+    getChainInfoLinkUrlFromName,
+    getChainLogoFromName,
+} from '@/modules/chain-select';
 
 interface CustomChainModalProps {
     isOpen: boolean;
@@ -87,8 +44,8 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
 
     // Determine the learn more URL based on the active chain.
     const learnMoreUrl =
-        chain && learnMoreUrlMap[chain.name]
-            ? learnMoreUrlMap[chain.name]
+        chain && getChainInfoLinkUrlFromName(chain.name)
+            ? getChainInfoLinkUrlFromName(chain.name)
             : 'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism';
 
     return (
@@ -225,9 +182,11 @@ const CustomChainModal: React.FC<CustomChainModalProps> = ({
                                                     : '#52525b',
                                         }}
                                     >
-                                        {chainLogoMap[network.name] && (
+                                        {getChainLogoFromName(network.name) && (
                                             <Image
-                                                src={chainLogoMap[network.name]}
+                                                src={getChainLogoFromName(
+                                                    network.name
+                                                )}
                                                 alt={`${network.name} logo`}
                                                 width={24}
                                                 height={24}
