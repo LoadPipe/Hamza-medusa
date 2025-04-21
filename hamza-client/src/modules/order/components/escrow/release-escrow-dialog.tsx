@@ -42,7 +42,8 @@ export const ReleaseEscrowDialog = ({
 
         try {
             //Release the escrow payment
-            await releaseOrderEscrow(order.id);
+            const releaseData = await releaseEscrowPayment(order, 'buyer');
+            console.log('Escrow released data: ', releaseData);
 
             //get escrowPayment to see if escrow contract completely released
             const escrowPayment = await getEscrowPayment(order);
