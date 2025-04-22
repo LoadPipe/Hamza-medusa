@@ -354,32 +354,34 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                     </Text>
                                 </HStack>
                                 <VStack align="flex-end">
-                                    <HStack>
-                                        <Text color="gray.500">
-                                            Shipping Cost:
-                                        </Text>
-                                        <Flex>
-                                            <Image
-                                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                                src={
-                                                    currencyIcons[
-                                                        order.currency_code ??
-                                                            'usdc'
-                                                    ]
-                                                }
-                                                alt={
-                                                    order.currency_code ??
-                                                    'usdc'
-                                                }
-                                            />
-                                            <Text ml="0.4rem" color="white">
-                                                {formatCryptoPrice(
-                                                    orderShippingTotal,
-                                                    order.currency_code
-                                                )}
+                                    {orderShippingTotal > 0 && (
+                                        <HStack>
+                                            <Text color="gray.500">
+                                                Shipping Cost:
                                             </Text>
-                                        </Flex>
-                                    </HStack>
+                                            <Flex>
+                                                <Image
+                                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                                    src={
+                                                        currencyIcons[
+                                                            order.currency_code ??
+                                                                'usdc'
+                                                        ]
+                                                    }
+                                                    alt={
+                                                        order.currency_code ??
+                                                        'usdc'
+                                                    }
+                                                />
+                                                <Text ml="0.4rem" color="white">
+                                                    {formatCryptoPrice(
+                                                        orderShippingTotal,
+                                                        order.currency_code
+                                                    )}
+                                                </Text>
+                                            </Flex>
+                                        </HStack>
+                                    )}
                                     {orderDiscountTotal > 0 && (
                                         <HStack>
                                             <Text color="gray.500">
@@ -437,22 +439,24 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                             </Text>
                         </HStack>
                     </Flex>
-                    <Flex justify="space-between" color="gray.300">
-                        <Text>Total Shipping Cost:</Text>
-                        <HStack>
-                            <Image
-                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                src={currencyIcons[currencyCode ?? 'usdc']}
-                                alt={currencyCode ?? 'usdc'}
-                            />
-                            <Text>
-                                {formatCryptoPrice(
-                                    cartShippingTotal,
-                                    currencyCode
-                                )}
-                            </Text>
-                        </HStack>
-                    </Flex>
+                    {cartShippingTotal > 0 && (
+                        <Flex justify="space-between" color="gray.300">
+                            <Text>Total Shipping Cost:</Text>
+                            <HStack>
+                                <Image
+                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                    src={currencyIcons[currencyCode ?? 'usdc']}
+                                    alt={currencyCode ?? 'usdc'}
+                                />
+                                <Text>
+                                    {formatCryptoPrice(
+                                        cartShippingTotal,
+                                        currencyCode
+                                    )}
+                                </Text>
+                            </HStack>
+                        </Flex>
+                    )}
                     {/* <Flex justify="space-between" color="gray.300">
                         <Text>Taxes:</Text>
                         <Text>
