@@ -11,6 +11,7 @@ import {
     MenuList,
 } from '@chakra-ui/react';
 import { useAccount, useBalance, useNetwork } from 'wagmi';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth'; // Import Zustand store
 
 import { getCurrencyAddress } from '@/currency.config';
 import AddressDisplay from '../components/address-display';
@@ -29,13 +30,21 @@ interface NewWalletInfoProps {
 const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
     chainName,
     chain,
-    preferred_currency_code,
+    preferred_currency_code: initialPreferredCurrencyCode,
 }) => {
     const { address } = useAccount();
     const { chain: networkChain } = useNetwork();
     const chainId = networkChain?.id ?? 1;
+
+    // Fetch preferredCurrency from Zustand store
+    const preferred_currency_code = useCustomerAuthStore(
+        (state) => state.preferred_currency_code
+    );
+
+    const effectivePreferredCurrencyCode = preferred_currency_code || initialPreferredCurrencyCode;
+
     const [selectedCurrency, setSelectedCurrency] = useState(
-        preferred_currency_code ?? 'eth'
+        effectivePreferredCurrencyCode ?? 'eth'
     );
 
     // Query native ETH balance
@@ -173,7 +182,7 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
 
                             <CurrencySelector
                                 isOpen={isOpen}
-                                preferredCurrencyCode={preferred_currency_code}
+                                preferredCurrencyCode={effectivePreferredCurrencyCode}
                                 defaultCurrency="eth"
                                 selectedCurrency={selectedCurrency}
                                 setSelectedCurrency={setSelectedCurrency}
