@@ -244,7 +244,7 @@ const Processing = ({
                         const hasSellerNotes = order?.notes?.length > 0;
 
                         // Locate the history that contains a non-empty transaction array
-                        const historyWithTransaction = order?.histories?.find(
+                        const historyWithTransaction = order?.history?.find(
                             (history: OrderHistory) =>
                                 Array.isArray(history.metadata?.transaction) &&
                                 history.metadata.transaction.length > 0
@@ -366,7 +366,8 @@ const Processing = ({
                                                         >
                                                             Request Cancellation
                                                         </Button>
-                                                        {order.escrow_status !== 'buyer_released' &&
+                                                        {order.escrow_status !==
+                                                            'buyer_released' &&
                                                             order.escrow_status !==
                                                                 'released' && (
                                                                 <Box

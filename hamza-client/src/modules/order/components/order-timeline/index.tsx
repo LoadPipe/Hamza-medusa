@@ -15,7 +15,7 @@ interface TimelineProps {
         status: string;
         fulfillment_status: string;
         payment_status: string;
-        histories?: Array<{
+        history?: Array<{
             id: string;
             title: string;
             to_status?: string | null;
@@ -70,8 +70,8 @@ const OrderTimeline: React.FC<TimelineProps> = ({ orderDetails }) => {
         });
     }
 
-    // Add historical events from `histories` array
-    orderDetails.histories?.forEach((history) => {
+    // Add historical events from `history` array
+    orderDetails.history?.forEach((history) => {
         const details = [];
         const ignoredStatuses = ['seller_released', 'in_escrow'];
         if (

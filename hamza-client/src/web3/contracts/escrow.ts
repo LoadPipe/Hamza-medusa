@@ -59,7 +59,7 @@ export interface Order extends MedusaOrder {
     store: Store;
     shipping_methods: ShippingMethod[];
     items: LineItem[];
-    histories: any[];
+    history: any[];
 }
 
 export class EscrowMulticallClient {
