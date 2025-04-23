@@ -114,7 +114,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             justifyContent={'center'}
             alignItems={'center'}
             maxW="1280px"
-            width={'100vw'}
+            width={'100%'}
             mx="auto"
         >
             <Flex

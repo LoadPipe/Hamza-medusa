@@ -30,7 +30,7 @@ export default async function Checkout(params: any) {
 
     return (
         <RainbowWrapper>
-            <Flex flexDir="row" maxW="1280px" width="100vw">
+            <Flex flexDir="row" maxW="1280px" width="100%">
                 {<CheckoutTemplate cart={cart} />}
             </Flex>
         </RainbowWrapper>
