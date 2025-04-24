@@ -279,6 +279,34 @@ const chainConfig: any = {
             },
         },
     },
+    //Base Sepolia
+    84532: {
+        chain_name: 'base sepolia',
+        usdc: {
+            contract_address: '0x5deac602762362fe5f135fa5904351916053cf70',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        usdt: {
+            contract_address: '0x8d9cb8f3191Fd685e2C14D2AC3Fb2b16D44EAfc3',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                db: 8,
+                native: 18,
+                display: 6,
+            },
+        },
+    },
     //Arbitrum
     42161: {
         chain_name: 'polygon',
@@ -320,6 +348,34 @@ const chainConfig: any = {
         },
         usdt: {
             contract_address: '0xf55bec9cafdbe8730f096aa55dad6d22d44099df',
+            precision: {
+                display: 2,
+                db: 2,
+                native: 6,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                display: 5,
+                db: 8,
+                native: 18,
+            },
+        },
+    },
+    //Scroll Sepolia
+    534351: {
+        chain_name: 'scroll sepolia',
+        usdc: {
+            contract_address: '0xacbc1ec300bbea9a9fd0a661cd717d8519c5fca5',
+            precision: {
+                display: 2,
+                db: 2,
+                native: 6,
+            },
+        },
+        usdt: {
+            contract_address: '0x28cb409154beb695d5e9ffa85da8f1564aa3cd76',
             precision: {
                 display: 2,
                 db: 2,
