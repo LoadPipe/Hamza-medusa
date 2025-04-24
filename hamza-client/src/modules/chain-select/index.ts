@@ -38,6 +38,17 @@ export const chainMap: {
         linkUrl:
             'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
     },
+    BaseSepolia: {
+        id: 84532,
+        logo: baseLogo,
+        linkUrl:
+            'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
+    },
+    ScrollSepolia: {
+        id: 534351,
+        logo: ethLogo,
+        linkUrl: '',
+    },
     'Arbitrum One': {
         id: 42151,
         logo: arbLogo,
