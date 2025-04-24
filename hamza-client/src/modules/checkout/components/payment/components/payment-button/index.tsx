@@ -33,7 +33,7 @@ import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
 import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
-import { FaBitcoin, FaEthereum } from 'react-icons/fa';
+import { FaBitcoin, FaWallet } from 'react-icons/fa';
 import { WalletPaymentResponse } from './payment-handlers/common';
 import ChainSelectionInterstitial from '../chain-selector';
 
@@ -348,8 +348,8 @@ const CryptoPaymentButton = ({
             const chainId =
                 chainIdOverride ||
                 (chainType === 'evm'
-                    ? (await walletClient?.getChainId())?.toString() ?? ''
-                    : process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet');
+                    ? ((await walletClient?.getChainId())?.toString() ?? '')
+                    : (process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet'));
 
             await new Promise((resolve, reject) => {
                 completeCart(
@@ -456,7 +456,9 @@ const CryptoPaymentButton = ({
                 {getButtonText()}
             </Button>
 
-            {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true' && (
+            {(process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true' ||
+                process.env.NEXT_PUBLIC_PAY_WITH_EXTERNAL_WALLET ===
+                    'true') && (
                 <>
                     <Flex alignItems="center" my="5px">
                         <Box flex="1">
@@ -469,41 +471,45 @@ const CryptoPaymentButton = ({
                             <Divider borderColor="gray.500" />
                         </Box>
                     </Flex>
-
-                    <Button
-                        borderRadius={'full'}
-                        height={{ base: '42px', md: '58px' }}
-                        opacity={1}
-                        color={'black'}
-                        _hover={{ opacity: 0.5 }}
-                        backgroundColor={'white'}
-                        isLoading={submitting}
-                        isDisabled={disableButton}
-                        onClick={() => handlePayment('direct', 'bitcoin')}
-                    >
-                        <Flex alignItems="center" gap={2}>
-                            <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
-                            Pay with Bitcoin
-                        </Flex>
-                    </Button>
-
-                    <Button
-                        borderRadius={'full'}
-                        height={{ base: '42px', md: '58px' }}
-                        opacity={1}
-                        color={'black'}
-                        _hover={{ opacity: 0.5 }}
-                        backgroundColor={'white'}
-                        isLoading={submitting}
-                        isDisabled={disableButton}
-                        onClick={() => handlePayment('direct', 'evm')}
-                    >
-                        <Flex alignItems="center" gap={2}>
-                            <Icon as={FaEthereum} boxSize={7} color="#627EEA" />
-                            Pay with Ethereum
-                        </Flex>
-                    </Button>
                 </>
+            )}
+
+            {process.env.NEXT_PUBLIC_PAY_WITH_EXTERNAL_WALLET === 'true' && (
+                <Button
+                    borderRadius={'full'}
+                    height={{ base: '42px', md: '58px' }}
+                    opacity={1}
+                    color={'white'}
+                    _hover={{ opacity: 0.5 }}
+                    backgroundColor={'#242424'}
+                    isLoading={submitting}
+                    isDisabled={disableButton}
+                    onClick={() => handlePayment('direct', 'evm')}
+                >
+                    <Flex alignItems="center" gap={2}>
+                        <Icon as={FaWallet} boxSize={5} color="white" />
+                        Pay with External Wallet
+                    </Flex>
+                </Button>
+            )}
+
+            {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true' && (
+                <Button
+                    borderRadius={'full'}
+                    height={{ base: '42px', md: '58px' }}
+                    opacity={1}
+                    color={'white'}
+                    _hover={{ opacity: 0.5 }}
+                    backgroundColor={'#242424'}
+                    isLoading={submitting}
+                    isDisabled={disableButton}
+                    onClick={() => handlePayment('direct', 'bitcoin')}
+                >
+                    <Flex alignItems="center" gap={2}>
+                        <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
+                        Pay with Bitcoin
+                    </Flex>
+                </Button>
             )}
         </>
     );

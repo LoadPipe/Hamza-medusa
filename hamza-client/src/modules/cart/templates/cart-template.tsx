@@ -57,7 +57,7 @@ const CartTemplate = ({
     return (
         <Flex
             maxW={'1280px'}
-            width={'100%'}
+            width={'95vw'}
             mx="auto"
             py={{ base: '1rem', md: '4rem' }}
             justifyContent="center"

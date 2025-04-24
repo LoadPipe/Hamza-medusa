@@ -15,7 +15,7 @@ import {
     ModalCloseButton,
     useDisclosure,
 } from '@chakra-ui/react';
-import { FaBitcoin, FaCopy, FaRegCheckCircle } from 'react-icons/fa';
+import { FaBitcoin, FaCopy, FaQrcode, FaRegCheckCircle } from 'react-icons/fa';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import StatusStep from './components/StatusStep';
@@ -31,6 +31,11 @@ import { getPaymentData } from '@/lib/server';
 import { useAccount } from 'wagmi';
 import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet-connect';
 import { calculateStepState } from './utils';
+import {
+    getChainLogoFromName,
+    getChainTitleFromName,
+    isChainNameInChainMap,
+} from '../chain-select';
 
 const OrderProcessing = ({
     startTimestamp,
@@ -352,6 +357,39 @@ const OrderProcessing = ({
                                             </Text>
                                         </Flex>
                                     </VStack>
+                                    {paywith &&
+                                        isChainNameInChainMap(paywith) && (
+                                            <VStack align="start" spacing={1}>
+                                                <Text
+                                                    color="gray.500"
+                                                    fontSize="sm"
+                                                >
+                                                    Chain Network:
+                                                </Text>
+                                                <Flex>
+                                                    <Image
+                                                        src={
+                                                            getChainLogoFromName(
+                                                                paywith
+                                                            ).src
+                                                        }
+                                                        alt={`${getChainTitleFromName(
+                                                            paywith
+                                                        )} logo`}
+                                                        width={24}
+                                                        height={24}
+                                                    />
+                                                    <Text
+                                                        ml="0.4rem"
+                                                        color="white"
+                                                    >
+                                                        {getChainTitleFromName(
+                                                            paywith
+                                                        )}
+                                                    </Text>
+                                                </Flex>
+                                            </VStack>
+                                        )}
                                     <VStack align="start" spacing={1}>
                                         <Text color="gray.500" fontSize="sm">
                                             Total Items:
@@ -405,25 +443,55 @@ const OrderProcessing = ({
                                         }}
                                         spacing={2}
                                     >
-                                        {paywith === 'bitcoin' && (
-                                            <Button
-                                                size={{ base: 'xs', md: 'sm' }}
-                                                bg="gray.700"
-                                                color="white"
-                                                borderRadius="2rem"
-                                                leftIcon={
-                                                    <FaBitcoin
-                                                        size={24}
-                                                        color="#F7931A"
-                                                    />
-                                                }
-                                                _hover={{ bg: 'gray.600' }}
-                                                p={{ base: 4, md: 6 }}
-                                                onClick={onOpen}
-                                            >
-                                                BTC QR Code
-                                            </Button>
-                                        )}
+                                        {paywith &&
+                                            isChainNameInChainMap(paywith) &&
+                                            paywith === 'bitcoin' && (
+                                                <Button
+                                                    size={{
+                                                        base: 'xs',
+                                                        md: 'sm',
+                                                    }}
+                                                    bg="gray.700"
+                                                    color="white"
+                                                    borderRadius="2rem"
+                                                    leftIcon={
+                                                        <FaBitcoin
+                                                            size={24}
+                                                            color="#F7931A"
+                                                        />
+                                                    }
+                                                    _hover={{ bg: 'gray.600' }}
+                                                    p={{ base: 4, md: 6 }}
+                                                    onClick={() => onOpen()}
+                                                >
+                                                    BTC QR Code
+                                                </Button>
+                                            )}
+
+                                        {paywith &&
+                                            isChainNameInChainMap(paywith) &&
+                                            paywith !== 'bitcoin' && (
+                                                <Button
+                                                    size={{
+                                                        base: 'xs',
+                                                        md: 'sm',
+                                                    }}
+                                                    bg="gray.700"
+                                                    color="white"
+                                                    borderRadius="2rem"
+                                                    leftIcon={
+                                                        <FaQrcode
+                                                            size={20}
+                                                            color="white"
+                                                        />
+                                                    }
+                                                    _hover={{ bg: 'gray.600' }}
+                                                    p={{ base: 4, md: 6 }}
+                                                    onClick={onOpen}
+                                                >
+                                                    QR Code
+                                                </Button>
+                                            )}
 
                                         <Button
                                             size={{ base: 'xs', md: 'sm' }}
@@ -460,7 +528,7 @@ const OrderProcessing = ({
                     </Box>
 
                     {/* QR Code Modal */}
-                    {openqrmodal && (
+                    {paywith && isChainNameInChainMap(paywith) && (
                         <Modal
                             isOpen={isOpen}
                             onClose={onClose}
@@ -477,23 +545,121 @@ const OrderProcessing = ({
                                             fontSize="xl"
                                             fontWeight="bold"
                                         >
-                                            Pay with BTC
+                                            {paywith &&
+                                            isChainNameInChainMap(paywith) &&
+                                            paywith === 'bitcoin'
+                                                ? 'Pay with BTC'
+                                                : 'Pay with External Wallet'}
                                         </Text>
-                                        <Text
-                                            color="gray.400"
-                                            fontSize="sm"
-                                            textAlign="left"
-                                        >
-                                            Bitcoin payments are processed
-                                            separately from EVM wallets. If you
-                                            choose Bitcoin, you'll receive a
-                                            unique payment address and
-                                            instructions. This method is
-                                            independent of your EVM wallet
-                                            balance. To complete your payment,
-                                            simply scan the QR code using your
-                                            Bitcoin wallet.
-                                        </Text>
+                                        {paywith &&
+                                        isChainNameInChainMap(paywith) &&
+                                        paywith === 'bitcoin' ? (
+                                            <Text
+                                                color="gray.400"
+                                                fontSize="sm"
+                                                textAlign="left"
+                                            >
+                                                Bitcoin payments are processed
+                                                separately from EVM wallets. If
+                                                you choose Bitcoin, you'll
+                                                receive a unique payment address
+                                                and instructions. This method is
+                                                independent of your EVM wallet
+                                                balance. To complete your
+                                                payment, simply scan the QR code
+                                                using your Bitcoin wallet."
+                                            </Text>
+                                        ) : (
+                                            <>
+                                                <Text
+                                                    color="gray.400"
+                                                    fontSize="sm"
+                                                    textAlign="left"
+                                                >
+                                                    Use this option if you're
+                                                    paying with a hardware
+                                                    wallet or a mobile wallet
+                                                    app like Trust Wallet or
+                                                    SafePal. It's ideal when
+                                                    your wallet isn't connected
+                                                    directly to the site but
+                                                    supports the same network.{' '}
+                                                    <br />
+                                                    <br /> To complete the
+                                                    payment, just scan the QR
+                                                    code or copy the wallet
+                                                    address to send the funds
+                                                    manually.
+                                                </Text>
+
+                                                <HStack
+                                                    justify="flex-start"
+                                                    width="100%"
+                                                    gap={5}
+                                                >
+                                                    <VStack
+                                                        gap={0}
+                                                        alignItems="flex-start"
+                                                    >
+                                                        <Text
+                                                            color="gray.400"
+                                                            fontSize="sm"
+                                                            textAlign="left"
+                                                        >
+                                                            Total Amount:
+                                                        </Text>
+                                                        <Text
+                                                            color="gray.400"
+                                                            fontSize="sm"
+                                                            textAlign="left"
+                                                        >
+                                                            {formatCryptoPrice(
+                                                                paymentTotal ??
+                                                                    0,
+                                                                currencyCode ??
+                                                                    'usdc'
+                                                            )}
+                                                        </Text>
+                                                    </VStack>
+                                                    <VStack
+                                                        gap={0}
+                                                        alignItems="flex-start"
+                                                    >
+                                                        <Text
+                                                            color="gray.400"
+                                                            fontSize="sm"
+                                                            textAlign="left"
+                                                        >
+                                                            Chain Network:
+                                                        </Text>
+                                                        <HStack>
+                                                            <Image
+                                                                src={
+                                                                    getChainLogoFromName(
+                                                                        paywith
+                                                                    ).src
+                                                                }
+                                                                alt={`${getChainTitleFromName(
+                                                                    paywith
+                                                                )} logo`}
+                                                                width={24}
+                                                                height={24}
+                                                            />
+                                                            <Text
+                                                                color="gray.400"
+                                                                fontSize="sm"
+                                                                textAlign="left"
+                                                            >
+                                                                {getChainTitleFromName(
+                                                                    paywith
+                                                                )}
+                                                            </Text>
+                                                        </HStack>
+                                                    </VStack>
+                                                </HStack>
+                                            </>
+                                        )}
+
                                         <Box bg="white" p={4} borderRadius="lg">
                                             <QRCode
                                                 value={
