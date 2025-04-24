@@ -38,13 +38,13 @@ export const chainMap: {
         linkUrl:
             'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
     },
-    BaseSepolia: {
+    'Base Sepolia': {
         id: 84532,
         logo: baseLogo,
         linkUrl:
             'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
     },
-    ScrollSepolia: {
+    'Scroll Sepolia': {
         id: 534351,
         logo: ethLogo,
         linkUrl: '',
