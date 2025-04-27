@@ -17,6 +17,8 @@ import {
     scroll,
     mantle,
     bsc,
+    baseSepolia,
+    scrollSepolia,
 } from 'wagmi/chains';
 import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -99,6 +101,10 @@ if (allowedChains.length === 0) {
         80002: amoy,
         sepolia,
         11155111: sepolia,
+        baseSepolia,
+        84532: baseSepolia,
+        scrollSepolia,
+        534351: scrollSepolia,
     };
 
     wagmiChains = allowedChains.map(
