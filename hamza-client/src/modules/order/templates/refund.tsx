@@ -13,7 +13,8 @@ import {
     TabList,
     Tab,
     TabPanels,
-    TabPanel, Divider,
+    TabPanel,
+    Divider,
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 import RefundCard from '@modules/account/components/refund-card';
@@ -32,7 +33,7 @@ import {
     getChainLogo,
 } from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
-import {OrderNote} from './all'
+import { OrderNote } from './all';
 import { format } from 'date-fns';
 
 const Refund = ({
@@ -92,7 +93,12 @@ const Refund = ({
                             0
                         );
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
-                        const hasSellerNotes = order?.notes?.length > 0
+                        const hasSellerNotes = order?.notes?.length > 0;
+
+                        const chainId =
+                            order.payments[0]?.blockchain_data
+                                ?.payment_chain_id ??
+                            order.payments[0]?.blockchain_data?.chain_id;
 
                         return (
                             <Flex
@@ -232,7 +238,7 @@ const Refund = ({
                                                             >
                                                                 Order Timeline
                                                             </Tab>
-                                                            {hasSellerNotes &&
+                                                            {hasSellerNotes && (
                                                                 <Tab
                                                                     _selected={{
                                                                         color: 'primary.green.900',
@@ -241,7 +247,10 @@ const Refund = ({
                                                                         borderColor:
                                                                             'primary.green.900',
                                                                     }}
-                                                                >Seller Note</Tab>}
+                                                                >
+                                                                    Seller Note
+                                                                </Tab>
+                                                            )}
                                                         </TabList>
                                                         <TabPanels>
                                                             <TabPanel>
@@ -270,7 +279,15 @@ const Refund = ({
                                                                         >
                                                                             {order.tracking_number && (
                                                                                 <>
-                                                                                    <Text><b>Tracking Number:</b> {order.tracking_number}</Text>
+                                                                                    <Text>
+                                                                                        <b>
+                                                                                            Tracking
+                                                                                            Number:
+                                                                                        </b>{' '}
+                                                                                        {
+                                                                                            order.tracking_number
+                                                                                        }
+                                                                                    </Text>
                                                                                 </>
                                                                             )}
                                                                             {order
@@ -352,16 +369,10 @@ const Refund = ({
                                                                                 </strong>
                                                                                 <Image
                                                                                     src={getChainLogo(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                     alt={chainIdToName(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                     width={
                                                                                         25
@@ -372,10 +383,7 @@ const Refund = ({
                                                                                 />
                                                                                 <Text>
                                                                                     {chainIdToName(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                 </Text>
                                                                             </Flex>
@@ -401,22 +409,55 @@ const Refund = ({
                                                                         boxShadow="sm"
                                                                         fontFamily="Inter, sans-serif"
                                                                     >
-                                                                        {order.notes.map((note: OrderNote, index: number) => (
-                                                                            <div key={note.id}>
-                                                                                {/* Date in smaller, gray text */}
-                                                                                <Text color="gray.400" fontSize="sm" mb={2}>
-                                                                                    {format(new Date(note.updated_at), 'EEEE, MMMM d, yyyy | h:mm a')}
-                                                                                </Text>
+                                                                        {order.notes.map(
+                                                                            (
+                                                                                note: OrderNote,
+                                                                                index: number
+                                                                            ) => (
+                                                                                <div
+                                                                                    key={
+                                                                                        note.id
+                                                                                    }
+                                                                                >
+                                                                                    {/* Date in smaller, gray text */}
+                                                                                    <Text
+                                                                                        color="gray.400"
+                                                                                        fontSize="sm"
+                                                                                        mb={
+                                                                                            2
+                                                                                        }
+                                                                                    >
+                                                                                        {format(
+                                                                                            new Date(
+                                                                                                note.updated_at
+                                                                                            ),
+                                                                                            'EEEE, MMMM d, yyyy | h:mm a'
+                                                                                        )}
+                                                                                    </Text>
 
-                                                                                {/* The note content */}
-                                                                                <Text color="white">{note.note}</Text>
+                                                                                    {/* The note content */}
+                                                                                    <Text color="white">
+                                                                                        {
+                                                                                            note.note
+                                                                                        }
+                                                                                    </Text>
 
-                                                                                {/* Divider between notes (except after the last one) */}
-                                                                                {index < order.notes.length - 1 && (
-                                                                                    <Divider my={4} borderColor="#272727" />
-                                                                                )}
-                                                                            </div>
-                                                                        ))}
+                                                                                    {/* Divider between notes (except after the last one) */}
+                                                                                    {index <
+                                                                                        order
+                                                                                            .notes
+                                                                                            .length -
+                                                                                            1 && (
+                                                                                        <Divider
+                                                                                            my={
+                                                                                                4
+                                                                                            }
+                                                                                            borderColor="#272727"
+                                                                                        />
+                                                                                    )}
+                                                                                </div>
+                                                                            )
+                                                                        )}
                                                                     </Box>
                                                                 </TabPanel>
                                                             )}

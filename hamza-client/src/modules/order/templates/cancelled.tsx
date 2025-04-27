@@ -14,30 +14,30 @@ import {
 } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
-import {useQueryClient} from '@tanstack/react-query';
-import React, {useState} from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import CancellationModal from '@modules/order/templates/cancelled-modal';
-import {OrdersData} from './all';
-import {useOrderTabStore} from '@/zustand/order-tab-state';
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 import OrderTimeline from '@modules/order/components/order-timeline';
-import {formatCryptoPrice} from '@lib/util/get-product-price';
-import {upperCase} from 'lodash';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { upperCase } from 'lodash';
 import {
     chainIdToName,
     getChainLogo,
 } from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
-import {OrderNote} from './all'
+import { OrderNote } from './all';
 import { format } from 'date-fns';
 
 const Cancelled = ({
-                       customer,
-                       // chainEnabled,
-                       // onSuccess,
-                       isEmpty,
-                   }: {
+    customer,
+    // chainEnabled,
+    // onSuccess,
+    isEmpty,
+}: {
     customer: string;
     // chainEnabled?: boolean;
     // onSuccess?: () => void;
@@ -64,11 +64,11 @@ const Cancelled = ({
 
     const canceledOrder = cachedData?.Cancelled || [];
     if (isEmpty && canceledOrder && canceledOrder?.length == 0) {
-        return <EmptyState/>;
+        return <EmptyState />;
     }
 
     return (
-        <div style={{width: '100%'}}>
+        <div style={{ width: '100%' }}>
             {/*{cancelIsLoading ? (*/}
             {/*    <Box*/}
             {/*        display="flex"*/}
@@ -107,7 +107,11 @@ const Cancelled = ({
                         );
 
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
-                        const hasSellerNotes = order?.notes?.length > 0
+                        const hasSellerNotes = order?.notes?.length > 0;
+                        const chainId =
+                            order?.payments[0]?.blockchain_data
+                                ?.payment_chain_id ??
+                            order?.payments[0]?.blockchain_data?.chain_id;
 
                         return (
                             <Flex
@@ -190,7 +194,7 @@ const Cancelled = ({
                                                             'flex-end'
                                                         }
                                                         gap={2}
-                                                        mt={{base: 4, md: 0}}
+                                                        mt={{ base: 4, md: 0 }}
                                                         width="100%"
                                                     >
                                                         <Button
@@ -269,7 +273,7 @@ const Cancelled = ({
                                                         </a>
                                                         {order.escrow_status &&
                                                             order.escrow_status !==
-                                                            'released' && (
+                                                                'released' && (
                                                                 <Box
                                                                     as="a"
                                                                     href={`/account/escrow/${order.id}`}
@@ -300,7 +304,6 @@ const Cancelled = ({
                                                 <Box mt={4}>
                                                     <Tabs variant="unstyled">
                                                         <TabList>
-
                                                             <Tab
                                                                 _selected={{
                                                                     color: 'primary.green.900',
@@ -324,7 +327,7 @@ const Cancelled = ({
                                                                 Order Timeline
                                                             </Tab>
 
-                                                            {hasSellerNotes &&
+                                                            {hasSellerNotes && (
                                                                 <Tab
                                                                     _selected={{
                                                                         color: 'primary.green.900',
@@ -333,7 +336,10 @@ const Cancelled = ({
                                                                         borderColor:
                                                                             'primary.green.900',
                                                                     }}
-                                                                >Seller Note</Tab>}
+                                                                >
+                                                                    Seller Note
+                                                                </Tab>
+                                                            )}
                                                         </TabList>
                                                         <TabPanels>
                                                             <TabPanel>
@@ -362,8 +368,14 @@ const Cancelled = ({
                                                                         >
                                                                             {order.tracking_number && (
                                                                                 <>
-                                                                                    <Text><b>Tracking
-                                                                                        Number:</b> {order.tracking_number}
+                                                                                    <Text>
+                                                                                        <b>
+                                                                                            Tracking
+                                                                                            Number:
+                                                                                        </b>{' '}
+                                                                                        {
+                                                                                            order.tracking_number
+                                                                                        }
                                                                                     </Text>
                                                                                 </>
                                                                             )}
@@ -383,7 +395,7 @@ const Cancelled = ({
                                                                                                 ?.price
                                                                                         ),
                                                                                         item.currency_code ??
-                                                                                        'usdc'
+                                                                                            'usdc'
                                                                                     )}{' '}
                                                                                     {upperCase(
                                                                                         item.currency_code
@@ -425,11 +437,11 @@ const Cancelled = ({
                                                                                     </strong>{' '}
                                                                                     {order?.id &&
                                                                                     typeof order.id ===
-                                                                                    'string'
+                                                                                        'string'
                                                                                         ? order.id.replace(
-                                                                                            /^order_/,
-                                                                                            ''
-                                                                                        ) // Remove "order_" prefix
+                                                                                              /^order_/,
+                                                                                              ''
+                                                                                          ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>
@@ -446,16 +458,10 @@ const Cancelled = ({
                                                                                 </strong>
                                                                                 <Image
                                                                                     src={getChainLogo(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                     alt={chainIdToName(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                     width={
                                                                                         25
@@ -466,10 +472,7 @@ const Cancelled = ({
                                                                                 />
                                                                                 <Text>
                                                                                     {chainIdToName(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                 </Text>
                                                                             </Flex>
@@ -495,22 +498,55 @@ const Cancelled = ({
                                                                         boxShadow="sm"
                                                                         fontFamily="Inter, sans-serif"
                                                                     >
-                                                                        {order.notes.map((note: OrderNote, index: number) => (
-                                                                            <div key={note.id}>
-                                                                                {/* Date in smaller, gray text */}
-                                                                                <Text color="gray.400" fontSize="sm" mb={2}>
-                                                                                    {format(new Date(note.updated_at), 'EEEE, MMMM d, yyyy | h:mm a')}
-                                                                                </Text>
+                                                                        {order.notes.map(
+                                                                            (
+                                                                                note: OrderNote,
+                                                                                index: number
+                                                                            ) => (
+                                                                                <div
+                                                                                    key={
+                                                                                        note.id
+                                                                                    }
+                                                                                >
+                                                                                    {/* Date in smaller, gray text */}
+                                                                                    <Text
+                                                                                        color="gray.400"
+                                                                                        fontSize="sm"
+                                                                                        mb={
+                                                                                            2
+                                                                                        }
+                                                                                    >
+                                                                                        {format(
+                                                                                            new Date(
+                                                                                                note.updated_at
+                                                                                            ),
+                                                                                            'EEEE, MMMM d, yyyy | h:mm a'
+                                                                                        )}
+                                                                                    </Text>
 
-                                                                                {/* The note content */}
-                                                                                <Text color="white">{note.note}</Text>
+                                                                                    {/* The note content */}
+                                                                                    <Text color="white">
+                                                                                        {
+                                                                                            note.note
+                                                                                        }
+                                                                                    </Text>
 
-                                                                                {/* Divider between notes (except after the last one) */}
-                                                                                {index < order.notes.length - 1 && (
-                                                                                    <Divider my={4} borderColor="#272727" />
-                                                                                )}
-                                                                            </div>
-                                                                        ))}
+                                                                                    {/* Divider between notes (except after the last one) */}
+                                                                                    {index <
+                                                                                        order
+                                                                                            .notes
+                                                                                            .length -
+                                                                                            1 && (
+                                                                                        <Divider
+                                                                                            my={
+                                                                                                4
+                                                                                            }
+                                                                                            borderColor="#272727"
+                                                                                        />
+                                                                                    )}
+                                                                                </div>
+                                                                            )
+                                                                        )}
                                                                     </Box>
                                                                 </TabPanel>
                                                             )}
