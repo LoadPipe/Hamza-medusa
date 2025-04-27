@@ -162,7 +162,7 @@ export default async function Footer() {
                                 fontSize={{ base: '14px', md: '16px' }}
                                 className="text-base font-bold"
                             >
-                                Knoweledge Base
+                                Knowledge Base
                             </Text>
                         </a>
 
