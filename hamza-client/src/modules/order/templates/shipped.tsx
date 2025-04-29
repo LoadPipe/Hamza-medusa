@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {getSingleBucket} from '@/lib/server';
+import React, { useEffect, useState } from 'react';
+import { getSingleBucket } from '@/lib/server';
 import {
     Box,
     Button,
@@ -16,34 +16,33 @@ import {
     Text,
     VStack,
 } from '@chakra-ui/react';
-import {BsCircleFill} from 'react-icons/bs';
+import { BsCircleFill } from 'react-icons/bs';
 import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
-import {debounce, upperCase} from 'lodash';
-import {formatCryptoPrice} from '@lib/util/get-product-price';
+import { debounce, upperCase } from 'lodash';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
-import {OrdersData} from './all';
-import {useOrderTabStore} from '@/zustand/order-tab-state';
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 import OrderTimeline from '@modules/order/components/order-timeline';
 import {
     chainIdToName,
     getChainLogo,
 } from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
-import { OrderNote } from './all'
+import { OrderNote } from './all';
 import { format } from 'date-fns';
 
-
 const Shipped = ({
-                     customer,
-                     // chainEnabled,
-                     // onSuccess,
-                     isEmpty,
-                 }: {
+    customer,
+    // chainEnabled,
+    // onSuccess,
+    isEmpty,
+}: {
     customer: string;
     // chainEnabled?: boolean;
     // onSuccess?: () => void;
@@ -64,7 +63,7 @@ const Shipped = ({
     const shippedOrder = cachedData?.Shipped || [];
 
     if (isEmpty && shippedOrder?.length === 0) {
-        return <EmptyState/>;
+        return <EmptyState />;
     }
 
     const toggleViewOrder = (orderId: any) => {
@@ -83,7 +82,13 @@ const Shipped = ({
                             0
                         );
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
-                        const hasSellerNotes = order?.notes?.length > 0
+                        const hasSellerNotes = order?.notes?.length > 0;
+
+                        const chainId =
+                            order.payments[0]?.blockchain_data
+                                ?.payment_chain_id ??
+                            order.payments[0]?.blockchain_data?.chain_id;
+
                         return (
                             <div
                                 key={order.id} // Changed from cart_id to id since it's more reliable and unique
@@ -154,7 +159,7 @@ const Shipped = ({
                                                             'flex-end'
                                                         }
                                                         gap={2}
-                                                        mt={{base: 4, md: 0}}
+                                                        mt={{ base: 4, md: 0 }}
                                                         width="100%"
                                                     >
                                                         <Button
@@ -188,7 +193,7 @@ const Shipped = ({
                                                         </Button>
                                                         {order.escrow_status &&
                                                             order.escrow_status !==
-                                                            'released' && (
+                                                                'released' && (
                                                                 <Box
                                                                     as="a"
                                                                     href={`/account/escrow/${order.id}`}
@@ -246,7 +251,7 @@ const Shipped = ({
                                                             >
                                                                 Order Timeline
                                                             </Tab>
-                                                            {hasSellerNotes &&
+                                                            {hasSellerNotes && (
                                                                 <Tab
                                                                     _selected={{
                                                                         color: 'primary.green.900',
@@ -255,10 +260,12 @@ const Shipped = ({
                                                                         borderColor:
                                                                             'primary.green.900',
                                                                     }}
-                                                                >Seller Note</Tab>}
+                                                                >
+                                                                    Seller Note
+                                                                </Tab>
+                                                            )}
                                                         </TabList>
                                                         <TabPanels>
-
                                                             <TabPanel>
                                                                 <HStack
                                                                     align="start"
@@ -271,17 +278,16 @@ const Shipped = ({
                                                                             2
                                                                         }
                                                                     >
-
-
                                                                         <Flex
                                                                             direction={{
                                                                                 base: 'column',
                                                                                 md: 'row',
                                                                             }}
-                                                                            gap={6}
+                                                                            gap={
+                                                                                6
+                                                                            }
                                                                             w="100%"
                                                                         >
-
                                                                             {/* Left Column: Shipping Cost & Subtotal */}
                                                                             <VStack
                                                                                 align="start"
@@ -293,8 +299,14 @@ const Shipped = ({
                                                                                 {/* Stack text vertically */}
                                                                                 {order.tracking_number && (
                                                                                     <>
-                                                                                        <Text><b>Tracking
-                                                                                            Number:</b> {order.tracking_number}
+                                                                                        <Text>
+                                                                                            <b>
+                                                                                                Tracking
+                                                                                                Number:
+                                                                                            </b>{' '}
+                                                                                            {
+                                                                                                order.tracking_number
+                                                                                            }
                                                                                         </Text>
                                                                                     </>
                                                                                 )}
@@ -326,7 +338,7 @@ const Shipped = ({
                                                                                                     ?.price
                                                                                             ),
                                                                                             item.currency_code ??
-                                                                                            'usdc'
+                                                                                                'usdc'
                                                                                         )}{' '}
                                                                                         {upperCase(
                                                                                             item.currency_code
@@ -352,23 +364,21 @@ const Shipped = ({
                                                                                             ?.soOrderInfo
                                                                                             ?.createTime
                                                                                             ? new Date(
-                                                                                                order.external_metadata.tracking.data.soOrderInfo.createTime
-                                                                                            ).toLocaleString(
-                                                                                                undefined,
-                                                                                                {
-                                                                                                    year: 'numeric',
-                                                                                                    month: 'long',
-                                                                                                    day: 'numeric',
-                                                                                                    hour: '2-digit',
-                                                                                                    minute: '2-digit',
-                                                                                                    second: '2-digit',
-                                                                                                }
-                                                                                            )
+                                                                                                  order.external_metadata.tracking.data.soOrderInfo.createTime
+                                                                                              ).toLocaleString(
+                                                                                                  undefined,
+                                                                                                  {
+                                                                                                      year: 'numeric',
+                                                                                                      month: 'long',
+                                                                                                      day: 'numeric',
+                                                                                                      hour: '2-digit',
+                                                                                                      minute: '2-digit',
+                                                                                                      second: '2-digit',
+                                                                                                  }
+                                                                                              )
                                                                                             : 'Date not available'}
                                                                                     </Text>
                                                                                 </Flex>
-
-
                                                                             </VStack>
 
                                                                             {/* Right Column: Order ID & Chain Data */}
@@ -385,18 +395,18 @@ const Shipped = ({
                                                                                     </strong>{' '}
                                                                                     {order?.created_at
                                                                                         ? new Date(
-                                                                                            order.created_at
-                                                                                        ).toLocaleDateString(
-                                                                                            undefined,
-                                                                                            {
-                                                                                                year: 'numeric',
-                                                                                                month: 'long',
-                                                                                                day: 'numeric',
-                                                                                                hour: '2-digit',
-                                                                                                minute: '2-digit',
-                                                                                                second: '2-digit',
-                                                                                            }
-                                                                                        )
+                                                                                              order.created_at
+                                                                                          ).toLocaleDateString(
+                                                                                              undefined,
+                                                                                              {
+                                                                                                  year: 'numeric',
+                                                                                                  month: 'long',
+                                                                                                  day: 'numeric',
+                                                                                                  hour: '2-digit',
+                                                                                                  minute: '2-digit',
+                                                                                                  second: '2-digit',
+                                                                                              }
+                                                                                          )
                                                                                         : 'N/A'}
                                                                                 </Text>
 
@@ -413,11 +423,11 @@ const Shipped = ({
                                                                                         </strong>{' '}
                                                                                         {order?.id &&
                                                                                         typeof order.id ===
-                                                                                        'string'
+                                                                                            'string'
                                                                                             ? order.id.replace(
-                                                                                                /^order_/,
-                                                                                                ''
-                                                                                            ) // Remove "order_" prefix
+                                                                                                  /^order_/,
+                                                                                                  ''
+                                                                                              ) // Remove "order_" prefix
                                                                                             : 'Order ID not available'}
                                                                                     </Text>
                                                                                 </Flex>
@@ -434,16 +444,10 @@ const Shipped = ({
                                                                                     </strong>
                                                                                     <Image
                                                                                         src={getChainLogo(
-                                                                                            order
-                                                                                                ?.payments[0]
-                                                                                                ?.blockchain_data
-                                                                                                ?.chain_id
+                                                                                            chainId
                                                                                         )}
                                                                                         alt={chainIdToName(
-                                                                                            order
-                                                                                                ?.payments[0]
-                                                                                                ?.blockchain_data
-                                                                                                ?.chain_id
+                                                                                            chainId
                                                                                         )}
                                                                                         width={
                                                                                             25
@@ -454,16 +458,12 @@ const Shipped = ({
                                                                                     />
                                                                                     <Text>
                                                                                         {chainIdToName(
-                                                                                            order
-                                                                                                ?.payments[0]
-                                                                                                ?.blockchain_data
-                                                                                                ?.chain_id
+                                                                                            chainId
                                                                                         )}
                                                                                     </Text>
                                                                                 </Flex>
                                                                             </VStack>
                                                                         </Flex>
-
                                                                     </VStack>
                                                                 </HStack>
                                                             </TabPanel>
@@ -487,26 +487,58 @@ const Shipped = ({
                                                                         boxShadow="sm"
                                                                         fontFamily="Inter, sans-serif"
                                                                     >
-                                                                        {order.notes.map((note: OrderNote, index: number) => (
-                                                                            <div key={note.id}>
-                                                                                {/* Date in smaller, gray text */}
-                                                                                <Text color="gray.400" fontSize="sm" mb={2}>
-                                                                                    {format(new Date(note.updated_at), 'EEEE, MMMM d, yyyy | h:mm a')}
-                                                                                </Text>
+                                                                        {order.notes.map(
+                                                                            (
+                                                                                note: OrderNote,
+                                                                                index: number
+                                                                            ) => (
+                                                                                <div
+                                                                                    key={
+                                                                                        note.id
+                                                                                    }
+                                                                                >
+                                                                                    {/* Date in smaller, gray text */}
+                                                                                    <Text
+                                                                                        color="gray.400"
+                                                                                        fontSize="sm"
+                                                                                        mb={
+                                                                                            2
+                                                                                        }
+                                                                                    >
+                                                                                        {format(
+                                                                                            new Date(
+                                                                                                note.updated_at
+                                                                                            ),
+                                                                                            'EEEE, MMMM d, yyyy | h:mm a'
+                                                                                        )}
+                                                                                    </Text>
 
-                                                                                {/* The note content */}
-                                                                                <Text color="white">{note.note}</Text>
+                                                                                    {/* The note content */}
+                                                                                    <Text color="white">
+                                                                                        {
+                                                                                            note.note
+                                                                                        }
+                                                                                    </Text>
 
-                                                                                {/* Divider between notes (except after the last one) */}
-                                                                                {index < order.notes.length - 1 && (
-                                                                                    <Divider my={4} borderColor="#272727" />
-                                                                                )}
-                                                                            </div>
-                                                                        ))}
+                                                                                    {/* Divider between notes (except after the last one) */}
+                                                                                    {index <
+                                                                                        order
+                                                                                            .notes
+                                                                                            .length -
+                                                                                            1 && (
+                                                                                        <Divider
+                                                                                            my={
+                                                                                                4
+                                                                                            }
+                                                                                            borderColor="#272727"
+                                                                                        />
+                                                                                    )}
+                                                                                </div>
+                                                                            )
+                                                                        )}
                                                                     </Box>
                                                                 </TabPanel>
                                                             )}
-
                                                         </TabPanels>
                                                     </Tabs>
                                                 </Box>

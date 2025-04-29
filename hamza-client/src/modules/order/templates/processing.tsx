@@ -254,6 +254,11 @@ const Processing = ({
                         const transactions =
                             historyWithTransaction?.metadata?.transaction;
 
+                        const chainId =
+                            order.payments[0]?.blockchain_data
+                                ?.payment_chain_id ??
+                            order.payments[0]?.blockchain_data?.chain_id;
+
                         return (
                             <div key={order.id}>
                                 {order.items?.map(
@@ -572,16 +577,10 @@ const Processing = ({
                                                                                 </strong>
                                                                                 <Image
                                                                                     src={getChainLogo(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                     alt={chainIdToName(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                     width={
                                                                                         25
@@ -592,10 +591,7 @@ const Processing = ({
                                                                                 />
                                                                                 <Text>
                                                                                     {chainIdToName(
-                                                                                        order
-                                                                                            ?.payments[0]
-                                                                                            ?.blockchain_data
-                                                                                            ?.chain_id
+                                                                                        chainId
                                                                                     )}
                                                                                 </Text>
                                                                             </Flex>

@@ -13,30 +13,33 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import Spinner from '@modules/common/icons/spinner';
-import {addToCart} from '@modules/cart/actions';
+import { addToCart } from '@modules/cart/actions';
 import toast from 'react-hot-toast';
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
-import React, {useEffect, useState} from 'react';
-import {useParams, useRouter} from 'next/navigation';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
-import {OrdersData} from './all';
-import {useOrderTabStore} from '@/zustand/order-tab-state';
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 import Link from 'next/link';
 import OrderTimeline from '@modules/order/components/order-timeline';
-import {formatCryptoPrice} from '@lib/util/get-product-price';
-import {upperCase} from 'lodash';
-import {chainIdToName, getChainLogo} from '@modules/order/components/chain-enum/chain-enum';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { upperCase } from 'lodash';
+import {
+    chainIdToName,
+    getChainLogo,
+} from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
-import {OrderNote} from './all'
+import { OrderNote } from './all';
 import { format } from 'date-fns';
 
 const Delivered = ({
-                       customer,
-                       isEmpty,
-                   }: {
+    customer,
+    isEmpty,
+}: {
     customer: string;
     isEmpty?: boolean;
 }) => {
@@ -92,11 +95,11 @@ const Delivered = ({
     // }, [isStale]);
 
     if (isEmpty && deliveredOrder && deliveredOrder?.length == 0) {
-        return <EmptyState/>;
+        return <EmptyState />;
     }
 
     return (
-        <div style={{width: '100%'}}>
+        <div style={{ width: '100%' }}>
             {deliveredOrder && deliveredOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {deliveredOrder.map((order: any) => {
@@ -107,7 +110,11 @@ const Delivered = ({
                         );
 
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
-                        const hasSellerNotes = order?.notes?.length > 0
+                        const hasSellerNotes = order?.notes?.length > 0;
+                        const chainId =
+                            order?.payments[0]?.blockchain_data
+                                ?.payment_chain_id ??
+                            order?.payments[0]?.blockchain_data?.chain_id;
 
                         return (
                             <Flex
@@ -170,7 +177,7 @@ const Delivered = ({
                                                         md: 'row',
                                                     }}
                                                     justifyContent={'flex-end'}
-                                                    mt={{base: 4, md: 0}}
+                                                    mt={{ base: 4, md: 0 }}
                                                     width="100%"
                                                 >
                                                     {index ===
@@ -259,25 +266,29 @@ const Delivered = ({
                                                             Return/Refund
                                                         </Button>
                                                     </Link>
-                                                    {order.escrow_status && order.escrow_status !== 'released' && (
-                                                        <Box
-                                                            as="a"
-                                                            href={`/account/escrow/${order.id}`}
-                                                            border="1px solid"
-                                                            borderColor="white"
-                                                            borderRadius="37px"
-                                                            color="white"
-                                                            px="4"
-                                                            py="2"
-                                                            textAlign="center"
-                                                            _hover={{
-                                                                textDecoration: 'none',
-                                                                bg: 'primary.teal.600', // Adjust the hover color as needed
-                                                            }}
-                                                        >
-                                                            View Escrow Details
-                                                        </Box>
-                                                    )}
+                                                    {order.escrow_status &&
+                                                        order.escrow_status !==
+                                                            'released' && (
+                                                            <Box
+                                                                as="a"
+                                                                href={`/account/escrow/${order.id}`}
+                                                                border="1px solid"
+                                                                borderColor="white"
+                                                                borderRadius="37px"
+                                                                color="white"
+                                                                px="4"
+                                                                py="2"
+                                                                textAlign="center"
+                                                                _hover={{
+                                                                    textDecoration:
+                                                                        'none',
+                                                                    bg: 'primary.teal.600', // Adjust the hover color as needed
+                                                                }}
+                                                            >
+                                                                View Escrow
+                                                                Details
+                                                            </Box>
+                                                        )}
                                                 </Flex>
                                             </Flex>
                                             <Collapse
@@ -287,7 +298,6 @@ const Delivered = ({
                                                 <Box mt={4}>
                                                     <Tabs variant="unstyled">
                                                         <TabList>
-
                                                             <Tab
                                                                 _selected={{
                                                                     color: 'primary.green.900',
@@ -310,7 +320,7 @@ const Delivered = ({
                                                             >
                                                                 Order Timeline
                                                             </Tab>
-                                                            {hasSellerNotes &&
+                                                            {hasSellerNotes && (
                                                                 <Tab
                                                                     _selected={{
                                                                         color: 'primary.green.900',
@@ -319,10 +329,12 @@ const Delivered = ({
                                                                         borderColor:
                                                                             'primary.green.900',
                                                                     }}
-                                                                >Seller Note</Tab>}
+                                                                >
+                                                                    Seller Note
+                                                                </Tab>
+                                                            )}
                                                         </TabList>
                                                         <TabPanels>
-
                                                             <TabPanel>
                                                                 <VStack
                                                                     align="start"
@@ -331,46 +343,117 @@ const Delivered = ({
                                                                     borderRadius="lg"
                                                                     w="100%"
                                                                 >
-                                                                    <Flex direction={{base: "column", md: "row"}}
-                                                                          gap={6} w="100%">
+                                                                    <Flex
+                                                                        direction={{
+                                                                            base: 'column',
+                                                                            md: 'row',
+                                                                        }}
+                                                                        gap={6}
+                                                                        w="100%"
+                                                                    >
                                                                         {/* Left Column: Shipping Cost & Subtotal */}
-                                                                        <VStack align="start" spacing={2} flex="1">
-                                                                            {order?.shipping_methods[0]?.price && (
+                                                                        <VStack
+                                                                            align="start"
+                                                                            spacing={
+                                                                                2
+                                                                            }
+                                                                            flex="1"
+                                                                        >
+                                                                            {order
+                                                                                ?.shipping_methods[0]
+                                                                                ?.price && (
                                                                                 <Text fontSize="md">
-                                                                                    <strong>Order Shipping
-                                                                                        Cost:</strong>{' '}
-                                                                                    {formatCryptoPrice(Number(order?.shipping_methods[0]?.price), item.currency_code ?? 'usdc')}{' '}
-                                                                                    {upperCase(item.currency_code)}
+                                                                                    <strong>
+                                                                                        Order
+                                                                                        Shipping
+                                                                                        Cost:
+                                                                                    </strong>{' '}
+                                                                                    {formatCryptoPrice(
+                                                                                        Number(
+                                                                                            order
+                                                                                                ?.shipping_methods[0]
+                                                                                                ?.price
+                                                                                        ),
+                                                                                        item.currency_code ??
+                                                                                            'usdc'
+                                                                                    )}{' '}
+                                                                                    {upperCase(
+                                                                                        item.currency_code
+                                                                                    )}
                                                                                 </Text>
                                                                             )}
                                                                             <Text fontSize="md">
-                                                                                <strong>Subtotal:</strong>{' '}
-                                                                                {formatCryptoPrice(subTotal, item.currency_code)}{' '}
-                                                                                {upperCase(item.currency_code)}
+                                                                                <strong>
+                                                                                    Subtotal:
+                                                                                </strong>{' '}
+                                                                                {formatCryptoPrice(
+                                                                                    subTotal,
+                                                                                    item.currency_code
+                                                                                )}{' '}
+                                                                                {upperCase(
+                                                                                    item.currency_code
+                                                                                )}
                                                                             </Text>
                                                                         </VStack>
 
                                                                         {/* Right Column: Order ID & Chain Data */}
-                                                                        <VStack align="start" spacing={2} flex="1">
-                                                                            <Flex align="center" gap={2}>
+                                                                        <VStack
+                                                                            align="start"
+                                                                            spacing={
+                                                                                2
+                                                                            }
+                                                                            flex="1"
+                                                                        >
+                                                                            <Flex
+                                                                                align="center"
+                                                                                gap={
+                                                                                    2
+                                                                                }
+                                                                            >
                                                                                 <Text fontSize="md">
-                                                                                    <strong>Order ID:</strong>{' '}
-                                                                                    {order?.id && typeof order.id === 'string'
-                                                                                        ? order.id.replace(/^order_/, '') // Remove "order_" prefix
+                                                                                    <strong>
+                                                                                        Order
+                                                                                        ID:
+                                                                                    </strong>{' '}
+                                                                                    {order?.id &&
+                                                                                    typeof order.id ===
+                                                                                        'string'
+                                                                                        ? order.id.replace(
+                                                                                              /^order_/,
+                                                                                              ''
+                                                                                          ) // Remove "order_" prefix
                                                                                         : 'Order ID not available'}
                                                                                 </Text>
                                                                             </Flex>
 
-                                                                            <Flex align="center" gap={2}>
-                                                                                <strong>Order Chain:</strong>
+                                                                            <Flex
+                                                                                align="center"
+                                                                                gap={
+                                                                                    2
+                                                                                }
+                                                                            >
+                                                                                <strong>
+                                                                                    Order
+                                                                                    Chain:
+                                                                                </strong>
                                                                                 <Image
-                                                                                    src={getChainLogo(order?.payments[0]?.blockchain_data?.chain_id)}
-                                                                                    alt={chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
-                                                                                    width={25}
-                                                                                    height={25}
+                                                                                    src={getChainLogo(
+                                                                                        chainId
+                                                                                    )}
+                                                                                    alt={chainIdToName(
+                                                                                        chainId
+                                                                                    )}
+                                                                                    width={
+                                                                                        25
+                                                                                    }
+                                                                                    height={
+                                                                                        25
+                                                                                    }
                                                                                 />
                                                                                 <Text>
-                                                                                    {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                    {chainIdToName(
+                                                                                        chainId
+                                                                                    )}
                                                                                 </Text>
                                                                             </Flex>
                                                                         </VStack>
@@ -396,22 +479,55 @@ const Delivered = ({
                                                                         boxShadow="sm"
                                                                         fontFamily="Inter, sans-serif"
                                                                     >
-                                                                        {order.notes.map((note: OrderNote, index: number) => (
-                                                                            <div key={note.id}>
-                                                                                {/* Date in smaller, gray text */}
-                                                                                <Text color="gray.400" fontSize="sm" mb={2}>
-                                                                                    {format(new Date(note.updated_at), 'EEEE, MMMM d, yyyy | h:mm a')}
-                                                                                </Text>
+                                                                        {order.notes.map(
+                                                                            (
+                                                                                note: OrderNote,
+                                                                                index: number
+                                                                            ) => (
+                                                                                <div
+                                                                                    key={
+                                                                                        note.id
+                                                                                    }
+                                                                                >
+                                                                                    {/* Date in smaller, gray text */}
+                                                                                    <Text
+                                                                                        color="gray.400"
+                                                                                        fontSize="sm"
+                                                                                        mb={
+                                                                                            2
+                                                                                        }
+                                                                                    >
+                                                                                        {format(
+                                                                                            new Date(
+                                                                                                note.updated_at
+                                                                                            ),
+                                                                                            'EEEE, MMMM d, yyyy | h:mm a'
+                                                                                        )}
+                                                                                    </Text>
 
-                                                                                {/* The note content */}
-                                                                                <Text color="white">{note.note}</Text>
+                                                                                    {/* The note content */}
+                                                                                    <Text color="white">
+                                                                                        {
+                                                                                            note.note
+                                                                                        }
+                                                                                    </Text>
 
-                                                                                {/* Divider between notes (except after the last one) */}
-                                                                                {index < order.notes.length - 1 && (
-                                                                                    <Divider my={4} borderColor="#272727" />
-                                                                                )}
-                                                                            </div>
-                                                                        ))}
+                                                                                    {/* Divider between notes (except after the last one) */}
+                                                                                    {index <
+                                                                                        order
+                                                                                            .notes
+                                                                                            .length -
+                                                                                            1 && (
+                                                                                        <Divider
+                                                                                            my={
+                                                                                                4
+                                                                                            }
+                                                                                            borderColor="#272727"
+                                                                                        />
+                                                                                    )}
+                                                                                </div>
+                                                                            )
+                                                                        )}
                                                                     </Box>
                                                                 </TabPanel>
                                                             )}
