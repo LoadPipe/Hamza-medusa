@@ -285,7 +285,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                             <a
                                 href={
                                     process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK
-                                        ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?channel=${storeHandle}`
+                                        ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?target=${storeHandle}.hamzamarket`
                                         : 'https://support.hamza.market/help/1568263160'
                                 }
                                 target="_blank"
