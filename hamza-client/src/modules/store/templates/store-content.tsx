@@ -31,35 +31,34 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
     const router = useRouter();
 
     useEffect(() => {
-        getStorePage().then((r) => {
-            console.log(r);
-            if (r?.length) router.push(r);
-        });
-    }, [params.slug]);
+        async function loadStore() {
+            try {
+                if (!params.slug?.trim()) {
+                    // If no slug, redirect to not-found
+                    window.location.href = '/not-found';
+                    return;
+                }
 
-    const getStorePage = async () => {
-        try {
-            const response = await getStoreBySlug(params.slug);
+                const response = await getStoreBySlug(params.slug);
 
-            if (
-                response?.products &&
-                JSON.stringify(response?.products) !==
-                    JSON.stringify(reviewStats)
-            ) {
+                if (!response || !response.products) {
+                    console.log('Store not found or invalid response');
+                    window.location.href = '/not-found';
+                    return;
+                }
+
                 setStoreName(response?.store?.name);
                 setStoreHandle(response?.store?.handle);
                 setReviewStats(response?.products);
-            } else {
-                console.log('Response was null or no data changes');
-                return '/not-found';
+                setIsLoading(false);
+            } catch (error) {
+                console.error(`Error fetching store:`, error);
+                window.location.href = '/error';
             }
-        } catch (error) {
-            console.log(`Error ${error}`);
-            return '/error';
         }
 
-        return '';
-    };
+        loadStore();
+    }, [params.slug]);
 
     let readableDate = 'Invalid date';
     if (reviewStats.createdAt) {
@@ -126,7 +125,10 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                                     objectPosition="center"
                                     alignSelf={'center'}
                                     onLoad={() => setIsLoading(false)}
-                                    onError={() => setIsLoading(false)}
+                                    onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                    }}
                                 />
                             )}
 
@@ -385,7 +387,8 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                 </Flex>
             </Flex>
 
-            <StoreProductDisplay storeName={slug} />
+            {/* Only render StoreProductDisplay if we have a valid store */}
+            {!isLoading && <StoreProductDisplay storeName={slug} />}
         </Box>
     );
 }
