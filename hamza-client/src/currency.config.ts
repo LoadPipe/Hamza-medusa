@@ -281,20 +281,20 @@ const chainConfig: any = {
     },
     //Base Sepolia
     84532: {
-        chain_name: 'base sepolia',
+        chain_name: 'base',
         usdc: {
-            contract_address: '0x5deac602762362fe5f135fa5904351916053cf70',
+            contract_address: '0xD06c3b9Ee65245cE34089E8a55F0312500512455',
             precision: {
                 db: 2,
-                native: 6,
+                native: 4,
                 display: 2,
             },
         },
         usdt: {
-            contract_address: '0x8d9cb8f3191Fd685e2C14D2AC3Fb2b16D44EAfc3',
+            contract_address: '0x0baD6a5a59F3ca21Fb3b053d0a083F9DB37c1c1d',
             precision: {
                 db: 2,
-                native: 6,
+                native: 18,
                 display: 2,
             },
         },
