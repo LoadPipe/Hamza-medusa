@@ -493,7 +493,12 @@ const Cancelled = ({
                                                                                     }
                                                                                     target="_blank"
                                                                                 >
-                                                                                    <Text fontSize="md">
+                                                                                    <Text
+                                                                                        fontSize="md"
+                                                                                        color={
+                                                                                            '#ADD8E6'
+                                                                                        }
+                                                                                    >
                                                                                         <strong>
                                                                                             Chat
                                                                                             with
