@@ -467,7 +467,7 @@ const Delivered = ({
                                                                                         process
                                                                                             .env
                                                                                             .NEXT_PUBLIC_HAMZA_CHAT_LINK
-                                                                                            ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?target=${order.store.handle}.hamzamarket`
+                                                                                            ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?target=${order.store.handle}.hamzamarket&order=${order.id}`
                                                                                             : 'https://support.hamza.market/help/1568263160'
                                                                                     }
                                                                                     target="_blank"
