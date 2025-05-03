@@ -12,13 +12,12 @@ import {
     TabPanel,
     VStack,
 } from '@chakra-ui/react';
-import Spinner from '@modules/common/icons/spinner';
 import { addToCart } from '@modules/cart/actions';
 import toast from 'react-hot-toast';
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
@@ -455,6 +454,37 @@ const Delivered = ({
                                                                                         chainId
                                                                                     )}
                                                                                 </Text>
+                                                                            </Flex>
+
+                                                                            <Flex
+                                                                                align="center"
+                                                                                gap={
+                                                                                    2
+                                                                                }
+                                                                            >
+                                                                                <a
+                                                                                    href={
+                                                                                        process
+                                                                                            .env
+                                                                                            .NEXT_PUBLIC_HAMZA_CHAT_LINK
+                                                                                            ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?target=${order.store.handle}.hamzamarket&order=${order.id}`
+                                                                                            : 'https://support.hamza.market/help/1568263160'
+                                                                                    }
+                                                                                    target="_blank"
+                                                                                >
+                                                                                    <Text
+                                                                                        fontSize="md"
+                                                                                        color={
+                                                                                            '#ADD8E6'
+                                                                                        }
+                                                                                    >
+                                                                                        <strong>
+                                                                                            Chat
+                                                                                            with
+                                                                                            Merchant
+                                                                                        </strong>{' '}
+                                                                                    </Text>
+                                                                                </a>
                                                                             </Flex>
                                                                         </VStack>
                                                                     </Flex>

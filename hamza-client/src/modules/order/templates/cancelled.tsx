@@ -476,6 +476,37 @@ const Cancelled = ({
                                                                                     )}
                                                                                 </Text>
                                                                             </Flex>
+
+                                                                            <Flex
+                                                                                align="center"
+                                                                                gap={
+                                                                                    2
+                                                                                }
+                                                                            >
+                                                                                <a
+                                                                                    href={
+                                                                                        process
+                                                                                            .env
+                                                                                            .NEXT_PUBLIC_HAMZA_CHAT_LINK
+                                                                                            ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?target=${order.store.handle}.hamzamarket&order=${order.id}`
+                                                                                            : 'https://support.hamza.market/help/1568263160'
+                                                                                    }
+                                                                                    target="_blank"
+                                                                                >
+                                                                                    <Text
+                                                                                        fontSize="md"
+                                                                                        color={
+                                                                                            '#ADD8E6'
+                                                                                        }
+                                                                                    >
+                                                                                        <strong>
+                                                                                            Chat
+                                                                                            with
+                                                                                            Merchant
+                                                                                        </strong>{' '}
+                                                                                    </Text>
+                                                                                </a>
+                                                                            </Flex>
                                                                         </VStack>
                                                                     </Flex>
                                                                 </VStack>

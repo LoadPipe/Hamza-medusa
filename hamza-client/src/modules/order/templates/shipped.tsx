@@ -7,7 +7,6 @@ import {
     Divider,
     Flex,
     HStack,
-    Icon,
     Tab,
     TabList,
     TabPanel,
@@ -16,15 +15,12 @@ import {
     Text,
     VStack,
 } from '@chakra-ui/react';
-import { BsCircleFill } from 'react-icons/bs';
 import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import Spinner from '@modules/common/icons/spinner';
-import { debounce, upperCase } from 'lodash';
+import { useQueryClient } from '@tanstack/react-query';
+import { upperCase } from 'lodash';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
-import currencyIcons from '@/images/currencies/crypto-currencies';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
@@ -461,6 +457,37 @@ const Shipped = ({
                                                                                             chainId
                                                                                         )}
                                                                                     </Text>
+                                                                                </Flex>
+
+                                                                                <Flex
+                                                                                    align="center"
+                                                                                    gap={
+                                                                                        2
+                                                                                    }
+                                                                                >
+                                                                                    <a
+                                                                                        href={
+                                                                                            process
+                                                                                                .env
+                                                                                                .NEXT_PUBLIC_HAMZA_CHAT_LINK
+                                                                                                ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?target=${order.store.handle}.hamzamarket&order=${order.id}`
+                                                                                                : 'https://support.hamza.market/help/1568263160'
+                                                                                        }
+                                                                                        target="_blank"
+                                                                                    >
+                                                                                        <Text
+                                                                                            fontSize="md"
+                                                                                            color={
+                                                                                                '#ADD8E6'
+                                                                                            }
+                                                                                        >
+                                                                                            <strong>
+                                                                                                Chat
+                                                                                                with
+                                                                                                Merchant
+                                                                                            </strong>{' '}
+                                                                                        </Text>
+                                                                                    </a>
                                                                                 </Flex>
                                                                             </VStack>
                                                                         </Flex>
