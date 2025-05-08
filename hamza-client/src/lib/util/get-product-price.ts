@@ -100,7 +100,8 @@ export function getProductPrice({
 
 export function formatCryptoPrice(
     amount: number,
-    currencyCode: string = 'usdc'
+    currencyCode: string = 'usdc',
+    roundToPrecision: boolean = true
 ): string | number {
     try {
         if (!currencyCode?.length) currencyCode = 'usdc';
@@ -113,9 +114,11 @@ export function formatCryptoPrice(
         let output =
             displayPrecision <= 2
                 ? Number(amount).toFixed(2)
-                : parseFloat(Number(amount).toFixed(displayPrecision));
+                : roundToPrecision
+                  ? parseFloat(Number(amount).toFixed(displayPrecision))
+                  : parseFloat(Number(amount).toString());
 
-        if (displayPrecision > 2) {
+        if (displayPrecision > 2 && roundToPrecision) {
             output = limitPrecision(
                 parseFloat(output.toString()),
                 currencyPrecision.display

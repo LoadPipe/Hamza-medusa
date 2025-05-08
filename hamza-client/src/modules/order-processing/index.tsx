@@ -352,7 +352,8 @@ const OrderProcessing = ({
                                             <Text ml="0.4rem" color="white">
                                                 {formatCryptoPrice(
                                                     paymentTotal ?? 0,
-                                                    currencyCode ?? 'usdc'
+                                                    currencyCode ?? 'usdc',
+                                                    false
                                                 )}
                                             </Text>
                                         </Flex>
@@ -615,7 +616,8 @@ const OrderProcessing = ({
                                                                 paymentTotal ??
                                                                     0,
                                                                 currencyCode ??
-                                                                    'usdc'
+                                                                    'usdc',
+                                                                false
                                                             )}
                                                         </Text>
                                                     </VStack>
@@ -775,7 +777,8 @@ const OrderProcessing = ({
                                         <Text ml="0.4rem" color="white">
                                             {formatCryptoPrice(
                                                 paymentTotal ?? 0,
-                                                currencyCode ?? 'usdc'
+                                                currencyCode ?? 'usdc',
+                                                false
                                             )}
                                         </Text>
                                     </Flex>
