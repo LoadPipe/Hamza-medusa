@@ -34,6 +34,7 @@ import {
 import Image from 'next/image';
 import { OrderNote } from './all';
 import { format } from 'date-fns';
+import OrderDetails from '@modules/order/components/order-details';
 
 const Delivered = ({
     customer,
@@ -107,6 +108,24 @@ const Delivered = ({
                                 acc + item.unit_price * item.quantity,
                             0
                         );
+
+                        const orderShippingTotal =
+                            order.shipping_methods.reduce(
+                                (shippingTotal: number, method: any) =>
+                                    shippingTotal + (method.price ?? 0),
+                                0
+                            );
+
+                        const orderSubTotal = subTotal + orderShippingTotal;
+
+                        const orderTotalPaid = order.payments.reduce(
+                            (paymentTotal: number, payment: any) =>
+                                paymentTotal + (payment.amount ?? 0),
+                            0
+                        );
+
+                        const orderDiscountTotal =
+                            orderSubTotal - orderTotalPaid;
 
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
                         const hasSellerNotes = order?.notes?.length > 0;
@@ -335,160 +354,23 @@ const Delivered = ({
                                                         </TabList>
                                                         <TabPanels>
                                                             <TabPanel>
-                                                                <VStack
-                                                                    align="start"
-                                                                    spacing={4}
-                                                                    p={4}
-                                                                    borderRadius="lg"
-                                                                    w="100%"
-                                                                >
-                                                                    <Flex
-                                                                        direction={{
-                                                                            base: 'column',
-                                                                            md: 'row',
-                                                                        }}
-                                                                        gap={6}
-                                                                        w="100%"
-                                                                    >
-                                                                        {/* Left Column: Shipping Cost & Subtotal */}
-                                                                        <VStack
-                                                                            align="start"
-                                                                            spacing={
-                                                                                2
-                                                                            }
-                                                                            flex="1"
-                                                                        >
-                                                                            {order
-                                                                                ?.shipping_methods[0]
-                                                                                ?.price && (
-                                                                                <Text fontSize="md">
-                                                                                    <strong>
-                                                                                        Order
-                                                                                        Shipping
-                                                                                        Cost:
-                                                                                    </strong>{' '}
-                                                                                    {formatCryptoPrice(
-                                                                                        Number(
-                                                                                            order
-                                                                                                ?.shipping_methods[0]
-                                                                                                ?.price
-                                                                                        ),
-                                                                                        item.currency_code ??
-                                                                                            'usdc'
-                                                                                    )}{' '}
-                                                                                    {upperCase(
-                                                                                        item.currency_code
-                                                                                    )}
-                                                                                </Text>
-                                                                            )}
-                                                                            <Text fontSize="md">
-                                                                                <strong>
-                                                                                    Subtotal:
-                                                                                </strong>{' '}
-                                                                                {formatCryptoPrice(
-                                                                                    subTotal,
-                                                                                    item.currency_code
-                                                                                )}{' '}
-                                                                                {upperCase(
-                                                                                    item.currency_code
-                                                                                )}
-                                                                            </Text>
-                                                                        </VStack>
-
-                                                                        {/* Right Column: Order ID & Chain Data */}
-                                                                        <VStack
-                                                                            align="start"
-                                                                            spacing={
-                                                                                2
-                                                                            }
-                                                                            flex="1"
-                                                                        >
-                                                                            <Flex
-                                                                                align="center"
-                                                                                gap={
-                                                                                    2
-                                                                                }
-                                                                            >
-                                                                                <Text fontSize="md">
-                                                                                    <strong>
-                                                                                        Order
-                                                                                        ID:
-                                                                                    </strong>{' '}
-                                                                                    {order?.id &&
-                                                                                    typeof order.id ===
-                                                                                        'string'
-                                                                                        ? order.id.replace(
-                                                                                              /^order_/,
-                                                                                              ''
-                                                                                          ) // Remove "order_" prefix
-                                                                                        : 'Order ID not available'}
-                                                                                </Text>
-                                                                            </Flex>
-
-                                                                            <Flex
-                                                                                align="center"
-                                                                                gap={
-                                                                                    2
-                                                                                }
-                                                                            >
-                                                                                <strong>
-                                                                                    Order
-                                                                                    Chain:
-                                                                                </strong>
-                                                                                <Image
-                                                                                    src={getChainLogo(
-                                                                                        chainId
-                                                                                    )}
-                                                                                    alt={chainIdToName(
-                                                                                        chainId
-                                                                                    )}
-                                                                                    width={
-                                                                                        25
-                                                                                    }
-                                                                                    height={
-                                                                                        25
-                                                                                    }
-                                                                                />
-                                                                                <Text>
-                                                                                    {chainIdToName(
-                                                                                        chainId
-                                                                                    )}
-                                                                                </Text>
-                                                                            </Flex>
-
-                                                                            <Flex
-                                                                                align="center"
-                                                                                gap={
-                                                                                    2
-                                                                                }
-                                                                            >
-                                                                                <a
-                                                                                    href={
-                                                                                        process
-                                                                                            .env
-                                                                                            .NEXT_PUBLIC_HAMZA_CHAT_LINK
-                                                                                            ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?target=${order.store.handle}.hamzamarket&order=${order.id}`
-                                                                                            : 'https://support.hamza.market/help/1568263160'
-                                                                                    }
-                                                                                    target="_blank"
-                                                                                >
-                                                                                    <Text
-                                                                                        fontSize="md"
-                                                                                        color={
-                                                                                            '#ADD8E6'
-                                                                                        }
-                                                                                    >
-                                                                                        <strong>
-                                                                                            Chat
-                                                                                            with
-                                                                                            Merchant
-                                                                                        </strong>{' '}
-                                                                                    </Text>
-                                                                                </a>
-                                                                            </Flex>
-                                                                        </VStack>
-                                                                    </Flex>
-                                                                </VStack>
+                                                                <OrderDetails
+                                                                    order={
+                                                                        order
+                                                                    }
+                                                                    subTotal={
+                                                                        subTotal
+                                                                    }
+                                                                    orderDiscountTotal={
+                                                                        orderDiscountTotal
+                                                                    }
+                                                                    orderShippingTotal={
+                                                                        orderShippingTotal
+                                                                    }
+                                                                    chainId={
+                                                                        chainId
+                                                                    }
+                                                                />
                                                             </TabPanel>
                                                             <TabPanel>
                                                                 <OrderTimeline
@@ -497,7 +379,6 @@ const Delivered = ({
                                                                     }
                                                                 />
                                                             </TabPanel>
-
                                                             {hasSellerNotes && (
                                                                 <TabPanel>
                                                                     <Box
