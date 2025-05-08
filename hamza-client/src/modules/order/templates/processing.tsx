@@ -41,6 +41,7 @@ import OrderDetails from '@modules/order/components/order-details';
 import { OrdersData, OrderNote, HistoryMeta, OrderHistory } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import { upperCase } from 'lodash';
+import { calculateOrderTotals } from '@/lib/util/order-calculations';
 
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
@@ -196,29 +197,13 @@ const Processing = ({
             {processingOrder && processingOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {processingOrder.map((order: any) => {
-                        const subTotal = order.items.reduce(
-                            (acc: number, item: any) =>
-                                acc + item.unit_price * item.quantity,
-                            0
-                        );
-
-                        const orderShippingTotal =
-                            order.shipping_methods.reduce(
-                                (shippingTotal: number, method: any) =>
-                                    shippingTotal + (method.price ?? 0),
-                                0
-                            );
-
-                        const orderSubTotal = subTotal + orderShippingTotal;
-
-                        const orderTotalPaid = order.payments.reduce(
-                            (paymentTotal: number, payment: any) =>
-                                paymentTotal + (payment.amount ?? 0),
-                            0
-                        );
-
-                        const orderDiscountTotal =
-                            orderSubTotal - orderTotalPaid;
+                        const {
+                            subTotal,
+                            orderShippingTotal,
+                            orderSubTotal,
+                            orderTotalPaid,
+                            orderDiscountTotal,
+                        } = calculateOrderTotals(order);
 
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
                         const hasSellerNotes = order?.notes?.length > 0;

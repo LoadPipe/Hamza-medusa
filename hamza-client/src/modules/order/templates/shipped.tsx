@@ -32,6 +32,8 @@ import {
 import Image from 'next/image';
 import { OrderNote } from './all';
 import { format } from 'date-fns';
+import OrderDetails from '@modules/order/components/order-details';
+import { calculateOrderTotals } from '@/lib/util/order-calculations';
 
 const Shipped = ({
     customer,
@@ -72,11 +74,14 @@ const Shipped = ({
             {shippedOrder && shippedOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {shippedOrder.map((order: any) => {
-                        const subTotal = order.items.reduce(
-                            (acc: number, item: any) =>
-                                acc + item.unit_price * item.quantity,
-                            0
-                        );
+                        const {
+                            subTotal,
+                            orderShippingTotal,
+                            orderSubTotal,
+                            orderTotalPaid,
+                            orderDiscountTotal,
+                        } = calculateOrderTotals(order);
+
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
                         const hasSellerNotes = order?.notes?.length > 0;
 
@@ -86,9 +91,7 @@ const Shipped = ({
                             order.payments[0]?.blockchain_data?.chain_id;
 
                         return (
-                            <div
-                                key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            >
+                            <div key={order.id}>
                                 {order.items?.map(
                                     (
                                         item: any,
@@ -263,236 +266,23 @@ const Shipped = ({
                                                         </TabList>
                                                         <TabPanels>
                                                             <TabPanel>
-                                                                <HStack
-                                                                    align="start"
-                                                                    spacing={3}
-                                                                    w="100%"
-                                                                >
-                                                                    <VStack
-                                                                        align="start"
-                                                                        spacing={
-                                                                            2
-                                                                        }
-                                                                    >
-                                                                        <Flex
-                                                                            direction={{
-                                                                                base: 'column',
-                                                                                md: 'row',
-                                                                            }}
-                                                                            gap={
-                                                                                6
-                                                                            }
-                                                                            w="100%"
-                                                                        >
-                                                                            {/* Left Column: Shipping Cost & Subtotal */}
-                                                                            <VStack
-                                                                                align="start"
-                                                                                spacing={
-                                                                                    2
-                                                                                }
-                                                                                flex="1"
-                                                                            >
-                                                                                {/* Stack text vertically */}
-                                                                                {order.tracking_number && (
-                                                                                    <>
-                                                                                        <Text>
-                                                                                            <b>
-                                                                                                Tracking
-                                                                                                Number:
-                                                                                            </b>{' '}
-                                                                                            {
-                                                                                                order.tracking_number
-                                                                                            }
-                                                                                        </Text>
-                                                                                    </>
-                                                                                )}
-                                                                                <Text fontSize="md">
-                                                                                    <strong>
-                                                                                        Subtotal:
-                                                                                    </strong>{' '}
-                                                                                    {formatCryptoPrice(
-                                                                                        subTotal,
-                                                                                        item.currency_code
-                                                                                    )}{' '}
-                                                                                    {upperCase(
-                                                                                        item.currency_code
-                                                                                    )}
-                                                                                </Text>
-                                                                                {order
-                                                                                    ?.shipping_methods[0]
-                                                                                    ?.price && (
-                                                                                    <Text fontSize="md">
-                                                                                        <strong>
-                                                                                            Order
-                                                                                            Shipping
-                                                                                            Cost:
-                                                                                        </strong>{' '}
-                                                                                        {formatCryptoPrice(
-                                                                                            Number(
-                                                                                                order
-                                                                                                    ?.shipping_methods[0]
-                                                                                                    ?.price
-                                                                                            ),
-                                                                                            item.currency_code ??
-                                                                                                'usdc'
-                                                                                        )}{' '}
-                                                                                        {upperCase(
-                                                                                            item.currency_code
-                                                                                        )}
-                                                                                    </Text>
-                                                                                )}
-                                                                                <Flex alignItems="center">
-                                                                                    <Text
-                                                                                        fontWeight="bold"
-                                                                                        mr={
-                                                                                            2
-                                                                                        }
-                                                                                    >
-                                                                                        Shipped
-                                                                                        on
-                                                                                        Date:
-                                                                                    </Text>
-                                                                                    <Text>
-                                                                                        {order
-                                                                                            .external_metadata
-                                                                                            ?.tracking
-                                                                                            ?.data
-                                                                                            ?.soOrderInfo
-                                                                                            ?.createTime
-                                                                                            ? new Date(
-                                                                                                  order.external_metadata.tracking.data.soOrderInfo.createTime
-                                                                                              ).toLocaleString(
-                                                                                                  undefined,
-                                                                                                  {
-                                                                                                      year: 'numeric',
-                                                                                                      month: 'long',
-                                                                                                      day: 'numeric',
-                                                                                                      hour: '2-digit',
-                                                                                                      minute: '2-digit',
-                                                                                                      second: '2-digit',
-                                                                                                  }
-                                                                                              )
-                                                                                            : 'Date not available'}
-                                                                                    </Text>
-                                                                                </Flex>
-                                                                            </VStack>
-
-                                                                            {/* Right Column: Order ID & Chain Data */}
-                                                                            <VStack
-                                                                                align="start"
-                                                                                spacing={
-                                                                                    2
-                                                                                }
-                                                                            >
-                                                                                <Text fontSize="16px">
-                                                                                    <strong>
-                                                                                        Order
-                                                                                        Created:
-                                                                                    </strong>{' '}
-                                                                                    {order?.created_at
-                                                                                        ? new Date(
-                                                                                              order.created_at
-                                                                                          ).toLocaleDateString(
-                                                                                              undefined,
-                                                                                              {
-                                                                                                  year: 'numeric',
-                                                                                                  month: 'long',
-                                                                                                  day: 'numeric',
-                                                                                                  hour: '2-digit',
-                                                                                                  minute: '2-digit',
-                                                                                                  second: '2-digit',
-                                                                                              }
-                                                                                          )
-                                                                                        : 'N/A'}
-                                                                                </Text>
-
-                                                                                <Flex
-                                                                                    align="center"
-                                                                                    gap={
-                                                                                        2
-                                                                                    }
-                                                                                >
-                                                                                    <Text fontSize="md">
-                                                                                        <strong>
-                                                                                            Order
-                                                                                            ID:
-                                                                                        </strong>{' '}
-                                                                                        {order?.id &&
-                                                                                        typeof order.id ===
-                                                                                            'string'
-                                                                                            ? order.id.replace(
-                                                                                                  /^order_/,
-                                                                                                  ''
-                                                                                              ) // Remove "order_" prefix
-                                                                                            : 'Order ID not available'}
-                                                                                    </Text>
-                                                                                </Flex>
-
-                                                                                <Flex
-                                                                                    align="start"
-                                                                                    gap={
-                                                                                        2
-                                                                                    }
-                                                                                >
-                                                                                    <strong>
-                                                                                        Order
-                                                                                        Chain:
-                                                                                    </strong>
-                                                                                    <Image
-                                                                                        src={getChainLogo(
-                                                                                            chainId
-                                                                                        )}
-                                                                                        alt={chainIdToName(
-                                                                                            chainId
-                                                                                        )}
-                                                                                        width={
-                                                                                            25
-                                                                                        }
-                                                                                        height={
-                                                                                            25
-                                                                                        }
-                                                                                    />
-                                                                                    <Text>
-                                                                                        {chainIdToName(
-                                                                                            chainId
-                                                                                        )}
-                                                                                    </Text>
-                                                                                </Flex>
-
-                                                                                <Flex
-                                                                                    align="center"
-                                                                                    gap={
-                                                                                        2
-                                                                                    }
-                                                                                >
-                                                                                    <a
-                                                                                        href={
-                                                                                            process
-                                                                                                .env
-                                                                                                .NEXT_PUBLIC_HAMZA_CHAT_LINK
-                                                                                                ? `${process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK}?target=${order.store.handle}.hamzamarket&order=${order.id}`
-                                                                                                : 'https://support.hamza.market/help/1568263160'
-                                                                                        }
-                                                                                        target="_blank"
-                                                                                    >
-                                                                                        <Text
-                                                                                            fontSize="md"
-                                                                                            color={
-                                                                                                '#ADD8E6'
-                                                                                            }
-                                                                                        >
-                                                                                            <strong>
-                                                                                                Chat
-                                                                                                with
-                                                                                                Merchant
-                                                                                            </strong>{' '}
-                                                                                        </Text>
-                                                                                    </a>
-                                                                                </Flex>
-                                                                            </VStack>
-                                                                        </Flex>
-                                                                    </VStack>
-                                                                </HStack>
+                                                                <OrderDetails
+                                                                    order={
+                                                                        order
+                                                                    }
+                                                                    subTotal={
+                                                                        subTotal
+                                                                    }
+                                                                    orderDiscountTotal={
+                                                                        orderDiscountTotal
+                                                                    }
+                                                                    orderShippingTotal={
+                                                                        orderShippingTotal
+                                                                    }
+                                                                    chainId={
+                                                                        chainId
+                                                                    }
+                                                                />
                                                             </TabPanel>
 
                                                             <TabPanel>

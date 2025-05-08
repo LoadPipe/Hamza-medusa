@@ -26,6 +26,15 @@ interface Order {
     tracking_number?: string;
     items: OrderItem[];
     store: OrderStore;
+    external_metadata?: {
+        tracking?: {
+            data?: {
+                soOrderInfo?: {
+                    createTime?: string;
+                };
+            };
+        };
+    };
 }
 
 interface OrderDetailsProps {
@@ -94,6 +103,26 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
                             )}{' '}
                             {upperCase(currencyCode)}
                         </Text>
+                    )}
+                    {order.external_metadata?.tracking?.data?.soOrderInfo
+                        ?.createTime && (
+                        <Flex alignItems="center">
+                            <Text fontWeight="bold" mr={2}>
+                                Shipped on Date:
+                            </Text>
+                            <Text>
+                                {new Date(
+                                    order.external_metadata.tracking.data.soOrderInfo.createTime
+                                ).toLocaleString(undefined, {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                })}
+                            </Text>
+                        </Flex>
                     )}
                 </VStack>
 
