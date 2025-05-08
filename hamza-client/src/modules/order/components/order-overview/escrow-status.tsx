@@ -32,8 +32,17 @@ function getEscrowStatus(payment: PaymentDefinition): string {
     return 'in escrow';
 }
 
-const EscrowStatus: React.FC<EscrowStatusProps> = ({ payment }: { payment: PaymentDefinition | null }) => {
-    const status = payment ? getEscrowStatus(payment) : '-';
+const capitalizeFirstLetter = (str?: string) =>
+    str ? str.replace(/(?:^|\s)\S/g, (match) => match.toUpperCase()) : ''; // Capitalize every word's first char
+
+const EscrowStatus: React.FC<EscrowStatusProps> = ({
+    payment,
+}: {
+    payment: PaymentDefinition | null;
+}) => {
+    const status = payment
+        ? capitalizeFirstLetter(getEscrowStatus(payment))
+        : '-';
 
     return (
         <div className="p-4 bg-[#242424] rounded-lg shadow-sm">

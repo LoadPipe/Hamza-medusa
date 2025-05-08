@@ -24,6 +24,7 @@ interface BlockchainData {
     payer_address: string;
     receiver_address: string;
     transaction_id: string;
+    payment_chain_id: number;
 }
 
 interface Payment {
