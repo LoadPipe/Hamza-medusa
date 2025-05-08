@@ -5,13 +5,15 @@ import { IoMdInformationCircleOutline } from 'react-icons/io';
 
 const DynamicOrderStatus = ({
     paymentStatus,
-    paymentType,
+    fulfillmentStatus,
 }: {
     paymentStatus?: string;
-    paymentType?: string;
+    fulfillmentStatus?: string;
 }) => {
     const capitalizeFirstLetter = (str?: string) =>
-        str ? str.charAt(0).toUpperCase() + str.slice(1) : ''; // Handle undefined
+        str ? str.replace(/(?:^|\s)\S/g, (match) => match.toUpperCase()) : ''; // Capitalize every word's first char
+
+    const removeUnderscores = (s?: string) => (s ? s.replaceAll('_', ' ') : '');
 
     return (
         <Flex
@@ -41,7 +43,9 @@ const DynamicOrderStatus = ({
                 mx={1}
             />
 
-            <Text color={'primary.green.900'}>{paymentType}</Text>
+            <Text color={'primary.green.900'}>
+                {capitalizeFirstLetter(removeUnderscores(fulfillmentStatus))}
+            </Text>
         </Flex>
     );
 };

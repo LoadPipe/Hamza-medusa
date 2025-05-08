@@ -61,7 +61,7 @@ export const OrderComponent = ({ order }: { order: Order }) => {
                             {index === 0 ? (
                                 <DynamicOrderStatus
                                     paymentStatus={order.payment_status}
-                                    paymentType={'Delivered'}
+                                    fulfillmentStatus={order.fulfillment_status}
                                 />
                             ) : null}
                             <DeliveredCard
