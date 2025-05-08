@@ -65,7 +65,32 @@ export default function OrderCompletedTemplate({
             </Text>
 
             {/* Order Body */}
-            <OrderDetails cart={cart} />
+            <OrderDetails
+                order={{
+                    id: order.id,
+                    items: order.items.map((item) => ({
+                        id: item.id,
+                        currency_code: item.currency_code || 'usdc',
+                        unit_price: item.unit_price,
+                        quantity: item.quantity,
+                    })),
+                    store: {
+                        handle: '',
+                        name: (order as any).store?.name || '',
+                        icon: (order as any).store?.icon || '',
+                    },
+                    tracking_number:
+                        order.fulfillments?.[0]?.tracking_numbers?.[0],
+                    external_metadata: order.metadata,
+                }}
+                subTotal={cart.subtotal || 0}
+                orderDiscountTotal={cart.discount_total || 0}
+                orderShippingTotal={cart.shipping_total || 0}
+                chainId={
+                    order.payments[0]?.blockchain_data?.chain_id?.toString() ||
+                    '1'
+                }
+            />
             <Divider my="2rem" borderColor="#555555" />
             <Summary cart={cart} />
 
