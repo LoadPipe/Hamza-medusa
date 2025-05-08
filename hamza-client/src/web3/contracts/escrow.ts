@@ -43,6 +43,7 @@ export type MulticallPaymentInput = {
 interface BlockchainData {
     escrow_address: string; //contract address
     chain_id: number;
+    payment_chain_id: number;
 }
 
 export interface Payment extends MedusaPayment {
