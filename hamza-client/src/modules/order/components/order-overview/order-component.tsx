@@ -24,6 +24,7 @@ import { retrieveOrder } from '@/lib/server';
 import { notFound } from 'next/navigation';
 import { Order } from '@/web3/contracts/escrow';
 import OrderDetails from '../order-details';
+import { calculateOrderTotals } from '@/lib/util/order-calculations';
 
 // Add type mapping for OrderDetails component
 interface OrderDetailsOrder {
@@ -112,18 +113,23 @@ export const OrderComponent = ({ order }: { order: Order }) => {
         router.push('/checkout');
     };
 
-    const subTotal = order.items.reduce(
-        (acc: number, item: ExtendedLineItem) =>
-            acc + item.unit_price * item.quantity,
-        0
-    );
+    const { subTotal, orderShippingTotal, orderDiscountTotal } =
+        calculateOrderTotals(order as any);
+
+    // const subTotal = order.items.reduce(
+    //     (acc: number, item: ExtendedLineItem) =>
+    //         acc + item.unit_price * item.quantity,
+    //     0
+    // );
 
     // Calculate shipping total from shipping methods
-    const orderShippingTotal = order.shipping_methods?.[0]?.price || 0;
-    // For now, setting discount total to 0 as it's not available in the current order structure
-    const orderDiscountTotal = 0;
+    // const orderShippingTotal = order.shipping_methods?.[0]?.price || 0;
+    // // For now, setting discount total to 0 as it's not available in the current order structure
+    // const orderDiscountTotal = 0;
     // Get chainId from order metadata or default to a value
-    const chainId = order.metadata?.chainId?.toString() || '1'; // Default to mainnet if not specified
+    const chainId =
+        order.payments[0]?.blockchain_data?.payment_chain_id ??
+        order.payments[0]?.blockchain_data?.chain_id;
 
     // Map the order to match OrderDetails expected format
     const mappedOrder: OrderDetailsOrder = {
@@ -295,7 +301,7 @@ export const OrderComponent = ({ order }: { order: Order }) => {
                                                         orderShippingTotal={
                                                             orderShippingTotal
                                                         }
-                                                        chainId={chainId}
+                                                        chainId={chainId.toString()}
                                                     />
                                                 </TabPanel>
                                             </TabPanels>

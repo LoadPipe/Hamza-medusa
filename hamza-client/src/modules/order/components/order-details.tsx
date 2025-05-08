@@ -24,7 +24,7 @@ interface OrderStore {
 interface Order {
     id: string;
     tracking_number?: string;
-    items: OrderItem[];
+    items: OrderItem[] | any;
     store: OrderStore;
     external_metadata?: {
         tracking?: {
