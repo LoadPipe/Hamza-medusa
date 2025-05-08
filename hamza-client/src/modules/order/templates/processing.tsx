@@ -192,42 +192,6 @@ const Processing = ({
 
     return (
         <div style={{ width: '100%' }}>
-            {/*{processingOrdersLoading ? (*/}
-            {/*    <Box*/}
-            {/*        display="flex"*/}
-            {/*        flexDirection="column"*/}
-            {/*        justifyContent="center"*/}
-            {/*        alignItems="center"*/}
-            {/*        textAlign="center"*/}
-            {/*    >*/}
-            {/*        <Text color="white" fontSize="lg" mb={8}>*/}
-            {/*            Loading Processing orders...*/}
-            {/*        </Text>*/}
-            {/*        <Spinner size={80} />*/}
-            {/*    </Box>*/}
-            {/*) : processingOrdersError && orderActiveTab !== 'All Orders' ? (*/}
-            {/*    <Box*/}
-            {/*        display="flex"*/}
-            {/*        flexDirection="column"*/}
-            {/*        justifyContent="center"*/}
-            {/*        alignItems="center"*/}
-            {/*        textAlign="center"*/}
-            {/*        py={5}*/}
-            {/*    >*/}
-            {/*        <Text>Error fetching processing orders</Text>*/}
-            {/*    </Box>*/}
-            {/*) : processingOrdersError && orderActiveTab === 'All Orders' ? (*/}
-            {/*    <Box*/}
-            {/*        display="flex"*/}
-            {/*        flexDirection="column"*/}
-            {/*        justifyContent="center"*/}
-            {/*        alignItems="center"*/}
-            {/*        textAlign="center"*/}
-            {/*        py={5}*/}
-            {/*    >*/}
-            {/*        <Text>Error Fetching Orders, please refresh</Text>*/}
-            {/*    </Box>*/}
-            {/*) :*/}
             {processingOrder && processingOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {processingOrder.map((order: any) => {
@@ -236,6 +200,24 @@ const Processing = ({
                                 acc + item.unit_price * item.quantity,
                             0
                         );
+
+                        const orderShippingTotal =
+                            order.shipping_methods.reduce(
+                                (shippingTotal: number, method: any) =>
+                                    shippingTotal + (method.price ?? 0),
+                                0
+                            );
+
+                        const orderSubTotal = subTotal + orderShippingTotal;
+
+                        const orderTotalPaid = order.payments.reduce(
+                            (paymentTotal: number, payment: any) =>
+                                paymentTotal + (payment.amount ?? 0),
+                            0
+                        );
+
+                        const orderDiscountTotal =
+                            orderSubTotal - orderTotalPaid;
 
                         // Check if we Seller has left a `PUBLIC` note, we're only returning public notes to client.
                         const hasSellerNotes = order?.notes?.length > 0;
@@ -495,29 +477,6 @@ const Processing = ({
                                                                                     </>
                                                                                 )}
                                                                             </Flex>
-                                                                            {order
-                                                                                ?.shipping_methods[0]
-                                                                                ?.price && (
-                                                                                <Text fontSize="md">
-                                                                                    <strong>
-                                                                                        Order
-                                                                                        Shipping
-                                                                                        Cost:
-                                                                                    </strong>{' '}
-                                                                                    {formatCryptoPrice(
-                                                                                        Number(
-                                                                                            order
-                                                                                                ?.shipping_methods[0]
-                                                                                                ?.price
-                                                                                        ),
-                                                                                        item.currency_code ??
-                                                                                            'usdc'
-                                                                                    )}{' '}
-                                                                                    {upperCase(
-                                                                                        item.currency_code
-                                                                                    )}
-                                                                                </Text>
-                                                                            )}
                                                                             <Text fontSize="md">
                                                                                 <strong>
                                                                                     Subtotal:
@@ -530,6 +489,51 @@ const Processing = ({
                                                                                     item.currency_code
                                                                                 )}
                                                                             </Text>
+                                                                            {orderDiscountTotal &&
+                                                                                orderDiscountTotal >
+                                                                                    0 && (
+                                                                                    <Text fontSize="md">
+                                                                                        <strong>
+                                                                                            Order
+                                                                                            Discount
+                                                                                            Total:
+                                                                                        </strong>
+                                                                                        {
+                                                                                            ' -'
+                                                                                        }
+                                                                                        {formatCryptoPrice(
+                                                                                            Number(
+                                                                                                orderDiscountTotal
+                                                                                            ),
+                                                                                            item.currency_code ??
+                                                                                                'usdc'
+                                                                                        )}{' '}
+                                                                                        {upperCase(
+                                                                                            item.currency_code
+                                                                                        )}
+                                                                                    </Text>
+                                                                                )}
+                                                                            {orderShippingTotal &&
+                                                                                orderShippingTotal >
+                                                                                    0 && (
+                                                                                    <Text fontSize="md">
+                                                                                        <strong>
+                                                                                            Order
+                                                                                            Shipping
+                                                                                            Cost:
+                                                                                        </strong>{' '}
+                                                                                        {formatCryptoPrice(
+                                                                                            Number(
+                                                                                                orderShippingTotal
+                                                                                            ),
+                                                                                            item.currency_code ??
+                                                                                                'usdc'
+                                                                                        )}{' '}
+                                                                                        {upperCase(
+                                                                                            item.currency_code
+                                                                                        )}
+                                                                                    </Text>
+                                                                                )}
                                                                         </VStack>
 
                                                                         {/* Right Column: Order ID & Chain Data */}

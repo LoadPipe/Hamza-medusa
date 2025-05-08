@@ -107,7 +107,7 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
     }
 
     return renderOrderTotal(
-        'Order total:',
+        'Payment total:',
         paymentTotal.amount,
         paymentTotal.currency_code || 'USDC'
     );
