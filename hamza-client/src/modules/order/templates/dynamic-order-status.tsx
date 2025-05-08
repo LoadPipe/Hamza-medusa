@@ -5,10 +5,10 @@ import { IoMdInformationCircleOutline } from 'react-icons/io';
 
 const DynamicOrderStatus = ({
     paymentStatus,
-    fulfillmentStatus,
+    paymentType: paymentType,
 }: {
     paymentStatus?: string;
-    fulfillmentStatus?: string;
+    paymentType?: string;
 }) => {
     const capitalizeFirstLetter = (str?: string) =>
         str ? str.replace(/(?:^|\s)\S/g, (match) => match.toUpperCase()) : ''; // Capitalize every word's first char
@@ -44,7 +44,7 @@ const DynamicOrderStatus = ({
             />
 
             <Text color={'primary.green.900'}>
-                {capitalizeFirstLetter(removeUnderscores(fulfillmentStatus))}
+                {capitalizeFirstLetter(removeUnderscores(paymentType))}
             </Text>
         </Flex>
     );
