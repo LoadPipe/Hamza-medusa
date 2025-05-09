@@ -231,6 +231,7 @@ const Processing = ({
                                         <div key={item.id}>
                                             {index === 0 ? (
                                                 <DynamicOrderStatus
+                                                    orderDate={order.created_at}
                                                     paymentStatus={
                                                         order.payment_status
                                                     }
