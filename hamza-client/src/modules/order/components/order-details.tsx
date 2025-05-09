@@ -71,13 +71,11 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             <Flex direction={{ base: 'column', md: 'row' }} gap={6} w="100%">
                 {/* Left Column: Shipping Cost & Subtotal */}
                 <VStack align="start" spacing={2} flex="1">
-                    <Flex>
-                        {order.tracking_number && (
-                            <Text>
-                                <b>Tracking Number:</b> {order.tracking_number}
-                            </Text>
-                        )}
-                    </Flex>
+                    {order.tracking_number && (
+                        <Text>
+                            <b>Tracking Number:</b> {order.tracking_number}
+                        </Text>
+                    )}
                     <Text fontSize="md">
                         <strong>Subtotal:</strong>{' '}
                         {formatCryptoPrice(numericSubTotal, currencyCode)}{' '}

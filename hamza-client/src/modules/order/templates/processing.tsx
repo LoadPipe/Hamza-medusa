@@ -29,7 +29,7 @@ import {
     Divider,
 } from '@chakra-ui/react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { format } from 'date-fns';
+import { format as formatDate, parseISO } from 'date-fns';
 import EmptyState from '@modules/order/components/empty-state';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import OrderTimeline from '@modules/order/components/order-timeline';
@@ -231,6 +231,12 @@ const Processing = ({
                                         <div key={item.id}>
                                             {index === 0 ? (
                                                 <DynamicOrderStatus
+                                                    orderDate={formatDate(
+                                                        parseISO(
+                                                            order.created_at
+                                                        ),
+                                                        'yyyy-MM-dd HH:mm:ss'
+                                                    )}
                                                     paymentStatus={
                                                         order.payment_status
                                                     }
@@ -502,7 +508,7 @@ const Processing = ({
                                                                                             2
                                                                                         }
                                                                                     >
-                                                                                        {format(
+                                                                                        {formatDate(
                                                                                             new Date(
                                                                                                 note.updated_at
                                                                                             ),
@@ -565,7 +571,7 @@ const Processing = ({
                                                                                             2
                                                                                         }
                                                                                     >
-                                                                                        {format(
+                                                                                        {formatDate(
                                                                                             new Date(
                                                                                                 tx?.date
                                                                                             ),
