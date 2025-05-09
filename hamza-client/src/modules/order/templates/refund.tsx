@@ -29,7 +29,7 @@ import {
 } from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
 import { OrderNote } from './all';
-import { format } from 'date-fns';
+import { format as formatDate, parseISO } from 'date-fns';
 
 const Refund = ({
     customer,
@@ -106,6 +106,12 @@ const Refund = ({
                                         <div key={item.id}>
                                             {index === 0 ? (
                                                 <DynamicOrderStatus
+                                                    orderDate={formatDate(
+                                                        parseISO(
+                                                            order.created_at
+                                                        ),
+                                                        'yyyy-MM-dd HH:mm:ss'
+                                                    )}
                                                     paymentStatus={
                                                         order.payment_status
                                                     }
@@ -453,7 +459,7 @@ const Refund = ({
                                                                                             2
                                                                                         }
                                                                                     >
-                                                                                        {format(
+                                                                                        {formatDate(
                                                                                             new Date(
                                                                                                 note.updated_at
                                                                                             ),

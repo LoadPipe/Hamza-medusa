@@ -30,7 +30,7 @@ import {
 } from '@modules/order/components/chain-enum/chain-enum';
 import Image from 'next/image';
 import { OrderNote } from './all';
-import { format } from 'date-fns';
+import { format as formatDate, parseISO } from 'date-fns';
 
 const Cancelled = ({
     customer,
@@ -69,34 +69,6 @@ const Cancelled = ({
 
     return (
         <div style={{ width: '100%' }}>
-            {/*{cancelIsLoading ? (*/}
-            {/*    <Box*/}
-            {/*        display="flex"*/}
-            {/*        flexDirection="column"*/}
-            {/*        justifyContent="center"*/}
-            {/*        alignItems="center"*/}
-            {/*        textAlign="center"*/}
-            {/*        py={5}*/}
-            {/*    >*/}
-            {/*        <Text color="white" fontSize="lg" mb={8}>*/}
-            {/*            Loading Cancelled orders...*/}
-            {/*        </Text>*/}
-            {/*        <Spinner size={80} />*/}
-            {/*    </Box>*/}
-            {/*) : cancelIsError && orderActiveTab !== 'All Orders' ? (*/}
-            {/*    <Box*/}
-            {/*        display="flex"*/}
-            {/*        flexDirection="column"*/}
-            {/*        justifyContent="center"*/}
-            {/*        alignItems="center"*/}
-            {/*        textAlign="center"*/}
-            {/*        py={5}*/}
-            {/*    >*/}
-            {/*        <Text color="red.500" fontSize="lg" mb={8}>*/}
-            {/*            Error fetching delivered orders.*/}
-            {/*        </Text>*/}
-            {/*    </Box>*/}
-            {/*) :*/}
             {canceledOrder && canceledOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {canceledOrder.map((order: any) => {
@@ -124,6 +96,12 @@ const Cancelled = ({
                                         <div key={item.id}>
                                             {index === 0 ? (
                                                 <DynamicOrderStatus
+                                                    orderDate={formatDate(
+                                                        parseISO(
+                                                            order.created_at
+                                                        ),
+                                                        'yyyy-MM-dd HH:mm:ss'
+                                                    )}
                                                     paymentStatus={
                                                         order.payment_status
                                                     }
@@ -547,7 +525,7 @@ const Cancelled = ({
                                                                                             2
                                                                                         }
                                                                                     >
-                                                                                        {format(
+                                                                                        {formatDate(
                                                                                             new Date(
                                                                                                 note.updated_at
                                                                                             ),

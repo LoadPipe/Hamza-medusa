@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Text, Divider, HStack } from '@chakra-ui/react';
+import { Flex, Text, Divider, Stack } from '@chakra-ui/react';
 import { LuBox } from 'react-icons/lu';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
 
@@ -31,17 +31,23 @@ const DynamicOrderStatus = ({
     };
 
     return (
-        <HStack>
-            <Flex>
-                <Text>Order Date: {formatDate(orderDate)}</Text>
-            </Flex>
+        <Stack
+            direction={{ base: 'column', md: 'row' }}
+            spacing={4}
+            align={{ base: 'flex-start', md: 'center' }}
+        >
+            {orderDate && (
+                <Flex>
+                    <Text>Order Date: {formatDate(orderDate)}</Text>
+                </Flex>
+            )}
             <Flex
                 justifyContent={{ sm: 'center', md: 'flex-end' }}
                 direction={'row'}
                 fontSize={{ sm: '14px', md: '16px' }}
                 fontWeight="bold"
                 alignItems={'center'}
-                ml={'auto'}
+                ml={{ base: 0, md: 'auto' }}
                 gap={1}
                 my={'4'}
             >
@@ -66,7 +72,7 @@ const DynamicOrderStatus = ({
                     {capitalizeFirstLetter(removeUnderscores(paymentType))}
                 </Text>
             </Flex>
-        </HStack>
+        </Stack>
     );
 };
 
