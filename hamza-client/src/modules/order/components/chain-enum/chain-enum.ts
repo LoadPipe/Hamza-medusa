@@ -1,3 +1,10 @@
+import arbLogo from '@/images/chains/arbitrum-arb-logo.png';
+import ethLogo from '@/images/chains/ethereum-eth-logo.png';
+import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
+import polygonLogo from '@/images/chains/polygon-matic-logo.png';
+import baseLogo from '@/images/chains/base-logo-in-blue.png';
+import bscLogo from '@/images/chains/bnb-logo.png';
+
 enum ChainNames {
     Mainnet = 1,
     Optimism = 10,
@@ -26,21 +33,17 @@ export const chainIdToName = (id: number): string => {
 // Map chain IDs to their logos
 export const getChainLogo = (id: number): string => {
     const logos: Record<number, string> = {
-        1: 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029', // Ethereum Mainnet
-        10: 'https://cryptologos.cc/logos/optimism-ethereum-op-logo.png?v=029', // Optimism
-        137: 'https://cryptologos.cc/logos/polygon-matic-logo.png?v=029', // Polygon
-        8453: 'https://www.base.org/_next/static/media/logo.f6fdedfc.svg', // Base
-        42161: 'https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=029', // Arbitrum
-        11155111:
-            'https://lh3.googleusercontent.com/ubGeGKiOxh9hwvu1EtDedfpl0Mry7JXD-iiPyAtRo9oVYLTpuGInHowVhNgPPPH_PajRzTVDJ68iOGuXUjXyOBU=w16383', // Sepolia (fallback to Ethereum)
-        11155420:
-            'https://cryptologos.cc/logos/optimism-ethereum-op-logo.png?v=029', // OpSepolia (OP LOGO...)
-        80002: 'https://cryptologos.cc/logos/polygon-matic-logo.png?v=029', // Amoy (fallback to Polygon)
-        84532: 'https://www.base.org/_next/static/media/logo.f6fdedfc.svg', //Base Sepolia
-        534351: 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029', //Scroll Sepolia
+        1: ethLogo.src, // Ethereum Mainnet
+        10: optimismLogo.src, // Optimism
+        137: polygonLogo.src, // Polygon
+        8453: baseLogo.src, // Base
+        42161: arbLogo.src, // Arbitrum
+        11155111: ethLogo.src, // Sepolia (fallback to Ethereum)
+        11155420: optimismLogo.src, // OpSepolia (OP LOGO...)
+        80002: polygonLogo.src, // Amoy (fallback to Polygon)
+        84532: baseLogo.src, //Base Sepolia
+        534351: ethLogo.src, //Scroll Sepolia
     };
 
-    return (
-        logos[id] || 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029'
-    ); // Default to Ethereum logo
+    return logos[id] || ethLogo.src; // Default to Ethereum logo
 };
