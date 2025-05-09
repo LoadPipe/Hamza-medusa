@@ -240,7 +240,6 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                     <Button
                                         as={Link}
                                         href={`/account/escrow/${order.id}`}
-                                        target="_blank"
                                         size="sm"
                                         bg="gray.700"
                                         color="white"
