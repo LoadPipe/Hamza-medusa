@@ -33,6 +33,7 @@ import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet
 import { calculateStepState } from './utils';
 import {
     getChainLogoFromName,
+    getChainNameFromId,
     getChainTitleFromName,
     isChainNameInChainMap,
 } from '../chain-select';
@@ -63,6 +64,19 @@ const OrderProcessing = ({
     const [isClient, setIsClient] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const totalOrders = initialPaymentData?.orders?.length ?? 0;
+
+    //get chain name from payment data
+    const _paymentData = initialPaymentData?.orders?.length
+        ? initialPaymentData.orders[0].payments
+        : null;
+
+    const paymentCurrency = _paymentData?.[0]?.currency_code;
+
+    const blockchainData = _paymentData?.[0]?.blockchain_data;
+
+    const chainId = blockchainData?.chain_id;
+
+    const chainName = getChainNameFromId(chainId || 0);
 
     //get total of items
     const totalItems = initialPaymentData?.orders?.reduce((total, order) => {
@@ -359,7 +373,8 @@ const OrderProcessing = ({
                                         </Flex>
                                     </VStack>
                                     {paywith &&
-                                        isChainNameInChainMap(paywith) && (
+                                        chainName &&
+                                        isChainNameInChainMap(chainName) && (
                                             <VStack align="start" spacing={1}>
                                                 <Text
                                                     color="gray.500"
@@ -371,11 +386,11 @@ const OrderProcessing = ({
                                                     <Image
                                                         src={
                                                             getChainLogoFromName(
-                                                                paywith
+                                                                chainName
                                                             ).src
                                                         }
                                                         alt={`${getChainTitleFromName(
-                                                            paywith
+                                                            chainName
                                                         )} logo`}
                                                         width={24}
                                                         height={24}
@@ -385,12 +400,26 @@ const OrderProcessing = ({
                                                         color="white"
                                                     >
                                                         {getChainTitleFromName(
-                                                            paywith
+                                                            chainName
                                                         )}
                                                     </Text>
                                                 </Flex>
                                             </VStack>
                                         )}
+
+                                    {paymentCurrency && (
+                                        <VStack align="start" spacing={1}>
+                                            <Text
+                                                color="gray.500"
+                                                fontSize="sm"
+                                            >
+                                                Payment Currency:
+                                            </Text>
+                                            <Text color="white">
+                                                {paymentCurrency?.toUpperCase()}
+                                            </Text>
+                                        </VStack>
+                                    )}
                                     <VStack align="start" spacing={1}>
                                         <Text color="gray.500" fontSize="sm">
                                             Total Items:
@@ -546,9 +575,7 @@ const OrderProcessing = ({
                                                 ? 'Pay with BTC'
                                                 : 'Pay with External Wallet'}
                                         </Text>
-                                        {paywith &&
-                                        isChainNameInChainMap(paywith) &&
-                                        paywith === 'bitcoin' ? (
+                                        {paywith && paywith === 'bitcoin' ? (
                                             <Text
                                                 color="gray.400"
                                                 fontSize="sm"
@@ -617,52 +644,64 @@ const OrderProcessing = ({
                                                             )}
                                                         </Text>
                                                     </VStack>
-                                                    {paywith &&
-                                                        isChainNameInChainMap(
-                                                            paywith
-                                                        ) && (
-                                                            <VStack
-                                                                gap={0}
-                                                                alignItems="flex-start"
+                                                    {paywith && chainName && (
+                                                        <VStack
+                                                            gap={0}
+                                                            alignItems="flex-start"
+                                                        >
+                                                            <Text
+                                                                color="gray.400"
+                                                                fontSize="sm"
+                                                                textAlign="left"
                                                             >
+                                                                Chain Network:
+                                                            </Text>
+                                                            <HStack>
+                                                                <Image
+                                                                    src={
+                                                                        getChainLogoFromName(
+                                                                            chainName
+                                                                        ).src
+                                                                    }
+                                                                    alt={`${getChainTitleFromName(
+                                                                        chainName
+                                                                    )} logo`}
+                                                                    width={24}
+                                                                    height={24}
+                                                                />
                                                                 <Text
                                                                     color="gray.400"
                                                                     fontSize="sm"
                                                                     textAlign="left"
                                                                 >
-                                                                    Chain
-                                                                    Network:
+                                                                    {getChainTitleFromName(
+                                                                        chainName
+                                                                    )}
                                                                 </Text>
-                                                                <HStack>
-                                                                    <Image
-                                                                        src={
-                                                                            getChainLogoFromName(
-                                                                                paywith
-                                                                            )
-                                                                                .src
-                                                                        }
-                                                                        alt={`${getChainTitleFromName(
-                                                                            paywith
-                                                                        )} logo`}
-                                                                        width={
-                                                                            24
-                                                                        }
-                                                                        height={
-                                                                            24
-                                                                        }
-                                                                    />
-                                                                    <Text
-                                                                        color="gray.400"
-                                                                        fontSize="sm"
-                                                                        textAlign="left"
-                                                                    >
-                                                                        {getChainTitleFromName(
-                                                                            paywith
-                                                                        )}
-                                                                    </Text>
-                                                                </HStack>
-                                                            </VStack>
-                                                        )}
+                                                            </HStack>
+                                                        </VStack>
+                                                    )}
+                                                    <VStack
+                                                        gap={0}
+                                                        alignItems="flex-start"
+                                                    >
+                                                        <Text
+                                                            color="gray.400"
+                                                            fontSize="sm"
+                                                            textAlign="left"
+                                                        >
+                                                            Payment Currency:
+                                                        </Text>
+                                                        <HStack>
+                                                            <Text
+                                                                color="gray.400"
+                                                                fontSize="sm"
+                                                                textAlign="left"
+                                                            >
+                                                                {paymentCurrency?.toUpperCase()}
+                                                            </Text>
+                                                        </HStack>
+                                                    </VStack>
                                                 </HStack>
                                             </>
                                         )}

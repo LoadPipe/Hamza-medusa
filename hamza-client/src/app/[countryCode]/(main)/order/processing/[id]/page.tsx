@@ -51,6 +51,7 @@ interface Payment {
     expiresInSeconds: number;
     paymentAddress: string;
     totalAmount: number;
+    payment_chain_id: number;
 }
 
 interface Store extends MedusaStore {
