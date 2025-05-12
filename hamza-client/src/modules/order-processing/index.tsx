@@ -33,6 +33,7 @@ import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet
 import { calculateStepState } from './utils';
 import {
     getChainLogoFromName,
+    getChainNameFromId,
     getChainTitleFromName,
     isChainNameInChainMap,
 } from '../chain-select';
@@ -64,6 +65,19 @@ const OrderProcessing = ({
     const { isOpen, onOpen, onClose } = useDisclosure();
     const totalOrders = initialPaymentData?.orders?.length ?? 0;
 
+    //get chain name from payment data
+    const _paymentData = initialPaymentData?.orders?.length
+        ? initialPaymentData.orders[0].payments
+        : null;
+
+    const paymentCurrency = _paymentData?.[0]?.currency_code;
+
+    const blockchainData = _paymentData?.[0]?.blockchain_data;
+
+    const chainId = blockchainData?.chain_id;
+
+    const chainName = getChainNameFromId(chainId || 0);
+
     //get total of items
     const totalItems = initialPaymentData?.orders?.reduce((total, order) => {
         const orderTotalItems = order?.items?.reduce(
@@ -85,7 +99,8 @@ const OrderProcessing = ({
     const currencyCode = initialPaymentData?.orders?.length
         ? initialPaymentData.orders[0].currency_code
         : 'usdc';
-    const [hasCopied, setHasCopied] = useState(false);
+    const [hasCopiedAmount, setHasCopiedAmount] = useState(false);
+    const [hasCopiedAddress, setHasCopiedAddress] = useState(false);
     const [currentStatus, setCurrentStatus] = useState('waiting');
 
     const toggleOrder = (orderId: string) => {
@@ -339,27 +354,81 @@ const OrderProcessing = ({
                                         <Text color="gray.500" fontSize="sm">
                                             Total Amount:
                                         </Text>
-                                        <Flex>
-                                            <Image
-                                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                                src={
-                                                    currencyIcons[
-                                                        currencyCode ?? 'usdc'
-                                                    ]
+                                        <HStack>
+                                            <Flex>
+                                                <Image
+                                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                                    src={
+                                                        currencyIcons[
+                                                            currencyCode ??
+                                                                'usdc'
+                                                        ]
+                                                    }
+                                                    alt={currencyCode ?? 'usdc'}
+                                                />
+                                                <Text ml="0.4rem" color="white">
+                                                    {formatCryptoPrice(
+                                                        paymentTotal ?? 0,
+                                                        currencyCode ?? 'usdc',
+                                                        false
+                                                    )}
+                                                </Text>
+                                            </Flex>
+                                            <Button
+                                                size="xs"
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    hasCopiedAmount ? (
+                                                        <FaRegCheckCircle
+                                                            style={{
+                                                                marginRight:
+                                                                    '0',
+                                                            }}
+                                                            color="white"
+                                                        />
+                                                    ) : (
+                                                        <FaCopy
+                                                            style={{
+                                                                marginRight:
+                                                                    '0',
+                                                            }}
+                                                            color="white"
+                                                        />
+                                                    )
                                                 }
-                                                alt={currencyCode ?? 'usdc'}
-                                            />
-                                            <Text ml="0.4rem" color="white">
-                                                {formatCryptoPrice(
-                                                    paymentTotal ?? 0,
-                                                    currencyCode ?? 'usdc',
-                                                    false
-                                                )}
-                                            </Text>
-                                        </Flex>
+                                                _hover={{ bg: 'gray.600' }}
+                                                onClick={() => {
+                                                    const formattedAmount =
+                                                        formatCryptoPrice(
+                                                            paymentTotal ?? 0,
+                                                            currencyCode ??
+                                                                'usdc',
+                                                            false
+                                                        ).toString();
+                                                    navigator.clipboard.writeText(
+                                                        formattedAmount
+                                                    );
+                                                    setHasCopiedAmount(true);
+                                                    setTimeout(
+                                                        () =>
+                                                            setHasCopiedAmount(
+                                                                false
+                                                            ),
+                                                        2000
+                                                    );
+                                                }}
+                                            >
+                                                {hasCopiedAmount
+                                                    ? 'Copied!'
+                                                    : 'Copy'}
+                                            </Button>
+                                        </HStack>
                                     </VStack>
                                     {paywith &&
-                                        isChainNameInChainMap(paywith) && (
+                                        chainName &&
+                                        isChainNameInChainMap(chainName) && (
                                             <VStack align="start" spacing={1}>
                                                 <Text
                                                     color="gray.500"
@@ -371,11 +440,11 @@ const OrderProcessing = ({
                                                     <Image
                                                         src={
                                                             getChainLogoFromName(
-                                                                paywith
+                                                                chainName
                                                             ).src
                                                         }
                                                         alt={`${getChainTitleFromName(
-                                                            paywith
+                                                            chainName
                                                         )} logo`}
                                                         width={24}
                                                         height={24}
@@ -385,12 +454,26 @@ const OrderProcessing = ({
                                                         color="white"
                                                     >
                                                         {getChainTitleFromName(
-                                                            paywith
+                                                            chainName
                                                         )}
                                                     </Text>
                                                 </Flex>
                                             </VStack>
                                         )}
+
+                                    {paymentCurrency && (
+                                        <VStack align="start" spacing={1}>
+                                            <Text
+                                                color="gray.500"
+                                                fontSize="sm"
+                                            >
+                                                Payment Currency:
+                                            </Text>
+                                            <Text color="white">
+                                                {paymentCurrency?.toUpperCase()}
+                                            </Text>
+                                        </VStack>
+                                    )}
                                     <VStack align="start" spacing={1}>
                                         <Text color="gray.500" fontSize="sm">
                                             Total Items:
@@ -444,55 +527,51 @@ const OrderProcessing = ({
                                         }}
                                         spacing={2}
                                     >
-                                        {paywith &&
-                                            !isChainNameInChainMap(paywith) &&
-                                            paywith === 'bitcoin' && (
-                                                <Button
-                                                    size={{
-                                                        base: 'xs',
-                                                        md: 'sm',
-                                                    }}
-                                                    bg="gray.700"
-                                                    color="white"
-                                                    borderRadius="2rem"
-                                                    leftIcon={
-                                                        <FaBitcoin
-                                                            size={24}
-                                                            color="#F7931A"
-                                                        />
-                                                    }
-                                                    _hover={{ bg: 'gray.600' }}
-                                                    p={{ base: 4, md: 6 }}
-                                                    onClick={() => onOpen()}
-                                                >
-                                                    BTC QR Code
-                                                </Button>
-                                            )}
+                                        {paywith && paywith === 'bitcoin' && (
+                                            <Button
+                                                size={{
+                                                    base: 'xs',
+                                                    md: 'sm',
+                                                }}
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    <FaBitcoin
+                                                        size={24}
+                                                        color="#F7931A"
+                                                    />
+                                                }
+                                                _hover={{ bg: 'gray.600' }}
+                                                p={{ base: 4, md: 6 }}
+                                                onClick={() => onOpen()}
+                                            >
+                                                BTC QR Code
+                                            </Button>
+                                        )}
 
-                                        {paywith &&
-                                            isChainNameInChainMap(paywith) &&
-                                            paywith !== 'bitcoin' && (
-                                                <Button
-                                                    size={{
-                                                        base: 'xs',
-                                                        md: 'sm',
-                                                    }}
-                                                    bg="gray.700"
-                                                    color="white"
-                                                    borderRadius="2rem"
-                                                    leftIcon={
-                                                        <FaQrcode
-                                                            size={20}
-                                                            color="white"
-                                                        />
-                                                    }
-                                                    _hover={{ bg: 'gray.600' }}
-                                                    p={{ base: 4, md: 6 }}
-                                                    onClick={onOpen}
-                                                >
-                                                    QR Code
-                                                </Button>
-                                            )}
+                                        {paywith && paywith === 'evm' && (
+                                            <Button
+                                                size={{
+                                                    base: 'xs',
+                                                    md: 'sm',
+                                                }}
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    <FaQrcode
+                                                        size={20}
+                                                        color="white"
+                                                    />
+                                                }
+                                                _hover={{ bg: 'gray.600' }}
+                                                p={{ base: 4, md: 6 }}
+                                                onClick={onOpen}
+                                            >
+                                                QR Code
+                                            </Button>
+                                        )}
 
                                         <Button
                                             size={{ base: 'xs', md: 'sm' }}
@@ -500,10 +579,20 @@ const OrderProcessing = ({
                                             color="white"
                                             borderRadius="2rem"
                                             leftIcon={
-                                                hasCopied ? (
-                                                    <FaRegCheckCircle color="white" />
+                                                hasCopiedAddress ? (
+                                                    <FaRegCheckCircle
+                                                        style={{
+                                                            marginRight: '0',
+                                                        }}
+                                                        color="white"
+                                                    />
                                                 ) : (
-                                                    <FaCopy color="white" />
+                                                    <FaCopy
+                                                        style={{
+                                                            marginRight: '0',
+                                                        }}
+                                                        color="white"
+                                                    />
                                                 )
                                             }
                                             _hover={{ bg: 'gray.600' }}
@@ -513,14 +602,19 @@ const OrderProcessing = ({
                                                     paymentData?.paymentAddress ??
                                                         ''
                                                 );
-                                                setHasCopied(true);
+                                                setHasCopiedAddress(true);
                                                 setTimeout(
-                                                    () => setHasCopied(false),
+                                                    () =>
+                                                        setHasCopiedAddress(
+                                                            false
+                                                        ),
                                                     2000
                                                 );
                                             }}
                                         >
-                                            {hasCopied ? 'Copied!' : 'Copy'}
+                                            {hasCopiedAddress
+                                                ? 'Copied!'
+                                                : 'Copy'}
                                         </Button>
                                     </Stack>
                                 </HStack>
@@ -533,13 +627,29 @@ const OrderProcessing = ({
                         <Modal
                             isOpen={isOpen}
                             onClose={onClose}
-                            size="md"
+                            size={{ base: 'full', md: 'md' }}
+                            motionPreset="slideInBottom"
                             isCentered
                         >
                             <ModalOverlay />
-                            <ModalContent bg="gray.900">
-                                <ModalCloseButton color="white" />
-                                <ModalBody py={8}>
+                            <ModalContent
+                                bg="gray.900"
+                                h={{ base: '100vh', md: 'auto' }}
+                                m={0}
+                                borderRadius={{ base: 0, md: 'xl' }}
+                            >
+                                <ModalCloseButton
+                                    color="white"
+                                    position="absolute"
+                                    top={4}
+                                    right={4}
+                                    size="lg"
+                                />
+                                <ModalBody
+                                    py={8}
+                                    h={{ base: '100%', md: 'auto' }}
+                                    overflowY="auto"
+                                >
                                     <VStack spacing={6}>
                                         <Text
                                             color="white"
@@ -550,9 +660,7 @@ const OrderProcessing = ({
                                                 ? 'Pay with BTC'
                                                 : 'Pay with External Wallet'}
                                         </Text>
-                                        {paywith &&
-                                        isChainNameInChainMap(paywith) &&
-                                        paywith === 'bitcoin' ? (
+                                        {paywith && paywith === 'bitcoin' ? (
                                             <Text
                                                 color="gray.400"
                                                 fontSize="sm"
@@ -576,18 +684,18 @@ const OrderProcessing = ({
                                                     textAlign="left"
                                                 >
                                                     Use this option if you're
-                                                    paying with a hardware
-                                                    wallet or a mobile wallet
-                                                    app like Trust Wallet or
+                                                    paying with a hardware
+                                                    wallet or a mobile wallet
+                                                    app like Trust Wallet or
                                                     SafePal. It's ideal when
                                                     your wallet isn't connected
                                                     directly to the site but
                                                     supports the same network.{' '}
                                                     <br />
                                                     <br /> To complete the
-                                                    payment, just scan the QR
-                                                    code or copy the wallet
-                                                    address to send the funds
+                                                    payment, just scan the QR
+                                                    code or copy the wallet
+                                                    address to send the funds
                                                     manually.
                                                 </Text>
 
@@ -607,66 +715,135 @@ const OrderProcessing = ({
                                                         >
                                                             Total Amount:
                                                         </Text>
-                                                        <Text
-                                                            color="gray.400"
-                                                            fontSize="sm"
-                                                            textAlign="left"
-                                                        >
-                                                            {formatCryptoPrice(
-                                                                paymentTotal ??
-                                                                    0,
-                                                                currencyCode ??
-                                                                    'usdc',
-                                                                false
-                                                            )}
-                                                        </Text>
-                                                    </VStack>
-                                                    {paywith &&
-                                                        isChainNameInChainMap(
-                                                            paywith
-                                                        ) && (
-                                                            <VStack
-                                                                gap={0}
-                                                                alignItems="flex-start"
+                                                        <HStack>
+                                                            <Text
+                                                                color="gray.400"
+                                                                fontSize="sm"
+                                                                textAlign="left"
                                                             >
+                                                                {formatCryptoPrice(
+                                                                    paymentTotal ??
+                                                                        0,
+                                                                    currencyCode ??
+                                                                        'usdc',
+                                                                    false
+                                                                )}
+                                                            </Text>
+                                                            <Button
+                                                                size="xs"
+                                                                bg="gray.700"
+                                                                color="white"
+                                                                borderRadius="2rem"
+                                                                leftIcon={
+                                                                    hasCopiedAmount ? (
+                                                                        <FaRegCheckCircle
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    '0',
+                                                                            }}
+                                                                            color="white"
+                                                                        />
+                                                                    ) : (
+                                                                        <FaCopy
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    '0',
+                                                                            }}
+                                                                            color="white"
+                                                                        />
+                                                                    )
+                                                                }
+                                                                _hover={{
+                                                                    bg: 'gray.600',
+                                                                }}
+                                                                onClick={() => {
+                                                                    const formattedAmount =
+                                                                        formatCryptoPrice(
+                                                                            paymentTotal ??
+                                                                                0,
+                                                                            currencyCode ??
+                                                                                'usdc',
+                                                                            false
+                                                                        ).toString();
+                                                                    navigator.clipboard.writeText(
+                                                                        formattedAmount
+                                                                    );
+                                                                    setHasCopiedAmount(
+                                                                        true
+                                                                    );
+                                                                    setTimeout(
+                                                                        () =>
+                                                                            setHasCopiedAmount(
+                                                                                false
+                                                                            ),
+                                                                        2000
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {/* {hasCopiedAmount
+                                                                    ? 'Copied!'
+                                                                    : 'Copy'} */}
+                                                            </Button>
+                                                        </HStack>
+                                                    </VStack>
+                                                    {paywith && chainName && (
+                                                        <VStack
+                                                            gap={0}
+                                                            alignItems="flex-start"
+                                                        >
+                                                            <Text
+                                                                color="gray.400"
+                                                                fontSize="sm"
+                                                                textAlign="left"
+                                                            >
+                                                                Chain Network:
+                                                            </Text>
+                                                            <HStack>
+                                                                <Image
+                                                                    src={
+                                                                        getChainLogoFromName(
+                                                                            chainName
+                                                                        ).src
+                                                                    }
+                                                                    alt={`${getChainTitleFromName(
+                                                                        chainName
+                                                                    )} logo`}
+                                                                    width={24}
+                                                                    height={24}
+                                                                />
                                                                 <Text
                                                                     color="gray.400"
                                                                     fontSize="sm"
                                                                     textAlign="left"
                                                                 >
-                                                                    Chain
-                                                                    Network:
+                                                                    {getChainTitleFromName(
+                                                                        chainName
+                                                                    )}
                                                                 </Text>
-                                                                <HStack>
-                                                                    <Image
-                                                                        src={
-                                                                            getChainLogoFromName(
-                                                                                paywith
-                                                                            )
-                                                                                .src
-                                                                        }
-                                                                        alt={`${getChainTitleFromName(
-                                                                            paywith
-                                                                        )} logo`}
-                                                                        width={
-                                                                            24
-                                                                        }
-                                                                        height={
-                                                                            24
-                                                                        }
-                                                                    />
-                                                                    <Text
-                                                                        color="gray.400"
-                                                                        fontSize="sm"
-                                                                        textAlign="left"
-                                                                    >
-                                                                        {getChainTitleFromName(
-                                                                            paywith
-                                                                        )}
-                                                                    </Text>
-                                                                </HStack>
-                                                            </VStack>
-                                                        )}
+                                                            </HStack>
+                                                        </VStack>
+                                                    )}
+                                                    <VStack
+                                                        gap={0}
+                                                        alignItems="flex-start"
+                                                    >
+                                                        <Text
+                                                            color="gray.400"
+                                                            fontSize="sm"
+                                                            textAlign="left"
+                                                        >
+                                                            Payment Currency:
+                                                        </Text>
+                                                        <HStack>
+                                                            <Text
+                                                                color="gray.400"
+                                                                fontSize="sm"
+                                                                textAlign="left"
+                                                            >
+                                                                {paymentCurrency?.toUpperCase()}
+                                                            </Text>
+                                                        </HStack>
+                                                    </VStack>
                                                 </HStack>
                                             </>
                                         )}
@@ -701,10 +878,22 @@ const OrderProcessing = ({
                                                 color="white"
                                                 borderRadius="2rem"
                                                 leftIcon={
-                                                    hasCopied ? (
-                                                        <FaRegCheckCircle color="white" />
+                                                    hasCopiedAddress ? (
+                                                        <FaRegCheckCircle
+                                                            style={{
+                                                                marginRight:
+                                                                    '0',
+                                                            }}
+                                                            color="white"
+                                                        />
                                                     ) : (
-                                                        <FaCopy color="white" />
+                                                        <FaCopy
+                                                            style={{
+                                                                marginRight:
+                                                                    '0',
+                                                            }}
+                                                            color="white"
+                                                        />
                                                     )
                                                 }
                                                 _hover={{ bg: 'gray.600' }}
@@ -714,15 +903,19 @@ const OrderProcessing = ({
                                                         paymentData?.paymentAddress ??
                                                             ''
                                                     );
-                                                    setHasCopied(true);
+                                                    setHasCopiedAddress(true);
                                                     setTimeout(
                                                         () =>
-                                                            setHasCopied(false),
+                                                            setHasCopiedAddress(
+                                                                false
+                                                            ),
                                                         2000
                                                     );
                                                 }}
                                             >
-                                                {hasCopied ? 'Copied!' : 'Copy'}
+                                                {hasCopiedAddress
+                                                    ? 'Copied!'
+                                                    : 'Copy'}
                                             </Button>
                                         </Text>
                                     </VStack>
