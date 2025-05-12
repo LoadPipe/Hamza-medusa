@@ -444,55 +444,51 @@ const OrderProcessing = ({
                                         }}
                                         spacing={2}
                                     >
-                                        {paywith &&
-                                            !isChainNameInChainMap(paywith) &&
-                                            paywith === 'bitcoin' && (
-                                                <Button
-                                                    size={{
-                                                        base: 'xs',
-                                                        md: 'sm',
-                                                    }}
-                                                    bg="gray.700"
-                                                    color="white"
-                                                    borderRadius="2rem"
-                                                    leftIcon={
-                                                        <FaBitcoin
-                                                            size={24}
-                                                            color="#F7931A"
-                                                        />
-                                                    }
-                                                    _hover={{ bg: 'gray.600' }}
-                                                    p={{ base: 4, md: 6 }}
-                                                    onClick={() => onOpen()}
-                                                >
-                                                    BTC QR Code
-                                                </Button>
-                                            )}
+                                        {paywith && paywith === 'bitcoin' && (
+                                            <Button
+                                                size={{
+                                                    base: 'xs',
+                                                    md: 'sm',
+                                                }}
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    <FaBitcoin
+                                                        size={24}
+                                                        color="#F7931A"
+                                                    />
+                                                }
+                                                _hover={{ bg: 'gray.600' }}
+                                                p={{ base: 4, md: 6 }}
+                                                onClick={() => onOpen()}
+                                            >
+                                                BTC QR Code
+                                            </Button>
+                                        )}
 
-                                        {paywith &&
-                                            isChainNameInChainMap(paywith) &&
-                                            paywith !== 'bitcoin' && (
-                                                <Button
-                                                    size={{
-                                                        base: 'xs',
-                                                        md: 'sm',
-                                                    }}
-                                                    bg="gray.700"
-                                                    color="white"
-                                                    borderRadius="2rem"
-                                                    leftIcon={
-                                                        <FaQrcode
-                                                            size={20}
-                                                            color="white"
-                                                        />
-                                                    }
-                                                    _hover={{ bg: 'gray.600' }}
-                                                    p={{ base: 4, md: 6 }}
-                                                    onClick={onOpen}
-                                                >
-                                                    QR Code
-                                                </Button>
-                                            )}
+                                        {paywith && paywith === 'evm' && (
+                                            <Button
+                                                size={{
+                                                    base: 'xs',
+                                                    md: 'sm',
+                                                }}
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    <FaQrcode
+                                                        size={20}
+                                                        color="white"
+                                                    />
+                                                }
+                                                _hover={{ bg: 'gray.600' }}
+                                                p={{ base: 4, md: 6 }}
+                                                onClick={onOpen}
+                                            >
+                                                QR Code
+                                            </Button>
+                                        )}
 
                                         <Button
                                             size={{ base: 'xs', md: 'sm' }}
