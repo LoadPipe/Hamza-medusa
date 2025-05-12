@@ -100,6 +100,7 @@ const OrderProcessing = ({
         ? initialPaymentData.orders[0].currency_code
         : 'usdc';
     const [hasCopied, setHasCopied] = useState(false);
+    const [hasCopiedAmount, setHasCopiedAmount] = useState(false);
     const [currentStatus, setCurrentStatus] = useState('waiting');
 
     const toggleOrder = (orderId: string) => {
@@ -534,9 +535,14 @@ const OrderProcessing = ({
                                             _hover={{ bg: 'gray.600' }}
                                             p={{ base: 4, md: 6 }}
                                             onClick={() => {
+                                                const formattedAmount =
+                                                    formatCryptoPrice(
+                                                        paymentTotal ?? 0,
+                                                        currencyCode ?? 'usdc',
+                                                        false
+                                                    ).toString();
                                                 navigator.clipboard.writeText(
-                                                    paymentData?.paymentAddress ??
-                                                        ''
+                                                    formattedAmount
                                                 );
                                                 setHasCopied(true);
                                                 setTimeout(
@@ -615,18 +621,18 @@ const OrderProcessing = ({
                                                     textAlign="left"
                                                 >
                                                     Use this option if you're
-                                                    paying with a hardware
-                                                    wallet or a mobile wallet
-                                                    app like Trust Wallet or
+                                                    paying with a hardware
+                                                    wallet or a mobile wallet
+                                                    app like Trust Wallet or
                                                     SafePal. It's ideal when
                                                     your wallet isn't connected
                                                     directly to the site but
                                                     supports the same network.{' '}
                                                     <br />
                                                     <br /> To complete the
-                                                    payment, just scan the QR
-                                                    code or copy the wallet
-                                                    address to send the funds
+                                                    payment, just scan the QR
+                                                    code or copy the wallet
+                                                    address to send the funds
                                                     manually.
                                                 </Text>
 
@@ -646,19 +652,76 @@ const OrderProcessing = ({
                                                         >
                                                             Total Amount:
                                                         </Text>
-                                                        <Text
-                                                            color="gray.400"
-                                                            fontSize="sm"
-                                                            textAlign="left"
-                                                        >
-                                                            {formatCryptoPrice(
-                                                                paymentTotal ??
-                                                                    0,
-                                                                currencyCode ??
-                                                                    'usdc',
-                                                                false
-                                                            )}
-                                                        </Text>
+                                                        <HStack>
+                                                            <Text
+                                                                color="gray.400"
+                                                                fontSize="sm"
+                                                                textAlign="left"
+                                                            >
+                                                                {formatCryptoPrice(
+                                                                    paymentTotal ??
+                                                                        0,
+                                                                    currencyCode ??
+                                                                        'usdc',
+                                                                    false
+                                                                )}
+                                                            </Text>
+                                                            <Button
+                                                                size="xs"
+                                                                bg="gray.700"
+                                                                color="white"
+                                                                borderRadius="2rem"
+                                                                leftIcon={
+                                                                    hasCopiedAmount ? (
+                                                                        <FaRegCheckCircle
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    '0',
+                                                                            }}
+                                                                            color="white"
+                                                                        />
+                                                                    ) : (
+                                                                        <FaCopy
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    '0',
+                                                                            }}
+                                                                            color="white"
+                                                                        />
+                                                                    )
+                                                                }
+                                                                _hover={{
+                                                                    bg: 'gray.600',
+                                                                }}
+                                                                onClick={() => {
+                                                                    const formattedAmount =
+                                                                        formatCryptoPrice(
+                                                                            paymentTotal ??
+                                                                                0,
+                                                                            currencyCode ??
+                                                                                'usdc',
+                                                                            false
+                                                                        ).toString();
+                                                                    navigator.clipboard.writeText(
+                                                                        formattedAmount
+                                                                    );
+                                                                    setHasCopiedAmount(
+                                                                        true
+                                                                    );
+                                                                    setTimeout(
+                                                                        () =>
+                                                                            setHasCopiedAmount(
+                                                                                false
+                                                                            ),
+                                                                        2000
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {/* {hasCopiedAmount
+                                                                    ? 'Copied!'
+                                                                    : 'Copy'} */}
+                                                            </Button>
+                                                        </HStack>
                                                     </VStack>
                                                     {paywith && chainName && (
                                                         <VStack
@@ -761,9 +824,15 @@ const OrderProcessing = ({
                                                 _hover={{ bg: 'gray.600' }}
                                                 p={{ base: 4, md: 6 }}
                                                 onClick={() => {
+                                                    const formattedAmount =
+                                                        formatCryptoPrice(
+                                                            paymentTotal ?? 0,
+                                                            currencyCode ??
+                                                                'usdc',
+                                                            false
+                                                        ).toString();
                                                     navigator.clipboard.writeText(
-                                                        paymentData?.paymentAddress ??
-                                                            ''
+                                                        formattedAmount
                                                     );
                                                     setHasCopied(true);
                                                     setTimeout(
