@@ -99,8 +99,8 @@ const OrderProcessing = ({
     const currencyCode = initialPaymentData?.orders?.length
         ? initialPaymentData.orders[0].currency_code
         : 'usdc';
-    const [hasCopied, setHasCopied] = useState(false);
     const [hasCopiedAmount, setHasCopiedAmount] = useState(false);
+    const [hasCopiedAddress, setHasCopiedAddress] = useState(false);
     const [currentStatus, setCurrentStatus] = useState('waiting');
 
     const toggleOrder = (orderId: string) => {
@@ -354,24 +354,77 @@ const OrderProcessing = ({
                                         <Text color="gray.500" fontSize="sm">
                                             Total Amount:
                                         </Text>
-                                        <Flex>
-                                            <Image
-                                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                                src={
-                                                    currencyIcons[
-                                                        currencyCode ?? 'usdc'
-                                                    ]
+                                        <HStack>
+                                            <Flex>
+                                                <Image
+                                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                                    src={
+                                                        currencyIcons[
+                                                            currencyCode ??
+                                                                'usdc'
+                                                        ]
+                                                    }
+                                                    alt={currencyCode ?? 'usdc'}
+                                                />
+                                                <Text ml="0.4rem" color="white">
+                                                    {formatCryptoPrice(
+                                                        paymentTotal ?? 0,
+                                                        currencyCode ?? 'usdc',
+                                                        false
+                                                    )}
+                                                </Text>
+                                            </Flex>
+                                            <Button
+                                                size="xs"
+                                                bg="gray.700"
+                                                color="white"
+                                                borderRadius="2rem"
+                                                leftIcon={
+                                                    hasCopiedAmount ? (
+                                                        <FaRegCheckCircle
+                                                            style={{
+                                                                marginRight:
+                                                                    '0',
+                                                            }}
+                                                            color="white"
+                                                        />
+                                                    ) : (
+                                                        <FaCopy
+                                                            style={{
+                                                                marginRight:
+                                                                    '0',
+                                                            }}
+                                                            color="white"
+                                                        />
+                                                    )
                                                 }
-                                                alt={currencyCode ?? 'usdc'}
-                                            />
-                                            <Text ml="0.4rem" color="white">
-                                                {formatCryptoPrice(
-                                                    paymentTotal ?? 0,
-                                                    currencyCode ?? 'usdc',
-                                                    false
-                                                )}
-                                            </Text>
-                                        </Flex>
+                                                _hover={{ bg: 'gray.600' }}
+                                                onClick={() => {
+                                                    const formattedAmount =
+                                                        formatCryptoPrice(
+                                                            paymentTotal ?? 0,
+                                                            currencyCode ??
+                                                                'usdc',
+                                                            false
+                                                        ).toString();
+                                                    navigator.clipboard.writeText(
+                                                        formattedAmount
+                                                    );
+                                                    setHasCopiedAmount(true);
+                                                    setTimeout(
+                                                        () =>
+                                                            setHasCopiedAmount(
+                                                                false
+                                                            ),
+                                                        2000
+                                                    );
+                                                }}
+                                            >
+                                                {hasCopiedAmount
+                                                    ? 'Copied!'
+                                                    : 'Copy'}
+                                            </Button>
+                                        </HStack>
                                     </VStack>
                                     {paywith &&
                                         chainName &&
@@ -526,32 +579,42 @@ const OrderProcessing = ({
                                             color="white"
                                             borderRadius="2rem"
                                             leftIcon={
-                                                hasCopied ? (
-                                                    <FaRegCheckCircle color="white" />
+                                                hasCopiedAddress ? (
+                                                    <FaRegCheckCircle
+                                                        style={{
+                                                            marginRight: '0',
+                                                        }}
+                                                        color="white"
+                                                    />
                                                 ) : (
-                                                    <FaCopy color="white" />
+                                                    <FaCopy
+                                                        style={{
+                                                            marginRight: '0',
+                                                        }}
+                                                        color="white"
+                                                    />
                                                 )
                                             }
                                             _hover={{ bg: 'gray.600' }}
                                             p={{ base: 4, md: 6 }}
                                             onClick={() => {
-                                                const formattedAmount =
-                                                    formatCryptoPrice(
-                                                        paymentTotal ?? 0,
-                                                        currencyCode ?? 'usdc',
-                                                        false
-                                                    ).toString();
                                                 navigator.clipboard.writeText(
-                                                    formattedAmount
+                                                    paymentData?.paymentAddress ??
+                                                        ''
                                                 );
-                                                setHasCopied(true);
+                                                setHasCopiedAddress(true);
                                                 setTimeout(
-                                                    () => setHasCopied(false),
+                                                    () =>
+                                                        setHasCopiedAddress(
+                                                            false
+                                                        ),
                                                     2000
                                                 );
                                             }}
                                         >
-                                            {hasCopied ? 'Copied!' : 'Copy'}
+                                            {hasCopiedAddress
+                                                ? 'Copied!'
+                                                : 'Copy'}
                                         </Button>
                                     </Stack>
                                 </HStack>
@@ -815,34 +878,44 @@ const OrderProcessing = ({
                                                 color="white"
                                                 borderRadius="2rem"
                                                 leftIcon={
-                                                    hasCopied ? (
-                                                        <FaRegCheckCircle color="white" />
+                                                    hasCopiedAddress ? (
+                                                        <FaRegCheckCircle
+                                                            style={{
+                                                                marginRight:
+                                                                    '0',
+                                                            }}
+                                                            color="white"
+                                                        />
                                                     ) : (
-                                                        <FaCopy color="white" />
+                                                        <FaCopy
+                                                            style={{
+                                                                marginRight:
+                                                                    '0',
+                                                            }}
+                                                            color="white"
+                                                        />
                                                     )
                                                 }
                                                 _hover={{ bg: 'gray.600' }}
                                                 p={{ base: 4, md: 6 }}
                                                 onClick={() => {
-                                                    const formattedAmount =
-                                                        formatCryptoPrice(
-                                                            paymentTotal ?? 0,
-                                                            currencyCode ??
-                                                                'usdc',
-                                                            false
-                                                        ).toString();
                                                     navigator.clipboard.writeText(
-                                                        formattedAmount
+                                                        paymentData?.paymentAddress ??
+                                                            ''
                                                     );
-                                                    setHasCopied(true);
+                                                    setHasCopiedAddress(true);
                                                     setTimeout(
                                                         () =>
-                                                            setHasCopied(false),
+                                                            setHasCopiedAddress(
+                                                                false
+                                                            ),
                                                         2000
                                                     );
                                                 }}
                                             >
-                                                {hasCopied ? 'Copied!' : 'Copy'}
+                                                {hasCopiedAddress
+                                                    ? 'Copied!'
+                                                    : 'Copy'}
                                             </Button>
                                         </Text>
                                     </VStack>
