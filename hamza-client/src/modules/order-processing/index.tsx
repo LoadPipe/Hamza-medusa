@@ -558,13 +558,29 @@ const OrderProcessing = ({
                         <Modal
                             isOpen={isOpen}
                             onClose={onClose}
-                            size="md"
+                            size={{ base: 'full', md: 'md' }}
+                            motionPreset="slideInBottom"
                             isCentered
                         >
                             <ModalOverlay />
-                            <ModalContent bg="gray.900">
-                                <ModalCloseButton color="white" />
-                                <ModalBody py={8}>
+                            <ModalContent
+                                bg="gray.900"
+                                h={{ base: '100vh', md: 'auto' }}
+                                m={0}
+                                borderRadius={{ base: 0, md: 'xl' }}
+                            >
+                                <ModalCloseButton
+                                    color="white"
+                                    position="absolute"
+                                    top={4}
+                                    right={4}
+                                    size="lg"
+                                />
+                                <ModalBody
+                                    py={8}
+                                    h={{ base: '100%', md: 'auto' }}
+                                    overflowY="auto"
+                                >
                                     <VStack spacing={6}>
                                         <Text
                                             color="white"
