@@ -61,6 +61,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     );
     const queryClient = useQueryClient();
     const [emailError, setEmailError] = useState<string>('');
+    const [phoneError, setPhoneError] = useState<string>('');
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -166,6 +167,39 @@ const AddressModal: React.FC<AddressModalProps> = ({
         return true;
     };
 
+    const validatePhone = (phone: string): boolean => {
+        // Remove spaces and dashes for validation
+        const cleanPhone = phone.replace(/[\s-]/g, '');
+
+        if (!phone) {
+            setPhoneError('Phone number is required');
+            return false;
+        }
+
+        // Check if the cleaned number contains only digits
+        if (!/^\d+$/.test(cleanPhone)) {
+            setPhoneError(
+                'Phone number can only contain numbers, spaces, and dashes'
+            );
+            return false;
+        }
+
+        // Check for minimum length (e.g., at least 7 digits)
+        if (cleanPhone.length < 7) {
+            setPhoneError('Phone number is too short');
+            return false;
+        }
+
+        // Check for maximum length (e.g., no more than 15 digits)
+        if (cleanPhone.length > 15) {
+            setPhoneError('Phone number is too long');
+            return false;
+        }
+
+        setPhoneError('');
+        return true;
+    };
+
     const handleChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLInputElement | HTMLSelectElement
@@ -175,6 +209,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
         if (name === 'email') {
             validateEmail(value);
+        } else if (name === 'shipping_address.phone') {
+            validatePhone(value);
         }
 
         setFormData({
@@ -204,8 +240,11 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Validate email before submission
-        if (!validateEmail(formData.email)) {
+        // Validate email and phone before submission
+        if (
+            !validateEmail(formData.email) ||
+            !validatePhone(formData['shipping_address.phone'])
+        ) {
             return;
         }
 
@@ -491,7 +530,10 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 gap="4"
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
-                                <FormControl isRequired>
+                                <FormControl
+                                    isRequired
+                                    isInvalid={!!phoneError}
+                                >
                                     <Input
                                         placeholder="Phone Number"
                                         height={'50px'}
@@ -509,6 +551,15 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         }
                                         onChange={handleChange}
                                     />
+                                    {phoneError && (
+                                        <Text
+                                            color="red.500"
+                                            fontSize="sm"
+                                            mt={1}
+                                        >
+                                            {phoneError}
+                                        </Text>
+                                    )}
                                 </FormControl>
                                 <FormControl
                                     isRequired
