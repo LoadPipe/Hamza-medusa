@@ -126,11 +126,15 @@ const Addresses = ({
                             {cart.shipping_address.address_2}
                         </Text>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
-                            {cart.shipping_address.postal_code},{' '}
+                            {cart.shipping_address.province},{' '}
                             {cart.shipping_address.city}
                         </Text>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
+                            {cart.shipping_address.postal_code},{' '}
                             {cart.shipping_address.country_code?.toUpperCase()}
+                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            {cart.shipping_address.phone}
                         </Text>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             {contactEmail}
