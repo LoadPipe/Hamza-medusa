@@ -30,7 +30,7 @@ export const fetchCartForCheckout = async (
     if (!cart?.shipping_address_id) {
         const address = await setBestShippingAddress(cart);
         if (address) {
-            cart.shipping_address = address;
+            cart = await retrieveCart(cartId);
         }
     }
 
