@@ -329,6 +329,12 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     preferred_currency_code,
                 ],
             });
+            await queryClient.invalidateQueries({
+                queryKey: ['cart'],
+            });
+            await queryClient.refetchQueries({
+                queryKey: ['cart'],
+            });
         }
     };
 
