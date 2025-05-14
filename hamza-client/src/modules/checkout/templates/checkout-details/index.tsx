@@ -3,16 +3,15 @@ import React from 'react';
 import Addresses from '@modules/checkout/components/addresses';
 import { CartWithCheckoutStep } from '@/types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
-import {
-    createPaymentSessions,
-    getHamzaCustomer,
-    listShippingMethods,
-} from '@/lib/server';
+import { createPaymentSessions, listShippingMethods } from '@/lib/server';
+import { Customer } from '@medusajs/medusa';
 
 export default async function CheckoutDetails({
     cart,
+    customer,
 }: {
     cart: CartWithCheckoutStep;
+    customer: Customer;
 }) {
     if (!cart) {
         return null;
@@ -31,9 +30,6 @@ export default async function CheckoutDetails({
     if (!availableShippingMethods) {
         return null;
     }
-
-    // get customer if logged in
-    const customer = await getHamzaCustomer();
 
     return (
         <Flex

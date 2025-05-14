@@ -1,7 +1,7 @@
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { CartWithCheckoutStep } from '@/types/global';
-import { LineItem, Store } from '@medusajs/medusa';
-import { getCheckoutStep } from '@lib/util/get-checkout-step';
+import { LineItem } from '@medusajs/medusa';
+import { setBestShippingAddress } from '@/lib/server';
 
 /**
  * Fetches the cart and enriches the line items with product data
@@ -15,14 +15,23 @@ export const fetchCartForCheckout = async (
     cartId: string
 ): Promise<CartWithCheckoutStep | null> => {
     if (!cartId) return null;
-    const cart = await retrieveCart(cartId);
+    let cart = await retrieveCart(cartId);
 
+    // enrich line items
     if (cart?.items.length) {
         const enrichedItems = await enrichLineItems(
             cart?.items,
             cart?.region_id
         );
         cart.items = enrichedItems as LineItem[];
+    }
+
+    // handle shipping address
+    if (!cart?.shipping_address_id) {
+        const address = await setBestShippingAddress(cart);
+        if (address) {
+            cart.shipping_address = address;
+        }
     }
 
     return cart;

@@ -9,7 +9,6 @@ import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
-import { addDefaultShippingMethod } from '@/lib/server';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import axios from 'axios';
 
@@ -45,15 +44,11 @@ const Addresses = ({
             : cart.email
         : '';
 
-    const { state: sameAsSBilling, toggle: toggleSameAsBilling } =
-        useToggleState(
-            cart?.shipping_address && cart?.billing_address
-                ? compareAddresses(
-                      cart?.shipping_address,
-                      cart?.billing_address
-                  )
-                : true
-        );
+    const { toggle: toggleSameAsBilling } = useToggleState(
+        cart?.shipping_address && cart?.billing_address
+            ? compareAddresses(cart?.shipping_address, cart?.billing_address)
+            : true
+    );
 
     const handleAddAddress = () => {
         setShippingAddressType('add');
