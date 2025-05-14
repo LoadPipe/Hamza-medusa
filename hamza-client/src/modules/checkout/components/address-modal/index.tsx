@@ -60,6 +60,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
         (state) => state.preferred_currency_code
     );
     const queryClient = useQueryClient();
+    const [emailError, setEmailError] = useState<string>('');
+    const [phoneError, setPhoneError] = useState<string>('');
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -127,14 +129,93 @@ const AddressModal: React.FC<AddressModalProps> = ({
         }
     }, [cart, countryCode, addressType, customer, selectedAddressId]);
 
+    const validateEmail = (email: string): boolean => {
+        // Basic email format validation
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (!email) {
+            setEmailError('Email is required');
+            return false;
+        }
+
+        if (!emailRegex.test(email)) {
+            setEmailError('Please enter a valid email address');
+            return false;
+        }
+
+        // Check for maximum length
+        if (email.length > 50) {
+            setEmailError('Email must be less than 50 characters');
+            return false;
+        }
+
+        // Check for special characters
+        const specialChars = /[<>()[\]\\{}|^`~]+/;
+        if (specialChars.test(email)) {
+            setEmailError('Email contains invalid characters');
+            return false;
+        }
+
+        // Check for valid domain
+        const domain = email.split('@')[1];
+        if (!domain || domain.length < 3) {
+            setEmailError('Invalid email domain');
+            return false;
+        }
+
+        setEmailError('');
+        return true;
+    };
+
+    const validatePhone = (phone: string): boolean => {
+        // Remove spaces and dashes for validation
+        const cleanPhone = phone.replace(/[\s-]/g, '');
+
+        if (!phone) {
+            setPhoneError('Phone number is required');
+            return false;
+        }
+
+        // Check if the cleaned number contains only digits
+        if (!/^\d+$/.test(cleanPhone)) {
+            setPhoneError(
+                'Phone number can only contain numbers, spaces, and dashes'
+            );
+            return false;
+        }
+
+        // Check for minimum length (e.g., at least 7 digits)
+        if (cleanPhone.length < 7) {
+            setPhoneError('Phone number is too short');
+            return false;
+        }
+
+        // Check for maximum length (e.g., no more than 15 digits)
+        if (cleanPhone.length > 15) {
+            setPhoneError('Phone number is too long');
+            return false;
+        }
+
+        setPhoneError('');
+        return true;
+    };
+
     const handleChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLInputElement | HTMLSelectElement
         >
     ) => {
+        const { name, value } = e.target;
+
+        if (name === 'email') {
+            validateEmail(value);
+        } else if (name === 'shipping_address.phone') {
+            validatePhone(value);
+        }
+
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
     };
 
@@ -158,6 +239,15 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // Validate email and phone before submission
+        if (
+            !validateEmail(formData.email) ||
+            !validatePhone(formData['shipping_address.phone'])
+        ) {
+            return;
+        }
+
         const formPayload = new FormData(e.currentTarget);
 
         try {
@@ -238,6 +328,12 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     cart?.shipping_address,
                     preferred_currency_code,
                 ],
+            });
+            await queryClient.invalidateQueries({
+                queryKey: ['cart'],
+            });
+            await queryClient.refetchQueries({
+                queryKey: ['cart'],
             });
         }
     };
@@ -440,7 +536,10 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 gap="4"
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
-                                <FormControl isRequired>
+                                <FormControl
+                                    isRequired
+                                    isInvalid={!!phoneError}
+                                >
                                     <Input
                                         placeholder="Phone Number"
                                         height={'50px'}
@@ -458,8 +557,20 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         }
                                         onChange={handleChange}
                                     />
+                                    {phoneError && (
+                                        <Text
+                                            color="red.500"
+                                            fontSize="sm"
+                                            mt={1}
+                                        >
+                                            {phoneError}
+                                        </Text>
+                                    )}
                                 </FormControl>
-                                <FormControl isRequired>
+                                <FormControl
+                                    isRequired
+                                    isInvalid={!!emailError}
+                                >
                                     <Input
                                         name="email"
                                         type="email"
@@ -479,6 +590,15 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderWidth={0}
                                         borderRadius={'12px'}
                                     />
+                                    {emailError && (
+                                        <Text
+                                            color="red.500"
+                                            fontSize="sm"
+                                            mt={1}
+                                        >
+                                            {emailError}
+                                        </Text>
+                                    )}
                                 </FormControl>
                             </Flex>
 

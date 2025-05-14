@@ -6,6 +6,7 @@ import CheckoutTemplate from '@/modules/checkout/templates';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import { RainbowWrapper } from '@/app/components/providers/rainbowkit/rainbow-provider';
 import EmptyCart from '@/modules/cart/components/empty-cart';
+import { getHamzaCustomer } from '@/lib/server';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -24,6 +25,9 @@ export default async function Checkout(params: any) {
 
     const cart = await fetchCartForCheckout(cartId);
 
+    // get customer if logged in
+    const customer = await getHamzaCustomer();
+
     if (!cart) {
         return <EmptyCart />;
     }
@@ -31,7 +35,7 @@ export default async function Checkout(params: any) {
     return (
         <RainbowWrapper>
             <Flex flexDir="row" maxW="1280px" width="95vw">
-                {<CheckoutTemplate cart={cart} />}
+                {<CheckoutTemplate cart={cart} customer={customer} />}
             </Flex>
         </RainbowWrapper>
     );

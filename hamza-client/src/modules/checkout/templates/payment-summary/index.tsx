@@ -38,14 +38,6 @@ const PaymentSummary = async ({ cart }: { cart: CartWithCheckoutStep }) => {
         );
     }
 
-    if (cart?.items.length) {
-        const enrichedItems = await enrichLineItems(
-            cart?.items,
-            cart?.region_id
-        );
-        cart.items = enrichedItems as LineItem[];
-    }
-
     return (
         <Flex
             bgColor={'#121212'}
