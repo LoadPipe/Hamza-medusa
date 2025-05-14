@@ -60,6 +60,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
         (state) => state.preferred_currency_code
     );
     const queryClient = useQueryClient();
+    const [emailError, setEmailError] = useState<string>('');
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -127,14 +128,58 @@ const AddressModal: React.FC<AddressModalProps> = ({
         }
     }, [cart, countryCode, addressType, customer, selectedAddressId]);
 
+    const validateEmail = (email: string): boolean => {
+        // Basic email format validation
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (!email) {
+            setEmailError('Email is required');
+            return false;
+        }
+
+        if (!emailRegex.test(email)) {
+            setEmailError('Please enter a valid email address');
+            return false;
+        }
+
+        // Check for maximum length
+        if (email.length > 50) {
+            setEmailError('Email must be less than 50 characters');
+            return false;
+        }
+
+        // Check for special characters
+        const specialChars = /[<>()[\]\\{}|^`~]+/;
+        if (specialChars.test(email)) {
+            setEmailError('Email contains invalid characters');
+            return false;
+        }
+
+        // Check for valid domain
+        const domain = email.split('@')[1];
+        if (!domain || domain.length < 3) {
+            setEmailError('Invalid email domain');
+            return false;
+        }
+
+        setEmailError('');
+        return true;
+    };
+
     const handleChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLInputElement | HTMLSelectElement
         >
     ) => {
+        const { name, value } = e.target;
+
+        if (name === 'email') {
+            validateEmail(value);
+        }
+
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
     };
 
@@ -158,6 +203,12 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // Validate email before submission
+        if (!validateEmail(formData.email)) {
+            return;
+        }
+
         const formPayload = new FormData(e.currentTarget);
 
         try {
@@ -459,7 +510,10 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         onChange={handleChange}
                                     />
                                 </FormControl>
-                                <FormControl isRequired>
+                                <FormControl
+                                    isRequired
+                                    isInvalid={!!emailError}
+                                >
                                     <Input
                                         name="email"
                                         type="email"
@@ -479,6 +533,15 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderWidth={0}
                                         borderRadius={'12px'}
                                     />
+                                    {emailError && (
+                                        <Text
+                                            color="red.500"
+                                            fontSize="sm"
+                                            mt={1}
+                                        >
+                                            {emailError}
+                                        </Text>
+                                    )}
                                 </FormControl>
                             </Flex>
 
