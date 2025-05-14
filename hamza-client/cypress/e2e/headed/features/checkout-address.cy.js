@@ -127,7 +127,7 @@ describe('Checkout Address', () => {
             .clear()
             .type('test2@whatever.com');
 
-        buttonClickByElementText(/(Add|Edit) Address/);
+        buttonClickByElementText(/(Add|Edit|Save) Address/);
 
         cy.wait(2000);
 
@@ -207,13 +207,11 @@ describe('Checkout Address', () => {
             .clear()
             .type('test@test.com');
 
-        buttonClickByElementText(/(Add|Edit) Address/);
-
-        cy.wait(2000);
-
         buttonClickByElementClass('.save-address-checkbox span', {
             forceClick: true,
         });
+
+        cy.wait(2000);
 
         buttonClickByElementText(/(Add|Edit|Save) Address/);
     });
