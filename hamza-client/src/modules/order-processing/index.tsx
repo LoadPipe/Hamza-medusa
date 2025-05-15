@@ -371,7 +371,8 @@ const OrderProcessing = ({
                                                         paymentTotal ?? 0,
                                                         currencyCode ?? 'usdc',
                                                         false
-                                                    )}
+                                                    )}{' '}
+                                                    {paymentCurrency?.toUpperCase()}
                                                 </Text>
                                             </Flex>
                                             <Button
@@ -461,19 +462,6 @@ const OrderProcessing = ({
                                             </VStack>
                                         )}
 
-                                    {paymentCurrency && (
-                                        <VStack align="start" spacing={1}>
-                                            <Text
-                                                color="gray.500"
-                                                fontSize="sm"
-                                            >
-                                                Payment Currency:
-                                            </Text>
-                                            <Text color="white">
-                                                {paymentCurrency?.toUpperCase()}
-                                            </Text>
-                                        </VStack>
-                                    )}
                                     <VStack align="start" spacing={1}>
                                         <Text color="gray.500" fontSize="sm">
                                             Total Items:
@@ -667,59 +655,44 @@ const OrderProcessing = ({
                                                 textAlign="left"
                                             >
                                                 Bitcoin payments are processed
-                                                separately from EVM wallets. If
-                                                you choose Bitcoin, you'll
-                                                receive a unique payment address
-                                                and instructions. This method is
-                                                independent of your EVM wallet
-                                                balance. To complete your
-                                                payment, simply scan the QR code
-                                                using your Bitcoin wallet."
+                                                separately from EVM wallets. To
+                                                complete your payment, simply
+                                                scan the QR code using your
+                                                Bitcoin wallet."
                                             </Text>
                                         ) : (
                                             <>
-                                                <Text
-                                                    color="gray.400"
-                                                    fontSize="sm"
-                                                    textAlign="left"
-                                                >
-                                                    Use this option if you're
-                                                    paying with a hardware
-                                                    wallet or a mobile wallet
-                                                    app like Trust Wallet or
-                                                    SafePal. It's ideal when
-                                                    your wallet isn't connected
-                                                    directly to the site but
-                                                    supports the same network.{' '}
-                                                    <br />
-                                                    <br /> To complete the
-                                                    payment, just scan the QR
-                                                    code or copy the wallet
-                                                    address to send the funds
-                                                    manually.
-                                                </Text>
-
-                                                <HStack
-                                                    justify="flex-start"
-                                                    width="100%"
-                                                    gap={5}
-                                                >
+                                                <VStack width="100%" gap={5}>
                                                     <VStack
                                                         gap={0}
-                                                        alignItems="flex-start"
+                                                        alignItems="center"
                                                     >
                                                         <Text
-                                                            color="gray.400"
-                                                            fontSize="sm"
+                                                            color="white"
+                                                            fontSize="l"
                                                             textAlign="left"
                                                         >
-                                                            Total Amount:
+                                                            Total to pay:
                                                         </Text>
                                                         <HStack>
+                                                            <Image
+                                                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                                                src={
+                                                                    currencyIcons[
+                                                                        currencyCode ??
+                                                                            'usdc'
+                                                                    ]
+                                                                }
+                                                                alt={
+                                                                    currencyCode ??
+                                                                    'usdc'
+                                                                }
+                                                            />
                                                             <Text
-                                                                color="gray.400"
-                                                                fontSize="sm"
+                                                                color="white"
+                                                                fontSize="2xl"
                                                                 textAlign="left"
+                                                                fontWeight="bold"
                                                             >
                                                                 {formatCryptoPrice(
                                                                     paymentTotal ??
@@ -727,11 +700,12 @@ const OrderProcessing = ({
                                                                     currencyCode ??
                                                                         'usdc',
                                                                     false
-                                                                )}
+                                                                )}{' '}
+                                                                {paymentCurrency?.toUpperCase()}
                                                             </Text>
                                                             <Button
                                                                 size="xs"
-                                                                bg="gray.700"
+                                                                bg="none"
                                                                 color="white"
                                                                 borderRadius="2rem"
                                                                 leftIcon={
@@ -741,7 +715,7 @@ const OrderProcessing = ({
                                                                                 marginRight:
                                                                                     '0',
                                                                             }}
-                                                                            color="white"
+                                                                            color="#999"
                                                                         />
                                                                     ) : (
                                                                         <FaCopy
@@ -749,7 +723,7 @@ const OrderProcessing = ({
                                                                                 marginRight:
                                                                                     '0',
                                                                             }}
-                                                                            color="white"
+                                                                            color="#999"
                                                                         />
                                                                     )
                                                                 }
@@ -789,14 +763,14 @@ const OrderProcessing = ({
                                                     {paywith && chainName && (
                                                         <VStack
                                                             gap={0}
-                                                            alignItems="flex-start"
+                                                            alignItems="center"
                                                         >
                                                             <Text
-                                                                color="gray.400"
-                                                                fontSize="sm"
+                                                                color="white"
+                                                                fontSize="l"
                                                                 textAlign="left"
                                                             >
-                                                                Chain Network:
+                                                                Chain Used:
                                                             </Text>
                                                             <HStack>
                                                                 <Image
@@ -812,8 +786,9 @@ const OrderProcessing = ({
                                                                     height={24}
                                                                 />
                                                                 <Text
-                                                                    color="gray.400"
-                                                                    fontSize="sm"
+                                                                    color="white"
+                                                                    fontSize="2xl"
+                                                                    fontWeight="bold"
                                                                     textAlign="left"
                                                                 >
                                                                     {getChainTitleFromName(
@@ -823,28 +798,7 @@ const OrderProcessing = ({
                                                             </HStack>
                                                         </VStack>
                                                     )}
-                                                    <VStack
-                                                        gap={0}
-                                                        alignItems="flex-start"
-                                                    >
-                                                        <Text
-                                                            color="gray.400"
-                                                            fontSize="sm"
-                                                            textAlign="left"
-                                                        >
-                                                            Payment Currency:
-                                                        </Text>
-                                                        <HStack>
-                                                            <Text
-                                                                color="gray.400"
-                                                                fontSize="sm"
-                                                                textAlign="left"
-                                                            >
-                                                                {paymentCurrency?.toUpperCase()}
-                                                            </Text>
-                                                        </HStack>
-                                                    </VStack>
-                                                </HStack>
+                                                </VStack>
                                             </>
                                         )}
 
@@ -869,15 +823,14 @@ const OrderProcessing = ({
                                             textAlign="center"
                                             wordBreak="break-all"
                                         >
-                                            {paymentData?.paymentAddress}
+                                            Wallet Address:
                                             <br />
-
                                             <Button
                                                 size={{ base: 'xs', md: 'sm' }}
                                                 bg="gray.700"
                                                 color="white"
-                                                borderRadius="2rem"
-                                                leftIcon={
+                                                borderRadius="5px"
+                                                rightIcon={
                                                     hasCopiedAddress ? (
                                                         <FaRegCheckCircle
                                                             style={{
@@ -897,7 +850,7 @@ const OrderProcessing = ({
                                                     )
                                                 }
                                                 _hover={{ bg: 'gray.600' }}
-                                                p={{ base: 4, md: 6 }}
+                                                py={{ base: 2, md: 4 }}
                                                 onClick={() => {
                                                     navigator.clipboard.writeText(
                                                         paymentData?.paymentAddress ??
@@ -913,9 +866,7 @@ const OrderProcessing = ({
                                                     );
                                                 }}
                                             >
-                                                {hasCopiedAddress
-                                                    ? 'Copied!'
-                                                    : 'Copy'}
+                                                {paymentData?.paymentAddress}
                                             </Button>
                                         </Text>
                                     </VStack>
