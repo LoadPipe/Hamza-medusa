@@ -11,6 +11,8 @@ import {
     StorePostCustomersCustomerAddressesReq,
     StorePostCustomersCustomerReq,
     Order,
+    Cart,
+    Address,
 } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { cache } from 'react';
@@ -463,11 +465,11 @@ export async function updateOrderEscrowStatus(
 
 export async function getEscrowPaymentData(order_id: string) {
     return getSecure('/custom/order/escrow', { order_id });
- }
- 
- export async function releaseOrderEscrow(order_id: string) {
+}
+
+export async function releaseOrderEscrow(order_id: string) {
     return putSecure('/custom/order/escrow', { order_id });
- }
+}
 
 export async function cancelOrder(order_id: string, cancel_reason: string) {
     return putSecure('/custom/order/cancel', { order_id, cancel_reason });
@@ -1496,4 +1498,21 @@ export async function getProductsByCategoryHandle({
         response,
         nextPage,
     };
+}
+
+export async function setBestShippingAddress(
+    cart: Cart
+): Promise<Address | null> {
+    const token = cookies().get('_medusa_jwt')?.value;
+
+    if (!token) {
+        return null;
+    }
+
+    // updates cart to use the best shipping address if non was set
+    const address: Address = await putSecure('/custom/cart/shipping/best', {
+        cart_id: cart.id,
+    });
+
+    return address ?? null;
 }

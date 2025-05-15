@@ -9,22 +9,31 @@ import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
-import { addDefaultShippingMethod } from '@/lib/server';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import { CartWithCheckoutStep } from '@/types/global';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
 
 const Addresses = ({
-    cart,
+    cart: initialCart,
     customer,
 }: {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
     const router = useRouter();
+
+    // Use TanStack Query to fetch cart data
+    const { data: cart } = useQuery({
+        queryKey: ['cart'],
+        queryFn: fetchCartForCart,
+        initialData: initialCart as CartWithCheckoutStep,
+    });
 
     // Hooks to open and close address modal
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -45,15 +54,11 @@ const Addresses = ({
             : cart.email
         : '';
 
-    const { state: sameAsSBilling, toggle: toggleSameAsBilling } =
-        useToggleState(
-            cart?.shipping_address && cart?.billing_address
-                ? compareAddresses(
-                      cart?.shipping_address,
-                      cart?.billing_address
-                  )
-                : true
-        );
+    const { toggle: toggleSameAsBilling } = useToggleState(
+        cart?.shipping_address && cart?.billing_address
+            ? compareAddresses(cart?.shipping_address, cart?.billing_address)
+            : true
+    );
 
     const handleAddAddress = () => {
         setShippingAddressType('add');
@@ -131,11 +136,15 @@ const Addresses = ({
                             {cart.shipping_address.address_2}
                         </Text>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
-                            {cart.shipping_address.postal_code},{' '}
+                            {cart.shipping_address.province},{' '}
                             {cart.shipping_address.city}
                         </Text>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
+                            {cart.shipping_address.postal_code},{' '}
                             {cart.shipping_address.country_code?.toUpperCase()}
+                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            {cart.shipping_address.phone}
                         </Text>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             {contactEmail}
