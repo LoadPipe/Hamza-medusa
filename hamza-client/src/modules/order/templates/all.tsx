@@ -11,6 +11,7 @@ import { getOrderBucket } from '@/lib/server';
 
 type Order = {};
 export type OrdersData = {
+    All: Order[];
     Processing: Order[];
     Shipped: Order[];
     Delivered: Order[];
@@ -19,14 +20,14 @@ export type OrdersData = {
 };
 
 export interface OrderNote {
-    id: string
-    note: string
-    public: boolean
-    created_at: string
-    updated_at: string
+    id: string;
+    note: string;
+    public: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
-type TransactionType = "refund" | "release";
+type TransactionType = 'refund' | 'release';
 
 export type HistoryMeta = {
     transaction_id: string;
@@ -41,8 +42,6 @@ export interface OrderHistory {
         source?: string;
     };
 }
-
-
 
 const All = ({ customer }: { customer: string }) => {
     const [processingFetched, setProcessingFetched] = useState(false);
@@ -59,7 +58,8 @@ const All = ({ customer }: { customer: string }) => {
     // Check if any tab contains data
     const ordersExist =
         data &&
-        ((data.Processing && data.Processing.length > 0) ||
+        ((data.All && data.All.length > 0) ||
+            (data.Processing && data.Processing.length > 0) ||
             (data.Shipped && data.Shipped.length > 0) ||
             (data.Delivered && data.Delivered.length > 0) ||
             (data.Cancelled && data.Cancelled.length > 0) ||
