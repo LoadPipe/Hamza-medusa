@@ -8,6 +8,8 @@ import {
     Grid,
     GridItem,
     Flex,
+    Text,
+    Spinner,
 } from '@chakra-ui/react';
 import {useQuery} from '@tanstack/react-query';
 import {formatCryptoPrice} from '@lib/util/get-product-price';
@@ -17,13 +19,19 @@ import {getAllProducts} from '@/lib/server';
 import {useSearchParams} from 'next/navigation';
 import {formatPriceBetweenCurrencies} from '@/lib/util/prices';
 import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
+import { Product, ProductPrice, ProductReview } from '@/types/global';
+
+interface ProductResponse {
+    products: Product[];
+    count: number;
+}
 
 const ProductCardGroup = ({
   columns = {base: 2, lg: 4},
   gap = {base: 4, md: '25.5px'},
   skeletonCount = 8,
   skeletonHeight = {base: '134.73', md: '238px'},
-  visibleProductCountInitial = 16,
+    productsPerPage = 24,
   padding = {base: '1rem', md: '1rem'},
 }) => {
     const {preferred_currency_code} = useCustomerAuthStore();
@@ -37,9 +45,11 @@ const ProductCardGroup = ({
         setRangeUpper,
         setRangeLower,
       } = useUnifiedFilterStore();
-    const [visibleProductsCount, setVisibleProductsCount] = useState(
-        visibleProductCountInitial,
-    );
+
+    // State for pagination with proper typing
+    const [offset, setOffset] = useState(0);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
+    const [hasMore, setHasMore] = useState(true);
 
     const searchParams = useSearchParams();
     const categoryFromUrl = searchParams.get('category');
@@ -50,21 +60,47 @@ const ProductCardGroup = ({
         }
     }, [categoryFromUrl, setSelectedCategories]);
 
-    const { data, error, isLoading } = useQuery({
-        queryKey: ['categories', selectedCategories, rangeUpper, rangeLower],
+    // Reset pagination when filters change
+    useEffect(() => {
+        setOffset(0);
+        setAllProducts([]);
+        setHasMore(true);
+    }, [selectedCategories, rangeUpper, rangeLower]);
+
+    const { data, error, isLoading, isFetching } = useQuery<ProductResponse>({
+        queryKey: ['categories', selectedCategories, rangeUpper, rangeLower, offset],
         queryFn: () =>
             getAllProducts(
                 selectedCategories,
                 rangeUpper,
                 rangeLower,
                 preferred_currency_code ?? 'usdc',
+                productsPerPage,
+                offset
             ),
         staleTime: 60 * 1000,
     });
 
-    const productsAll = data?.products ?? [];
+    // Update allProducts when new data is loaded
+    useEffect(() => {
+        if (data?.products) {
+            if (offset === 0) {
+                setAllProducts(data.products);
+            } else {
+                setAllProducts(prev => [...prev, ...data.products]);
+            }
 
-    if (isLoading) {
+            // Check if we have more products to load
+            setHasMore(data.products.length === productsPerPage);
+        }
+    }, [data, offset, productsPerPage]);
+
+    // Load more products handler
+    const handleLoadMore = () => {
+        setOffset(prev => prev + productsPerPage);
+    };
+
+    if (isLoading && offset === 0) {
         return (
             <Flex
                 mt={{base: '0', md: '1rem'}}
@@ -130,11 +166,11 @@ const ProductCardGroup = ({
                 }}
                 gap={gap}
             >
-                {productsAll.map((product: any, index: number) => {
+                {allProducts.map((product, index) => {
                     const variant = product.variants[0];
                     const productPricing =
                         variant?.prices?.find(
-                            (price: any) =>
+                            (price: ProductPrice) =>
                                 price.currency_code ===
                                 (preferred_currency_code ?? 'usdc'),
                         )?.amount ||
@@ -154,7 +190,7 @@ const ProductCardGroup = ({
 
                     const reviewCounter = product.reviews.length;
                     const totalRating = product.reviews.reduce(
-                        (acc: number, review: any) => acc + review.rating,
+                        (acc: number, review: ProductReview) => acc + review.rating,
                         0,
                     );
                     const avgRating = reviewCounter
@@ -183,7 +219,7 @@ const ProductCardGroup = ({
                                 currencyCode={preferred_currency_code || 'usdc'}
                                 imageSrc={product.thumbnail}
                                 hasDiscount={product.is_giftcard}
-                                discountValue={product.discountValue}
+                                discountValue={product.discountValue || ''}
                                 productId={product.id}
                                 inventory={variant?.inventory_quantity}
                                 allow_backorder={variant?.allow_backorder}
@@ -193,6 +229,63 @@ const ProductCardGroup = ({
                     );
                 })}
             </Grid>
+
+            {/* No products message */}
+            {allProducts.length === 0 && !isLoading && (
+                <Text textAlign="center" fontSize="lg" my={8}>
+                    No products found. Try adjusting your filters.
+                </Text>
+            )}
+
+            {/* Load More Button */}
+            {hasMore && allProducts.length > 0 && (
+                <Flex justifyContent="center" width="100%" mt={8}>
+                    <Flex
+                        display={{ base: 'flex' }}
+                        height={{ base: '33px', md: '47px' }}
+                        width={{ base: '120px', md: '190px' }}
+                        borderColor={'primary.green.900'}
+                        borderWidth={'1px'}
+                        borderRadius={'37px'}
+                        justifyContent={'center'}
+                        cursor={isFetching ? 'default' : 'pointer'}
+                        fontSize={{ base: '12px', md: '16px' }}
+                        onClick={isFetching ? undefined : handleLoadMore}
+                        opacity={isFetching ? 0.7 : 1}
+                        position="relative"
+                        transition="all 0.2s"
+                        _hover={{
+                            bg: isFetching ? 'transparent' : 'rgba(0, 128, 0, 0.05)',
+                            transform: isFetching ? 'none' : 'translateY(-2px)',
+                            boxShadow: isFetching ? 'none' : '0 4px 6px rgba(0, 128, 0, 0.1)'
+                        }}
+                    >
+                        {isFetching && (
+                            <Flex
+                                position="absolute"
+                                width="100%"
+                                height="100%"
+                                justifyContent="center"
+                                alignItems="center"
+                                borderRadius={'37px'}
+                                bg="rgba(255, 255, 255, 0.7)"
+                                backdropFilter="blur(4px)"
+                            >
+                                <Spinner size="sm" color="primary.green.900" thickness="2px" />
+                            </Flex>
+                        )}
+                        <Text
+                            alignSelf={'center'}
+                            color="primary.green.900"
+                            fontWeight={700}
+                            opacity={isFetching ? 0.3 : 1}
+                            transition="opacity 0.2s"
+                        >
+                            Load More
+                        </Text>
+                    </Flex>
+                </Flex>
+            )}
         </Flex>
     );
 };
