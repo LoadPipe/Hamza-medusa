@@ -7,7 +7,8 @@ import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getOrderBucket } from '@/lib/server';
+import { getOrderBuckets } from '@/lib/server';
+import AllOrders from './all-orders';
 
 type Order = {};
 export type OrdersData = {
@@ -51,7 +52,7 @@ const All = ({ customer }: { customer: string }) => {
 
     const { data, error, isLoading } = useQuery<OrdersData>({
         queryKey: ['batchOrders'],
-        queryFn: () => getOrderBucket(customer),
+        queryFn: () => getOrderBuckets(customer),
         staleTime: 5000, // Keep data fresh for 5 seconds
     });
 
@@ -69,11 +70,7 @@ const All = ({ customer }: { customer: string }) => {
         <React.Fragment>
             {ordersExist ? (
                 <React.Fragment>
-                    <Processing customer={customer} />
-                    <Shipped customer={customer} />
-                    <Delivered customer={customer} />
-                    <Cancelled customer={customer} />
-                    <Refund customer={customer} />
+                    <AllOrders customer={customer} />
                 </React.Fragment>
             ) : (
                 <Box

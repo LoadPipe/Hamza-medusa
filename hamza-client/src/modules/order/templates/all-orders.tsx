@@ -71,7 +71,7 @@ import { calculateOrderTotals } from '@/lib/util/order-calculations';
  * - Ensures the cancellation modal doesn't close prematurely unless the cancellation succeeds.
  */
 
-const Processing = ({
+const AllOrders = ({
     customer,
     // onSuccess,
     isEmpty,
@@ -94,14 +94,7 @@ const Processing = ({
         'batchOrders',
     ]);
 
-    // const {
-    //     data,
-    //     isLoading: processingOrdersLoading,
-    //     isError: processingOrdersError,
-    //     refetch,
-    // } = useQuery<OrdersData>(['batchOrders']);
-
-    const processingOrders = cachedData?.Processing || [];
+    const allOrders = cachedData?.All || [];
 
     const mutation = useMutation({
         mutationFn: async ({
@@ -181,15 +174,15 @@ const Processing = ({
         return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
-    if (isEmpty && processingOrders?.length === 0) {
+    if (isEmpty && allOrders?.length === 0) {
         return <EmptyState />;
     }
 
     return (
         <div style={{ width: '100%' }}>
-            {processingOrders && processingOrders.length > 0 ? (
+            {allOrders && allOrders.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
-                    {processingOrders.map((order: any) => {
+                    {allOrders.map((order: any) => {
                         const {
                             subTotal,
                             orderShippingTotal,
@@ -233,7 +226,7 @@ const Processing = ({
                                                     paymentStatus={
                                                         order.payment_status
                                                     }
-                                                    paymentType={'Processing'}
+                                                    paymentType={'Bzardo'}
                                                 />
                                             ) : null}
                                             {/*item: {item.id} <br />*/}
@@ -695,4 +688,4 @@ const Processing = ({
     );
 };
 
-export default Processing;
+export default AllOrders;
