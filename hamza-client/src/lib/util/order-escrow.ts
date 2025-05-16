@@ -196,8 +196,9 @@ function validatePaymentExists(
     payment: PaymentDefinition | null,
     orderId: string
 ) {
+    const displayOrderId = orderId.replace(/^order_/, '');
     if (!payment || !paymentIsValid(payment)) {
-        throw new Error(`Payment ${orderId} not found.`);
+        throw new Error(`Payment ${displayOrderId} not found.`);
     }
 }
 
@@ -205,9 +206,10 @@ function validatePaymentNotReleased(
     payment: PaymentDefinition | null,
     orderId: string
 ) {
+    const displayOrderId = orderId.replace(/^order_/, '');
     if (payment?.released) {
         throw new Error(
-            `Escrow payment for ${orderId} has already been released.`
+            `Escrow payment for ${displayOrderId} has already been released.`
         );
     }
 }
@@ -216,9 +218,10 @@ function validatePaymentNotReleasedBySeller(
     payment: PaymentDefinition | null,
     orderId: string
 ) {
+    const displayOrderId = orderId.replace(/^order_/, '');
     if (payment?.receiverReleased) {
         throw new Error(
-            `Escrow payment for ${orderId} has already been released by the seller.`
+            `Escrow payment for ${displayOrderId} has already been released by the seller.`
         );
     }
 }
@@ -228,13 +231,14 @@ function validateRefundAmount(
     orderId: string,
     amount: BigNumberish
 ) {
+    const displayOrderId = orderId.replace(/^order_/, '');
     const refundableAmt =
         BigInt(payment?.amount.toString() ?? '0') -
         BigInt(payment?.amountRefunded.toString() ?? '0');
 
     if (refundableAmt < BigInt(amount.toString())) {
         throw new Error(
-            `Amount of ${amount} exceeds the refundable amount of ${refundableAmt} for ${orderId}.`
+            `Amount of ${amount} exceeds the refundable amount of ${refundableAmt} for ${displayOrderId}.`
         );
     }
 }

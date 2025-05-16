@@ -233,7 +233,7 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                             height={6}
                                             mr={2}
                                         />
-                                        <Text>#...{order.id.slice(-10)}</Text> -{' '}
+                                        <Text marginRight={2}>#...{order.id.replace(/^order_/, '').slice(-10)}</Text>
                                         {order.store?.name}
                                     </Flex>
 
