@@ -132,11 +132,11 @@ const AllOrders = ({
         return <EmptyState />;
     }
 
-    const processingIds = cachedData?.Processing?.map((o) => o.id) ?? [];
-    const deliveredIds = cachedData?.Delivered?.map((o) => o.id) ?? [];
-    const refundedIds = cachedData?.Refunded?.map((o) => o.id) ?? [];
-    const cancelledIds = cachedData?.Cancelled?.map((o) => o.id) ?? [];
-    const shippedIds = cachedData?.Shipped?.map((o) => o.id) ?? [];
+    const processingIds = cachedData?.Processing?.map((o: any) => o.id) ?? [];
+    const deliveredIds = cachedData?.Delivered?.map((o: any) => o.id) ?? [];
+    const refundedIds = cachedData?.Refunded?.map((o: any) => o.id) ?? [];
+    const cancelledIds = cachedData?.Cancelled?.map((o: any) => o.id) ?? [];
+    const shippedIds = cachedData?.Shipped?.map((o: any) => o.id) ?? [];
 
     return (
         <div style={{ width: '100%' }}>
@@ -144,15 +144,25 @@ const AllOrders = ({
                 <Flex width={'100%'} flexDirection="column">
                     {allOrders.map((order: any) => {
                         if (processingIds.includes(order.id))
-                            return <ProcessingOrder order={order} />;
+                            return (
+                                <ProcessingOrder key={order.id} order={order} />
+                            );
                         if (deliveredIds.includes(order.id))
-                            return <DeliveredOrder order={order} />;
+                            return (
+                                <DeliveredOrder key={order.id} order={order} />
+                            );
                         if (refundedIds.includes(order.id))
-                            return <RefundedOrder order={order} />;
+                            return (
+                                <RefundedOrder key={order.id} order={order} />
+                            );
                         if (cancelledIds.includes(order.id))
-                            return <CancelledOrder order={order} />;
+                            return (
+                                <CancelledOrder key={order.id} order={order} />
+                            );
                         if (shippedIds.includes(order.id))
-                            return <ShippedOrder order={order} />;
+                            return (
+                                <ShippedOrder key={order.id} order={order} />
+                            );
 
                         return <></>;
                     })}

@@ -134,7 +134,7 @@ const Processing = ({
             {processingOrders && processingOrders.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {processingOrders.map((order: any) => {
-                        return <ProcessingOrder order={order} />;
+                        return <ProcessingOrder key={order.id} order={order} />;
                     })}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
                         <ModalOverlay />

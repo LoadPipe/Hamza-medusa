@@ -11,7 +11,7 @@ import Processing from '@modules/order/templates/processing';
 import Shipped from '@modules/order/templates/shipped';
 import Delivered from '@modules/order/templates/delivered';
 import Cancelled from '@modules/order/templates/cancelled';
-import Refund from '@modules/order/templates/refund';
+import Refund from '@/modules/order/templates/refunded';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import React from 'react';
 import { OrderTabsStyle } from './order-tabs-style';

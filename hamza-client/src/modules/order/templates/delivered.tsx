@@ -34,7 +34,7 @@ const Delivered = ({
             {deliveredOrder && deliveredOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {deliveredOrder.map((order: any) => {
-                        return <DeliveredOrder order={order} />;
+                        return <DeliveredOrder key={order.id} order={order} />;
                     })}
                 </Flex>
             ) : null}

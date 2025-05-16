@@ -30,7 +30,7 @@ const Cancelled = ({
             {canceledOrder && canceledOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {canceledOrder.map((order: any) => {
-                        return <CancelledOrder order={order} />;
+                        return <CancelledOrder key={order.id} order={order} />;
                     })}
                 </Flex>
             ) : null}

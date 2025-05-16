@@ -30,7 +30,7 @@ const Shipped = ({
             {shippedOrder && shippedOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {shippedOrder.map((order: any) => {
-                        return <ShippedOrder order={order} />;
+                        return <ShippedOrder key={order.id} order={order} />;
                     })}
                 </Flex>
             ) : null}

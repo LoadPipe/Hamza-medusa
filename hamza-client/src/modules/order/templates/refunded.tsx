@@ -32,7 +32,7 @@ const Refund = ({
             {refundOrder && refundOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {refundOrder.map((order: any) => {
-                        return <RefundedOrder order={order} />;
+                        return <RefundedOrder key={order.id} order={order} />;
                     })}
                 </Flex>
             ) : null}

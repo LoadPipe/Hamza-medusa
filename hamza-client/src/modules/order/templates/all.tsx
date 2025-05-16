@@ -1,16 +1,11 @@
 import { Box, Button, Text } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import Processing from '@modules/order/templates/processing';
-import Shipped from '@modules/order/templates/shipped';
-import Delivered from '@modules/order/templates/delivered';
-import Cancelled from '@modules/order/templates/cancelled';
-import Refund from '@modules/order/templates/refund';
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getOrderBuckets } from '@/lib/server';
 import AllOrders from './all-orders';
 
-type Order = { id: string };
+type Order = {};
 export type OrdersData = {
     All: Order[];
     Processing: Order[];
