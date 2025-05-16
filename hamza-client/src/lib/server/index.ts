@@ -254,7 +254,9 @@ export async function getAllProducts(
     categorySelect: string[] | null = ['all'],
     priceHigh: number = 5000000,
     priceLow: number = 0,
-    currencyCode: string = 'usdc'
+    currencyCode: string = 'usdc',
+    limit: number = 24,
+    offset: number = 0
 ) {
     const categoryString =
         categorySelect && categorySelect.length > 0
@@ -268,6 +270,8 @@ export async function getAllProducts(
         price_hi: priceHigh,
         price_lo: priceLow,
         currency_code: currencyCode,
+        limit,
+        offset,
     });
 }
 

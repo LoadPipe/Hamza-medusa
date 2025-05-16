@@ -88,7 +88,7 @@ const ShopTemplate = ({ category }: ShopTemplateProps) => {
                                 columns={{ base: 2, lg: 3 }}
                                 gap={{ base: 4, md: '7' }}
                                 skeletonCount={9}
-                                visibleProductCountInitial={16}
+                                productsPerPage={24}
                                 padding={{ base: '1rem', md: '0' }}
                             />
                         </Box>
