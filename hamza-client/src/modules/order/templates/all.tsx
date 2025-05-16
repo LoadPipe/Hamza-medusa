@@ -40,11 +40,6 @@ export interface OrderHistory {
 }
 
 const All = ({ customer }: { customer: string }) => {
-    const [processingFetched, setProcessingFetched] = useState(false);
-    const [shippedFetched, setShippedFetched] = useState(false);
-    const [deliveredFetched, setDeliveredFetched] = useState(false);
-    const [cancelledFetched, setCancelledFetched] = useState(false);
-
     const { data, error, isLoading } = useQuery<OrdersData>({
         queryKey: ['batchOrders'],
         queryFn: () => getOrderBuckets(customer),

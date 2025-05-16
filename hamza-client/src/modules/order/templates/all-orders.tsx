@@ -18,11 +18,12 @@ import {
 import EmptyState from '@modules/order/components/empty-state';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { OrdersData } from './all';
-import ProcessingOrder from './orders/processing';
-import DeliveredOrder from './orders/delivered';
-import RefundedOrder from './orders/refunded';
-import CancelledOrder from './orders/cancelled';
-import ShippedOrder from './orders/shipped';
+import ProcessingOrder from './orders/processing-order';
+import DeliveredOrder from './orders/delivered-order';
+import RefundedOrder from './orders/refunded-order';
+import CancelledOrder from './orders/cancelled-order';
+import ShippedOrder from './orders/shipped-order';
+import UnclassifiedOrder from './orders/unclassified-order';
 
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
@@ -143,6 +144,7 @@ const AllOrders = ({
             {allOrders && allOrders.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {allOrders.map((order: any) => {
+                        /*
                         if (processingIds.includes(order.id))
                             return (
                                 <ProcessingOrder key={order.id} order={order} />
@@ -163,8 +165,11 @@ const AllOrders = ({
                             return (
                                 <ShippedOrder key={order.id} order={order} />
                             );
+                            */
 
-                        return <></>;
+                        return (
+                            <UnclassifiedOrder key={order.id} order={order} />
+                        );
                     })}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
                         <ModalOverlay />

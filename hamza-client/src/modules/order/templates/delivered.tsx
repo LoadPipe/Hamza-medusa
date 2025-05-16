@@ -5,7 +5,7 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
-import DeliveredOrder from './orders/delivered';
+import DeliveredOrder from './orders/delivered-order';
 
 const Delivered = ({
     customer,

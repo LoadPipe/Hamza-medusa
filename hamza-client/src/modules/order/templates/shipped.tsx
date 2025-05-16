@@ -4,7 +4,7 @@ import EmptyState from '@modules/order/components/empty-state';
 import { useQueryClient } from '@tanstack/react-query';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
-import ShippedOrder from './orders/shipped';
+import ShippedOrder from './orders/shipped-order';
 
 const Shipped = ({
     customer,

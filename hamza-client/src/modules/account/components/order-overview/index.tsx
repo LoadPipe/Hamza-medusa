@@ -6,7 +6,7 @@ import {
     useBreakpointValue,
     Flex,
 } from '@chakra-ui/react';
-import All from '@modules/order/templates/all';
+import All from '@/modules/order/templates/all';
 import Processing from '@modules/order/templates/processing';
 import Shipped from '@modules/order/templates/shipped';
 import Delivered from '@modules/order/templates/delivered';

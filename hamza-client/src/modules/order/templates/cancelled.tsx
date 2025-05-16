@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
-import CancelledOrder from './orders/cancelled';
+import CancelledOrder from './orders/cancelled-order';
 
 const Cancelled = ({
     customer,
