@@ -119,7 +119,7 @@ export const Escrow = ({
                     {/* Display order details */}
                     {order && (
                         <>
-                            {order.id}
+                            {order.id.replace(/^order_/, '')}
                             <OrderComponent order={order} />
                         </>
                     )}
@@ -147,7 +147,7 @@ export const Escrow = ({
                                         <Flex direction="column" align="center" justify="center" my={4} p={5}
                                             borderWidth="1px" borderColor="whiteAlpha.300" borderRadius="md">
                                             <Text mb={2}>
-                                                Order found ({order.id}), waiting for escrow setup to complete
+                                                Order found {order.id.replace(/^order_/, '')}, waiting for escrow setup to complete
                                             </Text>
                                             <Text fontSize="sm" color="whiteAlpha.700">
                                                 Your payment is being processed. This may take a few moments.

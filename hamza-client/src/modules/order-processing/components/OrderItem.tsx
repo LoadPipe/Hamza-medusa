@@ -77,10 +77,10 @@ const OrderItem = ({
                 <HStack spacing={3}>
                     <Icon as={FaBox} color="white" />
                     <Text color="white" display={{ base: 'none', md: 'block' }}>
-                        {`${order.id} - ${order.store.name}`}
+                        {`${order.id.replace(/^order_/, '')} - ${order.store.name}`}
                     </Text>
                     <Text color="white" display={{ base: 'block', md: 'none' }}>
-                        {`...${order.id.slice(-10)}`}
+                        {`...${order.id.replace(/^order_/, '').slice(-10)}`}
                         <br />
                         {order.store.name}
                     </Text>

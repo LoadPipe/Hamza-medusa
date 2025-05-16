@@ -87,7 +87,7 @@ const OrderDetails = ({ cart, showStatus }: OrderDetailsProps) => {
                             key={orderId}
                             fontSize={{ base: '14px', md: '16px' }}
                         >
-                            {orderId}
+                            {orderId.replace(/^order_/, '')}
                         </Text>
                     ))}
                 </Flex>
