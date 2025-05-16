@@ -59,3 +59,34 @@ export type ProductCategoryWithChildren = Omit<
     category_children: ProductCategory[];
     category_parent?: ProductCategory;
 };
+
+// Products Card
+export interface ProductPrice {
+    currency_code: string;
+    amount: number;
+}
+
+export interface ProductVariants {
+    id: string;
+    prices: ProductPrice[];
+    inventory_quantity: number;
+    allow_backorder: boolean;
+}
+
+export interface ProductReview {
+    rating: number;
+}
+
+export interface Product {
+    id: string;
+    handle: string;
+    title: string;
+    thumbnail: string;
+    variants: ProductVariants[];
+    reviews: ProductReview[];
+    is_giftcard: boolean;
+    discountValue?: string;
+    origin_country: string;
+    store_id: string;
+    countryCode?: string;
+}
