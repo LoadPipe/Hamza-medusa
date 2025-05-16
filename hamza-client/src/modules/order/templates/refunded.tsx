@@ -1,12 +1,12 @@
+import React from 'react';
 import { Flex } from '@chakra-ui/react';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
-import CancelledOrder from './orders/cancelled-order';
+import RefundedOrder from './orders/refunded-order';
 
-const Cancelled = ({
+const Refund = ({
     customer,
     isEmpty,
 }: {
@@ -16,21 +16,23 @@ const Cancelled = ({
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const queryClient = useQueryClient();
+
     const cachedData: OrdersData | undefined = queryClient.getQueryData([
         'batchOrders',
     ]);
 
-    const canceledOrder = cachedData?.Cancelled || [];
-    if (isEmpty && canceledOrder && canceledOrder?.length == 0) {
+    const refundOrder = cachedData?.Refunded || [];
+
+    if (isEmpty && refundOrder && refundOrder?.length == 0) {
         return <EmptyState />;
     }
 
     return (
         <div style={{ width: '100%' }}>
-            {canceledOrder && canceledOrder.length > 0 ? (
+            {refundOrder && refundOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
-                    {canceledOrder.map((order: any) => {
-                        return <CancelledOrder key={order.id} order={order} />;
+                    {refundOrder.map((order: any) => {
+                        return <RefundedOrder key={order.id} order={order} />;
                     })}
                 </Flex>
             ) : null}
@@ -38,4 +40,4 @@ const Cancelled = ({
     );
 };
 
-export default Cancelled;
+export default Refund;
