@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getOrderBuckets } from '@/lib/server';
 import AllOrders from './all-orders';
 
-type Order = {};
+type Order = { id: string };
 export type OrdersData = {
     All: Order[];
     Processing: Order[];
