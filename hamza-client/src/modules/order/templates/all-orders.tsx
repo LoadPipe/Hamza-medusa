@@ -144,7 +144,6 @@ const AllOrders = ({
             {allOrders && allOrders.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {allOrders.map((order: any) => {
-                        /*
                         if (processingIds.includes(order.id))
                             return (
                                 <ProcessingOrder key={order.id} order={order} />
@@ -165,8 +164,6 @@ const AllOrders = ({
                             return (
                                 <ShippedOrder key={order.id} order={order} />
                             );
-                            */
-
                         return (
                             <UnclassifiedOrder key={order.id} order={order} />
                         );
