@@ -168,13 +168,14 @@ const AddressModal: React.FC<AddressModalProps> = ({
     };
 
     const validatePhone = (phone: string): boolean => {
+        // If phone is empty, skip validation
+        if (!phone) {
+            setPhoneError('');
+            return true;
+        }
+
         // Remove spaces and dashes for validation
         const cleanPhone = phone.replace(/[\s-]/g, '');
-
-        // if (!phone) {
-        //     setPhoneError('Phone number is required');
-        //     return false;
-        // }
 
         // Check if the cleaned number contains only digits
         if (!/^\d+$/.test(cleanPhone)) {
@@ -536,10 +537,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 gap="4"
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
-                                <FormControl
-                                    isRequired
-                                    isInvalid={!!phoneError}
-                                >
+                                <FormControl isInvalid={!!phoneError}>
                                     <Input
                                         placeholder="Phone Number"
                                         height={'50px'}
