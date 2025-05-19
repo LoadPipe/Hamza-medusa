@@ -171,10 +171,10 @@ const AddressModal: React.FC<AddressModalProps> = ({
         // Remove spaces and dashes for validation
         const cleanPhone = phone.replace(/[\s-]/g, '');
 
-        if (!phone) {
-            setPhoneError('Phone number is required');
-            return false;
-        }
+        // if (!phone) {
+        //     setPhoneError('Phone number is required');
+        //     return false;
+        // }
 
         // Check if the cleaned number contains only digits
         if (!/^\d+$/.test(cleanPhone)) {
