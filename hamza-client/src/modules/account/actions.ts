@@ -215,9 +215,7 @@ export async function addCustomerShippingAddress(
     } as StorePostCustomersCustomerAddressesReq;
 
     try {
-        await addShippingAddress(customer).then(() => {
-            revalidateTag('customer');
-        });
+        await addShippingAddress(customer);
         return { success: true, error: null };
     } catch (error: any) {
         return { success: false, error: error.toString() };
