@@ -1,16 +1,13 @@
 import { Box, Button, Text } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import Processing from '@modules/order/templates/processing';
-import Shipped from '@modules/order/templates/shipped';
-import Delivered from '@modules/order/templates/delivered';
-import Cancelled from '@modules/order/templates/cancelled';
-import Refund from '@modules/order/templates/refund';
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getOrderBucket } from '@/lib/server';
+import { getOrderBuckets } from '@/lib/server';
+import AllOrders from './all-orders';
 
 type Order = {};
 export type OrdersData = {
+    All: Order[];
     Processing: Order[];
     Shipped: Order[];
     Delivered: Order[];
@@ -19,14 +16,14 @@ export type OrdersData = {
 };
 
 export interface OrderNote {
-    id: string
-    note: string
-    public: boolean
-    created_at: string
-    updated_at: string
+    id: string;
+    note: string;
+    public: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
-type TransactionType = "refund" | "release";
+type TransactionType = 'refund' | 'release';
 
 export type HistoryMeta = {
     transaction_id: string;
@@ -42,24 +39,18 @@ export interface OrderHistory {
     };
 }
 
-
-
 const All = ({ customer }: { customer: string }) => {
-    const [processingFetched, setProcessingFetched] = useState(false);
-    const [shippedFetched, setShippedFetched] = useState(false);
-    const [deliveredFetched, setDeliveredFetched] = useState(false);
-    const [cancelledFetched, setCancelledFetched] = useState(false);
-
     const { data, error, isLoading } = useQuery<OrdersData>({
         queryKey: ['batchOrders'],
-        queryFn: () => getOrderBucket(customer),
+        queryFn: () => getOrderBuckets(customer),
         staleTime: 5000, // Keep data fresh for 5 seconds
     });
 
     // Check if any tab contains data
     const ordersExist =
         data &&
-        ((data.Processing && data.Processing.length > 0) ||
+        ((data.All && data.All.length > 0) ||
+            (data.Processing && data.Processing.length > 0) ||
             (data.Shipped && data.Shipped.length > 0) ||
             (data.Delivered && data.Delivered.length > 0) ||
             (data.Cancelled && data.Cancelled.length > 0) ||
@@ -69,11 +60,7 @@ const All = ({ customer }: { customer: string }) => {
         <React.Fragment>
             {ordersExist ? (
                 <React.Fragment>
-                    <Processing customer={customer} />
-                    <Shipped customer={customer} />
-                    <Delivered customer={customer} />
-                    <Cancelled customer={customer} />
-                    <Refund customer={customer} />
+                    <AllOrders customer={customer} />
                 </React.Fragment>
             ) : (
                 <Box

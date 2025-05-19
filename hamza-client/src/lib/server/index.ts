@@ -408,16 +408,7 @@ export async function getOrderInformation(cart_id: string) {
     });
 }
 
-export async function getOrderDetails(customer_id: string) {
-    const output = await getSecure('/custom/order/customer-orders', {
-        customer_id,
-    });
-
-    //TODO: why orders.orders?
-    return output.orders.orders;
-}
-
-export async function getOrderBucket(customer_id: string) {
+export async function getOrderBuckets(customer_id: string) {
     const response = await getSecure('/custom/order/customer-orders', {
         customer_id,
         buckets: true,

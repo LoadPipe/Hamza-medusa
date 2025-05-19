@@ -18,8 +18,12 @@ import {
 import EmptyState from '@modules/order/components/empty-state';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { OrdersData } from './all';
-import { useOrderTabStore } from '@/zustand/order-tab-state';
 import ProcessingOrder from './orders/processing-order';
+import DeliveredOrder from './orders/delivered-order';
+import RefundedOrder from './orders/refunded-order';
+import CancelledOrder from './orders/cancelled-order';
+import ShippedOrder from './orders/shipped-order';
+import UnclassifiedOrder from './orders/unclassified-order';
 
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
@@ -56,11 +60,13 @@ import ProcessingOrder from './orders/processing-order';
  * - Ensures the cancellation modal doesn't close prematurely unless the cancellation succeeds.
  */
 
-const Processing = ({
+const AllOrders = ({
     customer,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -68,14 +74,12 @@ const Processing = ({
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
 
-    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
-
     const queryClient = useQueryClient();
     const cachedData: OrdersData | undefined = queryClient.getQueryData([
         'batchOrders',
     ]);
 
-    const processingOrders = cachedData?.Processing || [];
+    const allOrders = cachedData?.All || [];
 
     const mutation = useMutation({
         mutationFn: async ({
@@ -125,16 +129,44 @@ const Processing = ({
         setIsAttemptedSubmit(false);
     };
 
-    if (isEmpty && processingOrders?.length === 0) {
+    if (isEmpty && allOrders?.length === 0) {
         return <EmptyState />;
     }
 
+    const processingIds = cachedData?.Processing?.map((o: any) => o.id) ?? [];
+    const deliveredIds = cachedData?.Delivered?.map((o: any) => o.id) ?? [];
+    const refundedIds = cachedData?.Refunded?.map((o: any) => o.id) ?? [];
+    const cancelledIds = cachedData?.Cancelled?.map((o: any) => o.id) ?? [];
+    const shippedIds = cachedData?.Shipped?.map((o: any) => o.id) ?? [];
+
     return (
         <div style={{ width: '100%' }}>
-            {processingOrders && processingOrders.length > 0 ? (
+            {allOrders && allOrders.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
-                    {processingOrders.map((order: any) => {
-                        return <ProcessingOrder key={order.id} order={order} />;
+                    {allOrders.map((order: any) => {
+                        if (processingIds.includes(order.id))
+                            return (
+                                <ProcessingOrder key={order.id} order={order} />
+                            );
+                        if (deliveredIds.includes(order.id))
+                            return (
+                                <DeliveredOrder key={order.id} order={order} />
+                            );
+                        if (refundedIds.includes(order.id))
+                            return (
+                                <RefundedOrder key={order.id} order={order} />
+                            );
+                        if (cancelledIds.includes(order.id))
+                            return (
+                                <CancelledOrder key={order.id} order={order} />
+                            );
+                        if (shippedIds.includes(order.id))
+                            return (
+                                <ShippedOrder key={order.id} order={order} />
+                            );
+                        return (
+                            <UnclassifiedOrder key={order.id} order={order} />
+                        );
                     })}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
                         <ModalOverlay />
@@ -208,4 +240,4 @@ const Processing = ({
     );
 };
 
-export default Processing;
+export default AllOrders;
