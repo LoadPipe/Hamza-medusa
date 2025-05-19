@@ -422,7 +422,8 @@ const CryptoPaymentButton = ({
     const disableButton =
         isCartEmpty ||
         isUpdatingCart ||
-        (isMissingAddress && isMissingShippingMethod);
+        isMissingAddress ||
+        isMissingShippingMethod;
 
     const getButtonText = () => {
         if (isCartEmpty) return 'Add products to order';

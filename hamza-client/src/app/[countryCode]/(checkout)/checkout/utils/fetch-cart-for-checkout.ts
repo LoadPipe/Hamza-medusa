@@ -1,7 +1,7 @@
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { CartWithCheckoutStep } from '@/types/global';
 import { LineItem } from '@medusajs/medusa';
-import { setBestShippingAddress } from '@/lib/server';
+import { addDefaultShippingMethod, setBestShippingAddress } from '@/lib/server';
 
 /**
  * Fetches the cart and enriches the line items with product data
@@ -30,6 +30,14 @@ export const fetchCartForCheckout = async (
     if (!cart?.shipping_address_id) {
         const address = await setBestShippingAddress(cart);
         if (address) {
+            cart = await retrieveCart(cartId);
+        }
+    }
+
+    // add default shipping method
+    if (!cart?.shipping_methods.length) {
+        const shippingMethod = await addDefaultShippingMethod(cartId);
+        if (shippingMethod) {
             cart = await retrieveCart(cartId);
         }
     }
