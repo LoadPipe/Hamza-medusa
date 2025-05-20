@@ -29,7 +29,7 @@ type Props = {
 
 const ProductCardGroup = ({
     storeName,
-    productsPerPage = 8,
+    productsPerPage = parseInt(process.env.NEXT_PUBLIC_STORE_PRODUCTS_PER_PAGE || '8'),
 }: Props) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { selectedCategories, setSelectedCategories } = useUnifiedFilterStore();
