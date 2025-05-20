@@ -178,9 +178,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
         const cleanPhone = phone.replace(/[\s-]/g, '');
 
         // Check if the cleaned number contains only digits
-        if (!/^\d+$/.test(cleanPhone)) {
+        if (!/^[\d+]+$/.test(cleanPhone)) {
             setPhoneError(
-                'Phone number can only contain numbers, spaces, and dashes'
+                'Phone number can only contain numbers, spaces, dashes, and plus sign'
             );
             return false;
         }
