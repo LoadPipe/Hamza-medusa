@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     Box,
     Skeleton,
@@ -19,6 +19,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 import { Product, ProductPrice, ProductReview } from '@/types/global';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 type Props = {
     storeName: string;
@@ -30,98 +31,219 @@ const ProductCardGroup = ({
     storeName,
     productsPerPage = 8,
 }: Props) => {
-    // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
-    const { selectedCategories } = useUnifiedFilterStore();
+    const { selectedCategories, setSelectedCategories } = useUnifiedFilterStore();
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
-    // State for pagination
+    // State for pagination and products
     const [offset, setOffset] = useState(0);
     const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [hasMore, setHasMore] = useState(true);
+    const [loadingInitialBatches, setLoadingInitialBatches] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    // Store references to previous values to avoid unnecessary resets
-    const prevFiltersRef = React.useRef({
-        categories: selectedCategories,
-        currency: preferred_currency_code,
-        store: storeName
+    // Track current filter state to detect changes
+    const filterState = useRef({
+        categories: [] as string[],
+        currency: '',
+        store: ''
     });
 
-    // Reset pagination only when filters actually change
-    useEffect(() => {
-        const prevFilters = prevFiltersRef.current;
-        const categoriesChanged =
-            prevFilters.categories.join(',') !== selectedCategories.join(',');
-        const storeChanged = prevFilters.store !== storeName;
+    // URL update helper function
+    const updateUrl = (currentOffset: number) => {
+        const params = new URLSearchParams(searchParams.toString());
 
-        // Only reset if something actually changed
-        if (categoriesChanged || storeChanged) {
-            console.log('Filters actually changed - resetting pagination state');
+        // Update offset
+        params.set('offset', currentOffset.toString());
+
+        // Update category filter
+        if (selectedCategories && selectedCategories.length > 0) {
+            if (selectedCategories.includes('all') || selectedCategories[0] === 'all') {
+                params.set('category', 'all');
+            } else {
+                params.set('category', selectedCategories.join(','));
+            }
+        } else if (params.has('category')) {
+            params.delete('category');
+        }
+
+        // Replace URL without full page refresh
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    };
+
+    // API call helper functions
+    const getProductsUrl = (storeNameParam: string, categoryParam: string, currencyCode: string, limit: number, offsetValue: number) => {
+        return `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeNameParam}&category_name=${categoryParam}&currency_code=${currencyCode}&limit=${limit}&offset=${offsetValue}`;
+    };
+
+    // 1. Initialize from URL parameters (runs once)
+    useEffect(() => {
+        if (isInitialized) return;
+
+        // Get offset from URL
+        const offsetParam = searchParams.get('offset');
+        if (offsetParam) {
+            const parsedOffset = parseInt(offsetParam, 10);
+            setOffset(parsedOffset);
+
+            // If starting at non-zero offset, need to load previous batches
+            if (parsedOffset > 0) {
+                setLoadingInitialBatches(true);
+            }
+        }
+
+        // Get category from URL
+        const categoryParam = searchParams.get('category');
+        if (categoryParam) {
+            const categories = categoryParam.split(',').map(cat => cat.trim().toLowerCase());
+            setSelectedCategories(categories);
+
+            // Track initial categories for change detection
+            filterState.current.categories = [...categories];
+        } else {
+            // Track current categories
+            filterState.current.categories = [...selectedCategories];
+        }
+
+        // Track other filter state values
+        filterState.current.currency = preferred_currency_code || 'usdc';
+        filterState.current.store = storeName;
+
+        setIsInitialized(true);
+    }, [searchParams, isInitialized, setSelectedCategories, preferred_currency_code, storeName, selectedCategories]);
+
+    // 2. Handle filter changes (reset pagination when filters change)
+    useEffect(() => {
+        // Skip during initialization
+        if (!isInitialized || loadingInitialBatches) return;
+
+        const prevState = filterState.current;
+        const categoriesChanged = prevState.categories.join(',') !== selectedCategories.join(',');
+        const currencyChanged = prevState.currency !== (preferred_currency_code || 'usdc');
+        const storeChanged = prevState.store !== storeName;
+
+        // Reset pagination if any filters changed
+        if (categoriesChanged || currencyChanged || storeChanged) {
             setOffset(0);
             setAllProducts([]);
             setHasMore(true);
 
-            // Update refs with new values
-            prevFiltersRef.current = {
-                categories: selectedCategories,
-                currency: preferred_currency_code,
+            // Update tracking refs with new values
+            filterState.current = {
+                categories: [...selectedCategories],
+                currency: preferred_currency_code || 'usdc',
                 store: storeName
             };
+
+            // Update URL to reflect reset pagination
+            updateUrl(0);
         }
-    }, [selectedCategories, preferred_currency_code, storeName]);
+    }, [selectedCategories, preferred_currency_code, storeName, isInitialized, loadingInitialBatches]);
 
-    const categoryParam = selectedCategories.join(',');
+    // Function to fetch initial batches (when URL has non-zero offset)
+    const fetchInitialBatches = async () => {
+        if (offset === 0 || !loadingInitialBatches) return [];
 
+        const batchCount = Math.ceil(offset / productsPerPage);
+        const batches = [];
+        const categoryParam = selectedCategories.join(',');
+        const currencyCode = preferred_currency_code || 'usdc';
+
+        // Load all previous batches (0 to current offset)
+        for (let i = 0; i < batchCount; i++) {
+            const batchOffset = i * productsPerPage;
+            try {
+                const url = getProductsUrl(storeName, categoryParam, currencyCode, productsPerPage, batchOffset);
+                const response = await axios.get(url);
+                batches.push(response.data);
+            } catch (error) {
+                // Continue loading other batches even if one fails
+            }
+        }
+
+        return batches;
+    };
+
+    // Function to fetch products for current offset
     const fetchProducts = async () => {
-        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categoryParam}&currency_code=${preferred_currency_code ?? 'usdc'}&limit=${productsPerPage}&offset=${offset}`;
+        const categoryParam = selectedCategories.join(',');
+        const currencyCode = preferred_currency_code || 'usdc';
 
-        console.log('Fetching data from URL:', url);
         try {
+            const url = getProductsUrl(storeName, categoryParam, currencyCode, productsPerPage, offset);
             const response = await axios.get(url);
-            console.log('Data fetched:', response.data);
             return response.data;
         } catch (error) {
-            console.error('Error fetching products:', error);
             return [];
         }
     };
 
+    // Query for loading initial batches
+    const { data: initialBatchesData, isLoading: isLoadingInitialBatches } = useQuery({
+        queryKey: ['initialBatches', storeName, selectedCategories, offset],
+        queryFn: fetchInitialBatches,
+        enabled: loadingInitialBatches && !!storeName && isInitialized,
+    });
+
+    // Process initial batches when they load
+    useEffect(() => {
+        if (initialBatchesData && Array.isArray(initialBatchesData) && initialBatchesData.length > 0 && loadingInitialBatches) {
+            // Flatten all batches into a single array of products
+            const allInitialProducts = initialBatchesData.flatMap(batch =>
+                Array.isArray(batch) ? batch : []
+            );
+
+            if (allInitialProducts.length > 0) {
+                setAllProducts(allInitialProducts);
+            }
+            setLoadingInitialBatches(false);
+        }
+    }, [initialBatchesData, loadingInitialBatches]);
+
+    // Main query for current offset
     const { data, error, isLoading, isFetching } = useQuery({
-        queryKey: ['products', storeName, selectedCategories, offset],
+        queryKey: ['products', storeName, selectedCategories, offset, preferred_currency_code],
         queryFn: fetchProducts,
-        enabled: !!storeName,
+        enabled: !!storeName && !loadingInitialBatches && isInitialized,
     });
 
     // Update allProducts when new data is loaded
     useEffect(() => {
-        console.log('Data changed. Data:', data);
+        if (!data || loadingInitialBatches || !isInitialized) return;
 
-        if (data) {
-            console.log('Processing data. Current allProducts length:', allProducts.length);
-            // Make sure we properly handle the data as an array
-            const productsArray = Array.isArray(data) ? data : [];
-            console.log('Products array length:', productsArray.length);
+        // Make sure properly handle the data as an array
+        const productsArray = Array.isArray(data) ? data : [];
 
-            if (offset === 0) {
-                console.log('Setting initial products');
-                setAllProducts(productsArray);
-            } else {
-                console.log('Appending products, current count:', allProducts.length);
-                setAllProducts(prev => [...prev, ...productsArray]);
+        if (offset === 0) {
+            setAllProducts(productsArray);
+        } else {
+            // Ensure don't duplicate products
+            const currentProductIds = new Set(allProducts.map(p => p.id));
+            const newProducts = productsArray.filter(p => !currentProductIds.has(p.id));
+
+            if (newProducts.length > 0) {
+                setAllProducts(prev => [...prev, ...newProducts]);
             }
-
-            // Check if we have more products to load
-            setHasMore(productsArray.length === productsPerPage);
-            console.log('Setting hasMore to:', productsArray.length === productsPerPage);
         }
-    }, [data, offset, productsPerPage]);
 
-    // Log if there's an error
-    if (error) {
-        console.error('Error fetching data:', error);
-    }
+        // Check if have more products to load
+        setHasMore(productsArray.length === productsPerPage);
 
+        // Update URL with current pagination state
+        updateUrl(offset);
+    }, [data, offset, productsPerPage, allProducts, loadingInitialBatches, isInitialized]);
 
-    if (isLoading && offset === 0) {
+    // Load more products handler
+    const handleLoadMore = () => {
+        if (!isFetching) {
+            setOffset(prev => prev + productsPerPage);
+        }
+    };
+
+    // Loading UI
+    if ((isLoading && offset === 0 && !loadingInitialBatches) || loadingInitialBatches || isLoadingInitialBatches) {
         return (
             <Flex
                 maxW={'1280px'}
@@ -129,7 +251,11 @@ const ProductCardGroup = ({
                 mx="auto"
                 justifyContent={'center'}
                 alignItems={'center'}
+                flexDirection="column"
             >
+                {(loadingInitialBatches || isLoadingInitialBatches) && (
+                    <Text mb={4} fontWeight="medium">Loading previous products...</Text>
+                )}
                 <Grid
                     maxWidth={'1256.52px'}
                     mx="1rem"
@@ -164,6 +290,12 @@ const ProductCardGroup = ({
                         </GridItem>
                     ))}
                 </Grid>
+
+                {error && (
+                    <Text mt={4} color="red.500">
+                        Error loading products. Please try refreshing the page.
+                    </Text>
+                )}
             </Flex>
         );
     }
@@ -190,7 +322,6 @@ const ProductCardGroup = ({
                 gap={{ base: '4', md: '25.5px' }}
             >
                 {allProducts.map((product, index) => {
-
                     try {
                         const variant = product.variants && product.variants.length > 0
                             ? product.variants[0]
@@ -229,14 +360,13 @@ const ProductCardGroup = ({
 
                         return (
                             <GridItem
-                                key={index}
-                                //   maxW={'295px'}
+                                key={product.id || `product-${index}`}
                                 minHeight={'243.73px'}
                                 height={{ base: '100%', md: '399px' }}
                                 width="100%"
                             >
                                 <ProductCard
-                                    key={index}
+                                    key={product.id || `product-${index}`}
                                     reviewCount={reviewCounter}
                                     totalRating={roundedAvgRating}
                                     productHandle={product.handle}
@@ -257,14 +387,13 @@ const ProductCardGroup = ({
                             </GridItem>
                         );
                     } catch (err) {
-                        console.error(`Error rendering product at index ${index}:`, err);
                         return null;
                     }
                 })}
             </Grid>
 
             {/* No products message */}
-            {allProducts.length === 0 && !isLoading && (
+            {allProducts.length === 0 && !isLoading && !loadingInitialBatches && !isLoadingInitialBatches && (
                 <Text textAlign="center" fontSize="lg" my={8}>
                     No products found. Try adjusting your filters.
                 </Text>
@@ -321,11 +450,6 @@ const ProductCardGroup = ({
             )}
         </Flex>
     );
-
-    function handleLoadMore() {
-        console.log('Loading more products...');
-        setOffset(prev => prev + productsPerPage);
-    }
 };
 
 export default ProductCardGroup;
