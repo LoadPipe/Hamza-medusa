@@ -91,7 +91,7 @@ export const Escrow = ({
                 position="absolute"
                 top="16px"
                 right="16px"
-                onClick={() => router.back()}
+                onClick={() => router.push('/account/orders?tab=Refund')}
                 variant="ghost"
                 color="white"
                 _hover={{ bg: 'whiteAlpha.200' }}
