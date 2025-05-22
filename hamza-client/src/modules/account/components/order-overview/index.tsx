@@ -13,19 +13,34 @@ import Delivered from '@modules/order/templates/delivered';
 import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@/modules/order/templates/refunded';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { OrderTabsStyle } from './order-tabs-style';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const OrderOverview = ({ customer }: { customer: any }) => {
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
-
     const setOrderActiveTab = useOrderTabStore(
         (state) => state.setOrderActiveTab
     );
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    // Initialize tab from URL parameter
+    useEffect(() => {
+        const tabParam = searchParams.get('tab');
+        if (tabParam && Object.values(TABS).includes(tabParam)) {
+            setOrderActiveTab(tabParam);
+        }
+    }, [searchParams, setOrderActiveTab]);
 
     const handleTabChange = (tab: string) => {
         if (orderActiveTab !== tab) {
             setOrderActiveTab(tab);
+            // Update URL with new tab
+            const params = new URLSearchParams(searchParams);
+            params.set('tab', tab);
+            router.push(`${pathname}?${params.toString()}`);
         }
     };
 

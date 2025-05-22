@@ -9,11 +9,18 @@ interface CategoryButtonProps {
     setSelectedCategories: (categories: string[]) => void;
 }
 
-const CategoryButton: React.FC<CategoryButtonProps> = ({ categoryName, url, selectedCategories,
-    setSelectedCategories, }) => {
+const CategoryButton: React.FC<CategoryButtonProps> = ({
+    categoryName,
+    url,
+    selectedCategories,
+    setSelectedCategories
+}) => {
+    const normalizeCategory = (category: string) => {
+        return category.trim().replace(/[\s_]+/g, '-').toLowerCase();
+    };
 
     const toggleCategorySelection = (category: string) => {
-        const normalized = category.toLowerCase();
+        const normalized = normalizeCategory(category);
         if (normalized === 'all') {
             setSelectedCategories(['all']);
             return;
@@ -27,7 +34,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({ categoryName, url, sele
         }
     };
 
-    const isSelected = selectedCategories.includes(categoryName.trim().replace(/[\s_]+/g, '-').toLowerCase());
+    const isSelected = selectedCategories.includes(normalizeCategory(categoryName));
 
     return (
         <Flex>
