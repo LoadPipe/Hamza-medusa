@@ -11,7 +11,7 @@ import { CartWithCheckoutStep } from '@/types/global';
 import { useEffect, useState } from 'react';
 import { LineItem } from '@medusajs/medusa';
 import { deleteLineItem } from '../actions';
-import RegionLockedModal from '@/modules/checkout/components/cart-items/components/region-locked-modal';
+import RegionLockedModal from '@/modules/cart/components/region-locked-modal';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
