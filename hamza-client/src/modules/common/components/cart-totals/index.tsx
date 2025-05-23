@@ -10,40 +10,28 @@ import currencyIcons from '../../../../../public/images/currencies/crypto-curren
 import { updateShippingCost } from '@lib/server';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { CartWithCheckoutStep } from '@/types/global';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
-import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
+import { useRouter } from 'next/navigation';
 
 type CartTotalsProps = {
     cart: CartWithCheckoutStep;
     useCartStyle: boolean;
 };
 
-const CartTotals: React.FC<CartTotalsProps> = ({
-    useCartStyle,
-    cart: initialCart,
-}) => {
+const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
+    const router = useRouter();
     const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
     const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
 
-    const { data: cart } = useQuery({
-        queryKey: ['cartInPaymentSummary', initialCart?.id],
-        queryFn: async () => {
-            setIsUpdatingCart(true);
-            const updatedCart = await fetchCartForCheckout(initialCart.id);
-            setIsUpdatingCart(false);
-            return updatedCart;
-        },
-        initialData: initialCart,
-        staleTime: 0,
-        gcTime: 0,
-        enabled:
-            preferred_currency_code !==
-            initialCart?.customer?.preferred_currency_id,
-    });
+    if (preferred_currency_code !== cart?.customer?.preferred_currency_id) {
+        setIsUpdatingCart(true);
+        router.refresh();
+        setIsUpdatingCart(false);
+    }
 
     const { data: shippingCost, isLoading: loading } = useQuery({
         queryKey: [
