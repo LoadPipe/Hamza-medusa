@@ -32,7 +32,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     const { data: cart } = useQuery({
         queryKey: ['cartInPaymentSummary', initialCart?.id],
         queryFn: async () => {
+            setIsUpdatingCart(true);
             const updatedCart = await fetchCartForCheckout(initialCart.id);
+            setIsUpdatingCart(false);
             return updatedCart;
         },
         initialData: initialCart,
@@ -130,12 +132,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     });
 
     if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
-
-    if (preferred_currency_code !== cart?.customer?.preferred_currency_id) {
-        setIsUpdatingCart(true);
-    } else {
-        setIsUpdatingCart(false);
-    }
 
     return (
         <>
