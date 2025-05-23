@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { LineItem } from '@medusajs/medusa';
 import { deleteLineItem } from '../actions';
 import RegionLockedModal from '@/modules/cart/components/region-locked-modal';
+import { useRouter } from 'next/navigation';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -33,53 +34,64 @@ const StoreItems = ({ store, cart }: StoreItemsProps) => {
     const [regionLockedItems, setRegionLockedItems] = useState<
         ExtendedLineItem[]
     >([]);
+    const router = useRouter();
+
+    //TODO: this is a workaround for a nextjs issue in which router.push doesn't cause the target page to load fully
+    useEffect(() => {
+        if (
+            cart?.items?.length &&
+            cart.items[0]?.variant?.product &&
+            !cart.items[0].variant?.product?.tags
+        ) {
+            router.refresh();
+        }
+    });
 
     useEffect(() => {
-        if (cart?.shipping_address) {
-            if (cart?.items) {
-                // Filter items with geo-restriction tags
-                const variantsWithGeoRestriction: any[] = cart.items.filter(
-                    (i) =>
-                        (i.variant?.product?.tags ?? []).find((t: any) =>
-                            t.id.startsWith('geo-restriction')
-                        )
-                );
+        if (cart?.shipping_address && cart?.items) {
+            setTimeout(() => doGeoRestrictionCheck(), 10);
+        }
+    }, [cart, cart?.items, onOpen]);
 
-                if (variantsWithGeoRestriction?.length) {
-                    const restrictedVariants = [];
-                    for (let item of variantsWithGeoRestriction ?? []) {
-                        const tags =
-                            item?.variant?.product?.tags?.filter((t: any) =>
-                                t?.id?.startsWith('geo-restriction')
-                            ) ?? [];
+    const doGeoRestrictionCheck = () => {
+        // Filter items with geo-restriction tags
+        const variantsWithGeoRestriction: any[] = cart.items.filter((i) =>
+            (i.variant?.product?.tags ?? []).find((t: any) =>
+                t.id.startsWith('geo-restriction')
+            )
+        );
 
-                        let geoRestricted: boolean = true;
-                        for (let tag of tags) {
-                            if (tag?.metadata?.country) {
-                                if (
-                                    cart?.shipping_address?.country_code?.toLowerCase() ===
-                                    tag.metadata.country.toLowerCase()
-                                ) {
-                                    geoRestricted = false;
-                                }
-                            }
+        if (variantsWithGeoRestriction?.length) {
+            const restrictedVariants = [];
+            for (let item of variantsWithGeoRestriction ?? []) {
+                const tags =
+                    item?.variant?.product?.tags?.filter((t: any) =>
+                        t?.id?.startsWith('geo-restriction')
+                    ) ?? [];
+
+                let geoRestricted: boolean = true;
+                for (let tag of tags) {
+                    if (tag?.metadata?.country) {
+                        if (
+                            cart?.shipping_address?.country_code?.toLowerCase() ===
+                            tag.metadata.country.toLowerCase()
+                        ) {
+                            geoRestricted = false;
                         }
-
-                        if (geoRestricted) restrictedVariants.push(item);
-                    }
-
-                    setRegionLockedItems(
-                        restrictedVariants as ExtendedLineItem[]
-                    );
-
-                    // If there are region-locked items, show the modal
-                    if (restrictedVariants.length > 0) {
-                        onOpen();
                     }
                 }
+
+                if (geoRestricted) restrictedVariants.push(item);
+            }
+
+            setRegionLockedItems(restrictedVariants as ExtendedLineItem[]);
+
+            // If there are region-locked items, show the modal
+            if (restrictedVariants.length > 0) {
+                onOpen();
             }
         }
-    }, [cart]);
+    };
 
     const handleRemoveLockedItems = () => {
         // Delete all region locked items
