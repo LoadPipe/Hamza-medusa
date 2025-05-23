@@ -10,19 +10,38 @@ import currencyIcons from '../../../../../public/images/currencies/crypto-curren
 import { updateShippingCost } from '@lib/server';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { CartWithCheckoutStep } from '@/types/global';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 
 type CartTotalsProps = {
     cart: CartWithCheckoutStep;
     useCartStyle: boolean;
 };
 
-const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
+const CartTotals: React.FC<CartTotalsProps> = ({
+    useCartStyle,
+    cart: initialCart,
+}) => {
     const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
+    const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
+
+    const { data: cart } = useQuery({
+        queryKey: ['cartInPaymentSummary', initialCart?.id],
+        queryFn: async () => {
+            const updatedCart = await fetchCartForCheckout(initialCart.id);
+            return updatedCart;
+        },
+        initialData: initialCart,
+        staleTime: 0,
+        gcTime: 0,
+        enabled:
+            preferred_currency_code !==
+            initialCart?.customer?.preferred_currency_id,
+    });
 
     const { data: shippingCost, isLoading: loading } = useQuery({
         queryKey: [
@@ -89,6 +108,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
+    const discountTotal = cart?.discount_total ?? 0;
+
     const { data: convertedPrice } = useQuery({
         queryKey: ['convertedPrice', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
         queryFn: async () => {
@@ -109,6 +130,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
     });
 
     if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
+
+    if (preferred_currency_code !== cart?.customer?.preferred_currency_id) {
+        setIsUpdatingCart(true);
+    } else {
+        setIsUpdatingCart(false);
+    }
 
     return (
         <>
@@ -145,7 +172,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                     </Flex>
                 )}
 
-                {!!cart.discount_total && (
+                {!!discountTotal && (
                     <Flex justifyContent={'space-between'}>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             Discount
@@ -156,7 +183,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                             <Text fontSize={{ base: '14px', md: '16px' }}>
                                 -
                                 {formatCryptoPrice(
-                                    cart.discount_total,
+                                    discountTotal,
                                     displayCurrency
                                 )}
                             </Text>
