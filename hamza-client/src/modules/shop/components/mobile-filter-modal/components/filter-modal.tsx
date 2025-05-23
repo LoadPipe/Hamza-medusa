@@ -51,6 +51,13 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     const [localRange, setLocalRange] = useState<RangeType>(range);
 
     useEffect(() => {
+        if (isOpen) {
+            setModalSelectedCategories(selectedCategories);
+            setLocalRange(range);
+        }
+    }, [isOpen, selectedCategories, range]);
+
+    useEffect(() => {
         setLocalRange(range);
     }, [range]);
 
@@ -176,8 +183,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     </Button>
                     <Button
                         onClick={() => {
-                            if (selectedCategories.length === 0) {
+                            if (modalSelectedCategories.length === 0) {
                                 setSelectedCategories(['all']);
+                            } else {
+                                setSelectedCategories(modalSelectedCategories);
                             }
                             if (localRange[0] !== 0 || localRange[1] !== 350) {
                                 setRangeLower(localRange[0]);

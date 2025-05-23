@@ -14,30 +14,34 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
 }) => {
     const { selectedCategories, setSelectedCategories } = useUnifiedFilterStore();
 
-    const identifier = categoryName.trim().replace(/[\s_]+/g, '-').toLowerCase();
-    const isSelected = selectedCategories.includes(identifier);
+    const normalizeCategory = (name: string) => {
+        return name.trim().toLowerCase();
+    };
+
+    const normalizedCategory = normalizeCategory(categoryName);
+    const isSelected = selectedCategories.includes(normalizedCategory);
 
     const toggleCategorySelection = (category: string) => {
-        const normalizedCategory = category.toLowerCase();
+        const normalizedCat = normalizeCategory(category);
         const currentSelection = selectedCategories || [];
 
-        if (normalizedCategory === 'all') {
+        if (normalizedCat === 'all') {
             setSelectedCategories(['all']);
             return;
         }
 
-        if (currentSelection.includes(normalizedCategory)) {
-            const updated = currentSelection.filter((c) => c !== normalizedCategory);
+        if (currentSelection.includes(normalizedCat)) {
+            const updated = currentSelection.filter((c) => c !== normalizedCat);
             setSelectedCategories(updated.length ? updated : ['all']);
         } else {
             const updated = currentSelection.filter((c) => c !== 'all');
-            setSelectedCategories([...updated, normalizedCategory]);
+            setSelectedCategories([...updated, normalizedCat]);
         }
     };
     return (
         <Flex
             flexShrink={0}
-            onClick={() => toggleCategorySelection(identifier)}
+            onClick={() => toggleCategorySelection(categoryName)}
             borderColor={'#3E3E3E'}
             backgroundColor={isSelected ? 'white' : 'black'}
             display={'flex'}

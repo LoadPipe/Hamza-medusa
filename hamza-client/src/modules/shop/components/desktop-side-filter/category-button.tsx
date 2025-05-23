@@ -16,7 +16,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     setSelectedCategories
 }) => {
     const normalizeCategory = (category: string) => {
-        return category.trim().replace(/[\s_]+/g, '-').toLowerCase();
+        return category.trim().toLowerCase();
     };
 
     const toggleCategorySelection = (category: string) => {
