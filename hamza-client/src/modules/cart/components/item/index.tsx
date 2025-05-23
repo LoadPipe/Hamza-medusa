@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
 import ItemQuantityButton from './components/item-quantity-button';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
@@ -29,6 +30,7 @@ const Item = ({ item }: ItemProps) => {
     const { handle } = item.variant.product;
     const queryClient = useQueryClient();
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const router = useRouter();
 
     const changeQuantity = async (newQuantity: number) => {
         try {
@@ -46,7 +48,8 @@ const Item = ({ item }: ItemProps) => {
                     lineId: item.id,
                     quantity: newQuantity,
                 });
-                await queryClient.invalidateQueries({ queryKey: ['cart'] });
+                // await queryClient.invalidateQueries({ queryKey: ['cart'] });
+                router.refresh();
                 setIsUpdatingCart(false);
             }, 500); // 500ms debounce
         } catch (error) {
