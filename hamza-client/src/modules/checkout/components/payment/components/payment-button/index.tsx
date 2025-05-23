@@ -429,7 +429,7 @@ const CryptoPaymentButton = ({
         if (isCartEmpty) return 'Add products to order';
         if (isMissingAddress) return 'Add address to order';
         if (isUpdatingCart) return <Spinner />;
-        return 'Pay with Crypto Wallet';
+        return 'Pay with Browser Wallet';
     };
 
     return (

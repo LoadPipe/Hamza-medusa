@@ -70,10 +70,6 @@ const nextConfig = withStoreConfig({
             },
             {
                 protocol: 'https',
-                hostname: 'alpha.hamza.biz',
-            },
-            {
-                protocol: 'https',
                 hostname: 'hamzamarket.b-cdn.net',
             },
             {
@@ -115,6 +111,11 @@ const nextConfig = withStoreConfig({
             {
                 protocol: 'https',
                 hostname: 'crm.dev.globetopper.com',
+            },
+            //NY Bar Store,
+            {
+                protocol: 'https',
+                hostname: 'newyorkbarstore.b-cdn.net',
             },
             // Add blockchain logo domains
             {
