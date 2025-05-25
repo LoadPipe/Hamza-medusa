@@ -2,6 +2,12 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem, Cart, Store } from '@medusajs/medusa';
 import { CartWithCheckoutStep } from '@/types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
+import {
+    addDefaultShippingMethod,
+    getCartShippingCost,
+    getShippingMethods,
+} from '@/lib/server';
+import { setBestShippingAddress } from '@/lib/server';
 
 type StoreWithItems = MedusaStore & {
     items: LineItem[];
@@ -13,20 +19,33 @@ type MedusaStore = Store & {
 
 export const fetchCartForCart =
     async (): Promise<CartWithCheckoutStep | null> => {
-        const cart = await retrieveCart().then(
-            (cart) => cart as CartWithCheckoutStep
-        );
+        let cart = await retrieveCart();
 
-        if (!cart) {
-            return null;
-        }
+        if (!cart) return null;
 
-        if (cart?.items?.length) {
+        if (cart.items.length) {
             const enrichedItems = await enrichLineItems(
                 cart.items,
                 cart.region_id
             );
             cart.items = enrichedItems as LineItem[];
+        }
+
+        // handle shipping address
+        if (!cart.shipping_address_id) {
+            const address = await setBestShippingAddress(cart);
+            if (address) {
+                cart = await retrieveCart();
+            }
+        }
+
+        // add default shipping method
+        const shippingMethod = await addDefaultShippingMethod(cart);
+        if (shippingMethod) {
+            const sm = await getShippingMethods(cart.id);
+            if (sm) {
+                cart.shipping_methods = sm;
+            }
         }
 
         // ✅ Ensure `checkout_step` is always assigned

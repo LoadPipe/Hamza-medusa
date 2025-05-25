@@ -13,6 +13,7 @@ import { CartWithCheckoutStep } from '@/types/global';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 
 type CartTotalsProps = {
     cart: CartWithCheckoutStep;
@@ -33,7 +34,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         queryKey: ['cartInPaymentSummary', initialCart?.id],
         queryFn: async () => {
             setIsUpdatingCart(true);
-            const updatedCart = await fetchCartForCheckout(initialCart.id);
+            const updatedCart = await fetchCartForCart();
             setIsUpdatingCart(false);
             return updatedCart;
         },

@@ -76,7 +76,7 @@ const Addresses = ({
                 console.log('Checking shipping method in address');
                 console.log('Shipping methods:', cart?.shipping_methods);
 
-                if (!cart?.shipping_methods.length) {
+                if (!cart?.shipping_methods || !cart?.shipping_methods.length) {
                     // If no shipping methods, add the default shipping method
                     console.log('Adding default shipping method');
                     axios.put(

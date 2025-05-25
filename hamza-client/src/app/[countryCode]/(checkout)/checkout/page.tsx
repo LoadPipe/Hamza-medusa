@@ -7,6 +7,7 @@ import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/ut
 import { RainbowWrapper } from '@/app/components/providers/rainbowkit/rainbow-provider';
 import EmptyCart from '@/modules/cart/components/empty-cart';
 import { getHamzaCustomer } from '@/lib/server';
+import { fetchCartForCart } from '../../(main)/cart/utils/fetch-cart-for-cart';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -23,7 +24,7 @@ export default async function Checkout(params: any) {
         return notFound();
     }
 
-    const cart = await fetchCartForCheckout(cartId);
+    const cart = await fetchCartForCart();
 
     // get customer if logged in
     const customer = await getHamzaCustomer();

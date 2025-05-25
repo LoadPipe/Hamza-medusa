@@ -11,7 +11,7 @@ import {
     StorePostCustomersCustomerAddressesReq,
     StorePostCustomersCustomerReq,
     Order,
-    Cart,
+    Cart as MedusaCart,
     Address,
 } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
@@ -42,6 +42,8 @@ const emptyResponse = {
     response: { products: [], count: 0 },
     nextPage: null,
 };
+
+type Cart = Omit<MedusaCart, 'refundable_amount' | 'refunded_total'>;
 
 async function axiosCall(
     verb: 'get' | 'post' | 'patch' | 'put' | 'delete',
@@ -609,7 +611,10 @@ export async function getCart(cart_id: string) {
     if (token?.length) {
         const headers = getMedusaHeaders(['cart']);
         return medusaClient.carts
-            .retrieve(cart_id, headers)
+            .retrieve(cart_id, {
+                ...headers,
+                expand: ['shipping_methods'],
+            })
             .then(({ cart }) => cart)
             .catch((err) => {
                 console.log(err);
@@ -619,6 +624,13 @@ export async function getCart(cart_id: string) {
 
     //otherwise, play it safe and get the definitely non-cached
     return getSecure('/custom/cart', { cart_id });
+}
+
+export async function getShippingMethods(cart_id: string) {
+    const cart = await getCart(cart_id);
+    if (!cart) return null;
+    if (!cart.shipping_methods) return null;
+    return cart.shipping_methods;
 }
 
 export async function addItem({
@@ -719,9 +731,20 @@ export async function updatePaymentSession(
     }
 }
 
-export async function addDefaultShippingMethod(cart_id: string) {
+export async function addDefaultShippingMethod(cart: Cart) {
+    // Return early if cart is missing required data
+    if (!cart?.customer_id || !cart?.shipping_address) {
+        return null;
+    }
+
+    // Return early if cart already has shipping methods
+    if (cart?.shipping_methods?.length > 0) {
+        return null;
+    }
+
+    // Add default shipping method
     return putSecure('/custom/cart/shipping', {
-        cart_id,
+        cart_id: cart.id,
     });
 }
 

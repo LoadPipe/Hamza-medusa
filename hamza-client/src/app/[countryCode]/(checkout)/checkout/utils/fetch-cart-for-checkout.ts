@@ -16,18 +16,16 @@ export const fetchCartForCheckout = async (
 ): Promise<CartWithCheckoutStep | null> => {
     if (!cartId) return null;
     let cart = await retrieveCart(cartId);
+    if (!cart) return null;
 
     // enrich line items
-    if (cart?.items.length) {
-        const enrichedItems = await enrichLineItems(
-            cart?.items,
-            cart?.region_id
-        );
+    if (cart.items.length) {
+        const enrichedItems = await enrichLineItems(cart.items, cart.region_id);
         cart.items = enrichedItems as LineItem[];
     }
 
     // handle shipping address
-    if (!cart?.shipping_address_id) {
+    if (!cart.shipping_address_id) {
         const address = await setBestShippingAddress(cart);
         if (address) {
             cart = await retrieveCart(cartId);
@@ -35,7 +33,7 @@ export const fetchCartForCheckout = async (
     }
 
     // add default shipping method
-    if (!cart?.shipping_methods.length) {
+    if (!cart.shipping_methods || !cart.shipping_methods.length) {
         const shippingMethod = await addDefaultShippingMethod(cartId);
         if (shippingMethod) {
             cart = await retrieveCart(cartId);
