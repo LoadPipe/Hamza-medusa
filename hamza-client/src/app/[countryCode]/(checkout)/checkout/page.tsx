@@ -3,7 +3,6 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { Flex } from '@chakra-ui/react';
 import CheckoutTemplate from '@/modules/checkout/templates';
-import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import { RainbowWrapper } from '@/app/components/providers/rainbowkit/rainbow-provider';
 import EmptyCart from '@/modules/cart/components/empty-cart';
 import { getHamzaCustomer } from '@/lib/server';

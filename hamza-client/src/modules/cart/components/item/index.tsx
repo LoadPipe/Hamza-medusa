@@ -46,7 +46,7 @@ const Item = ({ item }: ItemProps) => {
                     lineId: item.id,
                     quantity: newQuantity,
                 });
-                queryClient.invalidateQueries({ queryKey: ['cart'] });
+                await queryClient.invalidateQueries({ queryKey: ['cart'] });
                 setIsUpdatingCart(false);
             }, 500); // 500ms debounce
         } catch (error) {
