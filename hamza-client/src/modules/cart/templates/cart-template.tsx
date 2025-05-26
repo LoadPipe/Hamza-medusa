@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect } from 'react';
 import ItemsTemplate from './items-template';
 import Summary from './summary';

@@ -23,16 +23,18 @@ const Addresses = ({
     cart: initialCart,
     customer,
 }: {
-    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
+    cart: CartWithCheckoutStep | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
     const router = useRouter();
 
     // Use TanStack Query to fetch cart data
     const { data: cart } = useQuery({
-        queryKey: ['cart'],
+        queryKey: ['cart', initialCart?.id],
         queryFn: fetchCartForCart,
-        initialData: initialCart as CartWithCheckoutStep,
+        staleTime: 0,
+        gcTime: 0,
+        initialData: initialCart,
     });
 
     // Hooks to open and close address modal
