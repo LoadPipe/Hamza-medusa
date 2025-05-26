@@ -134,15 +134,14 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     }
     useEffect(() => {
         if (!isUpdatingCart && !loading && !isLoadingCart && cart) {
-            console.log('Cart totals fully loaded');
-
-            // You can perform any final actions here
-            console.log('Preferred Currency Code: ', preferred_currency_code);
-            console.log('cart currency code: ', cart.items[0].currency_code);
-            console.log(
-                'initialCart currency code: ',
-                initialCart.items[0].currency_code
-            );
+            // console.log('Cart totals fully loaded');
+            // // You can perform any final actions here
+            // console.log('Preferred Currency Code: ', preferred_currency_code);
+            // console.log('cart currency code: ', cart.items[0].currency_code);
+            // console.log(
+            //     'initialCart currency code: ',
+            //     initialCart.items[0].currency_code
+            // );
         }
     }, [isUpdatingCart, loading, cart, isLoadingCart]);
 
