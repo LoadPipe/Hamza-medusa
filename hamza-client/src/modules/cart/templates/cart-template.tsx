@@ -36,9 +36,10 @@ const CartTemplate = ({
         isLoading,
         isError,
     } = useQuery({
-        queryKey: ['cart'],
+        queryKey: ['cart', _cart.id],
         queryFn: fetchCartForCart,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 0,
+        gcTime: 0,
         initialData: _cart,
     });
 
