@@ -6,12 +6,14 @@ import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 
 import {
+    addDefaultShippingMethod,
     addItem,
     createCart,
     createPaymentSessions,
     getCart,
     getProductsById,
     removeItem,
+    setBestShippingAddress,
     updateCart,
     updateItem,
 } from '@/lib/server';
@@ -65,7 +67,18 @@ export async function retrieveCart(
     }
 
     try {
+        const initialCart = await getCart(cartId).then((cart) => cart);
+
+        // set best shipping address
+        if (!initialCart.shipping_address_id) {
+            const address = await setBestShippingAddress(initialCart);
+        }
+
+        // add default shipping method
+        const shippingMethod = await addDefaultShippingMethod(initialCart);
+
         const cart = await getCart(cartId).then((cart) => cart);
+
         return cart;
     } catch (e) {
         console.error(e);

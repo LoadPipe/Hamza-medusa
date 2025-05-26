@@ -719,10 +719,30 @@ export async function updatePaymentSession(
     }
 }
 
-export async function addDefaultShippingMethod(cart_id: string) {
+export async function addDefaultShippingMethod(
+    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>
+) {
+    // Return early if cart is missing required data
+    if (!cart?.customer_id || !cart?.shipping_address) {
+        return null;
+    }
+
+    // Return early if cart already has shipping methods
+    if (cart?.shipping_methods && cart?.shipping_methods.length > 0) {
+        return null;
+    }
+
+    // Add default shipping method
     return putSecure('/custom/cart/shipping', {
-        cart_id,
+        cart_id: cart.id,
     });
+}
+
+export async function getShippingMethods(cart_id: string) {
+    const cart = await getCart(cart_id);
+    if (!cart) return null;
+    if (!cart.shipping_methods) return null;
+    return cart.shipping_methods;
 }
 
 export async function createPaymentSessions(
