@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner, VStack } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
@@ -25,16 +25,13 @@ const CartTotals: React.FC<CartTotalsProps> = ({
 }) => {
     const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
     const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
-    const getCartUpdateEvents = useCartStore(
-        (state) => state.getCartUpdateEvents
-    );
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
 
     // Use TanStack Query to fetch cart data
-    const { data: cart } = useQuery({
-        queryKey: ['cart', initialCart?.id],
+    const { data: cart, isLoading: isLoadingCart } = useQuery({
+        queryKey: ['cart'],
         queryFn: () => {
             setIsUpdatingCart(true);
             const cart = fetchCartForCart();
@@ -130,7 +127,24 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
     });
 
-    // console.log(getCartUpdateEvents());
+    // Effect to handle final load state
+    let discountIsCorrectCurrency = false;
+    if (preferred_currency_code === cart?.items[0].currency_code) {
+        discountIsCorrectCurrency = true;
+    }
+    useEffect(() => {
+        if (!isUpdatingCart && !loading && !isLoadingCart && cart) {
+            console.log('Cart totals fully loaded');
+
+            // You can perform any final actions here
+            console.log('Preferred Currency Code: ', preferred_currency_code);
+            console.log('cart currency code: ', cart.items[0].currency_code);
+            console.log(
+                'initialCart currency code: ',
+                initialCart.items[0].currency_code
+            );
+        }
+    }, [isUpdatingCart, loading, cart, isLoadingCart]);
 
     if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
 
@@ -174,7 +188,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             Discount
                         </Text>
-                        {loading || isUpdatingCart ? (
+                        {!discountIsCorrectCurrency ||
+                        loading ||
+                        isUpdatingCart ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text fontSize={{ base: '14px', md: '16px' }}>
@@ -251,7 +267,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                     >
                         Total
                     </Text>
-                    {loading || isUpdatingCart ? (
+                    {!discountIsCorrectCurrency || loading || isUpdatingCart ? (
                         <Spinner size="sm" color="white" />
                     ) : (
                         <VStack alignItems="flex-end">
