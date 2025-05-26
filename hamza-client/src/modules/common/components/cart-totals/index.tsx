@@ -12,17 +12,36 @@ import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { CartWithCheckoutStep } from '@/types/global';
 import { useQuery } from '@tanstack/react-query';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 
 type CartTotalsProps = {
     cart: CartWithCheckoutStep;
     useCartStyle: boolean;
 };
 
-const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
+const CartTotals: React.FC<CartTotalsProps> = ({
+    useCartStyle,
+    cart: initialCart,
+}) => {
     const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
+    const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
+
+    // Use TanStack Query to fetch cart data
+    const { data: cart } = useQuery({
+        queryKey: ['cart', initialCart?.id],
+        queryFn: () => {
+            setIsUpdatingCart(true);
+            const cart = fetchCartForCart();
+            setIsUpdatingCart(false);
+            return cart;
+        },
+        staleTime: 0,
+        gcTime: 0,
+        initialData: initialCart,
+    });
 
     const { data: shippingCost, isLoading: loading } = useQuery({
         queryKey: [
