@@ -25,6 +25,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({
 }) => {
     const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
     const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
+    const getCartUpdateEvents = useCartStore(
+        (state) => state.getCartUpdateEvents
+    );
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
@@ -126,6 +129,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         enabled: preferred_currency_code === 'eth', //  Fetch only when preferred currency is ETH
         staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
     });
+
+    // console.log(getCartUpdateEvents());
 
     if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
 

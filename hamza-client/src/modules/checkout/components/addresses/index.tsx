@@ -72,32 +72,32 @@ const Addresses = ({
         onOpen();
     };
 
-    useEffect(() => {
-        const updateShippingMethod = async () => {
-            if (cart?.customer_id && cart?.shipping_address) {
-                console.log('Checking shipping method in address');
-                console.log('Shipping methods:', cart?.shipping_methods);
+    // useEffect(() => {
+    //     const updateShippingMethod = async () => {
+    //         if (cart?.customer_id && cart?.shipping_address) {
+    //             console.log('Checking shipping method in address');
+    //             console.log('Shipping methods:', cart?.shipping_methods);
 
-                if (!cart?.shipping_methods || !cart?.shipping_methods.length) {
-                    // If no shipping methods, add the default shipping method
-                    console.log('Adding default shipping method');
-                    axios.put(
-                        `${MEDUSA_SERVER_URL}/custom/cart/shipping`,
-                        {
-                            cart_id: cart.id,
-                        },
-                        {
-                            headers: {
-                                authorization: getClientCookie('_medusa_jwt'),
-                            },
-                        }
-                    );
-                }
-            }
-        };
+    //             if (!cart?.shipping_methods || !cart?.shipping_methods.length) {
+    //                 // If no shipping methods, add the default shipping method
+    //                 console.log('Adding default shipping method');
+    //                 axios.put(
+    //                     `${MEDUSA_SERVER_URL}/custom/cart/shipping`,
+    //                     {
+    //                         cart_id: cart.id,
+    //                     },
+    //                     {
+    //                         headers: {
+    //                             authorization: getClientCookie('_medusa_jwt'),
+    //                         },
+    //                     }
+    //                 );
+    //             }
+    //         }
+    //     };
 
-        updateShippingMethod();
-    }, [cart, router]);
+    //     updateShippingMethod();
+    // }, [cart, router]);
 
     return (
         <div>
