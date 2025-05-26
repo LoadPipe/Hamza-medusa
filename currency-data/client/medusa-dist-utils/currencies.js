@@ -38,6 +38,15 @@ exports.currencies = {
         code: "USDT",
         name_plural: "USDT",
     },
+    BTC: {
+        symbol: '₿',
+        name: 'Bitcoin',
+        symbol_native: '₿',
+        decimal_digits: 8,
+        rounding: 0,
+        code: 'BTC',
+        name_plural: 'BTC',
+    },
     CAD: {
         symbol: "CA$",
         name: "Canadian Dollar",
