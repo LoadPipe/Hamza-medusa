@@ -669,7 +669,10 @@ export async function updateShippingCost(cart_id: string) {
             cart_id,
         });
         const shippingCost = response?.amount ?? 0;
-        return shippingCost; // Return shipping cost for further use if needed
+        return {
+            cost: shippingCost, // Return shipping cost for further use if needed
+            cart: response.cart,
+        };
     } catch (error) {
         console.error('Error updating shipping cost:', error);
         return 0; // Return a default value or handle the error as needed
