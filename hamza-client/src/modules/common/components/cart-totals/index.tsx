@@ -375,7 +375,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                     >
                         Total
                     </Text>
-                    {cartTotal === 0 || isUpdatingCart ? (
+                    {cartTotal === 0 ||
+                    isUpdatingCart ||
+                    isNaN(cartTotalEthToUsdConverted) ? (
                         <Spinner size="sm" color="white" />
                     ) : (
                         <VStack alignItems="flex-end">
@@ -424,7 +426,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                             fontWeight={700}
                                             textAlign="right"
                                         >
-                                            {`≅ $${formatHumanReadablePrice(Number(cartTotalEthToUsdConverted), 'usdt')} USD`}
+                                            {`≅ $${formatHumanReadablePrice(cartTotalEthToUsdConverted, 'usdt')} USD`}
                                         </Text>
                                     </Flex>
                                 )}
