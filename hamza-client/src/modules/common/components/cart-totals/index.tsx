@@ -1,16 +1,17 @@
 'use client';
 
+import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
 import React, { useEffect } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { Text } from '@chakra-ui/react';
+import { Flex, Text, Divider, Spinner, VStack } from '@chakra-ui/react';
 import { updateShippingCost } from '@lib/server';
-import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { CartWithCheckoutStep } from '@/types/global';
 import { useQuery } from '@tanstack/react-query';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 
 type CartTotalsProps = {
     cart: CartWithCheckoutStep;
@@ -40,9 +41,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     const { data: cart, isLoading: isCartLoading } = useQuery({
         queryKey: ['cart'],
         queryFn: () => {
-            setIsUpdatingCart(true);
+            // setIsUpdatingCart(true);
             const cart = fetchCartForCart();
-            setIsUpdatingCart(false);
+            // setIsUpdatingCart(false);
             return cart;
         },
         staleTime: 0,
@@ -77,6 +78,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     let cartTaxTotal = 0;
     let cartDiscount = 0;
     let cartShippingFee = 0;
+    let cartTotal = 0;
     let cartSubTotalHumanReadable: number | string = 0;
     let cartTaxTotalHumanReadable: number | string = 0;
     let cartSubTotalConverted: number | string = 0;
@@ -85,6 +87,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     let cartDiscountConverted: number | string = 0;
     let cartShippingFeeHumanReadable: number | string = 0;
     let cartShippingFeeConverted: number | string = 0;
+    let cartTotalHumanReadable: number | string = 0;
     let cartTotalConverted: number | string = 0;
 
     let cartCurrencyCode = 'usdc';
@@ -128,6 +131,13 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         cartShippingFeeHumanReadable = formatCryptoPrice(
             cartShippingFee,
             shippingCurrencyCode
+        );
+
+        cartTotal =
+            cartSubTotal - cartDiscount + cartShippingFee + cartTaxTotal;
+        cartTotalHumanReadable = formatCryptoPrice(
+            cartTotal,
+            preferredCurrencyCode
         );
     }
 
@@ -191,9 +201,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         cartTotalConverted = convertedPrice?.cartTotal ?? 0;
     }
 
-    // const convertToBTC = (amount: number) => {
-    //     return amount / 100000000;
-    // };
+    const convertToBTC = (amount: number) => {
+        return amount / 100000000;
+    };
+    const convertBtcTotal = convertToBTC(cartTotalConverted ?? 0);
 
     // const finalSubtotal = getCartSubtotal(
     //     cart ?? null,
@@ -266,7 +277,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                 my="2rem"
                 gap={{ base: 2, md: 4 }}
             >
-                {finalSubtotal && (
+                {cart && !isCartLoading && (
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -275,7 +286,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                             Subtotal ({cart.items.length} items)
                         </Text>
 
-                        {isShippingCostLoading || isUpdatingCart ? (
+                        {cartSubTotal === 0 ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text
@@ -283,42 +294,34 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                 alignSelf="center"
                                 className="cart-totals-subtotal"
                             >
-                                {formatCryptoPrice(
-                                    finalSubtotal.amount,
-                                    displayCurrency
-                                )}
+                                {cartSubTotalConverted}
                             </Text>
                         )}
                     </Flex>
                 )}
 
-                {!!cart.discount_total && (
+                {cart && !isCartLoading && cartDiscount > 0 && (
                     <Flex justifyContent={'space-between'}>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             Discount
                         </Text>
-                        {!discountIsCorrectCurrency ||
-                        isShippingCostLoading ||
-                        isUpdatingCart ? (
+                        {isCartLoading || isShippingCostLoading ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text fontSize={{ base: '14px', md: '16px' }}>
-                                -
-                                {formatCryptoPrice(
-                                    cart.discount_total,
-                                    displayCurrency
-                                )}
+                                -{cartDiscountConverted}
                             </Text>
                         )}
                     </Flex>
                 )}
+
                 {!!cart.gift_card_total && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
                         Gift Card
                     </Text>
                 )}
 
-                {shippingCost ? (
+                {shippingCostData && !isShippingCostLoading ? (
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -327,7 +330,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                             Shipping Fee
                         </Text>
 
-                        {isShippingCostLoading || isUpdatingCart ? (
+                        {cartShippingFee === 0 ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text
@@ -335,10 +338,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                 alignSelf="center"
                                 className="cart-totals-shipping"
                             >
-                                {formatCryptoPrice(
-                                    shippingCost!,
-                                    displayCurrency
-                                ).toString()}
+                                {cartShippingFeeConverted}
                             </Text>
                         )}
                     </Flex>
@@ -364,7 +364,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                 />
             )}
 
-            {finalSubtotal?.currency && (
+            {cart && !isCartLoading && (
                 <Flex
                     color={'white'}
                     justifyContent={'space-between'}
@@ -376,9 +376,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                     >
                         Total
                     </Text>
-                    {!discountIsCorrectCurrency ||
-                    isShippingCostLoading ||
-                    isUpdatingCart ? (
+                    {cartTotal === 0 ? (
                         <Spinner size="sm" color="white" />
                     ) : (
                         <VStack alignItems="flex-end">
@@ -387,8 +385,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                     <Flex alignItems={'center'}>
                                         <Image
                                             className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                            src={currencyIcons[displayCurrency]}
-                                            alt={displayCurrency}
+                                            src={
+                                                currencyIcons[
+                                                    preferredCurrencyCode
+                                                ]
+                                            }
+                                            alt={preferredCurrencyCode}
                                         />
                                     </Flex>
                                     <Text
@@ -400,10 +402,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                         top="1px"
                                         className="cart-totals-total"
                                     >
-                                        {formatCryptoPrice(
-                                            grandTotal,
-                                            displayCurrency
-                                        )}
+                                        {cartTotalConverted}
                                     </Text>
                                 </Flex>
                                 {preferred_currency_code === 'eth' && (
@@ -423,7 +422,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                             fontWeight={700}
                                             textAlign="right"
                                         >
-                                            {`≅ $${convertedPrice} USD`}
+                                            {`≅ $${cartTotalHumanReadable} USD`}
                                         </Text>
                                     </Flex>
                                 )}
