@@ -1,12 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
 import React, { useEffect } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { Flex, Text, Divider, Spinner, VStack } from '@chakra-ui/react';
-import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import { Text } from '@chakra-ui/react';
 import { updateShippingCost } from '@lib/server';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { CartWithCheckoutStep } from '@/types/global';
@@ -19,33 +17,13 @@ type CartTotalsProps = {
     useCartStyle: boolean;
 };
 
-// Refactor: Imperative code to Declarative subset (Functional) code
-const getCartSubtotal = (
-    cart: CartWithCheckoutStep | null,
-    currencyCode: string,
-    options?: { includeDiscounts?: boolean }
+const getConvertedPrice = async (
+    amount: number,
+    fromCurrency: string,
+    toCurrency: string
 ) => {
-    if (!cart?.items) return { currency: currencyCode, amount: 0 };
-
-    return cart.items.reduce(
-        (total, item) => {
-            const applyDiscounts = options?.includeDiscounts ?? true;
-
-            const itemPrice = getPriceByCurrency(
-                item.variant.prices,
-                currencyCode
-            );
-
-            const discount = applyDiscounts ? (item.discount_total ?? 0) : 0;
-            const baseAmount = Number(itemPrice) * item.quantity;
-
-            return {
-                currency: currencyCode,
-                amount: total.amount + (baseAmount - (discount ?? 0)),
-            };
-        },
-        { currency: currencyCode, amount: 0 }
-    );
+    const result = await convertPrice(amount, fromCurrency, toCurrency);
+    return result;
 };
 
 const CartTotals: React.FC<CartTotalsProps> = ({
@@ -96,9 +74,28 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     }
 
     let cartSubTotal = 0;
+    let cartTaxTotal = 0;
     let cartDiscount = 0;
     let cartShippingFee = 0;
-    let cartTotal = 0;
+    let cartSubTotalHumanReadable: number | string = 0;
+    let cartTaxTotalHumanReadable: number | string = 0;
+    let cartSubTotalConverted: number | string = 0;
+    let cartTaxTotalConverted: number | string = 0;
+    let cartDiscountHumanReadable: number | string = 0;
+    let cartDiscountConverted: number | string = 0;
+    let cartShippingFeeHumanReadable: number | string = 0;
+    let cartShippingFeeConverted: number | string = 0;
+    let cartTotalConverted: number | string = 0;
+
+    let cartCurrencyCode = 'usdc';
+    let shippingCurrencyCode = 'usdc';
+    let preferredCurrencyCode = preferred_currency_code ?? 'usdc';
+
+    if (cart && shippingCostCart) {
+        cartCurrencyCode = cart.items[0].currency_code;
+        shippingCurrencyCode = shippingCostCart.items[0]?.currency_code;
+    }
+
     if (
         !isShippingCostLoading &&
         !isCartLoading &&
@@ -106,10 +103,92 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         shippingCostData &&
         preferred_currency_code
     ) {
-        cartSubTotal = cart.subtotal ?? 0;
-        cartDiscount = cart.discount_total ?? 0;
+        cartSubTotal = cart.items.reduce(
+            (total, item) => total + item.unit_price * item.quantity,
+            0
+        );
+        cartSubTotalHumanReadable = formatCryptoPrice(
+            cartSubTotal,
+            cartCurrencyCode
+        );
+        cartTaxTotal = cart.tax_total ?? 0;
+        cartTaxTotalHumanReadable = formatCryptoPrice(
+            cartTaxTotal,
+            cartCurrencyCode
+        );
+        cartDiscount = cart.items.reduce(
+            (total, item) => total + (item.discount_total ?? 0),
+            0
+        );
+        cartDiscountHumanReadable = formatCryptoPrice(
+            cartDiscount,
+            cartCurrencyCode
+        );
         cartShippingFee = shippingCost;
-        cartTotal = cart.total ?? 0;
+        cartShippingFeeHumanReadable = formatCryptoPrice(
+            cartShippingFee,
+            shippingCurrencyCode
+        );
+    }
+
+    const { data: convertedPrice, isLoading: isConvertedPriceLoading } =
+        useQuery({
+            queryKey: [
+                'convertedPrice',
+                cartSubTotalHumanReadable,
+                cartTaxTotalHumanReadable,
+                cartDiscountHumanReadable,
+                cartShippingFeeHumanReadable,
+            ], // ✅ Unique key per conversion
+            queryFn: async () => {
+                const cartSubTotal = await convertPrice(
+                    Number(cartSubTotalHumanReadable),
+                    cartCurrencyCode,
+                    preferredCurrencyCode
+                );
+
+                const cartTaxTotal = await convertPrice(
+                    Number(cartTaxTotalHumanReadable),
+                    cartCurrencyCode,
+                    preferredCurrencyCode
+                );
+
+                const cartDiscount = await convertPrice(
+                    Number(cartDiscountHumanReadable),
+                    cartCurrencyCode,
+                    preferredCurrencyCode
+                );
+
+                const cartShippingFee = await convertPrice(
+                    Number(cartShippingFeeHumanReadable),
+                    shippingCurrencyCode,
+                    preferredCurrencyCode
+                );
+
+                const cartTotal =
+                    cartSubTotal -
+                    cartDiscount +
+                    cartShippingFee +
+                    cartTaxTotal;
+
+                return {
+                    cartSubTotal: Number(cartSubTotal),
+                    cartTaxTotal: Number(cartTaxTotal),
+                    cartDiscount: Number(cartDiscount),
+                    cartShippingFee: Number(cartShippingFee),
+                    cartTotal: Number(cartTotal),
+                };
+            },
+            staleTime: 0, // Cache conversion result for 5 minutes
+            gcTime: 0,
+        });
+
+    if (!isConvertedPriceLoading) {
+        cartSubTotalConverted = convertedPrice?.cartSubTotal ?? 0;
+        cartTaxTotalConverted = convertedPrice?.cartTaxTotal ?? 0;
+        cartDiscountConverted = convertedPrice?.cartDiscount ?? 0;
+        cartShippingFeeConverted = convertedPrice?.cartShippingFee ?? 0;
+        cartTotalConverted = convertedPrice?.cartTotal ?? 0;
     }
 
     // const convertToBTC = (amount: number) => {
@@ -132,25 +211,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     // const grandTotal = (finalTotal.amount ?? 0) + shippingCost + taxTotal;
     // const displayCurrency =
     //     finalSubtotal?.currency || preferred_currency_code || 'usdc';
-
-    // const { data: convertedPrice } = useQuery({
-    //     queryKey: ['convertedPrice', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
-    //     queryFn: async () => {
-    //         const result = await convertPrice(
-    //             Number(
-    //                 formatCryptoPrice(
-    //                     grandTotal,
-    //                     preferred_currency_code ?? 'usdc'
-    //                 )
-    //             ),
-    //             'eth',
-    //             'usdc'
-    //         );
-    //         return Number(result).toFixed(2);
-    //     },
-    //     enabled: preferred_currency_code === 'eth', //  Fetch only when preferred currency is ETH
-    //     staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
-    // });
 
     // Effect to handle final load state
     let discountIsCorrectCurrency = false;
@@ -179,18 +239,23 @@ const CartTotals: React.FC<CartTotalsProps> = ({
 
     return (
         <>
-            <Text>
-                Subtotal: {cartSubTotal} ({cart?.items[0].currency_code})
+            <Text color="white">
+                Subtotal: {cartSubTotalConverted} (
+                {cart?.items[0].currency_code})
             </Text>
-            <Text>
-                Discount: {cartDiscount} ({cart?.items[0].currency_code})
+            <Text color="white">
+                Discount: {cartDiscountConverted} (
+                {cart?.items[0].currency_code})
             </Text>
-            <Text>
-                Shipping Fee: {cartShippingFee} (
+            <Text color="white">
+                Shipping Fee: {cartShippingFeeConverted} (
                 {shippingCostCart?.items?.[0]?.currency_code})
             </Text>
-            <Text>
-                Total: {cartTotal} ({cart?.items[0].currency_code})
+            <Text color="white">
+                Total: {cartTotalConverted} ({cart?.items[0].currency_code})
+            </Text>
+            <Text color="white">
+                Preferred Currency Code: {preferred_currency_code}
             </Text>
         </>
     );
