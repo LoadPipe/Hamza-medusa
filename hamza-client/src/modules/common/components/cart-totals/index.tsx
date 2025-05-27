@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner, VStack } from '@chakra-ui/react';
 import { updateShippingCost } from '@lib/server';
@@ -52,15 +52,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({
             staleTime: 0,
             gcTime: 0, // Were not caching the shipping
         });
-    // alert(shippingCost);
 
     let shippingCost = 0;
     let shippingCostCart: CartWithCheckoutStep | null = null;
     if (!isShippingCostLoading && shippingCostData) {
         shippingCost = shippingCostData.cost;
         shippingCostCart = shippingCostData.cart;
-        // console.log('shippingCostCart: ', shippingCostCart);
-        // console.log('cart: ', cart);
     }
 
     let cartSubTotal = 0;
@@ -201,8 +198,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         cartShippingFeeConverted = convertedPrice?.cartShippingFee ?? 0;
         cartTotalConverted = convertedPrice?.cartTotal ?? 0;
         cartTotalEthToUsdConverted = convertedPrice?.cartTotalEthToUsd ?? 0;
-        // console.log('cartTotalEthToUsdConverted: ', cartTotalEthToUsdConverted);
-        // console.log('convertedPrice: ', convertedPrice);
     }
 
     const convertToBTC = (amount: number) => {
@@ -210,52 +205,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     };
     const convertBtcTotal = convertToBTC(cartTotalConverted ?? 0);
 
-    // Effect to handle final load state
-    let discountIsCorrectCurrency = false;
-    if (preferred_currency_code === cart?.items[0].currency_code) {
-        discountIsCorrectCurrency = true;
-    }
-    useEffect(() => {
-        if (
-            !isUpdatingCart &&
-            !isShippingCostLoading &&
-            !isCartLoading &&
-            cart
-        ) {
-            // console.log('Cart totals fully loaded');
-            // // You can perform any final actions here
-            // console.log('Preferred Currency Code: ', preferred_currency_code);
-            // console.log('cart currency code: ', cart.items[0].currency_code);
-            // console.log(
-            //     'initialCart currency code: ',
-            //     initialCart.items[0].currency_code
-            // );
-        }
-    }, [isUpdatingCart, isShippingCostLoading, cart, isCartLoading]);
-
     if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
 
     return (
-        // <>
-        //     <Text color="white">
-        //         Subtotal: {cartSubTotalConverted} (
-        //         {cart?.items[0].currency_code})
-        //     </Text>
-        //     <Text color="white">
-        //         Discount: {cartDiscountConverted} (
-        //         {cart?.items[0].currency_code})
-        //     </Text>
-        //     <Text color="white">
-        //         Shipping Fee: {cartShippingFeeConverted} (
-        //         {shippingCostCart?.items?.[0]?.currency_code})
-        //     </Text>
-        //     <Text color="white">
-        //         Total: {cartTotalConverted} ({cart?.items[0].currency_code})
-        //     </Text>
-        //     <Text color="white">
-        //         Preferred Currency Code: {preferred_currency_code}
-        //     </Text>
-        // </>
         <>
             {/* amounts */}
             <Flex
