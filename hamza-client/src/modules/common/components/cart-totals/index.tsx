@@ -238,25 +238,206 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
 
     return (
+        // <>
+        //     <Text color="white">
+        //         Subtotal: {cartSubTotalConverted} (
+        //         {cart?.items[0].currency_code})
+        //     </Text>
+        //     <Text color="white">
+        //         Discount: {cartDiscountConverted} (
+        //         {cart?.items[0].currency_code})
+        //     </Text>
+        //     <Text color="white">
+        //         Shipping Fee: {cartShippingFeeConverted} (
+        //         {shippingCostCart?.items?.[0]?.currency_code})
+        //     </Text>
+        //     <Text color="white">
+        //         Total: {cartTotalConverted} ({cart?.items[0].currency_code})
+        //     </Text>
+        //     <Text color="white">
+        //         Preferred Currency Code: {preferred_currency_code}
+        //     </Text>
+        // </>
         <>
-            <Text color="white">
-                Subtotal: {cartSubTotalConverted} (
-                {cart?.items[0].currency_code})
-            </Text>
-            <Text color="white">
-                Discount: {cartDiscountConverted} (
-                {cart?.items[0].currency_code})
-            </Text>
-            <Text color="white">
-                Shipping Fee: {cartShippingFeeConverted} (
-                {shippingCostCart?.items?.[0]?.currency_code})
-            </Text>
-            <Text color="white">
-                Total: {cartTotalConverted} ({cart?.items[0].currency_code})
-            </Text>
-            <Text color="white">
-                Preferred Currency Code: {preferred_currency_code}
-            </Text>
+            {/* amounts */}
+            <Flex
+                flexDirection={'column'}
+                color="white"
+                my="2rem"
+                gap={{ base: 2, md: 4 }}
+            >
+                {finalSubtotal && (
+                    <Flex justifyContent={'space-between'}>
+                        <Text
+                            alignSelf={'center'}
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            Subtotal ({cart.items.length} items)
+                        </Text>
+
+                        {isShippingCostLoading || isUpdatingCart ? (
+                            <Spinner size="sm" color="white" />
+                        ) : (
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                alignSelf="center"
+                                className="cart-totals-subtotal"
+                            >
+                                {formatCryptoPrice(
+                                    finalSubtotal.amount,
+                                    displayCurrency
+                                )}
+                            </Text>
+                        )}
+                    </Flex>
+                )}
+
+                {!!cart.discount_total && (
+                    <Flex justifyContent={'space-between'}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            Discount
+                        </Text>
+                        {!discountIsCorrectCurrency ||
+                        isShippingCostLoading ||
+                        isUpdatingCart ? (
+                            <Spinner size="sm" color="white" />
+                        ) : (
+                            <Text fontSize={{ base: '14px', md: '16px' }}>
+                                -
+                                {formatCryptoPrice(
+                                    cart.discount_total,
+                                    displayCurrency
+                                )}
+                            </Text>
+                        )}
+                    </Flex>
+                )}
+                {!!cart.gift_card_total && (
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        Gift Card
+                    </Text>
+                )}
+
+                {shippingCost ? (
+                    <Flex justifyContent={'space-between'}>
+                        <Text
+                            alignSelf={'center'}
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            Shipping Fee
+                        </Text>
+
+                        {isShippingCostLoading || isUpdatingCart ? (
+                            <Spinner size="sm" color="white" />
+                        ) : (
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                alignSelf="center"
+                                className="cart-totals-shipping"
+                            >
+                                {formatCryptoPrice(
+                                    shippingCost!,
+                                    displayCurrency
+                                ).toString()}
+                            </Text>
+                        )}
+                    </Flex>
+                ) : (
+                    <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
+                )}
+            </Flex>
+            {!useCartStyle ? (
+                <hr
+                    style={{
+                        color: 'red',
+                        width: '100%',
+                        borderTop: '2px dashed #3E3E3E',
+                        marginTop: '1rem',
+                        marginBottom: '1rem',
+                    }}
+                />
+            ) : (
+                <Divider
+                    my={{ base: '1rem', md: '1rem' }}
+                    borderWidth={'1px'}
+                    borderColor={'#3E3E3E'}
+                />
+            )}
+
+            {finalSubtotal?.currency && (
+                <Flex
+                    color={'white'}
+                    justifyContent={'space-between'}
+                    alignItems="center"
+                >
+                    <Text
+                        alignSelf="center"
+                        fontSize={{ base: '15px', md: '16px' }}
+                    >
+                        Total
+                    </Text>
+                    {!discountIsCorrectCurrency ||
+                    isShippingCostLoading ||
+                    isUpdatingCart ? (
+                        <Spinner size="sm" color="white" />
+                    ) : (
+                        <VStack alignItems="flex-end">
+                            <Flex flexDirection="column" alignItems="flex-end">
+                                <Flex flexDirection={'row'} alignItems="center">
+                                    <Flex alignItems={'center'}>
+                                        <Image
+                                            className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                                            src={currencyIcons[displayCurrency]}
+                                            alt={displayCurrency}
+                                        />
+                                    </Flex>
+                                    <Text
+                                        ml={{ base: '0.4rem', md: '0.5rem' }}
+                                        fontSize={{ base: '15px', md: '24px' }}
+                                        fontWeight={700}
+                                        lineHeight="1.1"
+                                        position="relative"
+                                        top="1px"
+                                        className="cart-totals-total"
+                                    >
+                                        {formatCryptoPrice(
+                                            grandTotal,
+                                            displayCurrency
+                                        )}
+                                    </Text>
+                                </Flex>
+                                {preferred_currency_code === 'eth' && (
+                                    <Flex
+                                        justifyContent="flex-end"
+                                        width="100%"
+                                    >
+                                        <Text
+                                            as="h3"
+                                            variant="semibold"
+                                            color="white"
+                                            mt={2}
+                                            fontSize={{
+                                                base: '15px',
+                                                md: '18px',
+                                            }}
+                                            fontWeight={700}
+                                            textAlign="right"
+                                        >
+                                            {`≅ $${convertedPrice} USD`}
+                                        </Text>
+                                    </Flex>
+                                )}
+                            </Flex>
+                            {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN ===
+                                'true' && (
+                                <Flex>
+                                    <Text>≅ {convertBtcTotal} BTC</Text>
+                                </Flex>
+                            )}
+                        </VStack>
+                    )}
+                </Flex>
+            )}
         </>
     );
 };
