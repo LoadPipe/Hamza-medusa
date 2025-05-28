@@ -669,7 +669,10 @@ export async function updateShippingCost(cart_id: string) {
             cart_id,
         });
         const shippingCost = response?.amount ?? 0;
-        return shippingCost; // Return shipping cost for further use if needed
+        return {
+            cost: shippingCost, // Return shipping cost for further use if needed
+            cart: response.cart,
+        };
     } catch (error) {
         console.error('Error updating shipping cost:', error);
         return 0; // Return a default value or handle the error as needed
@@ -719,10 +722,30 @@ export async function updatePaymentSession(
     }
 }
 
-export async function addDefaultShippingMethod(cart_id: string) {
+export async function addDefaultShippingMethod(
+    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>
+) {
+    // Return early if cart is missing required data
+    if (!cart?.customer_id || !cart?.shipping_address) {
+        return null;
+    }
+
+    // Return early if cart already has shipping methods
+    if (cart?.shipping_methods && cart?.shipping_methods.length > 0) {
+        return null;
+    }
+
+    // Add default shipping method
     return putSecure('/custom/cart/shipping', {
-        cart_id,
+        cart_id: cart.id,
     });
+}
+
+export async function getShippingMethods(cart_id: string) {
+    const cart = await getCart(cart_id);
+    if (!cart) return null;
+    if (!cart.shipping_methods) return null;
+    return cart.shipping_methods;
 }
 
 export async function createPaymentSessions(

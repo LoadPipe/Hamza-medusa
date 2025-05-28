@@ -98,6 +98,7 @@ export function getProductPrice({
     };
 }
 
+// formats crypto price (price in db) to human readable price
 export function formatCryptoPrice(
     amount: number,
     currencyCode: string = 'usdc',
@@ -140,6 +141,14 @@ export function formatCryptoPrice(
         console.error(e);
         return '0.00';
     }
+}
+
+export function formatHumanReadablePrice(
+    amount: number,
+    currencyCode: string = 'usdc'
+) {
+    const currencyPrecision = getCurrencyPrecision(currencyCode);
+    return amount.toFixed(currencyPrecision.display);
 }
 
 export function convertCryptoPrice(amount: number, from: string, to: string) {

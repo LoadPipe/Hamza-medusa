@@ -1,11 +1,8 @@
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
-import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
-import { LineItem } from '@medusajs/medusa';
 import CartTotals from '@modules/common/components/cart-totals';
 import DiscountCode from '@modules/checkout/components/discount-code';
 import PaymentButton from '@modules/checkout/components/payment/components/payment-button';
-import CheckoutTermsOfService from '@/modules/terms-of-service/templates/checkout-tos';
 import { CartWithCheckoutStep } from '@/types/global';
 
 const PaymentSummary = async ({ cart }: { cart: CartWithCheckoutStep }) => {

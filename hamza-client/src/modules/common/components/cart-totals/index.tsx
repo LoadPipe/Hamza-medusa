@@ -3,135 +3,292 @@
 import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner, VStack } from '@chakra-ui/react';
-import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { updateShippingCost } from '@lib/server';
-import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { CartWithCheckoutStep } from '@/types/global';
 import { useQuery } from '@tanstack/react-query';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import currencyIcons from '@/images/currencies/crypto-currencies';
+import { formatHumanReadablePrice } from '@/lib/util/get-product-price';
 
 type CartTotalsProps = {
     cart: CartWithCheckoutStep;
     useCartStyle: boolean;
 };
 
-const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
+interface CartCalculations {
+    subtotal: number;
+    taxTotal: number;
+    discount: number;
+    shippingFee: number;
+    total: number;
+    cartCurrencyCode: string;
+    shippingCurrencyCode: string;
+    preferredCurrencyCode: string;
+    humanReadable: {
+        subtotal: number;
+        taxTotal: number;
+        discount: number;
+        shippingFee: number;
+        total: number;
+    };
+    converted: {
+        subtotal: number;
+        taxTotal: number;
+        discount: number;
+        shippingFee: number;
+        total: number;
+        ethToUsd: number;
+    };
+}
+
+const CartTotals: React.FC<CartTotalsProps> = ({
+    useCartStyle,
+    cart: initialCart,
+}) => {
     const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
     const { preferred_currency_code } = useCustomerAuthStore((state) => ({
         preferred_currency_code: state.preferred_currency_code,
     }));
 
-    const { data: shippingCost, isLoading: loading } = useQuery({
-        queryKey: [
-            'shippingCost',
-            cart?.shipping_address,
-            preferred_currency_code,
-        ],
-        queryFn: () => updateShippingCost(cart!.id), // Only fetch when cart exists
-        enabled: !!cart?.id, // Prevents fetching if no cart ID is available
+    // Fetch cart data
+    const { data: cart, isLoading: isCartLoading } = useQuery({
+        queryKey: ['cart'],
+        queryFn: fetchCartForCart,
         staleTime: 0,
-        gcTime: 0, // Were not caching the shipping
+        gcTime: 0,
+        initialData: initialCart,
     });
-    // alert(shippingCost);
 
-    // Refactor: Imperative code to Declarative subset (Functional) code
-    const getCartSubtotal = (
-        cart: CartWithCheckoutStep | null,
-        currencyCode: string,
-        options?: { includeDiscounts?: boolean }
-    ) => {
-        if (!cart?.items) return { currency: currencyCode, amount: 0 };
+    // Fetch shipping cost
+    const { data: shippingCostData, isLoading: isShippingCostLoading } =
+        useQuery({
+            queryKey: [
+                'shippingCost',
+                cart?.shipping_address,
+                preferred_currency_code,
+            ],
+            queryFn: async () => {
+                const result = await updateShippingCost(cart!.id);
+                if (typeof result === 'number') {
+                    return { cost: result, cart: cart! };
+                }
+                return result;
+            },
+            enabled: !!cart?.id,
+            staleTime: 0,
+            gcTime: 0,
+        });
 
-        return cart.items.reduce(
-            (total, item) => {
-                const applyDiscounts = options?.includeDiscounts ?? true;
+    // Calculate cart totals
+    const cartCalculations = useMemo<CartCalculations>(() => {
+        if (
+            !cart ||
+            !shippingCostData ||
+            isCartLoading ||
+            isShippingCostLoading
+        ) {
+            return {
+                subtotal: 0,
+                taxTotal: 0,
+                discount: 0,
+                shippingFee: 0,
+                total: 0,
+                cartCurrencyCode: 'usdc',
+                shippingCurrencyCode: 'usdc',
+                preferredCurrencyCode: 'usdc',
+                humanReadable: {
+                    subtotal: 0,
+                    taxTotal: 0,
+                    discount: 0,
+                    shippingFee: 0,
+                    total: 0,
+                },
+                converted: {
+                    subtotal: 0,
+                    taxTotal: 0,
+                    discount: 0,
+                    shippingFee: 0,
+                    total: 0,
+                    ethToUsd: 0,
+                },
+            };
+        }
 
-                const itemPrice = getPriceByCurrency(
-                    item.variant.prices,
-                    currencyCode
-                );
+        const cartCurrencyCode = cart.items[0]?.currency_code ?? 'usdc';
+        const shippingCurrencyCode =
+            shippingCostData.cart.items[0]?.currency_code ?? 'usdc';
+        const preferredCurrencyCode = preferred_currency_code ?? 'usdc';
 
-                const discount = applyDiscounts ? item.discount_total ?? 0 : 0;
-                const baseAmount = Number(itemPrice) * item.quantity;
+        const subtotal = cart.items.reduce(
+            (total, item) => total + item.unit_price * item.quantity,
+            0
+        );
+        const taxTotal = cart.tax_total ?? 0;
+        const discount = cart.items.reduce(
+            (total, item) => total + (item.discount_total ?? 0),
+            0
+        );
+        const shippingFee = shippingCostData.cost;
+        const total = subtotal - discount + shippingFee + taxTotal;
+
+        return {
+            subtotal,
+            taxTotal,
+            discount,
+            shippingFee,
+            total,
+            cartCurrencyCode,
+            shippingCurrencyCode,
+            preferredCurrencyCode,
+            humanReadable: {
+                subtotal: Number(formatCryptoPrice(subtotal, cartCurrencyCode)),
+                taxTotal: Number(formatCryptoPrice(taxTotal, cartCurrencyCode)),
+                discount: Number(formatCryptoPrice(discount, cartCurrencyCode)),
+                shippingFee: Number(
+                    formatCryptoPrice(shippingFee, shippingCurrencyCode)
+                ),
+                total: Number(formatCryptoPrice(total, cartCurrencyCode)),
+            },
+            converted: {
+                subtotal: 0,
+                taxTotal: 0,
+                discount: 0,
+                shippingFee: 0,
+                total: 0,
+                ethToUsd: 0,
+            },
+        };
+    }, [
+        cart,
+        shippingCostData,
+        isCartLoading,
+        isShippingCostLoading,
+        preferred_currency_code,
+    ]);
+
+    // Convert prices to preferred currency
+    const { data: convertedPrices, isLoading: isConvertedPriceLoading } =
+        useQuery({
+            queryKey: [
+                'convertedPrice',
+                cartCalculations.humanReadable,
+                cartCalculations.cartCurrencyCode,
+                cartCalculations.shippingCurrencyCode,
+                cartCalculations.preferredCurrencyCode,
+            ],
+            queryFn: async () => {
+                const [subtotal, taxTotal, discount, shippingFee] =
+                    await Promise.all([
+                        convertPrice(
+                            cartCalculations.humanReadable.subtotal,
+                            cartCalculations.cartCurrencyCode,
+                            preferredCurrencyCode
+                        ),
+                        convertPrice(
+                            cartCalculations.humanReadable.taxTotal,
+                            cartCalculations.cartCurrencyCode,
+                            preferredCurrencyCode
+                        ),
+                        convertPrice(
+                            cartCalculations.humanReadable.discount,
+                            cartCalculations.cartCurrencyCode,
+                            preferredCurrencyCode
+                        ),
+                        convertPrice(
+                            cartCalculations.humanReadable.shippingFee,
+                            cartCalculations.shippingCurrencyCode,
+                            preferredCurrencyCode
+                        ),
+                    ]);
+
+                const total = subtotal - discount + shippingFee + taxTotal;
+                let ethToUsd = cartCalculations.humanReadable.total;
+
+                if (
+                    preferredCurrencyCode === 'eth' &&
+                    preferredCurrencyCode === cartCalculations.cartCurrencyCode
+                ) {
+                    ethToUsd = await convertPrice(total, 'eth', 'usdt');
+                }
 
                 return {
-                    currency: currencyCode,
-                    amount: total.amount + (baseAmount - (discount ?? 0)),
+                    subtotal: Number(subtotal),
+                    taxTotal: Number(taxTotal),
+                    discount: Number(discount),
+                    shippingFee: Number(shippingFee),
+                    total: Number(total),
+                    ethToUsd: Number(ethToUsd),
                 };
             },
-            { currency: currencyCode, amount: 0 }
-        );
-    };
+            enabled: !!cartCalculations.humanReadable.subtotal,
+            staleTime: 0,
+            gcTime: 0,
+        });
 
-    const finalSubtotal = getCartSubtotal(
-        cart ?? null,
-        preferred_currency_code ?? 'usdc',
-        { includeDiscounts: false }
-    );
-    const finalTotal = getCartSubtotal(
-        cart ?? null,
-        preferred_currency_code ?? 'usdc',
-        { includeDiscounts: true }
-    );
+    // Update converted prices when available
+    const finalCalculations = useMemo(() => {
+        if (!convertedPrices || isConvertedPriceLoading) {
+            return cartCalculations;
+        }
 
-    const taxTotal = cart?.tax_total ?? 0;
-    const grandTotal = (finalTotal.amount ?? 0) + shippingCost + taxTotal;
-    const displayCurrency =
-        finalSubtotal?.currency || preferred_currency_code || 'usdc';
-
-    const { data: convertedUsdTotal } = useQuery({
-        queryKey: ['convertedUsdTotal', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
-        queryFn: async () => {
-            const result = await convertPrice(
-                Number(
-                    formatCryptoPrice(
-                        grandTotal,
-                        preferred_currency_code ?? 'usdc'
-                    )
-                ),
-                'eth',
-                'usdc'
-            );
-            return Number(result).toFixed(2);
-        },
-        enabled: preferred_currency_code === 'eth', //  Fetch only when preferred currency is ETH
-        staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
-    });
+        return {
+            ...cartCalculations,
+            converted: {
+                ...cartCalculations.converted,
+                ...convertedPrices,
+            },
+        };
+    }, [cartCalculations, convertedPrices, isConvertedPriceLoading]);
 
     const { data: convertBtcTotal } = useQuery({
-        queryKey: ['convertBtcTotal', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
+        queryKey: [
+            'convertBtcTotal',
+            cartCalculations.total,
+            cartCalculations.cartCurrencyCode,
+        ], // ✅ Unique key per conversion
         queryFn: async () => {
             const result = await convertPrice(
                 Number(
                     formatCryptoPrice(
-                        grandTotal,
-                        preferred_currency_code ?? 'usdc'
+                        cartCalculations.total,
+                        cartCalculations.cartCurrencyCode
                     )
                 ),
-                preferred_currency_code ?? 'usdc',
+                cartCalculations.cartCurrencyCode,
                 'btc'
             );
             return Number(result).toFixed(8);
         },
         enabled: process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true',
-        staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
+        staleTime: 0,
+        gcTime: 0,
     });
 
-    if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
+    if (!cart || cart.items.length === 0) {
+        return <p>Empty Cart</p>;
+    }
+
+    const isLoading =
+        isCartLoading ||
+        isShippingCostLoading ||
+        isConvertedPriceLoading ||
+        isUpdatingCart ||
+        isNaN(finalCalculations.converted.ethToUsd);
+    const preferredCurrencyCode = preferred_currency_code ?? 'usdc';
 
     return (
         <>
-            {/* amounts */}
             <Flex
                 flexDirection={'column'}
                 color="white"
                 my="2rem"
                 gap={{ base: 2, md: 4 }}
             >
-                {finalSubtotal && (
+                {!isCartLoading && (
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -139,8 +296,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                         >
                             Subtotal ({cart.items.length} items)
                         </Text>
-
-                        {loading || isUpdatingCart ? (
+                        {isLoading ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text
@@ -148,40 +304,41 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                                 alignSelf="center"
                                 className="cart-totals-subtotal"
                             >
-                                {formatCryptoPrice(
-                                    finalSubtotal.amount,
-                                    displayCurrency
+                                {formatHumanReadablePrice(
+                                    finalCalculations.converted.subtotal,
+                                    preferredCurrencyCode
                                 )}
                             </Text>
                         )}
                     </Flex>
                 )}
 
-                {!!cart.discount_total && (
+                {!isCartLoading && finalCalculations.discount > 0 && (
                     <Flex justifyContent={'space-between'}>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             Discount
                         </Text>
-                        {loading || isUpdatingCart ? (
+                        {isLoading ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text fontSize={{ base: '14px', md: '16px' }}>
                                 -
-                                {formatCryptoPrice(
-                                    cart.discount_total,
-                                    displayCurrency
+                                {formatHumanReadablePrice(
+                                    finalCalculations.converted.discount,
+                                    preferredCurrencyCode
                                 )}
                             </Text>
                         )}
                     </Flex>
                 )}
+
                 {!!cart.gift_card_total && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
                         Gift Card
                     </Text>
                 )}
 
-                {shippingCost ? (
+                {shippingCostData && !isShippingCostLoading && (
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -189,8 +346,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                         >
                             Shipping Fee
                         </Text>
-
-                        {loading || isUpdatingCart ? (
+                        {isLoading ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text
@@ -198,17 +354,16 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                                 alignSelf="center"
                                 className="cart-totals-shipping"
                             >
-                                {formatCryptoPrice(
-                                    shippingCost!,
-                                    displayCurrency
-                                ).toString()}
+                                {formatHumanReadablePrice(
+                                    finalCalculations.converted.shippingFee,
+                                    preferredCurrencyCode
+                                )}
                             </Text>
                         )}
                     </Flex>
-                ) : (
-                    <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
                 )}
             </Flex>
+
             {!useCartStyle ? (
                 <hr
                     style={{
@@ -227,7 +382,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                 />
             )}
 
-            {finalSubtotal?.currency && (
+            {!isCartLoading && (
                 <Flex
                     color={'white'}
                     justifyContent={'space-between'}
@@ -239,7 +394,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                     >
                         Total
                     </Text>
-                    {loading || isUpdatingCart ? (
+                    {isLoading ? (
                         <Spinner size="sm" color="white" />
                     ) : (
                         <VStack alignItems="flex-end">
@@ -248,8 +403,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                                     <Flex alignItems={'center'}>
                                         <Image
                                             className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                            src={currencyIcons[displayCurrency]}
-                                            alt={displayCurrency}
+                                            src={
+                                                currencyIcons[
+                                                    preferredCurrencyCode
+                                                ]
+                                            }
+                                            alt={preferredCurrencyCode}
                                         />
                                     </Flex>
                                     <Text
@@ -261,9 +420,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                                         top="1px"
                                         className="cart-totals-total"
                                     >
-                                        {formatCryptoPrice(
-                                            grandTotal,
-                                            displayCurrency
+                                        {formatHumanReadablePrice(
+                                            finalCalculations.converted.total,
+                                            preferredCurrencyCode
                                         )}
                                     </Text>
                                 </Flex>
@@ -284,7 +443,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                                             fontWeight={700}
                                             textAlign="right"
                                         >
-                                            {`≅ $${convertedUsdTotal} USD`}
+                                            {`≅ $${formatHumanReadablePrice(finalCalculations.converted.ethToUsd, 'usdt')} USD`}
                                         </Text>
                                     </Flex>
                                 )}

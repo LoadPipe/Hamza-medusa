@@ -1,4 +1,5 @@
 'use client';
+
 import { Flex, Text, Spinner } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React from 'react';

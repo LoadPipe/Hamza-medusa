@@ -23,16 +23,18 @@ const Addresses = ({
     cart: initialCart,
     customer,
 }: {
-    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
+    cart: CartWithCheckoutStep | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
     const router = useRouter();
 
     // Use TanStack Query to fetch cart data
     const { data: cart } = useQuery({
-        queryKey: ['cart'],
+        queryKey: ['cart', initialCart?.id],
         queryFn: fetchCartForCart,
-        initialData: initialCart as CartWithCheckoutStep,
+        staleTime: 0,
+        gcTime: 0,
+        initialData: initialCart,
     });
 
     // Hooks to open and close address modal
@@ -70,32 +72,32 @@ const Addresses = ({
         onOpen();
     };
 
-    useEffect(() => {
-        const updateShippingMethod = async () => {
-            if (cart?.customer_id && cart?.shipping_address) {
-                console.log('Checking shipping method in address');
-                console.log('Shipping methods:', cart?.shipping_methods);
+    // useEffect(() => {
+    //     const updateShippingMethod = async () => {
+    //         if (cart?.customer_id && cart?.shipping_address) {
+    //             console.log('Checking shipping method in address');
+    //             console.log('Shipping methods:', cart?.shipping_methods);
 
-                if (!cart?.shipping_methods.length) {
-                    // If no shipping methods, add the default shipping method
-                    console.log('Adding default shipping method');
-                    axios.put(
-                        `${MEDUSA_SERVER_URL}/custom/cart/shipping`,
-                        {
-                            cart_id: cart.id,
-                        },
-                        {
-                            headers: {
-                                authorization: getClientCookie('_medusa_jwt'),
-                            },
-                        }
-                    );
-                }
-            }
-        };
+    //             if (!cart?.shipping_methods || !cart?.shipping_methods.length) {
+    //                 // If no shipping methods, add the default shipping method
+    //                 console.log('Adding default shipping method');
+    //                 axios.put(
+    //                     `${MEDUSA_SERVER_URL}/custom/cart/shipping`,
+    //                     {
+    //                         cart_id: cart.id,
+    //                     },
+    //                     {
+    //                         headers: {
+    //                             authorization: getClientCookie('_medusa_jwt'),
+    //                         },
+    //                     }
+    //                 );
+    //             }
+    //         }
+    //     };
 
-        updateShippingMethod();
-    }, [cart, router]);
+    //     updateShippingMethod();
+    // }, [cart, router]);
 
     return (
         <div>
