@@ -54,9 +54,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                     currencyCode
                 );
 
-                const discount = applyDiscounts
-                    ? (item.discount_total ?? 0)
-                    : 0;
+                const discount = applyDiscounts ? item.discount_total ?? 0 : 0;
                 const baseAmount = Number(itemPrice) * item.quantity;
 
                 return {
@@ -66,10 +64,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
             },
             { currency: currencyCode, amount: 0 }
         );
-    };
-
-    const convertToBTC = (amount: number) => {
-        return amount / 100000000;
     };
 
     const finalSubtotal = getCartSubtotal(
@@ -82,15 +76,14 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
         preferred_currency_code ?? 'usdc',
         { includeDiscounts: true }
     );
-    const convertBtcTotal = convertToBTC(finalTotal.amount ?? 0);
 
     const taxTotal = cart?.tax_total ?? 0;
     const grandTotal = (finalTotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
-    const { data: convertedPrice } = useQuery({
-        queryKey: ['convertedPrice', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
+    const { data: convertedUsdTotal } = useQuery({
+        queryKey: ['convertedUsdTotal', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
         queryFn: async () => {
             const result = await convertPrice(
                 Number(
@@ -105,6 +98,25 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
             return Number(result).toFixed(2);
         },
         enabled: preferred_currency_code === 'eth', //  Fetch only when preferred currency is ETH
+        staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
+    });
+
+    const { data: convertBtcTotal } = useQuery({
+        queryKey: ['convertBtcTotal', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
+        queryFn: async () => {
+            const result = await convertPrice(
+                Number(
+                    formatCryptoPrice(
+                        grandTotal,
+                        preferred_currency_code ?? 'usdc'
+                    )
+                ),
+                preferred_currency_code ?? 'usdc',
+                'btc'
+            );
+            return Number(result).toFixed(8);
+        },
+        enabled: process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true',
         staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
     });
 
@@ -272,7 +284,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cart }) => {
                                             fontWeight={700}
                                             textAlign="right"
                                         >
-                                            {`≅ $${convertedPrice} USD`}
+                                            {`≅ $${convertedUsdTotal} USD`}
                                         </Text>
                                     </Flex>
                                 )}
