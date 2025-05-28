@@ -35,8 +35,8 @@ export const fetchCartForCheckout = async (
     }
 
     // add default shipping method
-    if (!cart?.shipping_methods.length) {
-        const shippingMethod = await addDefaultShippingMethod(cartId);
+    if (!cart?.shipping_methods || !cart?.shipping_methods.length) {
+        const shippingMethod = await addDefaultShippingMethod(cart);
         if (shippingMethod) {
             cart = await retrieveCart(cartId);
         }

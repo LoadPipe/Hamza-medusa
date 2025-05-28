@@ -9,7 +9,7 @@ import { SeamlessCache } from './seamless-cache';
  * Example: convertPrice(1.05, 'usdc', 'eth')
  * Example: convertPrice(0.00348, 'eth', 'usdt')
  *
- * @param amount numeric amount, e.g. 0.0014855
+ * @param amount numeric amount, e.g. 0.0014855 - human readable price
  * @param from currency (lowercase), e.g. 'eth'
  * @param to currency (lowercase), e.g. 'usdc'
  */
@@ -20,7 +20,12 @@ export async function convertPrice(
 ): Promise<number> {
     from = from.trim().toLowerCase();
     to = to.trim().toLowerCase();
-    const key = `${from}-${to}`;
+
+    // if keys are the same, then just return whats in db for usdt-usdc conversion.
+    if (from === to) return amount;
+
+    let key = `${from}-${to}`;
+
     const output = await exchangeRateCache.retrieve();
 
     if (!output[key])

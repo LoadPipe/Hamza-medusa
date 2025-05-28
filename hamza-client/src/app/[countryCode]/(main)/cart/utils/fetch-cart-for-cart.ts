@@ -2,6 +2,11 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem, Cart, Store } from '@medusajs/medusa';
 import { CartWithCheckoutStep } from '@/types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
+import {
+    addDefaultShippingMethod,
+    getShippingMethods,
+    setBestShippingAddress,
+} from '@/lib/server';
 
 type StoreWithItems = MedusaStore & {
     items: LineItem[];
@@ -13,15 +18,11 @@ type MedusaStore = Store & {
 
 export const fetchCartForCart =
     async (): Promise<CartWithCheckoutStep | null> => {
-        const cart = await retrieveCart().then(
-            (cart) => cart as CartWithCheckoutStep
-        );
+        let cart = await retrieveCart();
 
-        if (!cart) {
-            return null;
-        }
+        if (!cart) return null;
 
-        if (cart?.items?.length) {
+        if (cart.items.length) {
             const enrichedItems = await enrichLineItems(
                 cart.items,
                 cart.region_id

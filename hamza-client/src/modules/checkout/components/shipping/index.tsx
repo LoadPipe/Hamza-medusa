@@ -48,7 +48,7 @@ const Shipping: React.FC<ShippingProps> = ({
 
     const handleSubmit = () => {
         setIsLoading(true);
-        addDefaultShippingMethod(cart?.id).then(() => {
+        addDefaultShippingMethod(cart).then(() => {
             router.push(pathname + '?step=review', {
                 scroll: false,
             });
