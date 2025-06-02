@@ -17,6 +17,7 @@ import { BsBox } from 'react-icons/bs';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { EscrowStatusString } from '@/lib/server/enums';
 import currencyIcons from '@/images/currencies/crypto-currencies';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 // Define types for the component
 interface LineItem {
@@ -27,6 +28,9 @@ interface LineItem {
     thumbnail?: string | null;
     variant?: {
         title: string;
+        product?: {
+            handle: string;
+        };
     };
 }
 
@@ -256,79 +260,124 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                 </Flex>
 
                                 {order.items.map(
-                                    (item: LineItem, itemIndex: number) => (
-                                        <Flex
-                                            key={item.id}
-                                            direction="column"
-                                            gap={4}
-                                        >
-                                            <Flex gap={4} py={4}>
-                                                <Box
-                                                    w="48px"
-                                                    h="48px"
-                                                    bg="gray.800"
-                                                    borderRadius="8px"
-                                                    overflow="hidden"
-                                                >
-                                                    {item.thumbnail && (
-                                                        <Image
-                                                            src={item.thumbnail}
-                                                            alt={item.title}
-                                                            width={48}
-                                                            height={48}
-                                                            style={{
-                                                                objectFit:
-                                                                    'cover',
-                                                            }}
-                                                        />
+                                    (item: LineItem, itemIndex: number) => {
+                                        const productHandle = item.variant?.product?.handle;
+
+                                        return (
+                                            <Flex
+                                                key={item.id}
+                                                direction="column"
+                                                gap={4}
+                                            >
+                                                <Flex gap={4} py={4}>
+                                                    {productHandle ? (
+                                                        <LocalizedClientLink href={`/products/${productHandle}`}>
+                                                            <Box
+                                                                w="48px"
+                                                                h="48px"
+                                                                bg="gray.800"
+                                                                borderRadius="8px"
+                                                                overflow="hidden"
+                                                                cursor="pointer"
+                                                                _hover={{ opacity: 0.8 }}
+                                                                transition="opacity 0.2s"
+                                                            >
+                                                                {item.thumbnail && (
+                                                                    <Image
+                                                                        src={item.thumbnail}
+                                                                        alt={item.title}
+                                                                        width={48}
+                                                                        height={48}
+                                                                        style={{
+                                                                            objectFit: 'cover',
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </Box>
+                                                        </LocalizedClientLink>
+                                                    ) : (
+                                                        <Box
+                                                            w="48px"
+                                                            h="48px"
+                                                            bg="gray.800"
+                                                            borderRadius="8px"
+                                                            overflow="hidden"
+                                                        >
+                                                            {item.thumbnail && (
+                                                                <Image
+                                                                    src={item.thumbnail}
+                                                                    alt={item.title}
+                                                                    width={48}
+                                                                    height={48}
+                                                                    style={{
+                                                                        objectFit: 'cover',
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </Box>
                                                     )}
-                                                </Box>
-                                                <Flex
-                                                    flex={1}
-                                                    direction="column"
-                                                    gap={1}
-                                                >
-                                                    <Text fontWeight="500">
-                                                        {item.title}
-                                                    </Text>
-                                                    <Text
-                                                        color="gray.400"
-                                                        fontSize="14px"
+
+                                                    <Flex
+                                                        flex={1}
+                                                        direction="column"
+                                                        gap={1}
                                                     >
-                                                        Quantity:{' '}
-                                                        {item.quantity}
-                                                        {item.variant &&
-                                                            ` | Variation: ${item.variant.title}`}
-                                                    </Text>
-                                                </Flex>
-                                                <HStack
-                                                    fontWeight="500"
-                                                    alignItems={'flex-start'}
-                                                >
-                                                    <Image
-                                                        className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] mt-[2px]"
-                                                        src={
-                                                            currencyIcons[
-                                                                order.currency_code ??
-                                                                    'usdc'
-                                                            ]
-                                                        }
-                                                        alt={
-                                                            order.currency_code ??
-                                                            'usdc'
-                                                        }
-                                                    />
-                                                    <Text>
-                                                        {formatCryptoPrice(
-                                                            item.unit_price *
-                                                                item.quantity,
-                                                            order.currency_code
+                                                        {/* Clickable Title */}
+                                                        {productHandle ? (
+                                                            <LocalizedClientLink href={`/products/${productHandle}`}>
+                                                                <Text
+                                                                    fontWeight="500"
+                                                                    cursor="pointer"
+                                                                    _hover={{ color: '#94D42A' }}
+                                                                    transition="color 0.2s"
+                                                                >
+                                                                    {item.title}
+                                                                </Text>
+                                                            </LocalizedClientLink>
+                                                        ) : (
+                                                            <Text fontWeight="500">
+                                                                {item.title}
+                                                            </Text>
                                                         )}
-                                                    </Text>
-                                                </HStack>
+
+                                                        <Text
+                                                            color="gray.400"
+                                                            fontSize="14px"
+                                                        >
+                                                            Quantity: {item.quantity}
+                                                            {item.variant &&
+                                                                ` | Variation: ${item.variant.title}`}
+                                                        </Text>
+                                                    </Flex>
+                                                    <HStack
+                                                        fontWeight="500"
+                                                        alignItems={'flex-start'}
+                                                    >
+                                                        <Image
+                                                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] mt-[2px]"
+                                                            src={
+                                                                currencyIcons[
+                                                                order.currency_code ??
+                                                                'usdc'
+                                                                ]
+                                                            }
+                                                            alt={
+                                                                order.currency_code ??
+                                                                'usdc'
+                                                            }
+                                                        />
+                                                        <Text>
+                                                            {formatCryptoPrice(
+                                                                item.unit_price *
+                                                                item.quantity,
+                                                                order.currency_code
+                                                            )}
+                                                        </Text>
+                                                    </HStack>
+                                                </Flex>
                                             </Flex>
-                                        </Flex>
-                                    )
+                                        );
+                                    }
                                 )}
                             </Flex>
                             <HStack
