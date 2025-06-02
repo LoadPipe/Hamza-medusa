@@ -122,16 +122,21 @@ const Item = ({ item }: ItemProps) => {
                             alignItems="center"
                             width="100%"
                         >
-                            <Text
-                                color="white"
-                                fontSize={{ base: '14px', md: '18px' }}
-                                noOfLines={{ base: 1, md: 2 }}
-                                fontWeight={600}
-                                mb="auto"
-                                width="100%" // Ensures full width usage
-                            >
-                                {item?.title}
-                            </Text>
+                            <LocalizedClientLink href={`/products/${handle}`}>
+                                <Text
+                                    color="white"
+                                    fontSize={{ base: '14px', md: '18px' }}
+                                    noOfLines={{ base: 1, md: 2 }}
+                                    fontWeight={600}
+                                    mb="auto"
+                                    width="100%" 
+                                    cursor="pointer"
+                                    _hover={{ color: '#94D42A' }}
+                                    transition="color 0.2s"
+                                >
+                                    {item?.title}
+                                </Text>
+                            </LocalizedClientLink>
                             <Flex ml="auto">
                                 <DeleteButton
                                     id={item?.id}
