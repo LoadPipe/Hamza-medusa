@@ -464,14 +464,17 @@ const OrderProcessing = ({
                                                 _hover={{ bg: 'gray.600' }}
                                                 onClick={() => {
                                                     const formattedAmount =
-                                                        formatCryptoPrice(
-                                                            paymentTotal ?? 0,
-                                                            currencyCode ??
-                                                                'usdc',
-                                                            false
-                                                        ).toString();
+                                                        paywith === 'bitcoin'
+                                                            ? convertBtcTotal
+                                                            : formatCryptoPrice(
+                                                                  paymentTotal ??
+                                                                      0,
+                                                                  currencyCode ??
+                                                                      'usdc',
+                                                                  false
+                                                              ).toString();
                                                     navigator.clipboard.writeText(
-                                                        formattedAmount
+                                                        formattedAmount ?? ''
                                                     );
                                                     setHasCopiedAmount(true);
                                                     setTimeout(
