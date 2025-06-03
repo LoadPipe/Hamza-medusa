@@ -18,6 +18,8 @@ import { LineItem } from '@/app/[countryCode]/(main)/order/processing/[id]/page'
 import OrderItemDetails from './OrderItemDetails';
 import { useEffect, useState } from 'react';
 import { Payment, ShippingMethod } from '@medusajs/medusa';
+import { convertPrice } from '@/lib/util/price-conversion';
+import { useQuery } from '@tanstack/react-query';
 
 interface OrderItemProps {
     order: any; // Replace with proper type
@@ -35,8 +37,41 @@ const OrderItem = ({
     // calculate totals
     // const [orderTotal, setOrderTotal] = useState(0);
     // const [paymentTotal, setPaymentTotal] = useState(0);
+    const [orderPaymentTotal, setOrderPaymentTotal] = useState(0);
     const [shippingTotal, setShippingTotal] = useState(0);
     const [discountTotal, setDiscountTotal] = useState(0);
+
+    const { data: convertPaymentTotaltoUsd } = useQuery({
+        queryKey: [
+            'convertUsdTotal',
+            order.payments[0].amount,
+            order.currency_code,
+        ], // ✅ Unique key per conversion
+        queryFn: async () => {
+            if (
+                order.currency_code === 'usdc' ||
+                order.currency_code === 'usdt'
+            ) {
+                return formatCryptoPrice(
+                    order.payments[0].amount ?? 0,
+                    order.currency_code
+                );
+            }
+            const result = await convertPrice(
+                Number(
+                    formatCryptoPrice(
+                        order.payments[0].amount ?? 0,
+                        order.currency_code
+                    )
+                ),
+                order.currency_code,
+                'usdc'
+            );
+            return Number(result).toFixed(2);
+        },
+        staleTime: 0,
+        gcTime: 0,
+    });
 
     useEffect(() => {
         const orderTotal =
@@ -96,8 +131,13 @@ const OrderItem = ({
                             {formatCryptoPrice(
                                 order.payments[0].amount,
                                 order.currency_code
-                            )}
+                            )}{' '}
                         </Text>
+                        {order.currency_code === 'eth' && (
+                            <Text ml="0.4rem" color="white">
+                                ≅ ${convertPaymentTotaltoUsd} USD
+                            </Text>
+                        )}
                     </Flex>
                     <Icon
                         as={isOpen ? ChevronUpIcon : ChevronDownIcon}
