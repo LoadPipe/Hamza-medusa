@@ -392,16 +392,26 @@ const OrderProcessing = ({
                                         </Text>
                                         <HStack>
                                             <Flex>
-                                                <Image
-                                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                                    src={
-                                                        currencyIcons[
+                                                {paywith === 'bitcoin' ? (
+                                                    <FaBitcoin
+                                                        size={24}
+                                                        color="#F7931A"
+                                                    />
+                                                ) : (
+                                                    <Image
+                                                        className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                                        src={
+                                                            currencyIcons[
+                                                                currencyCode ??
+                                                                    'usdc'
+                                                            ]
+                                                        }
+                                                        alt={
                                                             currencyCode ??
-                                                                'usdc'
-                                                        ]
-                                                    }
-                                                    alt={currencyCode ?? 'usdc'}
-                                                />
+                                                            'usdc'
+                                                        }
+                                                    />
+                                                )}
                                                 <Text ml="0.4rem" color="white">
                                                     {paywith === 'bitcoin' ? (
                                                         <>
@@ -1058,15 +1068,22 @@ const OrderProcessing = ({
                                     </Text>
                                     <Flex gap={2}>
                                         <Text color="white">Total Amount:</Text>
-                                        <Image
-                                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                            src={
-                                                currencyIcons[
-                                                    currencyCode ?? 'usdc'
-                                                ]
-                                            }
-                                            alt={currencyCode ?? 'usdc'}
-                                        />
+                                        {paywith === 'bitcoin' ? (
+                                            <FaBitcoin
+                                                size={24}
+                                                color="#F7931A"
+                                            />
+                                        ) : (
+                                            <Image
+                                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                                src={
+                                                    currencyIcons[
+                                                        currencyCode ?? 'usdc'
+                                                    ]
+                                                }
+                                                alt={currencyCode ?? 'usdc'}
+                                            />
+                                        )}
                                         <Text ml="0.4rem" color="white">
                                             {formatCryptoPrice(
                                                 paymentTotal ?? 0,
