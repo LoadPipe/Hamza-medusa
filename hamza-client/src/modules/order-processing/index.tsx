@@ -1071,6 +1071,11 @@ const OrderProcessing = ({
                                                 false
                                             )}
                                         </Text>
+                                        {currencyCode === 'eth' && (
+                                            <Text ml="0.4rem" color="white">
+                                                ≅ {convertUsdTotal} USD
+                                            </Text>
+                                        )}
                                     </Flex>
                                 </HStack>
                             </Box>
