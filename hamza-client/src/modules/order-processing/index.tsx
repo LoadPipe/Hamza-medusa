@@ -37,6 +37,8 @@ import {
     getChainTitleFromName,
     isChainNameInChainMap,
 } from '../chain-select';
+import { useQuery } from '@tanstack/react-query';
+import { convertPrice } from '@/lib/util/price-conversion';
 
 const OrderProcessing = ({
     startTimestamp,
@@ -115,6 +117,40 @@ const OrderProcessing = ({
         const totalTime = endTimestamp - startTimestamp;
         return Math.min(Math.max((usedTime / totalTime) * 100, 0), 100);
     }, [startTimestamp, endTimestamp]);
+
+    const { data: convertBtcTotal } = useQuery({
+        queryKey: ['convertBtcTotal', paymentTotal, currencyCode], // ✅ Unique key per conversion
+        queryFn: async () => {
+            const result = await convertPrice(
+                Number(formatCryptoPrice(paymentTotal ?? 0, currencyCode)),
+                currencyCode,
+                'btc'
+            );
+            return Number(result).toFixed(8);
+        },
+        enabled: process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true',
+        staleTime: 0,
+        gcTime: 0,
+    });
+
+    const { data: convertUsdTotal } = useQuery({
+        queryKey: ['convertUsdTotal', paymentTotal, currencyCode], // ✅ Unique key per conversion
+        queryFn: async () => {
+            if (currencyCode === 'usdc' || currencyCode === 'usdt') {
+                return formatCryptoPrice(paymentTotal ?? 0, currencyCode);
+            }
+
+            const result = await convertPrice(
+                Number(formatCryptoPrice(paymentTotal ?? 0, currencyCode)),
+                currencyCode,
+                'usdc'
+            );
+
+            return Number(result).toFixed(2);
+        },
+        staleTime: 0,
+        gcTime: 0,
+    });
 
     // handling progress bar timer
     useEffect(() => {
@@ -367,12 +403,38 @@ const OrderProcessing = ({
                                                     alt={currencyCode ?? 'usdc'}
                                                 />
                                                 <Text ml="0.4rem" color="white">
-                                                    {formatCryptoPrice(
-                                                        paymentTotal ?? 0,
-                                                        currencyCode ?? 'usdc',
-                                                        false
-                                                    )}{' '}
-                                                    {paymentCurrency?.toUpperCase()}
+                                                    {paywith === 'bitcoin' ? (
+                                                        <>
+                                                            {convertBtcTotal}{' '}
+                                                            BTC ≅ $
+                                                            {convertUsdTotal}{' '}
+                                                            USD
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            {formatCryptoPrice(
+                                                                paymentTotal ??
+                                                                    0,
+                                                                currencyCode ??
+                                                                    'usdc',
+                                                                false
+                                                            )}{' '}
+                                                            {paymentCurrency?.toUpperCase()}{' '}
+                                                            {!paymentCurrency
+                                                                ?.toLowerCase()
+                                                                .includes(
+                                                                    'usd'
+                                                                ) && (
+                                                                <>
+                                                                    ≅ $
+                                                                    {
+                                                                        convertUsdTotal
+                                                                    }{' '}
+                                                                    USD
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    )}
                                                 </Text>
                                             </Flex>
                                             <Button
@@ -427,7 +489,7 @@ const OrderProcessing = ({
                                             </Button>
                                         </HStack>
                                     </VStack>
-                                    {paywith &&
+                                    {paywith !== 'bitcoin' &&
                                         chainName &&
                                         isChainNameInChainMap(chainName) && (
                                             <VStack align="start" spacing={1}>
@@ -649,17 +711,101 @@ const OrderProcessing = ({
                                                 : 'Pay with External Wallet'}
                                         </Text>
                                         {paywith && paywith === 'bitcoin' ? (
-                                            <Text
-                                                color="gray.400"
-                                                fontSize="sm"
-                                                textAlign="left"
-                                            >
-                                                Bitcoin payments are processed
-                                                separately from EVM wallets. To
-                                                complete your payment, simply
-                                                scan the QR code using your
-                                                Bitcoin wallet."
-                                            </Text>
+                                            <>
+                                                <Text
+                                                    color="gray.400"
+                                                    fontSize="sm"
+                                                    textAlign="left"
+                                                >
+                                                    Bitcoin payments are
+                                                    processed separately from
+                                                    EVM wallets. To complete
+                                                    your payment, simply scan
+                                                    the QR code using your
+                                                    Bitcoin wallet."
+                                                </Text>
+                                                <VStack width="100%" gap={5}>
+                                                    <VStack
+                                                        gap={0}
+                                                        alignItems="center"
+                                                    >
+                                                        <Text
+                                                            color="white"
+                                                            fontSize="l"
+                                                            textAlign="left"
+                                                        >
+                                                            Total to pay:
+                                                        </Text>
+                                                        <HStack>
+                                                            <FaBitcoin
+                                                                size={24}
+                                                                color="#F7931A"
+                                                            />
+                                                            <Text
+                                                                color="white"
+                                                                fontSize="2xl"
+                                                                textAlign="left"
+                                                                fontWeight="bold"
+                                                            >
+                                                                {
+                                                                    convertBtcTotal
+                                                                }{' '}
+                                                                BTC
+                                                            </Text>
+                                                            <Button
+                                                                size="xs"
+                                                                bg="none"
+                                                                color="white"
+                                                                borderRadius="2rem"
+                                                                leftIcon={
+                                                                    hasCopiedAmount ? (
+                                                                        <FaRegCheckCircle
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    '0',
+                                                                            }}
+                                                                            color="#999"
+                                                                        />
+                                                                    ) : (
+                                                                        <FaCopy
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    '0',
+                                                                            }}
+                                                                            color="#999"
+                                                                        />
+                                                                    )
+                                                                }
+                                                                _hover={{
+                                                                    bg: 'gray.600',
+                                                                }}
+                                                                onClick={() => {
+                                                                    const formattedAmount =
+                                                                        convertBtcTotal?.toString();
+                                                                    navigator.clipboard.writeText(
+                                                                        formattedAmount ??
+                                                                            ''
+                                                                    );
+                                                                    setHasCopiedAmount(
+                                                                        true
+                                                                    );
+                                                                    setTimeout(
+                                                                        () =>
+                                                                            setHasCopiedAmount(
+                                                                                false
+                                                                            ),
+                                                                        2000
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {/* {hasCopiedAmount
+                                                                    ? 'Copied!'
+                                                                    : 'Copy'} */}
+                                                            </Button>
+                                                        </HStack>
+                                                    </VStack>
+                                                </VStack>
+                                            </>
                                         ) : (
                                             <>
                                                 <VStack width="100%" gap={5}>
