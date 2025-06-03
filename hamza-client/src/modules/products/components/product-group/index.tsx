@@ -284,6 +284,9 @@ const ProductCardGroup = ({
     const updateUrlWithCurrentState = () => {
         if (isUpdatingUrl.current) return;
 
+        const isOnCategoryPage = pathname.includes('/category/');
+        if (isOnCategoryPage) return;
+
         isUpdatingUrl.current = true;
 
         try {
