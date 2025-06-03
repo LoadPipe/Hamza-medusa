@@ -105,6 +105,8 @@ if (allowedChains.length === 0) {
         84532: baseSepolia,
         scrollSepolia,
         534351: scrollSepolia,
+        mantle,
+        5000: mantle,
     };
 
     wagmiChains = allowedChains.map(

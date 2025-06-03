@@ -133,10 +133,27 @@ const chainConfig: any = {
             address: '0xaAa8a4393e72292043978a2EAa5A7061DfA3b413',
         },
     },
+    5000: {
+        chain_name: 'mantle',
+        master_switch: {
+            address: '0x0',
+        },
+        massmarket_payment: {
+            address: '0x0',
+        },
+        lite_switch: {
+            address: '0x0',
+        },
+        escrow_multicall: {
+            address: '0x0',
+        },
+    },
 };
 
 const getContractAddress = (contractId: string, chainId: number = 1) =>
-    chainConfig[chainId] ? chainConfig[chainId][contractId]?.address ?? '' : '';
+    chainConfig[chainId]
+        ? (chainConfig[chainId][contractId]?.address ?? '')
+        : '';
 
 const getMasterSwitchAddress = (chainId: number = 1) =>
     chainConfig[chainId]

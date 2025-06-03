@@ -395,7 +395,7 @@ const chainConfig: any = {
 
 const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>
     chainConfig[chainId]
-        ? chainConfig[chainId][currencyId]?.contract_address ?? ''
+        ? (chainConfig[chainId][currencyId]?.contract_address ?? '')
         : '';
 
 const getCurrencyPrecision = (currencyId: string, chainId: number = 1) =>

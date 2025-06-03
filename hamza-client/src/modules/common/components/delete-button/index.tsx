@@ -24,8 +24,8 @@ const DeleteButton = ({
             setIsDeleting(false);
             setIsUpdatingCart(false);
         });
-        queryClient.invalidateQueries({ queryKey: ['cart'] });
-        queryClient.invalidateQueries({ queryKey: ['shippingCost'] });
+        await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        await queryClient.invalidateQueries({ queryKey: ['shippingCost'] });
         setIsDeleting(false);
         setIsUpdatingCart(false);
     };

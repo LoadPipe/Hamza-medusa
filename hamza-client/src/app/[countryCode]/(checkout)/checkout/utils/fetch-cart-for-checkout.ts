@@ -10,6 +10,8 @@ import { addDefaultShippingMethod, setBestShippingAddress } from '@/lib/server';
  * @returns {Promise<CartWithCheckoutStep>} The cart
  * In cart flow we will acquire the cart_id => pass it to the checkout flow... we should pass this as prop since
  * it's a ssc cookie...
+ *
+ * @deprecated use fetchCartForCart instead
  */
 export const fetchCartForCheckout = async (
     cartId: string
