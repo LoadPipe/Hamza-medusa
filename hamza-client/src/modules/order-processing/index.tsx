@@ -76,7 +76,7 @@ const OrderProcessing = ({
 
     const blockchainData = _paymentData?.[0]?.blockchain_data;
 
-    const chainId = blockchainData?.chain_id;
+    const chainId = blockchainData?.payment_chain_id;
 
     const chainName = getChainNameFromId(chainId || 0);
 
