@@ -53,6 +53,10 @@ const ProductCardGroup = ({
 
     // URL update helper function
     const updateUrl = (currentOffset: number) => {
+
+        const isOnCategoryPage = pathname.includes('/category/');
+        if (isOnCategoryPage) return;
+        
         const params = new URLSearchParams(searchParams.toString());
 
         // Update offset

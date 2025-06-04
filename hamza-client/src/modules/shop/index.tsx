@@ -69,25 +69,30 @@ const ShopTemplate = ({ category }: ShopTemplateProps) => {
             return;
         }
 
-        // Read URL parameters
-        const categoryParam = searchParams.get('category');
-        const priceHi = searchParams.get('price_hi');
-        const priceLo = searchParams.get('price_lo');
-
-        // Only proceed if we have URL parameters to apply
-        if (!categoryParam && !priceHi && !priceLo) {
-            return;
-        }
-
         // Start with a clean slate
         clearFilters();
 
-        // Process and apply category filter
-        if (categoryParam) {
-            applyUrlCategoryFilter(categoryParam);
+        // If we're on a category page, use the category prop instead of query params
+        if (category) {
+            // Set the category from the URL path, ignore query parameters
+            setSelectedCategories([category]);
+
+            // Update store page state
+            if (storePageState?.setCategorySelect) {
+                storePageState.setCategorySelect(() => [category]);
+            }
+        } else {
+            // Only apply category query params if we're NOT on a category page
+            const categoryParam = searchParams.get('category');
+            if (categoryParam) {
+                applyUrlCategoryFilter(categoryParam);
+            }
         }
 
-        // Process and apply price range filter
+        // Still apply price filters
+        const priceHi = searchParams.get('price_hi');
+        const priceLo = searchParams.get('price_lo');
+
         const lowerValue = priceLo ? parseInt(priceLo, 10) : 0;
         const upperValue = priceHi ? parseInt(priceHi, 10) : 5000000;
 
@@ -100,6 +105,7 @@ const ShopTemplate = ({ category }: ShopTemplateProps) => {
     }, [
         searchParams,
         hasHydrated,
+        category,
         clearFilters,
         setSelectedCategories,
         setRangeLower,
@@ -159,11 +165,20 @@ const ShopTemplate = ({ category }: ShopTemplateProps) => {
                     flexDirection={{ base: 'column', md: 'row' }}
                     alignItems={'flex-start'}
                     gap={'20px'}
+                    justifyContent={category ? 'center' : 'flex-start'}
                 >
-                    <MobileFilter />
-                    <SideFilter />
-                    <Flex maxW={'941px'} w="100%" flexDirection={'column'}>
-                        <StoreFilterDisplay />
+                    {/* Only show filters on general shop page, */}
+                    {!category && <MobileFilter />}
+                    {!category && <SideFilter />}
+
+                    <Flex
+                        // Adjust max width based on whether filters are shown
+                        maxW={category ? '100%' : '941px'}
+                        w="100%"
+                        flexDirection={'column'}
+                    >
+                        {/* Only show filter display on general shop page */}
+                        {!category && <StoreFilterDisplay />}
 
                         <Box mt={{ base: '0', md: '1rem' }}>
                             <ProductCardGroup
