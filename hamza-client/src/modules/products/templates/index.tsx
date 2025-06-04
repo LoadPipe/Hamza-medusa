@@ -119,8 +119,6 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     const generateProductJsonLd = () => {
         if (!product) return null;
 
-        console.log('product for schema:', product);
-
         /**
          * Helper function to strip HTML tags from description
          */
