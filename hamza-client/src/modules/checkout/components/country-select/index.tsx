@@ -4,6 +4,7 @@ import NativeSelect, {
     NativeSelectProps,
 } from '@modules/common/components/native-select';
 import { Region } from '@medusajs/medusa';
+import { Text } from '@chakra-ui/react';
 
 const CountrySelect = forwardRef<
     HTMLSelectElement,
@@ -19,7 +20,7 @@ const CountrySelect = forwardRef<
     );
 
     const countryOptions = useMemo(() => {
-        if (!region) {
+        if (!region?.countries) {
             return [];
         }
 
@@ -29,21 +30,31 @@ const CountrySelect = forwardRef<
                 value: country.iso_2,
                 label: country.display_name,
             }));
-    }, [region]);
+    }, [region?.countries]);
 
     return (
-        <NativeSelect
-            ref={innerRef}
-            placeholder={placeholder}
-            defaultValue={defaultValue}
-            {...props}
-        >
-            {countryOptions.map(({ value, label }, index) => (
-                <option key={index} value={value}>
-                    {label}
-                </option>
-            ))}
-        </NativeSelect>
+        <>
+            {!region ||
+                (!region.countries && (
+                    <Text color="#ccc" fontSize="sm" py={4}>
+                        Countries loading...
+                    </Text>
+                ))}
+            {region?.countries && region.countries.length > 0 && (
+                <NativeSelect
+                    ref={innerRef}
+                    placeholder={placeholder}
+                    defaultValue={defaultValue}
+                    {...props}
+                >
+                    {countryOptions.map(({ value, label }, index) => (
+                        <option key={index} value={value}>
+                            {label}
+                        </option>
+                    ))}
+                </NativeSelect>
+            )}
+        </>
     );
 });
 
