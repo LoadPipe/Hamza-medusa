@@ -16,7 +16,6 @@ import { FaArrowLeftLong } from 'react-icons/fa6';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@medusajs/icons';
 import { ProductSchema, Product } from '@/lib/schemas/product';
-import Head from 'next/head';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 
 type ProductTemplateProps = {
@@ -194,7 +193,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 "itemCondition": "https://schema.org/NewCondition",
                 "seller": {
                     "@type": "Organization",
-                    "name": storeData?.name || "Hamza Market"
+                    "name": storeData?.name || "Hamza Market",
+                    "url": storeData?.handle
+                        ? `https://hamza.market/${countryCode}/store/${storeData.handle}`
+                        : "https://hamza.market"
                 }
             };
         }).filter(Boolean);
@@ -209,7 +211,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
             "brand": {
                 "@type": "Brand",
-                "name": storeData?.name || "Hamza Market"
+                "name": storeData?.name || "Hamza Market",
+                "url": storeData?.handle
+                    ? `https://hamza.market/${countryCode}/store/${storeData.handle}`
+                    : "https://hamza.market"
             },
 
             "offers": offers,
@@ -293,136 +298,132 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
 
     return (
-        <>
-            <Head>
-                {product && (
-                    <script
-                        type="application/ld+json"
-                        dangerouslySetInnerHTML={{
-                            __html: JSON.stringify(generateProductJsonLd(), null, 2)
-                        }}
-                    />
-                )}
-            </Head>
+        <Flex
+            flexDirection="column"
+            justifyContent={'center'}
+            alignItems={'center'}
+            maxW="1280px"
+            width={'100%'}
+            mx="auto"
+        >
+            {product && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify(generateProductJsonLd(), null, 2)
+                    }}
+                />
+            )}
             <Flex
-                flexDirection="column"
-                justifyContent={'center'}
-                alignItems={'center'}
                 maxW="1280px"
-                width={'100%'}
-                mx="auto"
+                width={'calc(100% - 2rem)'}
+                mx="rem"
+                flexDirection="column"
             >
                 <Flex
-                    maxW="1280px"
-                    width={'calc(100% - 2rem)'}
-                    mx="rem"
-                    flexDirection="column"
+                    mt={{ base: '0', md: '1rem' }}
+                    mb="-1rem"
+                    height={'52px'}
+                    width="100%"
+                    flexDirection={'row'}
+                    display={{ base: 'none', md: 'flex' }}
                 >
-                    <Flex
-                        mt={{ base: '0', md: '1rem' }}
-                        mb="-1rem"
-                        height={'52px'}
-                        width="100%"
-                        flexDirection={'row'}
-                        display={{ base: 'none', md: 'flex' }}
+                    <LocalizedClientLink
+                        style={{
+                            display: 'flex',
+                            backgroundColor: '#121212',
+                            alignItems: 'center',
+                            padding: '0 16px',
+                            color: 'white',
+                            justifyContent: 'center',
+                            borderColor: '#3E3E3E',
+                            borderWidth: '1px',
+                            borderRadius: '16px',
+                            height: '52px',
+                        }}
+                        className="ml-auto"
                     >
-                        <LocalizedClientLink
-                            style={{
-                                display: 'flex',
-                                backgroundColor: '#121212',
-                                alignItems: 'center',
-                                padding: '0 16px',
-                                color: 'white',
-                                justifyContent: 'center',
-                                borderColor: '#3E3E3E',
-                                borderWidth: '1px',
-                                borderRadius: '16px',
-                                height: '52px',
-                            }}
-                            className="ml-auto"
-                        >
-                            <Flex width={'30px'} height={'40px'}>
-                                <Flex
-                                    width={'20px'}
-                                    height={'20px'}
-                                    alignSelf={'center'}
-                                >
-                                    <FaArrowLeftLong
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            alignSelf: 'center',
-                                        }}
-                                    />
-                                </Flex>
-                            </Flex>
-                            <Text>Back to results</Text>
-                        </LocalizedClientLink>
-                    </Flex>
-                    <Flex
-                        mt={{ base: '1rem', md: '2rem' }}
-                        mb={{ base: '-1rem', md: '0' }}
-                    >
-                        <PreviewGallery
-                            handle={handle}
-                            selectedVariantImage={selectedVariantImage}
-                        />
-                    </Flex>
-                    <Flex
-                        maxWidth="1280px"
-                        width="100%"
-                        my="2rem"
-                        gap="26px"
-                        justifyContent="center"
-                        flexDirection={{ base: 'column', md: 'row' }}
-                    >
-                        <Flex flex="1" order={{ base: 2, md: 1 }}>
-                            <Flex flexDirection="column">
-                                <ProductInfo handle={handle} />
-                                {/*<Box mt="1.5rem">*/}
-                                {/*    <Tweet*/}
-                                {/*        productHandle={product.handle as string}*/}
-                                {/*        isPurchased={false}*/}
-                                {/*    />*/}
-                                {/*</Box>*/}
+                        <Flex width={'30px'} height={'40px'}>
+                            <Flex
+                                width={'20px'}
+                                height={'20px'}
+                                alignSelf={'center'}
+                            >
+                                <FaArrowLeftLong
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        alignSelf: 'center',
+                                    }}
+                                />
                             </Flex>
                         </Flex>
-                        <Flex
-                            maxW={{ base: '100%', md: '504px' }}
-                            width="100%"
-                            flex="0 0 auto"
-                            justifyContent="center"
-                            order={{ base: 1, md: 2 }}
-                            alignSelf="flex-start"
-                        >
-                            <PreviewCheckout
-                                selectedVariantImage={selectedVariantImage}
-                                setSelectedVariantImage={setSelectedVariantImage}
-                                productId={product.id as string}
-                                handle={handle}
-                            />
-                        </Flex>
-                    </Flex>
-                    {isStoreLoading ? (
-                        <Spinner /> // Or some loading placeholder for StoreBanner
-                    ) : isStoreError ? (
-                        <Text>Error loading store details</Text> // Handle error case gracefully
-                    ) : (
-                        <StoreBanner
-                            storeHandle={storeData?.handle}
-                            storeName={storeData?.name}
-                            icon={storeData?.icon}
-                        />
-                    )}
-                    <Divider
-                        color="#555555"
-                        display={{ base: 'block', md: 'none' }}
-                        mt="2rem"
-                    />
-                    <ProductReview />
+                        <Text>Back to results</Text>
+                    </LocalizedClientLink>
                 </Flex>
+                <Flex
+                    mt={{ base: '1rem', md: '2rem' }}
+                    mb={{ base: '-1rem', md: '0' }}
+                >
+                    <PreviewGallery
+                        handle={handle}
+                        selectedVariantImage={selectedVariantImage}
+                    />
+                </Flex>
+                <Flex
+                    maxWidth="1280px"
+                    width="100%"
+                    my="2rem"
+                    gap="26px"
+                    justifyContent="center"
+                    flexDirection={{ base: 'column', md: 'row' }}
+                >
+                    <Flex flex="1" order={{ base: 2, md: 1 }}>
+                        <Flex flexDirection="column">
+                            <ProductInfo handle={handle} />
+                            {/*<Box mt="1.5rem">*/}
+                            {/*    <Tweet*/}
+                            {/*        productHandle={product.handle as string}*/}
+                            {/*        isPurchased={false}*/}
+                            {/*    />*/}
+                            {/*</Box>*/}
+                        </Flex>
+                    </Flex>
+                    <Flex
+                        maxW={{ base: '100%', md: '504px' }}
+                        width="100%"
+                        flex="0 0 auto"
+                        justifyContent="center"
+                        order={{ base: 1, md: 2 }}
+                        alignSelf="flex-start"
+                    >
+                        <PreviewCheckout
+                            selectedVariantImage={selectedVariantImage}
+                            setSelectedVariantImage={setSelectedVariantImage}
+                            productId={product.id as string}
+                            handle={handle}
+                        />
+                    </Flex>
+                </Flex>
+                {isStoreLoading ? (
+                    <Spinner /> // Or some loading placeholder for StoreBanner
+                ) : isStoreError ? (
+                    <Text>Error loading store details</Text> // Handle error case gracefully
+                ) : (
+                    <StoreBanner
+                        storeHandle={storeData?.handle}
+                        storeName={storeData?.name}
+                        icon={storeData?.icon}
+                    />
+                )}
+                <Divider
+                    color="#555555"
+                    display={{ base: 'block', md: 'none' }}
+                    mt="2rem"
+                />
+                <ProductReview />
             </Flex>
-        </>
+        </Flex>
     );
 };
 
