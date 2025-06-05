@@ -87,6 +87,7 @@ export interface PaymentsDataProps {
     expiresInSeconds?: number; // ms
     startTimestamp?: number; // ms
     endTimestamp?: number; // ms
+    expectedAmount?: string;
     orders?: Order[];
 }
 
