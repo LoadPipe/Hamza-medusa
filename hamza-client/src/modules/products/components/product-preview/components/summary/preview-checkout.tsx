@@ -248,7 +248,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : preferred_currency_code ?? 'usdc'
+                            : (preferred_currency_code ?? 'usdc')
                     );
 
                     // Update USD price if the preferred currency is 'eth'
@@ -306,13 +306,25 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     // it sets the initial options to the first value of each option
     useEffect(() => {
         if (productData?.options) {
-            const initialOptions = productData.options.reduce(
-                (acc: any, option: any) => {
-                    // Assuming each option has a 'values' array and each 'value' object has a 'value' property
-                    const firstValue = option.values?.[0]?.value;
-                    if (firstValue) {
-                        acc[option.id] = firstValue;
+            // Find variant with lowest variant_rank
+            const lowestRankVariant = productData.variants.reduce(
+                (lowest: any, current: any) => {
+                    if (
+                        !lowest ||
+                        (current.variant_rank !== null &&
+                            (lowest.variant_rank === null ||
+                                current.variant_rank < lowest.variant_rank))
+                    ) {
+                        return current;
                     }
+                    return lowest;
+                }
+            );
+
+            // Create initialOptions from the lowest rank variant's options
+            const initialOptions = lowestRankVariant.options.reduce(
+                (acc: any, opt: any) => {
+                    acc[opt.option_id] = opt.value;
                     return acc;
                 },
                 {}
@@ -458,10 +470,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     >
                         Listing Price
                     </Heading>
-                    <Flex
-                        alignItems="center"
-                        gap={1}
-                    >
+                    <Flex alignItems="center" gap={1}>
                         <Box color="primary.green.900">
                             <Image
                                 src={shieldIcon}
@@ -470,16 +479,20 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                 height={12}
                             />
                         </Box>
-                        <Text fontSize={'18px'} fontWeight="normal" color="primary.green.900">
+                        <Text
+                            fontSize={'18px'}
+                            fontWeight="normal"
+                            color="primary.green.900"
+                        >
                             Escrow
                         </Text>
-                        { /* <Box as="span" cursor="pointer" color="white"> */ }
-                         { /*    <Box as="svg" width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> */ }
-                        { /*         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" /> */ }
-                         { /*        <path d="M9 9a3 3 0 1 1 4 2.829 1 1 0 0 0-1 1V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /> */ }
-                         { /*        <circle cx="12" cy="17" r="1" fill="currentColor" /> */ }
-                       { /*      </Box> */ }
-                       { /*  </Box> */}
+                        {/* <Box as="span" cursor="pointer" color="white"> */}
+                        {/*    <Box as="svg" width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> */}
+                        {/*         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" /> */}
+                        {/*        <path d="M9 9a3 3 0 1 1 4 2.829 1 1 0 0 0-1 1V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /> */}
+                        {/*        <circle cx="12" cy="17" r="1" fill="currentColor" /> */}
+                        {/*      </Box> */}
+                        {/*  </Box> */}
                     </Flex>
                 </Flex>
                 <Flex
@@ -660,8 +673,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 display={{ base: 'block', md: 'none' }}
                 mt="1rem"
             />
-            {/* Variants */}
+
             <Flex width={'100%'} flexDirection={'column'} mt="1rem">
+                {/* Variants */}
                 <div>
                     {productData &&
                         productData.variants &&
@@ -752,6 +766,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             </div>
                         )}
                 </div>
+                {/* Variants: end */}
 
                 <QuantityButton />
 
