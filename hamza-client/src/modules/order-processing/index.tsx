@@ -39,6 +39,7 @@ import {
 } from '../chain-select';
 import { useQuery } from '@tanstack/react-query';
 import { convertPrice } from '@/lib/util/price-conversion';
+import { ethers } from 'ethers';
 
 const OrderProcessing = ({
     startTimestamp,
@@ -110,6 +111,15 @@ const OrderProcessing = ({
             ...prev,
             [orderId]: !prev[orderId],
         }));
+    };
+
+    const formatNativeBtc = (amount: string | undefined) => {
+        if (amount?.length) {
+            const adjustmentFactor = Math.pow(10, 8);
+            const nativeAmount = Number(amount) / Number(adjustmentFactor);
+            return nativeAmount.toString();
+        }
+        return undefined;
     };
 
     const calculateProgress = useCallback(() => {
@@ -388,7 +398,7 @@ const OrderProcessing = ({
                                     </VStack>
                                     <VStack align="start" spacing={1}>
                                         <Text color="gray.500" fontSize="sm">
-                                            Total Amount:
+                                            AMOUNT TO PAY:
                                         </Text>
                                         <HStack>
                                             <Flex>
@@ -415,7 +425,10 @@ const OrderProcessing = ({
                                                 <Text ml="0.4rem" color="white">
                                                     {paywith === 'bitcoin' ? (
                                                         <>
-                                                            {convertBtcTotal}{' '}
+                                                            {formatNativeBtc(
+                                                                paymentData?.expectedAmount
+                                                            ) ??
+                                                                convertBtcTotal}{' '}
                                                             BTC ≅ $
                                                             {convertUsdTotal}{' '}
                                                             USD
@@ -475,7 +488,10 @@ const OrderProcessing = ({
                                                 onClick={() => {
                                                     const formattedAmount =
                                                         paywith === 'bitcoin'
-                                                            ? convertBtcTotal
+                                                            ? formatNativeBtc(
+                                                                  paymentData?.expectedAmount
+                                                              ) ??
+                                                              convertBtcTotal
                                                             : formatCryptoPrice(
                                                                   paymentTotal ??
                                                                       0,
@@ -735,7 +751,7 @@ const OrderProcessing = ({
                                                     EVM wallets. To complete
                                                     your payment, simply scan
                                                     the QR code using your
-                                                    Bitcoin wallet."
+                                                    Bitcoin wallet.
                                                 </Text>
                                                 <VStack width="100%" gap={5}>
                                                     <VStack
@@ -760,9 +776,10 @@ const OrderProcessing = ({
                                                                 textAlign="left"
                                                                 fontWeight="bold"
                                                             >
-                                                                {
-                                                                    convertBtcTotal
-                                                                }{' '}
+                                                                {formatNativeBtc(
+                                                                    paymentData?.expectedAmount
+                                                                ) ??
+                                                                    convertBtcTotal}{' '}
                                                                 BTC
                                                             </Text>
                                                             <Button
@@ -794,7 +811,12 @@ const OrderProcessing = ({
                                                                 }}
                                                                 onClick={() => {
                                                                     const formattedAmount =
-                                                                        convertBtcTotal?.toString();
+                                                                        (
+                                                                            formatNativeBtc(
+                                                                                paymentData?.expectedAmount
+                                                                            ) ??
+                                                                            convertBtcTotal
+                                                                        )?.toString();
                                                                     navigator.clipboard.writeText(
                                                                         formattedAmount ??
                                                                             ''
