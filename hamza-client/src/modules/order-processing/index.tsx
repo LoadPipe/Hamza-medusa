@@ -1090,22 +1090,15 @@ const OrderProcessing = ({
                                     </Text>
                                     <Flex gap={2}>
                                         <Text color="white">Total Amount:</Text>
-                                        {paywith === 'bitcoin' ? (
-                                            <FaBitcoin
-                                                size={24}
-                                                color="#F7931A"
-                                            />
-                                        ) : (
-                                            <Image
-                                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                                src={
-                                                    currencyIcons[
-                                                        currencyCode ?? 'usdc'
-                                                    ]
-                                                }
-                                                alt={currencyCode ?? 'usdc'}
-                                            />
-                                        )}
+                                        <Image
+                                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                            src={
+                                                currencyIcons[
+                                                    currencyCode ?? 'usdc'
+                                                ]
+                                            }
+                                            alt={currencyCode ?? 'usdc'}
+                                        />
                                         <Text ml="0.4rem" color="white">
                                             {formatCryptoPrice(
                                                 paymentTotal ?? 0,
