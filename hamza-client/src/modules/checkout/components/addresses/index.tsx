@@ -1,19 +1,18 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { Cart, Customer } from '@medusajs/medusa';
+import { Customer } from '@medusajs/medusa';
 import { useToggleState } from '@medusajs/ui';
-import { Flex, Text, useDisclosure, Button } from '@chakra-ui/react';
+import { Flex, Text, useDisclosure, Button, Spinner } from '@chakra-ui/react';
 import compareAddresses from '@lib/util/compare-addresses';
 import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
-import { useEffect, useState } from 'react';
-import { getClientCookie } from '@lib/util/get-client-cookies';
-import axios from 'axios';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import { CartWithCheckoutStep } from '@/types/global';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -26,8 +25,6 @@ const Addresses = ({
     cart: CartWithCheckoutStep | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
-    const router = useRouter();
-
     // Use TanStack Query to fetch cart data
     const { data: cart } = useQuery({
         queryKey: ['cart', initialCart?.id],
@@ -36,6 +33,8 @@ const Addresses = ({
         gcTime: 0,
         initialData: initialCart,
     });
+
+    const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
 
     // Hooks to open and close address modal
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -97,7 +96,7 @@ const Addresses = ({
     //     };
 
     //     updateShippingMethod();
-    // }, [cart, router]);
+    // }, [cart]);
 
     return (
         <div>
@@ -124,7 +123,13 @@ const Addresses = ({
             </Flex>
 
             <div>
-                {cart && cart.shipping_address ? (
+                {isUpdatingCart ? (
+                    <Flex>
+                        <Text color="white" py={6}>
+                            <Spinner /> Address loading...
+                        </Text>
+                    </Flex>
+                ) : cart && cart.shipping_address ? (
                     <Flex flexDir={'column'} color="white">
                         <Text
                             fontWeight={700}

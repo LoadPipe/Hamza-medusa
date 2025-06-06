@@ -27,6 +27,7 @@ import AddressSelect from '../address-select';
 import compareSelectedAddress from '@/lib/util/compare-address-select';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -77,6 +78,10 @@ const AddressModal: React.FC<AddressModalProps> = ({
         email: '',
         'shipping_address.phone': '',
     });
+
+    const setIsUpdatingCart = useCartStore((state) => state.setIsUpdatingCart);
+    const isUpdatingCart = useCartStore((state) => state.isUpdatingCart);
+
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
         if (isOpen) {
@@ -252,6 +257,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
         const formPayload = new FormData(e.currentTarget);
 
         try {
+            setIsUpdatingCart(true);
             if (saveAddress) {
                 const shippingAddressData = new FormData();
                 shippingAddressData.append(
@@ -336,6 +342,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
             await queryClient.refetchQueries({
                 queryKey: ['cart'],
             });
+
+            setIsUpdatingCart(false);
         }
     };
 
