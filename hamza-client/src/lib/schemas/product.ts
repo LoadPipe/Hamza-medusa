@@ -6,7 +6,11 @@ export const ProductSchema = z.object({
     title: z.string(),
     created_at: z.string().transform((str) => new Date(str)),
     updated_at: z.string().transform((str) => new Date(str)),
-    deleted_at: z.string().nullable().transform((str) => (str ? new Date(str) : null)),    subtitle: z.string().optional().nullable(),
+    deleted_at: z
+        .string()
+        .nullable()
+        .transform((str) => (str ? new Date(str) : null)),
+    subtitle: z.string().optional().nullable(),
     handle: z.string().optional().nullable(),
     description: z.string().optional(),
     thumbnail: z
@@ -32,7 +36,7 @@ export const ProductSchema = z.object({
                 url: z.string().url({ message: 'Invalid image URL' }),
                 id: z.string(),
                 fileName: z.string(),
-            }),
+            })
         )
         .optional()
         .default([]),
@@ -55,7 +59,7 @@ export const ProductSchema = z.object({
                     })
                     .optional()
                     .nullable(),
-            }),
+            })
         )
         .optional()
         .nullable(), // Ensure categories can be optional and nullable
@@ -67,7 +71,10 @@ export const ProductSchema = z.object({
             title: z.string(),
             created_at: z.string().transform((str) => new Date(str)),
             updated_at: z.string().transform((str) => new Date(str)),
-            deleted_at: z.string().nullable().transform((str) => (str ? new Date(str) : null)),
+            deleted_at: z
+                .string()
+                .nullable()
+                .transform((str) => (str ? new Date(str) : null)),
             sku: z.string().nullable(),
             inventory_quantity: z.number(),
             variant_rank: z.number(),
@@ -79,12 +86,20 @@ export const ProductSchema = z.object({
                 .array(
                     z.object({
                         id: z.string(),
-                        created_at: z.string().transform((str) => new Date(str)),
-                        updated_at: z.string().transform((str) => new Date(str)),
-                        deleted_at: z.string().nullable().transform((str) => (str ? new Date(str) : null)),
+                        created_at: z
+                            .string()
+                            .transform((str) => new Date(str)),
+                        updated_at: z
+                            .string()
+                            .transform((str) => new Date(str)),
+                        deleted_at: z
+                            .string()
+                            .nullable()
+                            .transform((str) => (str ? new Date(str) : null)),
                         value: z.string(),
                         option_id: z.string(),
                         variant_id: z.string(),
+                        variant_rank: z.number(),
                         metadata: z.any().nullable(),
                     })
                 )
@@ -100,7 +115,7 @@ export const ProductSchema = z.object({
                         max_quantity: z.number().nullable(),
                         price_list_id: z.string().nullable(),
                         region_id: z.string().nullable(),
-                    }),
+                    })
                 )
                 .optional()
                 .default([]),
@@ -123,7 +138,7 @@ export const ProductSchema = z.object({
                     imgUrl: z.string().url().optional(),
                 })
                 .nullable(),
-        }),
+        })
     ),
 });
 
