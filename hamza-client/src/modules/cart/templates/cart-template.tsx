@@ -45,7 +45,10 @@ const CartTemplate = ({
     });
 
     useEffect(() => {
-        queryClient.invalidateQueries({ queryKey: ['cart'] });
+        const invalidateCart = async () => {
+            await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        };
+        invalidateCart();
     }, []);
 
     if (isLoading) {

@@ -46,7 +46,7 @@ const Item = ({ item }: ItemProps) => {
                     lineId: item.id,
                     quantity: newQuantity,
                 });
-                queryClient.invalidateQueries({ queryKey: ['cart'] });
+                await queryClient.invalidateQueries({ queryKey: ['cart'] });
                 setIsUpdatingCart(false);
             }, 500); // 500ms debounce
         } catch (error) {
@@ -129,7 +129,7 @@ const Item = ({ item }: ItemProps) => {
                                     noOfLines={{ base: 1, md: 2 }}
                                     fontWeight={600}
                                     mb="auto"
-                                    width="100%" 
+                                    width="100%"
                                     cursor="pointer"
                                     _hover={{ color: '#94D42A' }}
                                     transition="color 0.2s"
