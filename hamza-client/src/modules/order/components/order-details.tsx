@@ -38,7 +38,7 @@ interface Order {
     tracking_number?: string;
     items: OrderItem[] | any;
     store: OrderStore;
-    payments: Payment[];
+    payments?: Payment[];
     external_metadata?: {
         tracking?: {
             data?: {
@@ -72,7 +72,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
         let bitcoinAmount: string = '';
 
         if (order.payments) {
-            order.payments.forEach(payment => {
+            order.payments.forEach((payment) => {
                 if (payment.metadata?.currency === 'btc') {
                     hasBitcoinPayment = true;
                     bitcoinAmount = payment.metadata.amount ?? '';
@@ -98,7 +98,11 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             : orderShippingTotal;
 
     // Helper function to render amount with appropriate icon
-    const renderAmountWithIcon = (amount: number, label: string, showMinus = false) => (
+    const renderAmountWithIcon = (
+        amount: number,
+        label: string,
+        showMinus = false
+    ) => (
         <Flex fontSize="md" alignItems="center" gap={2}>
             <Text fontWeight="bold">{label}:</Text>
             {showMinus && <Text>-</Text>}
@@ -106,7 +110,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
                 <Icon as={FaBitcoin} boxSize="16px" color="#F7931A" />
             ) : (
                 <Image
-                    src={currencyIcons[currencyCode.toLowerCase()] ?? currencyIcons['usdc']}
+                    src={
+                        currencyIcons[currencyCode.toLowerCase()] ??
+                        currencyIcons['usdc']
+                    }
                     alt={currencyCode.toUpperCase()}
                     width={16}
                     height={16}
@@ -115,8 +122,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             <Text>
                 {hasBitcoinPayment
                     ? bitcoinAmount
-                    : `${formatCryptoPrice(amount, currencyCode)} ${upperCase(currencyCode)}`
-                }
+                    : `${formatCryptoPrice(amount, currencyCode)} ${upperCase(currencyCode)}`}
             </Text>
         </Flex>
     );
@@ -132,36 +138,41 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
                         </Text>
                     )}
 
-                    {renderAmountWithIcon(numericSubTotal, "Subtotal")}
+                    {renderAmountWithIcon(numericSubTotal, 'Subtotal')}
 
                     {numericDiscountTotal > 0 &&
-                        renderAmountWithIcon(numericDiscountTotal, "Order Discount Total", true)
-                    }
+                        renderAmountWithIcon(
+                            numericDiscountTotal,
+                            'Order Discount Total',
+                            true
+                        )}
 
                     {numericShippingTotal > 0 &&
-                        renderAmountWithIcon(numericShippingTotal, "Order Shipping Cost")
-                    }
+                        renderAmountWithIcon(
+                            numericShippingTotal,
+                            'Order Shipping Cost'
+                        )}
 
                     {order.external_metadata?.tracking?.data?.soOrderInfo
                         ?.createTime && (
-                            <Flex alignItems="center">
-                                <Text fontWeight="bold" mr={2}>
-                                    Shipped on Date:
-                                </Text>
-                                <Text>
-                                    {new Date(
-                                        order.external_metadata.tracking.data.soOrderInfo.createTime
-                                    ).toLocaleString(undefined, {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                        second: '2-digit',
-                                    })}
-                                </Text>
-                            </Flex>
-                        )}
+                        <Flex alignItems="center">
+                            <Text fontWeight="bold" mr={2}>
+                                Shipped on Date:
+                            </Text>
+                            <Text>
+                                {new Date(
+                                    order.external_metadata.tracking.data.soOrderInfo.createTime
+                                ).toLocaleString(undefined, {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                })}
+                            </Text>
+                        </Flex>
+                    )}
                 </VStack>
 
                 {/* Right Column: Order ID & Chain Data */}
@@ -179,7 +190,11 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
                         <strong>Order Chain:</strong>
                         {hasBitcoinPayment ? (
                             <>
-                                <Icon as={FaBitcoin} boxSize="20px" color="#F7931A" />
+                                <Icon
+                                    as={FaBitcoin}
+                                    boxSize="20px"
+                                    color="#F7931A"
+                                />
                                 <Text>Bitcoin</Text>
                             </>
                         ) : (
