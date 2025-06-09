@@ -128,8 +128,8 @@ const OrderProcessing = ({
         return Math.min(Math.max((usedTime / totalTime) * 100, 0), 100);
     }, [startTimestamp, endTimestamp]);
 
-    const { data: convertBtcTotal } = useQuery({
-        queryKey: ['convertBtcTotal', paymentTotal, currencyCode], // ✅ Unique key per conversion
+    const { data: convertedBtcTotal } = useQuery({
+        queryKey: ['convertedBtcTotal', paymentTotal, currencyCode], // ✅ Unique key per conversion
         queryFn: async () => {
             const result = await convertPrice(
                 Number(formatCryptoPrice(paymentTotal ?? 0, currencyCode)),
@@ -143,8 +143,8 @@ const OrderProcessing = ({
         gcTime: 0,
     });
 
-    const { data: convertUsdTotal } = useQuery({
-        queryKey: ['convertUsdTotal', paymentTotal, currencyCode], // ✅ Unique key per conversion
+    const { data: convertedUsdTotal } = useQuery({
+        queryKey: ['convertedUsdTotal', paymentTotal, currencyCode], // ✅ Unique key per conversion
         queryFn: async () => {
             if (currencyCode === 'usdc' || currencyCode === 'usdt') {
                 return formatCryptoPrice(paymentTotal ?? 0, currencyCode);
@@ -428,9 +428,9 @@ const OrderProcessing = ({
                                                             {formatNativeBtc(
                                                                 paymentData?.expectedAmount
                                                             ) ??
-                                                                convertBtcTotal}{' '}
+                                                                convertedBtcTotal}{' '}
                                                             BTC ≅ $
-                                                            {convertUsdTotal}{' '}
+                                                            {convertedUsdTotal}{' '}
                                                             USD
                                                         </>
                                                     ) : (
@@ -451,7 +451,7 @@ const OrderProcessing = ({
                                                                 <>
                                                                     ≅ $
                                                                     {
-                                                                        convertUsdTotal
+                                                                        convertedUsdTotal
                                                                     }{' '}
                                                                     USD
                                                                 </>
@@ -491,7 +491,7 @@ const OrderProcessing = ({
                                                             ? formatNativeBtc(
                                                                   paymentData?.expectedAmount
                                                               ) ??
-                                                              convertBtcTotal
+                                                              convertedBtcTotal
                                                             : formatCryptoPrice(
                                                                   paymentTotal ??
                                                                       0,
@@ -779,7 +779,7 @@ const OrderProcessing = ({
                                                                 {formatNativeBtc(
                                                                     paymentData?.expectedAmount
                                                                 ) ??
-                                                                    convertBtcTotal}{' '}
+                                                                    convertedBtcTotal}{' '}
                                                                 BTC
                                                             </Text>
                                                             <Button
@@ -815,7 +815,7 @@ const OrderProcessing = ({
                                                                             formatNativeBtc(
                                                                                 paymentData?.expectedAmount
                                                                             ) ??
-                                                                            convertBtcTotal
+                                                                            convertedBtcTotal
                                                                         )?.toString();
                                                                     navigator.clipboard.writeText(
                                                                         formattedAmount ??
@@ -1100,15 +1100,21 @@ const OrderProcessing = ({
                                             alt={currencyCode ?? 'usdc'}
                                         />
                                         <Text ml="0.4rem" color="white">
-                                            {formatCryptoPrice(
-                                                paymentTotal ?? 0,
-                                                currencyCode ?? 'usdc',
-                                                false
-                                            )}
+                                            {paywith === 'bitcoin'
+                                                ? `${
+                                                      formatNativeBtc(
+                                                          paymentData?.expectedAmount
+                                                      ) ?? convertedBtcTotal
+                                                  } BTC`
+                                                : formatCryptoPrice(
+                                                      paymentTotal ?? 0,
+                                                      currencyCode ?? 'usdc',
+                                                      false
+                                                  )}
                                         </Text>
                                         {currencyCode === 'eth' && (
                                             <Text ml="0.4rem" color="white">
-                                                ≅ {convertUsdTotal} USD
+                                                ≅ {convertedUsdTotal} USD
                                             </Text>
                                         )}
                                     </Flex>
