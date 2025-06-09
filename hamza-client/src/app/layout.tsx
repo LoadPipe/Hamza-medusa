@@ -5,18 +5,16 @@ import { cookies } from 'next/headers';
 
 const BASE_URL =
     process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'https://localhost:8000';
-import MedusaProvider from '@/components/providers/medusa/medusa-provider';
 import { RainbowWrapper } from '@/components/providers/rainbowkit/rainbow-provider';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
-import Script from 'next/script';
 import FreeScoutWidget from './components/scripts/chat-widget';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import T5QueryProvider from '@/components/providers/t5-query-provider';
+import SchemaMarkup from './components/schema-markup';
 
-// import { GoogleTagManager } from '@next/third-parties/google';
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
 };
@@ -33,6 +31,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     return (
         <html lang="en" data-mode="dark">
             <head>
+                <SchemaMarkup />
                 {/* Google Tag Manager Script */}
                 {/* <Script
                     id="gtm-script"
