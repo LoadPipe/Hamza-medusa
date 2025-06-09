@@ -20,6 +20,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 import { Product, ProductPrice, ProductReview } from '@/types/global';
+import Script from 'next/script';
 
 interface ProductResponse {
     products: Product[];
@@ -69,6 +70,24 @@ const ProductCardGroup = ({
         lowerRange: 0,
         offset: 0,
     });
+
+    function getFormattedProductPrice(
+        variant: any,
+        preferred_currency_code: string | null
+    ) {
+        const productPricing =
+            variant?.prices?.find(
+                (price: ProductPrice) =>
+                    price.currency_code === (preferred_currency_code ?? 'usdc')
+            )?.amount ||
+            variant?.prices?.[0]?.amount ||
+            0;
+
+        return formatCryptoPrice(
+            productPricing ?? 0,
+            preferred_currency_code as string
+        );
+    }
 
     // Make sure store is hydrated
     useEffect(() => {
@@ -383,6 +402,47 @@ const ProductCardGroup = ({
         }
     };
 
+    // Add schema generation function
+    const generateItemListSchema = (products: Product[]) => {
+        debugger;
+        const categoryName =
+            selectedCategories.length > 0
+                ? selectedCategories.join(', ')
+                : 'All Products';
+
+        const currentPage = Math.floor(offset / productsPerPage) + 1;
+
+        const schema = {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: `Displaying products for ${categoryName} - in ${preferred_currency_code?.toUpperCase()} - Page ${currentPage}`,
+            itemListElement: products.map((product, index) => ({
+                '@type': 'ListItem',
+                position: offset + index + 1,
+                item: {
+                    '@type': 'Product',
+                    name: product.title,
+                    image: product.thumbnail,
+                    url: `${process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL}/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${product.handle}`,
+                    offers: {
+                        '@type': 'Offer',
+                        price: getFormattedProductPrice(
+                            product.variants[0],
+                            preferred_currency_code
+                        ),
+                        priceCurrency: preferred_currency_code || 'usdc',
+                        availability:
+                            product.variants[0]?.inventory_quantity > 0
+                                ? 'https://schema.org/InStock'
+                                : 'https://schema.org/OutOfStock',
+                    },
+                },
+            })),
+        };
+
+        return JSON.stringify(schema);
+    };
+
     // Loading UI
     if (
         (isLoading && offset === 0 && !loadingInitialBatches) ||
@@ -446,168 +506,177 @@ const ProductCardGroup = ({
     }
 
     return (
-        <Flex
-            mt={{ base: '0', md: '1rem' }}
-            mb={'4rem'}
-            maxW={'1280px'}
-            width="100%"
-            flexDir={'column'}
-            justifyContent={'center'}
-            alignItems={'center'}
-            className="product-cards"
-            px={{ base: padding.base, md: padding.md }}
-        >
-            <Grid
-                maxWidth={'1256.52px'}
-                width="100%"
-                templateColumns={{
-                    base: `repeat(${columns.base}, 1fr)`,
-                    lg: `repeat(${columns.lg}, 1fr)`,
-                }}
-                gap={gap}
-            >
-                {allProducts.map((product) => {
-                    try {
-                        const variant = product.variants[0];
-                        const productPricing =
-                            variant?.prices?.find(
-                                (price: ProductPrice) =>
-                                    price.currency_code ===
-                                    (preferred_currency_code ?? 'usdc')
-                            )?.amount ||
-                            variant?.prices?.[0]?.amount ||
-                            0;
-
-                        const formattedPrice = formatCryptoPrice(
-                            productPricing ?? 0,
-                            preferred_currency_code as string
-                        );
-
-                        const usdcFormattedPrice = formatPriceBetweenCurrencies(
-                            variant?.prices,
-                            preferred_currency_code ?? 'usdc',
-                            'usdc'
-                        );
-
-                        const reviewCounter = product.reviews?.length || 0;
-                        const totalRating = (product.reviews || []).reduce(
-                            (acc: number, review: ProductReview) =>
-                                acc + (review?.rating || 0),
-                            0
-                        );
-                        const avgRating = reviewCounter
-                            ? totalRating / reviewCounter
-                            : 0;
-                        const roundedAvgRating = parseFloat(
-                            avgRating.toFixed(2)
-                        );
-
-                        return (
-                            <GridItem
-                                key={product.id}
-                                minHeight={'243.73px'}
-                                height={{ base: '100%', md: '399px' }}
-                                width="100%"
-                                my={{ base: '2', md: '0' }}
-                            >
-                                <ProductCard
-                                    key={product.id}
-                                    reviewCount={reviewCounter}
-                                    totalRating={roundedAvgRating}
-                                    productHandle={product.handle}
-                                    variantID={variant?.id}
-                                    countryCode={product.origin_country}
-                                    productName={product.title}
-                                    productPrice={formattedPrice}
-                                    usdcProductPrice={usdcFormattedPrice}
-                                    currencyCode={
-                                        preferred_currency_code || 'usdc'
-                                    }
-                                    imageSrc={product.thumbnail}
-                                    hasDiscount={product.is_giftcard}
-                                    discountValue={product.discountValue || ''}
-                                    productId={product.id}
-                                    inventory={variant?.inventory_quantity}
-                                    allow_backorder={variant?.allow_backorder}
-                                    storeId={product.store_id}
-                                />
-                            </GridItem>
-                        );
-                    } catch (err) {
-                        console.error('Error rendering product:', err);
-                        return null;
-                    }
-                })}
-            </Grid>
-
-            {/* No products message */}
-            {allProducts.length === 0 &&
-                !isLoading &&
-                !loadingInitialBatches &&
-                !isLoadingInitialBatches && (
-                    <Text textAlign="center" fontSize="lg" my={8}>
-                        No products found. Try adjusting your filters.
-                    </Text>
-                )}
-
-            {/* Load More Button */}
-            {hasMore && allProducts.length > 0 && (
-                <Flex justifyContent="center" width="100%" mt={8}>
-                    <Flex
-                        display={{ base: 'flex' }}
-                        height={{ base: '33px', md: '47px' }}
-                        width={{ base: '120px', md: '190px' }}
-                        borderColor={'primary.green.900'}
-                        borderWidth={'1px'}
-                        borderRadius={'37px'}
-                        justifyContent={'center'}
-                        cursor={isFetching ? 'default' : 'pointer'}
-                        fontSize={{ base: '12px', md: '16px' }}
-                        onClick={isFetching ? undefined : handleLoadMore}
-                        opacity={isFetching ? 0.7 : 1}
-                        position="relative"
-                        transition="all 0.2s"
-                        _hover={{
-                            bg: isFetching
-                                ? 'transparent'
-                                : 'rgba(0, 128, 0, 0.05)',
-                            transform: isFetching ? 'none' : 'translateY(-2px)',
-                            boxShadow: isFetching
-                                ? 'none'
-                                : '0 4px 6px rgba(0, 128, 0, 0.1)',
-                        }}
-                    >
-                        {isFetching && (
-                            <Flex
-                                position="absolute"
-                                width="100%"
-                                height="100%"
-                                justifyContent="center"
-                                alignItems="center"
-                                borderRadius={'37px'}
-                                bg="rgba(255, 255, 255, 0.7)"
-                                backdropFilter="blur(4px)"
-                            >
-                                <Spinner
-                                    size="sm"
-                                    color="primary.green.900"
-                                    thickness="2px"
-                                />
-                            </Flex>
-                        )}
-                        <Text
-                            alignSelf={'center'}
-                            color="primary.green.900"
-                            fontWeight={700}
-                            opacity={isFetching ? 0.3 : 1}
-                            transition="opacity 0.2s"
-                        >
-                            Load More
-                        </Text>
-                    </Flex>
-                </Flex>
+        <>
+            {allProducts.length > 0 && (
+                <Script
+                    id="product-list-schema"
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: generateItemListSchema(allProducts),
+                    }}
+                />
             )}
-        </Flex>
+            <Flex
+                mt={{ base: '0', md: '1rem' }}
+                mb={'4rem'}
+                maxW={'1280px'}
+                width="100%"
+                flexDir={'column'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                className="product-cards"
+                px={{ base: padding.base, md: padding.md }}
+            >
+                <Grid
+                    maxWidth={'1256.52px'}
+                    width="100%"
+                    templateColumns={{
+                        base: `repeat(${columns.base}, 1fr)`,
+                        lg: `repeat(${columns.lg}, 1fr)`,
+                    }}
+                    gap={gap}
+                >
+                    {allProducts.map((product) => {
+                        try {
+                            const variant = product.variants[0];
+                            const formattedPrice = getFormattedProductPrice(
+                                variant,
+                                preferred_currency_code
+                            );
+
+                            const usdcFormattedPrice =
+                                formatPriceBetweenCurrencies(
+                                    variant?.prices,
+                                    preferred_currency_code ?? 'usdc',
+                                    'usdc'
+                                );
+
+                            const reviewCounter = product.reviews?.length || 0;
+                            const totalRating = (product.reviews || []).reduce(
+                                (acc: number, review: ProductReview) =>
+                                    acc + (review?.rating || 0),
+                                0
+                            );
+                            const avgRating = reviewCounter
+                                ? totalRating / reviewCounter
+                                : 0;
+                            const roundedAvgRating = parseFloat(
+                                avgRating.toFixed(2)
+                            );
+
+                            return (
+                                <GridItem
+                                    key={product.id}
+                                    minHeight={'243.73px'}
+                                    height={{ base: '100%', md: '399px' }}
+                                    width="100%"
+                                    my={{ base: '2', md: '0' }}
+                                >
+                                    <ProductCard
+                                        key={product.id}
+                                        reviewCount={reviewCounter}
+                                        totalRating={roundedAvgRating}
+                                        productHandle={product.handle}
+                                        variantID={variant?.id}
+                                        countryCode={product.origin_country}
+                                        productName={product.title}
+                                        productPrice={formattedPrice}
+                                        usdcProductPrice={usdcFormattedPrice}
+                                        currencyCode={
+                                            preferred_currency_code || 'usdc'
+                                        }
+                                        imageSrc={product.thumbnail}
+                                        hasDiscount={product.is_giftcard}
+                                        discountValue={
+                                            product.discountValue || ''
+                                        }
+                                        productId={product.id}
+                                        inventory={variant?.inventory_quantity}
+                                        allow_backorder={
+                                            variant?.allow_backorder
+                                        }
+                                        storeId={product.store_id}
+                                    />
+                                </GridItem>
+                            );
+                        } catch (err) {
+                            console.error('Error rendering product:', err);
+                            return null;
+                        }
+                    })}
+                </Grid>
+
+                {/* No products message */}
+                {allProducts.length === 0 &&
+                    !isLoading &&
+                    !loadingInitialBatches &&
+                    !isLoadingInitialBatches && (
+                        <Text textAlign="center" fontSize="lg" my={8}>
+                            No products found. Try adjusting your filters.
+                        </Text>
+                    )}
+
+                {/* Load More Button */}
+                {hasMore && allProducts.length > 0 && (
+                    <Flex justifyContent="center" width="100%" mt={8}>
+                        <Flex
+                            display={{ base: 'flex' }}
+                            height={{ base: '33px', md: '47px' }}
+                            width={{ base: '120px', md: '190px' }}
+                            borderColor={'primary.green.900'}
+                            borderWidth={'1px'}
+                            borderRadius={'37px'}
+                            justifyContent={'center'}
+                            cursor={isFetching ? 'default' : 'pointer'}
+                            fontSize={{ base: '12px', md: '16px' }}
+                            onClick={isFetching ? undefined : handleLoadMore}
+                            opacity={isFetching ? 0.7 : 1}
+                            position="relative"
+                            transition="all 0.2s"
+                            _hover={{
+                                bg: isFetching
+                                    ? 'transparent'
+                                    : 'rgba(0, 128, 0, 0.05)',
+                                transform: isFetching
+                                    ? 'none'
+                                    : 'translateY(-2px)',
+                                boxShadow: isFetching
+                                    ? 'none'
+                                    : '0 4px 6px rgba(0, 128, 0, 0.1)',
+                            }}
+                        >
+                            {isFetching && (
+                                <Flex
+                                    position="absolute"
+                                    width="100%"
+                                    height="100%"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    borderRadius={'37px'}
+                                    bg="rgba(255, 255, 255, 0.7)"
+                                    backdropFilter="blur(4px)"
+                                >
+                                    <Spinner
+                                        size="sm"
+                                        color="primary.green.900"
+                                        thickness="2px"
+                                    />
+                                </Flex>
+                            )}
+                            <Text
+                                alignSelf={'center'}
+                                color="primary.green.900"
+                                fontWeight={700}
+                                opacity={isFetching ? 0.3 : 1}
+                                transition="opacity 0.2s"
+                            >
+                                Load More
+                            </Text>
+                        </Flex>
+                    </Flex>
+                )}
+            </Flex>
+        </>
     );
 };
 
