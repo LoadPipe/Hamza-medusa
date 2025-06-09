@@ -18,6 +18,7 @@ import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { EscrowStatusString } from '@/lib/server/enums';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import { FaBitcoin } from 'react-icons/fa';
 
 // Define types for the component
 interface LineItem {
@@ -53,6 +54,12 @@ interface ExtendedOrder {
     total?: number;
     payments?: Array<{
         amount: number;
+        metadata?: {
+            chainType?: string;
+            chainId?: string;
+            currency?: string;
+            amount?: string;
+        };
     }>;
     discounts?: Array<{
         code: string;
@@ -73,6 +80,7 @@ interface OrderConfirmedProps {
 }
 
 const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
+
     // calculate totals
     const cartOrderTotal = orders.reduce(
         (total: number, order: ExtendedOrder) =>
@@ -120,6 +128,26 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
     ).join(', ');
 
     const currencyCode = orders[0].currency_code;
+
+    const getBitcoinPaymentInfo = () => {
+        let hasBitcoinPayment = false;
+        let bitcoinAmount: string = '';
+
+        orders.forEach(order => {
+            if (order.payments) {
+                order.payments.forEach(payment => {
+                    if (payment.metadata?.currency === 'btc') {
+                        hasBitcoinPayment = true;
+                        bitcoinAmount = payment.metadata.amount ?? '';
+                    }
+                });
+            }
+        });
+
+        return { hasBitcoinPayment, bitcoinAmount };
+    };
+
+    const { hasBitcoinPayment, bitcoinAmount } = getBitcoinPaymentInfo();
 
     return (
         <Flex
@@ -569,13 +597,17 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                     >
                         <Text>Total Amount Paid:</Text>
                         <HStack>
-                            <Image
-                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                src={currencyIcons[currencyCode ?? 'usdc']}
-                                alt={currencyCode ?? 'usdc'}
-                            />
+                            {hasBitcoinPayment ? (
+                                <Icon as={FaBitcoin} boxSize="18px" color="#F7931A" />
+                            ) : (
+                                <Image
+                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                    src={currencyIcons[currencyCode ?? 'usdc']}
+                                    alt={currencyCode ?? 'usdc'}
+                                />
+                            )}
                             <Text>
-                                {formatCryptoPrice(totalPaid, currencyCode)}
+                                {hasBitcoinPayment ? bitcoinAmount : formatCryptoPrice(totalPaid, currencyCode)}
                             </Text>
                         </HStack>
                     </Flex>

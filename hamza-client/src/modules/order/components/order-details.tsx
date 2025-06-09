@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, VStack, Icon } from '@chakra-ui/react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { upperCase } from 'lodash';
 import Image from 'next/image';
@@ -7,6 +7,8 @@ import {
     getChainLogo,
     chainIdToName,
 } from '@modules/order/components/chain-enum/chain-enum';
+import { FaBitcoin } from 'react-icons/fa';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 
 interface OrderItem {
     id: string;
@@ -21,11 +23,22 @@ interface OrderStore {
     icon: string;
 }
 
+interface Payment {
+    metadata?: {
+        currency?: string;
+        amount?: string;
+        chainType?: string;
+        chainId?: string;
+    };
+    amount?: number;
+}
+
 interface Order {
     id: string;
     tracking_number?: string;
     items: OrderItem[] | any;
     store: OrderStore;
+    payments: Payment[];
     external_metadata?: {
         tracking?: {
             data?: {
@@ -54,6 +67,24 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
 }) => {
     const currencyCode = order.items[0]?.currency_code ?? 'usdc';
 
+    const getBitcoinPaymentInfo = () => {
+        let hasBitcoinPayment = false;
+        let bitcoinAmount: string = '';
+
+        if (order.payments) {
+            order.payments.forEach(payment => {
+                if (payment.metadata?.currency === 'btc') {
+                    hasBitcoinPayment = true;
+                    bitcoinAmount = payment.metadata.amount ?? '';
+                }
+            });
+        }
+
+        return { hasBitcoinPayment, bitcoinAmount };
+    };
+
+    const { hasBitcoinPayment, bitcoinAmount } = getBitcoinPaymentInfo();
+
     // Convert any string values to numbers
     const numericSubTotal =
         typeof subTotal === 'string' ? parseFloat(subTotal) : subTotal;
@@ -66,6 +97,30 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             ? parseFloat(orderShippingTotal)
             : orderShippingTotal;
 
+    // Helper function to render amount with appropriate icon
+    const renderAmountWithIcon = (amount: number, label: string, showMinus = false) => (
+        <Flex fontSize="md" alignItems="center" gap={2}>
+            <Text fontWeight="bold">{label}:</Text>
+            {showMinus && <Text>-</Text>}
+            {hasBitcoinPayment ? (
+                <Icon as={FaBitcoin} boxSize="16px" color="#F7931A" />
+            ) : (
+                <Image
+                    src={currencyIcons[currencyCode.toLowerCase()] ?? currencyIcons['usdc']}
+                    alt={currencyCode.toUpperCase()}
+                    width={16}
+                    height={16}
+                />
+            )}
+            <Text>
+                {hasBitcoinPayment
+                    ? bitcoinAmount
+                    : `${formatCryptoPrice(amount, currencyCode)} ${upperCase(currencyCode)}`
+                }
+            </Text>
+        </Flex>
+    );
+
     return (
         <VStack align="start" spacing={4} p={4} borderRadius="lg" w="100%">
             <Flex direction={{ base: 'column', md: 'row' }} gap={6} w="100%">
@@ -76,52 +131,37 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
                             <b>Tracking Number:</b> {order.tracking_number}
                         </Text>
                     )}
-                    <Text fontSize="md">
-                        <strong>Subtotal:</strong>{' '}
-                        {formatCryptoPrice(numericSubTotal, currencyCode)}{' '}
-                        {upperCase(currencyCode)}
-                    </Text>
-                    {numericDiscountTotal > 0 && (
-                        <Text fontSize="md">
-                            <strong>Order Discount Total:</strong>
-                            {' -'}
-                            {formatCryptoPrice(
-                                numericDiscountTotal,
-                                currencyCode
-                            )}{' '}
-                            {upperCase(currencyCode)}
-                        </Text>
-                    )}
-                    {numericShippingTotal > 0 && (
-                        <Text fontSize="md">
-                            <strong>Order Shipping Cost:</strong>{' '}
-                            {formatCryptoPrice(
-                                numericShippingTotal,
-                                currencyCode
-                            )}{' '}
-                            {upperCase(currencyCode)}
-                        </Text>
-                    )}
+
+                    {renderAmountWithIcon(numericSubTotal, "Subtotal")}
+
+                    {numericDiscountTotal > 0 &&
+                        renderAmountWithIcon(numericDiscountTotal, "Order Discount Total", true)
+                    }
+
+                    {numericShippingTotal > 0 &&
+                        renderAmountWithIcon(numericShippingTotal, "Order Shipping Cost")
+                    }
+
                     {order.external_metadata?.tracking?.data?.soOrderInfo
                         ?.createTime && (
-                        <Flex alignItems="center">
-                            <Text fontWeight="bold" mr={2}>
-                                Shipped on Date:
-                            </Text>
-                            <Text>
-                                {new Date(
-                                    order.external_metadata.tracking.data.soOrderInfo.createTime
-                                ).toLocaleString(undefined, {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    second: '2-digit',
-                                })}
-                            </Text>
-                        </Flex>
-                    )}
+                            <Flex alignItems="center">
+                                <Text fontWeight="bold" mr={2}>
+                                    Shipped on Date:
+                                </Text>
+                                <Text>
+                                    {new Date(
+                                        order.external_metadata.tracking.data.soOrderInfo.createTime
+                                    ).toLocaleString(undefined, {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit',
+                                    })}
+                                </Text>
+                            </Flex>
+                        )}
                 </VStack>
 
                 {/* Right Column: Order ID & Chain Data */}
@@ -137,13 +177,22 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
 
                     <Flex align="center" gap={2}>
                         <strong>Order Chain:</strong>
-                        <Image
-                            src={getChainLogo(parseInt(chainId))}
-                            alt={chainIdToName(parseInt(chainId))}
-                            width={25}
-                            height={25}
-                        />
-                        <Text>{chainIdToName(parseInt(chainId))}</Text>
+                        {hasBitcoinPayment ? (
+                            <>
+                                <Icon as={FaBitcoin} boxSize="20px" color="#F7931A" />
+                                <Text>Bitcoin</Text>
+                            </>
+                        ) : (
+                            <>
+                                <Image
+                                    src={getChainLogo(parseInt(chainId))}
+                                    alt={chainIdToName(parseInt(chainId))}
+                                    width={25}
+                                    height={25}
+                                />
+                                <Text>{chainIdToName(parseInt(chainId))}</Text>
+                            </>
+                        )}
                     </Flex>
 
                     <Flex align="center" gap={2}>
