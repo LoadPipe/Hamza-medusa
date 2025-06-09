@@ -1100,11 +1100,17 @@ const OrderProcessing = ({
                                             alt={currencyCode ?? 'usdc'}
                                         />
                                         <Text ml="0.4rem" color="white">
-                                            {formatCryptoPrice(
-                                                paymentTotal ?? 0,
-                                                currencyCode ?? 'usdc',
-                                                false
-                                            )}
+                                            {paywith === 'bitcoin'
+                                                ? `${
+                                                      formatNativeBtc(
+                                                          paymentData?.expectedAmount
+                                                      ) ?? convertBtcTotal
+                                                  } BTC`
+                                                : formatCryptoPrice(
+                                                      paymentTotal ?? 0,
+                                                      currencyCode ?? 'usdc',
+                                                      false
+                                                  )}
                                         </Text>
                                         {currencyCode === 'eth' && (
                                             <Text ml="0.4rem" color="white">
