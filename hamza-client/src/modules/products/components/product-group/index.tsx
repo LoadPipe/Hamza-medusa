@@ -11,13 +11,13 @@ import {
     Text,
     Spinner,
 } from '@chakra-ui/react';
-import {useQuery} from '@tanstack/react-query';
-import {formatCryptoPrice} from '@lib/util/get-product-price';
-import {useCustomerAuthStore} from '@/zustand/customer-auth/customer-auth';
+import { useQuery } from '@tanstack/react-query';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import ProductCard from '../product-card';
-import {getAllProducts} from '@/lib/server';
+import { getAllProducts } from '@/lib/server';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import {formatPriceBetweenCurrencies} from '@/lib/util/prices';
+import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 import { Product, ProductPrice, ProductReview } from '@/types/global';
 
@@ -27,14 +27,16 @@ interface ProductResponse {
 }
 
 const ProductCardGroup = ({
-  columns = {base: 2, lg: 4},
-  gap = {base: 4, md: '25.5px'},
-  skeletonCount = 8,
-  skeletonHeight = {base: '134.73', md: '238px'},
-  productsPerPage = parseInt(process.env.NEXT_PUBLIC_PRODUCTS_PER_PAGE || '24'),
-  padding = {base: '1rem', md: '1rem'},
+    columns = { base: 2, lg: 4 },
+    gap = { base: 4, md: '25.5px' },
+    skeletonCount = 8,
+    skeletonHeight = { base: '134.73', md: '238px' },
+    productsPerPage = parseInt(
+        process.env.NEXT_PUBLIC_PRODUCTS_PER_PAGE || '24'
+    ),
+    padding = { base: '1rem', md: '1rem' },
 }) => {
-    const {preferred_currency_code} = useCustomerAuthStore();
+    const { preferred_currency_code } = useCustomerAuthStore();
     const {
         selectedCategories,
         setSelectedCategories,
@@ -65,7 +67,7 @@ const ProductCardGroup = ({
         categories: [] as string[],
         upperRange: 0,
         lowerRange: 0,
-        offset: 0
+        offset: 0,
     });
 
     // Make sure store is hydrated
@@ -76,35 +78,49 @@ const ProductCardGroup = ({
     }, [hasHydrated, setHasHydrated]);
 
     // Load initial batches if starting with non-zero offset
-    const { data: initialBatchesData, isLoading: isLoadingInitialBatches } = useQuery({
-        queryKey: ['initialBatches', selectedCategories, rangeUpper, rangeLower, offset],
-        queryFn: async () => {
-            if (offset === 0 || !loadingInitialBatches) return [] as ProductResponse[];
+    const { data: initialBatchesData, isLoading: isLoadingInitialBatches } =
+        useQuery({
+            queryKey: [
+                'initialBatches',
+                selectedCategories,
+                rangeUpper,
+                rangeLower,
+                offset,
+            ],
+            queryFn: async () => {
+                if (offset === 0 || !loadingInitialBatches)
+                    return [] as ProductResponse[];
 
-            const batchCount = Math.ceil(offset / productsPerPage);
-            const batches: ProductResponse[] = [];
+                const batchCount = Math.ceil(offset / productsPerPage);
+                const batches: ProductResponse[] = [];
 
-            for (let i = 0; i < batchCount; i++) {
-                const batchOffset = i * productsPerPage;
-                const response = await getAllProducts(
-                    selectedCategories,
-                    rangeUpper,
-                    rangeLower,
-                    preferred_currency_code ?? 'usdc',
-                    productsPerPage,
-                    batchOffset
-                );
-                batches.push(response);
-            }
+                for (let i = 0; i < batchCount; i++) {
+                    const batchOffset = i * productsPerPage;
+                    const response = await getAllProducts(
+                        selectedCategories,
+                        rangeUpper,
+                        rangeLower,
+                        preferred_currency_code ?? 'usdc',
+                        productsPerPage,
+                        batchOffset
+                    );
+                    batches.push(response);
+                }
 
-            return batches;
-        },
-        enabled: loadingInitialBatches && isUrlInitialized
-    });
+                return batches;
+            },
+            enabled: loadingInitialBatches && isUrlInitialized,
+        });
 
     // Main product loading query
     const { data, error, isLoading, isFetching } = useQuery<ProductResponse>({
-        queryKey: ['products', selectedCategories, rangeUpper, rangeLower, offset],
+        queryKey: [
+            'products',
+            selectedCategories,
+            rangeUpper,
+            rangeLower,
+            offset,
+        ],
         queryFn: () =>
             getAllProducts(
                 selectedCategories,
@@ -116,7 +132,7 @@ const ProductCardGroup = ({
             ),
         staleTime: 60 * 1000,
         enabled: !loadingInitialBatches && isUrlInitialized,
-        retry: 1
+        retry: 1,
     });
 
     // 1. Initialize state from URL parameters (runs once)
@@ -151,7 +167,9 @@ const ProductCardGroup = ({
 
         // Apply categories if present
         if (categoryParam) {
-            newCategories = categoryParam.split(',').map(cat => cat.trim().toLowerCase());
+            newCategories = categoryParam
+                .split(',')
+                .map((cat) => cat.trim().toLowerCase());
             setSelectedCategories(newCategories);
         }
 
@@ -174,12 +192,11 @@ const ProductCardGroup = ({
             categories: [...newCategories],
             upperRange: newUpperRange,
             lowerRange: newLowerRange,
-            offset: newOffset
+            offset: newOffset,
         };
 
         // Mark as initialized
         setIsUrlInitialized(true);
-
     }, [
         hasHydrated,
         searchParams,
@@ -190,12 +207,17 @@ const ProductCardGroup = ({
         setSelectedCategories,
         setRangeLower,
         setRangeUpper,
-        setRange
+        setRange,
     ]);
 
     // 2. Handle initial batches loading
     useEffect(() => {
-        if (!initialBatchesData || !Array.isArray(initialBatchesData) || initialBatchesData.length === 0 || !loadingInitialBatches) {
+        if (
+            !initialBatchesData ||
+            !Array.isArray(initialBatchesData) ||
+            initialBatchesData.length === 0 ||
+            !loadingInitialBatches
+        ) {
             return;
         }
 
@@ -207,7 +229,7 @@ const ProductCardGroup = ({
 
             setAllProducts(allInitialProducts);
         } catch (error) {
-            console.error("Error processing initial batches:", error);
+            console.error('Error processing initial batches:', error);
         } finally {
             setLoadingInitialBatches(false);
         }
@@ -216,7 +238,12 @@ const ProductCardGroup = ({
     // 3. Update products when new data is loaded or filters change
     useEffect(() => {
         // Skip during initial loading
-        if (!isUrlInitialized || loadingInitialBatches || isLoadingInitialBatches) return;
+        if (
+            !isUrlInitialized ||
+            loadingInitialBatches ||
+            isLoadingInitialBatches
+        )
+            return;
 
         // Process new data when it arrives
         if (data?.products) {
@@ -225,11 +252,13 @@ const ProductCardGroup = ({
                 setAllProducts(data.products);
             } else {
                 // When loading more, append only new products
-                const currentProductIds = new Set(allProducts.map(p => p.id));
-                const newProducts = data.products.filter(p => !currentProductIds.has(p.id));
+                const currentProductIds = new Set(allProducts.map((p) => p.id));
+                const newProducts = data.products.filter(
+                    (p) => !currentProductIds.has(p.id)
+                );
 
                 if (newProducts.length > 0) {
-                    setAllProducts(prev => [...prev, ...newProducts]);
+                    setAllProducts((prev) => [...prev, ...newProducts]);
                 }
             }
 
@@ -239,12 +268,24 @@ const ProductCardGroup = ({
             // Update URL with current state
             updateUrlWithCurrentState();
         }
-    }, [data, offset, isUrlInitialized, loadingInitialBatches, isLoadingInitialBatches, allProducts, productsPerPage]);
+    }, [
+        data,
+        offset,
+        isUrlInitialized,
+        loadingInitialBatches,
+        isLoadingInitialBatches,
+        allProducts,
+        productsPerPage,
+    ]);
 
     // 4. Handle filter changes
     useEffect(() => {
         // Skip during initial loading or if filters haven't been initialized
-        if (!isUrlInitialized || loadingInitialBatches || isLoadingInitialBatches) {
+        if (
+            !isUrlInitialized ||
+            loadingInitialBatches ||
+            isLoadingInitialBatches
+        ) {
             return;
         }
 
@@ -268,7 +309,7 @@ const ProductCardGroup = ({
                 categories: [...selectedCategories],
                 upperRange: rangeUpper,
                 lowerRange: rangeLower,
-                offset: 0
+                offset: 0,
             };
         }
     }, [
@@ -277,7 +318,7 @@ const ProductCardGroup = ({
         rangeLower,
         isUrlInitialized,
         loadingInitialBatches,
-        isLoadingInitialBatches
+        isLoadingInitialBatches,
     ]);
 
     // Helper function to update URL with current state
@@ -303,7 +344,10 @@ const ProductCardGroup = ({
 
             // Add categories
             if (selectedCategories && selectedCategories.length > 0) {
-                if (selectedCategories.includes('all') || selectedCategories[0] === 'all') {
+                if (
+                    selectedCategories.includes('all') ||
+                    selectedCategories[0] === 'all'
+                ) {
                     params.set('category', 'all');
                 } else {
                     params.set('category', selectedCategories.join(','));
@@ -323,10 +367,10 @@ const ProductCardGroup = ({
                 categories: [...selectedCategories],
                 upperRange: rangeUpper,
                 lowerRange: rangeLower,
-                offset: offset
+                offset: offset,
             };
         } catch (error) {
-            console.error("Error updating URL:", error);
+            console.error('Error updating URL:', error);
         } finally {
             isUpdatingUrl.current = false;
         }
@@ -340,10 +384,14 @@ const ProductCardGroup = ({
     };
 
     // Loading UI
-    if ((isLoading && offset === 0 && !loadingInitialBatches) || loadingInitialBatches || isLoadingInitialBatches) {
+    if (
+        (isLoading && offset === 0 && !loadingInitialBatches) ||
+        loadingInitialBatches ||
+        isLoadingInitialBatches
+    ) {
         return (
             <Flex
-                mt={{base: '0', md: '1rem'}}
+                mt={{ base: '0', md: '1rem' }}
                 mb={'4rem'}
                 maxW={'1280px'}
                 width="100%"
@@ -352,7 +400,9 @@ const ProductCardGroup = ({
                 flexDirection="column"
             >
                 {(loadingInitialBatches || isLoadingInitialBatches) && (
-                    <Text mb={4} fontWeight="medium">Loading previous products...</Text>
+                    <Text mb={4} fontWeight="medium">
+                        Loading previous products...
+                    </Text>
                 )}
                 <Grid
                     maxWidth={'1256.52px'}
@@ -364,22 +414,22 @@ const ProductCardGroup = ({
                     }}
                     gap={gap}
                 >
-                    {Array.from({length: skeletonCount}).map((_, index) => (
+                    {Array.from({ length: skeletonCount }).map((_, index) => (
                         <GridItem
                             key={index}
                             minHeight="243.73px"
-                            height={{base: '100%', md: '399px'}}
+                            height={{ base: '100%', md: '399px' }}
                             width="100%"
                             borderRadius="16px"
                             overflow="hidden"
                             backgroundColor="#121212"
                         >
-                            <Skeleton height={skeletonHeight} width="100%"/>
-                            <Box p={{base: '2', md: '4'}}>
+                            <Skeleton height={skeletonHeight} width="100%" />
+                            <Box p={{ base: '2', md: '4' }}>
                                 <SkeletonText
-                                    mt={{base: '1', md: '4'}}
+                                    mt={{ base: '1', md: '4' }}
                                     noOfLines={2}
-                                    spacing={{base: '3', md: '4'}}
+                                    spacing={{ base: '3', md: '4' }}
                                 />
                             </Box>
                         </GridItem>
@@ -397,7 +447,7 @@ const ProductCardGroup = ({
 
     return (
         <Flex
-            mt={{base: '0', md: '1rem'}}
+            mt={{ base: '0', md: '1rem' }}
             mb={'4rem'}
             maxW={'1280px'}
             width="100%"
@@ -405,7 +455,7 @@ const ProductCardGroup = ({
             justifyContent={'center'}
             alignItems={'center'}
             className="product-cards"
-            px={{base: padding.base, md: padding.md}}
+            px={{ base: padding.base, md: padding.md }}
         >
             <Grid
                 maxWidth={'1256.52px'}
@@ -423,31 +473,34 @@ const ProductCardGroup = ({
                             variant?.prices?.find(
                                 (price: ProductPrice) =>
                                     price.currency_code ===
-                                    (preferred_currency_code ?? 'usdc'),
+                                    (preferred_currency_code ?? 'usdc')
                             )?.amount ||
                             variant?.prices?.[0]?.amount ||
                             0;
 
                         const formattedPrice = formatCryptoPrice(
                             productPricing ?? 0,
-                            preferred_currency_code as string,
+                            preferred_currency_code as string
                         );
 
                         const usdcFormattedPrice = formatPriceBetweenCurrencies(
                             variant?.prices,
                             preferred_currency_code ?? 'usdc',
-                            'usdc',
+                            'usdc'
                         );
 
                         const reviewCounter = product.reviews?.length || 0;
                         const totalRating = (product.reviews || []).reduce(
-                            (acc: number, review: ProductReview) => acc + (review?.rating || 0),
-                            0,
+                            (acc: number, review: ProductReview) =>
+                                acc + (review?.rating || 0),
+                            0
                         );
                         const avgRating = reviewCounter
                             ? totalRating / reviewCounter
                             : 0;
-                        const roundedAvgRating = parseFloat(avgRating.toFixed(2));
+                        const roundedAvgRating = parseFloat(
+                            avgRating.toFixed(2)
+                        );
 
                         return (
                             <GridItem
@@ -467,7 +520,9 @@ const ProductCardGroup = ({
                                     productName={product.title}
                                     productPrice={formattedPrice}
                                     usdcProductPrice={usdcFormattedPrice}
-                                    currencyCode={preferred_currency_code || 'usdc'}
+                                    currencyCode={
+                                        preferred_currency_code || 'usdc'
+                                    }
                                     imageSrc={product.thumbnail}
                                     hasDiscount={product.is_giftcard}
                                     discountValue={product.discountValue || ''}
@@ -479,18 +534,21 @@ const ProductCardGroup = ({
                             </GridItem>
                         );
                     } catch (err) {
-                        console.error("Error rendering product:", err);
+                        console.error('Error rendering product:', err);
                         return null;
                     }
                 })}
             </Grid>
 
             {/* No products message */}
-            {allProducts.length === 0 && !isLoading && !loadingInitialBatches && !isLoadingInitialBatches && (
-                <Text textAlign="center" fontSize="lg" my={8}>
-                    No products found. Try adjusting your filters.
-                </Text>
-            )}
+            {allProducts.length === 0 &&
+                !isLoading &&
+                !loadingInitialBatches &&
+                !isLoadingInitialBatches && (
+                    <Text textAlign="center" fontSize="lg" my={8}>
+                        No products found. Try adjusting your filters.
+                    </Text>
+                )}
 
             {/* Load More Button */}
             {hasMore && allProducts.length > 0 && (
@@ -510,9 +568,13 @@ const ProductCardGroup = ({
                         position="relative"
                         transition="all 0.2s"
                         _hover={{
-                            bg: isFetching ? 'transparent' : 'rgba(0, 128, 0, 0.05)',
+                            bg: isFetching
+                                ? 'transparent'
+                                : 'rgba(0, 128, 0, 0.05)',
                             transform: isFetching ? 'none' : 'translateY(-2px)',
-                            boxShadow: isFetching ? 'none' : '0 4px 6px rgba(0, 128, 0, 0.1)'
+                            boxShadow: isFetching
+                                ? 'none'
+                                : '0 4px 6px rgba(0, 128, 0, 0.1)',
                         }}
                     >
                         {isFetching && (
@@ -526,7 +588,11 @@ const ProductCardGroup = ({
                                 bg="rgba(255, 255, 255, 0.7)"
                                 backdropFilter="blur(4px)"
                             >
-                                <Spinner size="sm" color="primary.green.900" thickness="2px" />
+                                <Spinner
+                                    size="sm"
+                                    color="primary.green.900"
+                                    thickness="2px"
+                                />
                             </Flex>
                         )}
                         <Text
