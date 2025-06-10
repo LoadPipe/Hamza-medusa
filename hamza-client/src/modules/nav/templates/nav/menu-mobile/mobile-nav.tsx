@@ -6,6 +6,7 @@ import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
 import HamzaBetaTitle from '@/images/logo/hamza-title-beta.svg';
 import MobileMainMenu from './menu/mobile-main-menu';
 import { WalletConnectButton } from './connect-wallet/connect-button';
+import NavProfileCurrency from '@modules/nav/components/nav-profile-currency';
 import CartButtonMobile from './components/cart-button';
 
 export default async function MobileNav() {
@@ -46,7 +47,8 @@ export default async function MobileNav() {
                 </Flex>
 
                 <Flex flex={1}>
-                    <Flex ml="auto">
+                    <Flex ml="auto" alignItems={'center'} gap={'0px'}>
+                        <NavProfileCurrency iconOnly={true} />
                         <WalletConnectButton />
                         <CartButtonMobile />
                     </Flex>
@@ -54,7 +56,6 @@ export default async function MobileNav() {
                 <Flex>
                     <MobileMainMenu />
                 </Flex>
-
             </Flex>
         </Flex>
     );
