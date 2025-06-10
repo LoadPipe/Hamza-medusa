@@ -24,6 +24,7 @@ import {
     getHamzaCustomer,
     getToken,
     recoverCart,
+    setCurrency,
 } from '@/lib/server';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
@@ -73,6 +74,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
         walletAddress,
         authData,
+        preferred_currency_code,
         setCustomerAuthData,
         setCustomerPreferredCurrency,
         setWhitelistConfig,
@@ -225,9 +227,15 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                             status: 'authenticated',
                         });
 
-                        setCustomerPreferredCurrency(
-                            data.data?.preferred_currency?.code
-                        );
+                        // setCustomerPreferredCurrency(
+                        //     data.data?.preferred_currency?.code
+                        // );
+                        if (preferred_currency_code) {
+                            await setCurrency(
+                                preferred_currency_code,
+                                customerId
+                            );
+                        }
 
                         setWhitelistConfig(data.data?.whitelist_config);
 
