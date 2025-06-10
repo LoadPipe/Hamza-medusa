@@ -71,7 +71,12 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
 
         if (balanceData?.formatted) {
             const value = parseFloat(balanceData.formatted);
-            const decimals = selectedCurrency === 'eth' ? 4 : 2;
+            const decimals =
+                selectedCurrency === 'eth'
+                    ? 4
+                    : selectedCurrency === 'btc'
+                      ? 8
+                      : 2;
 
             let formatted = value.toFixed(decimals);
 
@@ -82,15 +87,15 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                 });
             }
 
-            return selectedCurrency === 'eth'
-                ? `${formatted} ${symbol}`
-                : `$${formatted} ${symbol}`;
+            return selectedCurrency.startsWith('us')
+                ? `$${formatted} ${symbol}`
+                : `${formatted} ${symbol}`;
         }
 
         // Fallback if no balance data
-        return selectedCurrency === 'eth'
-            ? `0.0000 ${symbol}`
-            : `$0.00 ${symbol}`;
+        return selectedCurrency.startsWith('us')
+            ? `$0.00 ${symbol}`
+            : `0.0000 ${symbol}`;
     };
 
     return (

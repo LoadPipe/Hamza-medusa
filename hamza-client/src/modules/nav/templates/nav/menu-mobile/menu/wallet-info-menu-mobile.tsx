@@ -20,7 +20,6 @@ import CurrencySelector from '../components/currency-selector';
 import Image from 'next/image';
 import walletIconUrl from '@/images/icon/wallet_icon.svg';
 
-
 interface NewWalletInfoProps {
     chainName?: string;
     chain?: any;
@@ -41,7 +40,8 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
         (state) => state.preferred_currency_code
     );
 
-    const effectivePreferredCurrencyCode = preferred_currency_code || initialPreferredCurrencyCode;
+    const effectivePreferredCurrencyCode =
+        preferred_currency_code || initialPreferredCurrencyCode;
 
     const [selectedCurrency, setSelectedCurrency] = useState(
         effectivePreferredCurrencyCode ?? 'eth'
@@ -81,7 +81,12 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
 
         if (balanceData?.formatted) {
             const value = parseFloat(balanceData.formatted);
-            const decimals = selectedCurrency === 'eth' ? 4 : 2;
+            const decimals =
+                selectedCurrency === 'eth'
+                    ? 4
+                    : selectedCurrency === 'btc'
+                      ? 8
+                      : 2;
 
             let formatted = value.toFixed(decimals);
 
@@ -92,15 +97,15 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
                 });
             }
 
-            return selectedCurrency === 'eth'
-                ? `${formatted} ${symbol}`
-                : `$${formatted} ${symbol}`;
+            return selectedCurrency.startsWith('us')
+                ? `$${formatted} ${symbol}`
+                : `${formatted} ${symbol}`;
         }
 
         // Fallback if no balance data
-        return selectedCurrency === 'eth'
-            ? `0.0000 ${symbol}`
-            : `$0.00 ${symbol}`;
+        return selectedCurrency.startsWith('us')
+            ? `$0.00 ${symbol}`
+            : `0.0000 ${symbol}`;
     };
 
     return (
@@ -109,7 +114,7 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
                 <>
                     <MenuButton
                         as={Button}
-                        bg='transparent'
+                        bg="transparent"
                         _hover={{ bg: '#121212' }}
                         _active={{ bg: '#121212' }}
                         border="none"
@@ -120,7 +125,12 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
                         height="auto"
                         p={0}
                     >
-                        <Image src={walletIconUrl} alt="Wallet Icon" width={48} height={48} />
+                        <Image
+                            src={walletIconUrl}
+                            alt="Wallet Icon"
+                            width={48}
+                            height={48}
+                        />
                     </MenuButton>
 
                     <MenuList
@@ -182,7 +192,9 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
 
                             <CurrencySelector
                                 isOpen={isOpen}
-                                preferredCurrencyCode={effectivePreferredCurrencyCode}
+                                preferredCurrencyCode={
+                                    effectivePreferredCurrencyCode
+                                }
                                 defaultCurrency="eth"
                                 selectedCurrency={selectedCurrency}
                                 setSelectedCurrency={setSelectedCurrency}

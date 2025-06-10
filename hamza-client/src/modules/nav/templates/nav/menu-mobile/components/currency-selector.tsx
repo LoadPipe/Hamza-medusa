@@ -30,6 +30,7 @@ interface CurrencySelectorProps {
 
 const currencies = [
     { code: 'eth', label: 'ETH' },
+    { code: 'btc', label: 'BTC' },
     { code: 'usdc', label: 'USDC' },
     { code: 'usdt', label: 'USDT' },
 ];

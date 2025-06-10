@@ -32,6 +32,7 @@ const currencies = [
     { code: 'eth', label: 'ETH' },
     { code: 'usdc', label: 'USDC' },
     { code: 'usdt', label: 'USDT' },
+    { code: 'btc', label: 'BTC' },
 ];
 
 const CurrencySelector: React.FC<CurrencySelectorProps> = ({
