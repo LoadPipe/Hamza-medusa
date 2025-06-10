@@ -404,7 +404,6 @@ const ProductCardGroup = ({
 
     // Add schema generation function
     const generateItemListSchema = (products: Product[]) => {
-        debugger;
         const categoryName =
             selectedCategories.length > 0
                 ? selectedCategories.join(', ')
