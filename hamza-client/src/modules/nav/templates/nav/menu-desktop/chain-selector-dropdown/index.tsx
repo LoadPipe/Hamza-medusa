@@ -26,6 +26,7 @@ import {
     getChainInfoLinkUrlFromName,
     getChainLogoFromName,
 } from '@/modules/chain-select';
+import toast from 'react-hot-toast';
 
 const ChainDropdown: React.FC = () => {
     const { chain } = useNetwork();
@@ -41,6 +42,16 @@ const ChainDropdown: React.FC = () => {
             setActiveChainName(chain.name);
         }
     }, [isSuccess, chain?.name]);
+
+    // Show error toast when network switching fails
+    React.useEffect(() => {
+        if (error) {
+            toast.error(`Failed to switch network: ${error.message}`, {
+                duration: 5000,
+                position: 'bottom-right',
+            });
+        }
+    }, [error]);
 
     // Determine the learn more URL based on the active chain.
     const learnMoreUrl =
