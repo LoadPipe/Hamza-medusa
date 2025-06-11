@@ -1,5 +1,4 @@
 import { ProductVariant } from "@medusajs/medusa"
-import { Container, Text } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export type ProductHit = {
@@ -20,14 +19,14 @@ type MobileHitProps = {
 const MobileHit = ({ hit }: MobileHitProps) => {
   return (
     <LocalizedClientLink href={`/products/${hit.handle}`}>
-      <Container
+      <div
         key={hit.id}
-        className="flex w-full p-4 shadow-elevation-card-rest hover:shadow-elevation-card-hover items-center border-b border-gray-200"
+        className="bg-gray-900 rounded-lg p-3 mb-2 cursor-pointer hover:bg-gray-800 transition-colors"
       >
         <div className="flex flex-col justify-center w-full">
-          <Text className="text-ui-fg-base font-medium">{hit.title}</Text>
+          <span className="text-white text-sm">{hit.title}</span>
         </div>
-      </Container>
+      </div>
     </LocalizedClientLink>
   )
 }
