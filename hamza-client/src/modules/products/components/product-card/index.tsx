@@ -72,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
             event.button === 1
         ) {
             event.preventDefault();
-            window.open(`/products/${productHandle}`, '_blank');
+            window.open(`/products/${encodeURIComponent(productHandle)}`, '_blank');
             return;
         }
         event.preventDefault();
@@ -82,12 +82,12 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         setRatingAverage(totalRating);
 
         // Navigate to the product page after state update
-        router.push(`/products/${productHandle}`);
+        router.push(`/products/${encodeURIComponent(productHandle)}`);
     };
 
     return (
         <NextLink
-            href={`/products/${productHandle}`}
+            href={`/products/${encodeURIComponent(productHandle)}`}
             passHref
             style={{ textDecoration: 'none' }}
             onClick={handleClick}
