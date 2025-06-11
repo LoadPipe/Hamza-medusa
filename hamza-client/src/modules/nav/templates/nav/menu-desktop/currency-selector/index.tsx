@@ -19,14 +19,25 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { setCurrency } from '@/lib/server';
 
 const CurrencySelector = (props: any) => {
-    const preferred_currency_code = useCustomerAuthStore((state) => state.preferred_currency_code);
-    const setCustomerPreferredCurrency = useCustomerAuthStore((state) => state.setCustomerPreferredCurrency);
+    const preferred_currency_code = useCustomerAuthStore(
+        (state) => state.preferred_currency_code
+    );
+    const setCustomerPreferredCurrency = useCustomerAuthStore(
+        (state) => state.setCustomerPreferredCurrency
+    );
     const authData = useCustomerAuthStore((state) => state.authData);
 
-    const [displayedCurrency, setDisplayedCurrency] = useState(preferred_currency_code);
-    const [selectedCurrency, setSelectedCurrency] = useState(preferred_currency_code);
+    const [displayedCurrency, setDisplayedCurrency] = useState(
+        preferred_currency_code
+    );
+    const [selectedCurrency, setSelectedCurrency] = useState(
+        preferred_currency_code
+    );
 
-    const handleCurrencyChange = async (currency: string, onClose: () => void) => {
+    const handleCurrencyChange = async (
+        currency: string,
+        onClose: () => void
+    ) => {
         if (selectedCurrency) {
             try {
                 // Immediately update local states
@@ -48,7 +59,7 @@ const CurrencySelector = (props: any) => {
     function capitalizeFirstLetter(str: string): string {
         return str[0].toUpperCase() + str.slice(1);
     }
-    
+
     return (
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end" closeOnSelect={false}>
@@ -77,7 +88,7 @@ const CurrencySelector = (props: any) => {
                                 <Image
                                     src={
                                         currencyIcons[
-                                        displayedCurrency ?? 'usdc'
+                                            displayedCurrency ?? 'usdc'
                                         ]
                                     }
                                     alt={displayedCurrency ?? 'USDC'}
@@ -127,7 +138,7 @@ const CurrencySelector = (props: any) => {
                                     borderColor={'white'}
                                 />
                             </Box>
-                            {['eth', 'usdc', 'usdt'].map((currency) => (
+                            {['eth', 'usdc', 'usdt', 'btc'].map((currency) => (
                                 <MenuItem
                                     key={currency}
                                     fontWeight={'600'}
@@ -137,7 +148,9 @@ const CurrencySelector = (props: any) => {
                                     backgroundColor={'transparent'}
                                     _hover={{ color: 'primary.green.900' }}
                                     className="currency-selector-item"
-                                    onClick={() => handleCurrencyChange(currency, onClose)}
+                                    onClick={() =>
+                                        handleCurrencyChange(currency, onClose)
+                                    }
                                 >
                                     <Radio
                                         style={{

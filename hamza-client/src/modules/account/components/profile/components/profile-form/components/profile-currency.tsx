@@ -37,6 +37,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
         { code: 'usdc', label: 'USDC' },
         { code: 'usdt', label: 'USDT' },
         { code: 'eth', label: 'ETH' },
+        { code: 'btc', label: 'BTC' },
     ];
     const customerId = useCustomerAuthStore(
         (state) => state.authData.customer_id

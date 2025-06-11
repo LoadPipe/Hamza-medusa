@@ -86,12 +86,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         enabled: !!handle,
     });
 
-    console.log(
-        'PreviewCheckout component rendered with productId:',
-        productId
-    );
-
-    const currencies = ['eth', 'usdc', 'usdt'];
+    const currencies = ['eth', 'usdc', 'usdt', 'btc'];
 
     const [options, setOptions] = useState<Record<string, string>>({});
     const [cartModalOpen, setCartModalOpen] = useState(false);
@@ -248,7 +243,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         selectedProductVariant.prices,
                         isEthCurrency
                             ? 'eth'
-                            : (preferred_currency_code ?? 'usdc')
+                            : preferred_currency_code ?? 'usdc'
                     );
 
                     // Update USD price if the preferred currency is 'eth'

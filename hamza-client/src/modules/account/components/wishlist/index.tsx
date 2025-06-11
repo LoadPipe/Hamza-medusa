@@ -39,7 +39,9 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
             productPrice &&
             typeof productPrice === 'object' &&
             preferred_currency_code &&
-            ['eth', 'usdc', 'usdt'].includes(preferred_currency_code ?? 'usdc')
+            ['eth', 'usdc', 'usdt', 'btc'].includes(
+                preferred_currency_code ?? 'usdc'
+            )
         ) {
             return productPrice[
                 preferred_currency_code as keyof PriceDictionary

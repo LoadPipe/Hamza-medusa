@@ -105,6 +105,7 @@ export function formatCryptoPrice(
     roundToPrecision: boolean = true
 ): string | number {
     try {
+        if (currencyCode === 'btc') return amount.toString();
         if (!currencyCode?.length) currencyCode = 'usdc';
         if (!amount) amount = 0;
 

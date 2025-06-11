@@ -28,6 +28,10 @@ export async function convertPrice(
 
     const output = await exchangeRateCache.retrieve();
 
+    console.log(
+        `${amount} * ${output[key]} (${key}) = ${amount * output[key]}`
+    );
+
     if (!output[key])
         throw new Error(
             `Conversion from ${from} to ${to} is not supported, or some error occurred on the server side`
