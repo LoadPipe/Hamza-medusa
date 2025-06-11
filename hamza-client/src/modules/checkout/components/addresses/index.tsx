@@ -3,7 +3,14 @@
 import { useParams, useRouter } from 'next/navigation';
 import { Customer } from '@medusajs/medusa';
 import { useToggleState } from '@medusajs/ui';
-import { Flex, Text, useDisclosure, Button, Spinner } from '@chakra-ui/react';
+import {
+    Flex,
+    Text,
+    useDisclosure,
+    Button,
+    Spinner,
+    Box,
+} from '@chakra-ui/react';
 import compareAddresses from '@lib/util/compare-addresses';
 import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
@@ -125,9 +132,9 @@ const Addresses = ({
             <div>
                 {isUpdatingCart ? (
                     <Flex>
-                        <Text color="white" py={6}>
+                        <Box color="white" py={6} as="span">
                             <Spinner /> Address loading...
-                        </Text>
+                        </Box>
                     </Flex>
                 ) : cart && cart.shipping_address ? (
                     <Flex flexDir={'column'} color="white">
