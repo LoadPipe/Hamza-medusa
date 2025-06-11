@@ -133,7 +133,7 @@ const OrderItem = ({
                                 order.currency_code
                             )}{' '}
                         </Text>
-                        {order.currency_code === 'eth' && (
+                        {!order.currency_code?.startsWith('us') && (
                             <Text ml="0.4rem" color="white">
                                 ≅ ${convertPaymentTotaltoUsd} USD
                             </Text>

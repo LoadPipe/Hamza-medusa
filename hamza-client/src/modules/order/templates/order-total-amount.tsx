@@ -101,13 +101,12 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
                         />
                     )}
                     <Text fontSize={'18px'} whiteSpace="nowrap">
-                        {hasBitcoinPayment ?
-                            bitcoinAmount :
-                            getAmount(amount, currency_code)
-                        }
+                        {hasBitcoinPayment
+                            ? bitcoinAmount
+                            : getAmount(amount, currency_code)}
                     </Text>
                 </Flex>
-                {currencyCode === 'eth' && !hasBitcoinPayment && (
+                {!currencyCode?.startsWith('us') && !hasBitcoinPayment && (
                     <Flex alignItems="center" gap={2}>
                         {usdPrice === '' ? (
                             <Spinner size="sm" color="gray.300" />

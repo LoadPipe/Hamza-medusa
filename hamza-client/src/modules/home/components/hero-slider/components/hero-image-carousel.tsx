@@ -139,7 +139,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                             {price}
                         </Text>
 
-                        {preferred_currency_code === 'eth' && (
+                        {!preferred_currency_code?.startsWith('us') && (
                             <Text
                                 color="gray.300"
                                 fontSize="14px"

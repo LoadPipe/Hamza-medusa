@@ -584,7 +584,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     fontSize={'18px'}
                     color="white"
                 >
-                    {preferred_currency_code === 'eth'
+                    {!preferred_currency_code?.startsWith('us')
                         ? `≅ $${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')} USD`
                         : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>

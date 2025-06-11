@@ -158,7 +158,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         )}
 
                         {/* Spinner or Converted Price */}
-                        {preferred_currency_code === 'eth' && (
+                        {!preferred_currency_code?.startsWith('us') && (
                             <>
                                 {loadingUSDPrice && isUpdatingCart ? (
                                     <Spinner size="sm" color="white" ml={1} />

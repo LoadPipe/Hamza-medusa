@@ -233,7 +233,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                 </Text>
                             </Flex>
 
-                            {currencyCode === 'eth' && (
+                            {!currencyCode?.startsWith('us') && (
                                 <Flex
                                     flexDirection="row"
                                     ml="5px"

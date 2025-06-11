@@ -426,7 +426,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                         )}
                                     </Text>
                                 </Flex>
-                                {preferred_currency_code === 'eth' && (
+                                {!preferred_currency_code?.startsWith('us') && (
                                     <Flex
                                         justifyContent="flex-end"
                                         width="100%"
@@ -448,12 +448,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                     </Flex>
                                 )}
                             </Flex>
-                            {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN ===
-                                'true' && (
-                                <Flex>
-                                    <Text>≅ {convertBtcTotal} BTC</Text>
-                                </Flex>
-                            )}
                         </VStack>
                     )}
                 </Flex>

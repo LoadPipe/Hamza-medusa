@@ -130,11 +130,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
          */
         const getAvailability = (variant: any) => {
             if (variant.inventory_quantity > 0) {
-                return "https://schema.org/InStock";
+                return 'https://schema.org/InStock';
             } else if (variant.allow_backorder) {
-                return "https://schema.org/BackOrder";
+                return 'https://schema.org/BackOrder';
             } else {
-                return "https://schema.org/OutOfStock";
+                return 'https://schema.org/OutOfStock';
             }
         };
 
@@ -165,59 +165,66 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         });
 
         // Create offers for each currency
-        const offers = Array.from(allCurrencies).map((currency: string) => {
-            const sampleVariant = safeProduct.variants.find((variant: any) =>
-                variant.prices?.some((price: any) => price.currency_code === currency)
-            );
+        const offers = Array.from(allCurrencies)
+            .map((currency: string) => {
+                const sampleVariant = safeProduct.variants.find(
+                    (variant: any) =>
+                        variant.prices?.some(
+                            (price: any) => price.currency_code === currency
+                        )
+                );
 
-            if (!sampleVariant) return null;
+                if (!sampleVariant) return null;
 
-            const priceData = sampleVariant.prices?.find((price: any) =>
-                price.currency_code === currency
-            );
+                const priceData = sampleVariant.prices?.find(
+                    (price: any) => price.currency_code === currency
+                );
 
-            if (!priceData) return null;
+                if (!priceData) return null;
 
-            const formattedPrice = formatCryptoPrice(
-                priceData.amount,
-                priceData.currency_code,
-                true
-            ).toString();
+                const formattedPrice = formatCryptoPrice(
+                    priceData.amount,
+                    priceData.currency_code,
+                    true
+                ).toString();
 
-            return {
-                "@type": "Offer",
-                "url": `https://hamza.market/${countryCode}/products/${product.handle}`,
-                "priceCurrency": priceData.currency_code.toUpperCase(),
-                "price": formattedPrice,
-                "availability": getAvailability(sampleVariant),
-                "itemCondition": "https://schema.org/NewCondition",
-                "seller": {
-                    "@type": "Organization",
-                    "name": storeData?.name || "Hamza Market",
-                    "url": storeData?.handle
-                        ? `https://hamza.market/${countryCode}/store/${storeData.handle}`
-                        : "https://hamza.market"
-                }
-            };
-        }).filter(Boolean);
+                return {
+                    '@type': 'Offer',
+                    url: `https://hamza.market/${countryCode}/products/${product.handle}`,
+                    priceCurrency: priceData.currency_code.toUpperCase(),
+                    price: formattedPrice,
+                    availability: getAvailability(sampleVariant),
+                    itemCondition: 'https://schema.org/NewCondition',
+                    seller: {
+                        '@type': 'Organization',
+                        name: storeData?.name || 'Hamza Market',
+                        url: storeData?.handle
+                            ? `https://hamza.market/${countryCode}/store/${storeData.handle}`
+                            : 'https://hamza.market',
+                    },
+                };
+            })
+            .filter(Boolean);
 
         // Base schema object
         const schema: any = {
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": product.title,
-            "description": product.description ? stripHtmlTags(product.description) : "",
-            "image": safeProduct.images.map((img: any) => img.url),
+            '@context': 'https://schema.org/',
+            '@type': 'Product',
+            name: product.title,
+            description: product.description
+                ? stripHtmlTags(product.description)
+                : '',
+            image: safeProduct.images.map((img: any) => img.url),
 
-            "brand": {
-                "@type": "Brand",
-                "name": storeData?.name || "Hamza Market",
-                "url": storeData?.handle
+            brand: {
+                '@type': 'Brand',
+                name: storeData?.name || 'Hamza Market',
+                url: storeData?.handle
                     ? `https://hamza.market/${countryCode}/store/${storeData.handle}`
-                    : "https://hamza.market"
+                    : 'https://hamza.market',
             },
 
-            "offers": offers,
+            offers: offers,
         };
 
         // Add SKU if available
@@ -226,10 +233,12 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         }
 
         // Add MPN from metadata if available
-        if (safeProduct.metadata &&
+        if (
+            safeProduct.metadata &&
             typeof safeProduct.metadata === 'object' &&
             'mpn' in safeProduct.metadata &&
-            safeProduct.metadata.mpn) {
+            safeProduct.metadata.mpn
+        ) {
             schema.mpn = safeProduct.metadata.mpn;
         }
 
@@ -244,46 +253,47 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         // Add weight if available
         if (safeProduct.weight) {
             schema.weight = {
-                "@type": "QuantitativeValue",
-                "value": safeProduct.weight,
-                "unitCode": "GRM"
+                '@type': 'QuantitativeValue',
+                value: safeProduct.weight,
+                unitCode: 'GRM',
             };
         }
 
-        // Add product category if available 
+        // Add product category if available
         if (safeProduct.collection?.title) {
             schema.category = safeProduct.collection.title;
         }
 
         // Add dimensions if available
-        const hasAnyDimension = safeProduct.length || safeProduct.width || safeProduct.height;
+        const hasAnyDimension =
+            safeProduct.length || safeProduct.width || safeProduct.height;
         if (hasAnyDimension) {
             schema.additionalProperty = [];
 
             if (safeProduct.length) {
                 schema.additionalProperty.push({
-                    "@type": "PropertyValue",
-                    "name": "Length",
-                    "value": safeProduct.length,
-                    "unitCode": "CMT" 
+                    '@type': 'PropertyValue',
+                    name: 'Length',
+                    value: safeProduct.length,
+                    unitCode: 'CMT',
                 });
             }
 
             if (safeProduct.width) {
                 schema.additionalProperty.push({
-                    "@type": "PropertyValue",
-                    "name": "Width",
-                    "value": safeProduct.width,
-                    "unitCode": "CMT"
+                    '@type': 'PropertyValue',
+                    name: 'Width',
+                    value: safeProduct.width,
+                    unitCode: 'CMT',
                 });
             }
 
             if (safeProduct.height) {
                 schema.additionalProperty.push({
-                    "@type": "PropertyValue",
-                    "name": "Height",
-                    "value": safeProduct.height,
-                    "unitCode": "CMT"
+                    '@type': 'PropertyValue',
+                    name: 'Height',
+                    value: safeProduct.height,
+                    unitCode: 'CMT',
                 });
             }
         }
@@ -291,11 +301,8 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         // Add product URL
         schema.url = `https://hamza.market/${countryCode}/products/${product.handle}`;
 
-        console.log('FINAL ENHANCED SCHEMA:', JSON.stringify(schema, null, 2));
-
         return schema;
     };
-
 
     return (
         <Flex
@@ -310,7 +317,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{
-                        __html: JSON.stringify(generateProductJsonLd(), null, 2)
+                        __html: JSON.stringify(
+                            generateProductJsonLd(),
+                            null,
+                            2
+                        ),
                     }}
                 />
             )}

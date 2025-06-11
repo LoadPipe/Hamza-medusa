@@ -72,7 +72,6 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 width={'100%'}
                 gap={'8px'}
             >
-
                 {/* Discount */}
                 <Flex color="#555555" justifyContent={'space-between'}>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
@@ -83,7 +82,6 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                         <Text fontSize={{ base: '14px', md: '16px' }}> - </Text>
                     </Flex>
                 </Flex>
-
 
                 {/* Taxes */}
                 <Flex color="#555555" justifyContent={'space-between'}>
@@ -126,7 +124,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                         </Text>
                     </Flex>
 
-                    {currencyCode === 'eth' && (
+                    {!currencyCode?.startsWith('us') && (
                         <Flex ml={'auto'}>
                             {usdPrice === '' ? (
                                 <Spinner size="sm" color="white" />
