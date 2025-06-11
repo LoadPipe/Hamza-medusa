@@ -29,11 +29,11 @@ interface CartCalculations {
     shippingCurrencyCode: string;
     preferredCurrencyCode: string;
     humanReadable: {
-        subtotal: number;
-        taxTotal: number;
-        discount: number;
-        shippingFee: number;
-        total: number;
+        subtotal: string | number;
+        taxTotal: string | number;
+        discount: string | number;
+        shippingFee: string | number;
+        total: string | number;
     };
     converted: {
         subtotal: number;
@@ -82,6 +82,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({
             staleTime: 0,
             gcTime: 0,
         });
+
+    // Helper function to safely convert formatted prices to numbers for calculations
+    const parseFormattedPrice = (value: string | number): number => {
+        if (typeof value === 'number') return value;
+        return parseFloat(value.replace(/,/g, '')) || 0;
+    };
 
     // Calculate cart totals
     const cartCalculations = useMemo<CartCalculations>(() => {
@@ -145,13 +151,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({
             shippingCurrencyCode,
             preferredCurrencyCode,
             humanReadable: {
-                subtotal: Number(formatCryptoPrice(subtotal, cartCurrencyCode)),
-                taxTotal: Number(formatCryptoPrice(taxTotal, cartCurrencyCode)),
-                discount: Number(formatCryptoPrice(discount, cartCurrencyCode)),
-                shippingFee: Number(
-                    formatCryptoPrice(shippingFee, shippingCurrencyCode)
-                ),
-                total: Number(formatCryptoPrice(total, cartCurrencyCode)),
+                subtotal: formatCryptoPrice(subtotal, cartCurrencyCode),
+                taxTotal: formatCryptoPrice(taxTotal, cartCurrencyCode),
+                discount: formatCryptoPrice(discount, cartCurrencyCode),
+                shippingFee: formatCryptoPrice(shippingFee, shippingCurrencyCode),
+                total: formatCryptoPrice(total, cartCurrencyCode),
             },
             converted: {
                 subtotal: 0,
@@ -184,29 +188,29 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                 const [subtotal, taxTotal, discount, shippingFee] =
                     await Promise.all([
                         convertPrice(
-                            cartCalculations.humanReadable.subtotal,
+                            parseFormattedPrice(cartCalculations.humanReadable.subtotal),
                             cartCalculations.cartCurrencyCode,
                             preferredCurrencyCode
                         ),
                         convertPrice(
-                            cartCalculations.humanReadable.taxTotal,
+                            parseFormattedPrice(cartCalculations.humanReadable.taxTotal),
                             cartCalculations.cartCurrencyCode,
                             preferredCurrencyCode
                         ),
                         convertPrice(
-                            cartCalculations.humanReadable.discount,
+                            parseFormattedPrice(cartCalculations.humanReadable.discount),
                             cartCalculations.cartCurrencyCode,
                             preferredCurrencyCode
                         ),
                         convertPrice(
-                            cartCalculations.humanReadable.shippingFee,
+                            parseFormattedPrice(cartCalculations.humanReadable.shippingFee),
                             cartCalculations.shippingCurrencyCode,
                             preferredCurrencyCode
                         ),
                     ]);
 
                 const total = subtotal - discount + shippingFee + taxTotal;
-                let ethToUsd = cartCalculations.humanReadable.total;
+                let ethToUsd = parseFormattedPrice(cartCalculations.humanReadable.total);
 
                 if (
                     preferredCurrencyCode === 'eth' &&
@@ -224,7 +228,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                     ethToUsd: Number(ethToUsd),
                 };
             },
-            enabled: !!cartCalculations.humanReadable.subtotal,
+            enabled: !!parseFormattedPrice(cartCalculations.humanReadable.subtotal),
             staleTime: 0,
             gcTime: 0,
         });
@@ -252,7 +256,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         ], // ✅ Unique key per conversion
         queryFn: async () => {
             const result = await convertPrice(
-                Number(
+                parseFormattedPrice(
                     formatCryptoPrice(
                         cartCalculations.total,
                         cartCalculations.cartCurrencyCode
@@ -304,10 +308,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                 alignSelf="center"
                                 className="cart-totals-subtotal"
                             >
-                                {formatHumanReadablePrice(
-                                    finalCalculations.converted.subtotal,
-                                    preferredCurrencyCode
-                                )}
+                                {preferredCurrencyCode === cartCalculations.cartCurrencyCode
+                                    ? finalCalculations.humanReadable.subtotal
+                                    : formatHumanReadablePrice(
+                                        finalCalculations.converted.subtotal,
+                                        preferredCurrencyCode
+                                    )}
                             </Text>
                         )}
                     </Flex>
@@ -323,10 +329,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                         ) : (
                             <Text fontSize={{ base: '14px', md: '16px' }}>
                                 -
-                                {formatHumanReadablePrice(
-                                    finalCalculations.converted.discount,
-                                    preferredCurrencyCode
-                                )}
+                                {preferredCurrencyCode === cartCalculations.cartCurrencyCode
+                                    ? finalCalculations.humanReadable.discount
+                                    : formatHumanReadablePrice(
+                                        finalCalculations.converted.discount,
+                                        preferredCurrencyCode
+                                    )}
                             </Text>
                         )}
                     </Flex>
@@ -354,10 +362,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                 alignSelf="center"
                                 className="cart-totals-shipping"
                             >
-                                {formatHumanReadablePrice(
-                                    finalCalculations.converted.shippingFee,
-                                    preferredCurrencyCode
-                                )}
+                                {preferredCurrencyCode === cartCalculations.shippingCurrencyCode
+                                    ? finalCalculations.humanReadable.shippingFee
+                                    : formatHumanReadablePrice(
+                                        finalCalculations.converted.shippingFee,
+                                        preferredCurrencyCode
+                                    )}
                             </Text>
                         )}
                     </Flex>
@@ -405,7 +415,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                             className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
                                             src={
                                                 currencyIcons[
-                                                    preferredCurrencyCode
+                                                preferredCurrencyCode
                                                 ]
                                             }
                                             alt={preferredCurrencyCode}
@@ -420,10 +430,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                         top="1px"
                                         className="cart-totals-total"
                                     >
-                                        {formatHumanReadablePrice(
-                                            finalCalculations.converted.total,
-                                            preferredCurrencyCode
-                                        )}
+                                        {preferredCurrencyCode === cartCalculations.cartCurrencyCode
+                                            ? finalCalculations.humanReadable.total
+                                            : formatHumanReadablePrice(
+                                                finalCalculations.converted.total,
+                                                preferredCurrencyCode
+                                            )}
                                     </Text>
                                 </Flex>
                                 {preferred_currency_code === 'eth' && (
@@ -450,10 +462,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                             </Flex>
                             {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN ===
                                 'true' && (
-                                <Flex>
-                                    <Text>≅ {convertBtcTotal} BTC</Text>
-                                </Flex>
-                            )}
+                                    <Flex>
+                                        <Text>≅ {convertBtcTotal} BTC</Text>
+                                    </Flex>
+                                )}
                         </VStack>
                     )}
                 </Flex>
