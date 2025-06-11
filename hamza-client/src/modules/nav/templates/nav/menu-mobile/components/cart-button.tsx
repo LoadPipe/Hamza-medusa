@@ -2,26 +2,13 @@ import { Flex, Text } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import React from 'react';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
-import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
-import { LineItem } from '@medusajs/medusa';
+import { Cart } from '@medusajs/medusa';
 
-const fetchCart = async () => {
-    const cart = await retrieveCart();
+interface CartButtonMobileProps {
+    cart?: Cart;
+}
 
-    if (cart?.items.length) {
-        const enrichedItems = await enrichLineItems(
-            cart?.items,
-            cart?.region_id
-        );
-        cart.items = enrichedItems as LineItem[];
-    }
-
-    return cart;
-};
-
-export default async function CartButtonMobile() {
-    const cart = await fetchCart();
-
+export default function CartButtonMobile({ cart }: CartButtonMobileProps) {
     const totalItems =
         cart?.items?.reduce((acc: any, item: any) => {
             return acc + item.quantity;
