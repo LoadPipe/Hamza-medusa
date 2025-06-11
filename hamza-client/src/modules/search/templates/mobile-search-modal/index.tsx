@@ -125,7 +125,10 @@ export default function MobileSearchModal({
                                         Search Results
                                     </h3>
                                     <div className="search-results">
-                                        <MobileHits hitComponent={MobileHit} />
+                                        <MobileHits
+                                            hitComponent={MobileHit}
+                                            query={searchValue}
+                                        />
                                     </div>
                                 </div>
                             )}
