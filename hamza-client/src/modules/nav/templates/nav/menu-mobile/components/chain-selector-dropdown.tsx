@@ -20,11 +20,21 @@ import {
     getChainIdFromName,
     getChainLogoFromName,
 } from '@/modules/chain-select';
+import toast from 'react-hot-toast';
 
 const ChainDropdown: React.FC = () => {
     const { chain } = useNetwork();
     const { switchNetwork, isLoading, pendingChainId, error } =
         useSwitchNetwork();
+
+    React.useEffect(() => {
+        if (error) {
+            toast.error(`Failed to switch network: ${error.message}`, {
+                duration: 5000,
+                position: 'bottom-right',
+            });
+        }
+    }, [error]);
 
     return (
         <Menu placement="bottom-end">

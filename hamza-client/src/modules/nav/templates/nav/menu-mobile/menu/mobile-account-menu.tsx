@@ -39,7 +39,6 @@ const MobileAccountMenu = () => {
                 height={'26px'}
                 borderRadius={'full'}
                 borderColor={'white'}
-                borderWidth={'1px'}
                 backgroundColor={'transparent'}
                 cursor={'pointer'}
                 position="relative"
