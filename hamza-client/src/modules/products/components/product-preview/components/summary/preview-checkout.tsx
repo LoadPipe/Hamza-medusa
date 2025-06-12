@@ -237,18 +237,17 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     setSelectedVariant(selectedProductVariant);
 
                     // Find the price for the selected currency or default to the first price available
-                    const isEthCurrency = preferred_currency_code === 'eth';
+                    const isNonStable =
+                        !preferred_currency_code?.startsWith('us');
 
                     // Determine the price based on the preferred currency or fallback
                     const price = getPriceByCurrency(
                         selectedProductVariant.prices,
-                        isEthCurrency
-                            ? 'eth'
-                            : preferred_currency_code ?? 'usdc'
+                        preferred_currency_code ?? 'usdc'
                     );
 
                     // Update USD price if the preferred currency is 'eth'
-                    if (isEthCurrency) {
+                    if (isNonStable) {
                         setUsdPrice(
                             getPriceByCurrency(
                                 selectedProductVariant.prices,

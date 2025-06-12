@@ -40,7 +40,7 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
 
     useEffect(() => {
         const fetchConvertedPrice = async () => {
-            if (subTotal && currencyCode.toLowerCase() === 'eth') {
+            if (subTotal && !currencyCode.toLowerCase().startsWith('us')) {
                 try {
                     const result = await convertPrice(
                         Number(formatCryptoPrice(subTotal, 'eth')),

@@ -59,7 +59,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
             setUsdPrice(formattedResult);
         };
 
-        if (currencyCode === 'eth') {
+        if (!currencyCode.startsWith('us')) {
             fetchConvertedPrice();
         }
     }, [grandTotal, currencyCode]);

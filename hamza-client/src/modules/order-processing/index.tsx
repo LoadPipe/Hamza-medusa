@@ -1112,7 +1112,7 @@ const OrderProcessing = ({
                                                       false
                                                   )}
                                         </Text>
-                                        {currencyCode === 'eth' && (
+                                        {!currencyCode.startsWith('us') && (
                                             <Text ml="0.4rem" color="white">
                                                 ≅ {convertedUsdTotal} USD
                                             </Text>

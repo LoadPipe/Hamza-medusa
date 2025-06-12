@@ -41,7 +41,7 @@ interface CartCalculations {
         discount: number;
         shippingFee: number;
         total: number;
-        ethToUsd: number;
+        toUsd: number;
     };
 }
 
@@ -119,7 +119,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                     discount: 0,
                     shippingFee: 0,
                     total: 0,
-                    ethToUsd: 0,
+                    toUsd: 0,
                 },
             };
         }
@@ -166,7 +166,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                 discount: 0,
                 shippingFee: 0,
                 total: 0,
-                ethToUsd: 0,
+                toUsd: 0,
             },
         };
     }, [
@@ -221,15 +221,19 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                     ]);
 
                 const total = subtotal - discount + shippingFee + taxTotal;
-                let ethToUsd = parseFormattedPrice(
+                let toUsd = parseFormattedPrice(
                     cartCalculations.humanReadable.total
                 );
 
                 if (
-                    preferredCurrencyCode === 'eth' &&
+                    !preferredCurrencyCode.startsWith('us') &&
                     preferredCurrencyCode === cartCalculations.cartCurrencyCode
                 ) {
-                    ethToUsd = await convertPrice(total, 'eth', 'usdt');
+                    toUsd = await convertPrice(
+                        total,
+                        preferredCurrencyCode,
+                        'usdt'
+                    );
                 }
 
                 return {
@@ -238,7 +242,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                     discount: Number(discount),
                     shippingFee: Number(shippingFee),
                     total: Number(total),
-                    ethToUsd: Number(ethToUsd),
+                    toUsd: Number(toUsd),
                 };
             },
             enabled: !!parseFormattedPrice(
@@ -296,7 +300,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
         isShippingCostLoading ||
         isConvertedPriceLoading ||
         isUpdatingCart ||
-        isNaN(finalCalculations.converted.ethToUsd);
+        isNaN(finalCalculations.converted.toUsd);
     const preferredCurrencyCode = preferred_currency_code ?? 'usdc';
 
     return (
@@ -478,7 +482,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                             fontWeight={700}
                                             textAlign="right"
                                         >
-                                            {`≅ $${formatHumanReadablePrice(finalCalculations.converted.ethToUsd, 'usdt')} USD`}
+                                            {`≅ $${formatHumanReadablePrice(finalCalculations.converted.toUsd, 'usdt')} USD`}
                                         </Text>
                                     </Flex>
                                 )}

@@ -71,7 +71,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         )
                     ),
                     preferred_currency_code ?? 'usdc',
-                    'usdc'
+                    'usdt'
                 );
                 setConvertedUSDPrice(Number(result).toFixed(2));
                 setLoadingUSDPrice(false);
@@ -81,7 +81,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
             }
         };
 
-        if (preferred_currency_code === 'eth') {
+        if (!preferred_currency_code?.startsWith('us')) {
             fetchConvertedPrice();
         }
     }, [price, preferred_currency_code]);
