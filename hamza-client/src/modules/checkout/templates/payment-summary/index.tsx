@@ -55,7 +55,7 @@ const PaymentSummary = async ({ cart }: { cart: CartWithCheckoutStep }) => {
                 Payment Summary
             </Text>
 
-            <CartTotals cart={cart} useCartStyle={true} />
+            {cart && <CartTotals cart={cart} useCartStyle={true} />}
 
             <Flex mt="auto" flexDir={'column'} gap={2}>
                 <DiscountCode cart={cart} />
