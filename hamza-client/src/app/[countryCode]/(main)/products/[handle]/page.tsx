@@ -48,8 +48,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { handle } = params;
+    const decodedHandle = decodeURIComponent(handle);
 
-    const { product } = await getProductByHandle(handle).then(
+    const { product } = await getProductByHandle(decodedHandle).then(
         (product) => product
     );
 
@@ -77,23 +78,25 @@ export default async function ProductPage({ params }: Props) {
     // Async function renders on server before sending html to browser
     // const pricedProduct = await getPricedProductByHandle(params?.handle, region);
 
+    const decodedHandle = decodeURIComponent(params.handle);
+
     // Prefetch query for React Query Hydration (this doesn't actually fetch again, its storing data
     // inside the React Query's cache so for when the client hydrates, it doesn't need to refetch..
     await queryClient.prefetchQuery({
-        queryKey: ['product', params.handle],
-        queryFn: () => getPricedProductByHandle(params?.handle, region), // Avoid fetching twice
+        queryKey: ['product', decodedHandle],
+        queryFn: () => getPricedProductByHandle(decodedHandle, region),
     });
 
     await queryClient.prefetchQuery({
-        queryKey: ['product_terms', params.handle],
-        queryFn: () => getProductTermsByProductHandle(params?.handle), // Avoid fetching twice
+        queryKey: ['product_terms', decodedHandle],
+        queryFn: () => getProductTermsByProductHandle(decodedHandle),
     });
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <ProductTemplate
                 region={region}
-                handle={params.handle}
+                handle={decodedHandle}
                 countryCode={params.countryCode}
             />
         </HydrationBoundary>

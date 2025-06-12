@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, Icon } from '@chakra-ui/react';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Image from 'next/image';
 import { convertPrice } from '@/lib/util/price-conversion';
 import { Spinner } from '@chakra-ui/react';
+import { FaBitcoin } from 'react-icons/fa';
 
 type PaymentTotal = {
     amount?: number | null;
     currency_code?: string;
+    metadata?: {
+        currency?: string;
+        amount?: string;
+        chainType?: string;
+        chainId?: string;
+    };
 };
 
 type OrderTotalAmountProps = {
@@ -27,6 +34,10 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
     paymentTotal,
 }) => {
     const [usdPrice, setUsdPrice] = useState('');
+
+    const hasBitcoinPayment = paymentTotal?.metadata?.currency === 'btc';
+    const bitcoinAmount = paymentTotal?.metadata?.amount ?? '';
+
     useEffect(() => {
         const fetchConvertedPrice = async () => {
             if (subTotal && currencyCode.toLowerCase() === 'eth') {
@@ -76,20 +87,27 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
                     <Text fontSize={'18px'} whiteSpace="nowrap">
                         {title}
                     </Text>
-                    <Image
-                        src={
-                            currencyIcons[currency_code.toLowerCase()] ??
-                            currencyIcons['usdc']
-                        }
-                        alt={currency_code.toUpperCase()}
-                        width={16}
-                        height={16}
-                    />
+                    {hasBitcoinPayment ? (
+                        <Icon as={FaBitcoin} boxSize="18px" color="#F7931A" />
+                    ) : (
+                        <Image
+                            src={
+                                currencyIcons[currency_code.toLowerCase()] ??
+                                currencyIcons['usdc']
+                            }
+                            alt={currency_code.toUpperCase()}
+                            width={16}
+                            height={16}
+                        />
+                    )}
                     <Text fontSize={'18px'} whiteSpace="nowrap">
-                        {getAmount(amount, currency_code)}
+                        {hasBitcoinPayment ?
+                            bitcoinAmount :
+                            getAmount(amount, currency_code)
+                        }
                     </Text>
                 </Flex>
-                {currencyCode === 'eth' && (
+                {currencyCode === 'eth' && !hasBitcoinPayment && (
                     <Flex alignItems="center" gap={2}>
                         {usdPrice === '' ? (
                             <Spinner size="sm" color="gray.300" />
