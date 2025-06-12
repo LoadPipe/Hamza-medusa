@@ -109,11 +109,22 @@ const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
                         <Flex>
                             <Input
                                 color={'white'}
-                                borderLeftRadius={'16px'}
-                                style={{ height: '52px' }}
+                                style={{
+                                    height: '52px',
+                                    borderWidth: '1px',
+                                    borderColor: '#3E3E3E',
+                                    borderStyle: 'solid',
+                                    borderRadius: '5px 0px 0px 5px',
+                                    borderRight: '0px',
+                                    outline: 'none',
+                                    boxShadow: 'none',
+                                }}
+                                _focusVisible={{
+                                    outline: 'none',
+                                    boxShadow: 'none',
+                                }}
                                 placeholder="Discount Code"
                                 backgroundColor={'#121212'}
-                                borderWidth={'0'}
                                 name="code"
                                 type="text"
                                 autoFocus={false}
@@ -124,6 +135,9 @@ const DiscountCode: React.FC<{ cart: CartWithCheckoutStep }> = ({ cart }) => {
                                 backgroundColor={'primary.green.900'}
                                 color={'black'}
                                 variant="secondary"
+                                style={{
+                                    borderRadius: '0px 5px 5px 0px',
+                                }}
                             >
                                 Apply
                             </Button>
