@@ -39,6 +39,7 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
             productPrice &&
             typeof productPrice === 'object' &&
             preferred_currency_code &&
+            //TODO: HAMSTR-690: CONSOLIDATE
             ['eth', 'usdc', 'usdt', 'btc'].includes(
                 preferred_currency_code ?? 'usdc'
             )

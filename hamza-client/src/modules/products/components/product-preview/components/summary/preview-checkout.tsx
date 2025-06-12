@@ -86,6 +86,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         enabled: !!handle,
     });
 
+    //TODO: HAMSTR-690: CONSOLIDATE
     const currencies = ['eth', 'usdc', 'usdt', 'btc'];
 
     const [options, setOptions] = useState<Record<string, string>>({});

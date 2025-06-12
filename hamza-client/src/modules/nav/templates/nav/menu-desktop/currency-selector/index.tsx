@@ -138,7 +138,12 @@ const CurrencySelector = (props: any) => {
                                     borderColor={'white'}
                                 />
                             </Box>
-                            {['eth', 'usdc', 'usdt', 'btc'].map((currency) => (
+                            {[
+                                'eth',
+                                'usdc',
+                                /*TODO: HAMSTR-690: CONSOLIDATE*/ 'usdt',
+                                'btc',
+                            ].map((currency) => (
                                 <MenuItem
                                     key={currency}
                                     fontWeight={'600'}

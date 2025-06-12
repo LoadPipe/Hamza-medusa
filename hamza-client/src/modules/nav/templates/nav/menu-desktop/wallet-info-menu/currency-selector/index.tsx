@@ -28,6 +28,7 @@ interface CurrencySelectorProps {
     usdtBalanceData?: any;
 }
 
+//TODO: HAMSTR-690: CONSOLIDATE
 const currencies = [
     { code: 'eth', label: 'ETH' },
     { code: 'usdc', label: 'USDC' },

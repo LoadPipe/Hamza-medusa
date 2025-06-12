@@ -33,6 +33,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     isProfile,
     className,
 }) => {
+    //TODO: HAMSTR-690: CONSOLIDATE
     const currencies = [
         { code: 'usdc', label: 'USDC' },
         { code: 'usdt', label: 'USDT' },
