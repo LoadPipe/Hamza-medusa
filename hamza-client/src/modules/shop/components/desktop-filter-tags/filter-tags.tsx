@@ -2,26 +2,35 @@ import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import FilterTag from './filter-tag';
 import { IoCloseOutline } from 'react-icons/io5';
-import useProductGroup from '@/zustand/products/product-group/product-group';
+import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
 
 const FilterTags = () => {
     const {
-        categoryItem,
-        setCategorySelect,
-        setReviewStarsSelect,
-        setCategoryItem,
-    } = useProductGroup();
+        selectedCategories,
+        setSelectedCategories,
+        setRange,
+        setRangeUpper,
+        setRangeLower,
+    } = useUnifiedFilterStore();
 
     const filterTags = () => {
-        if (categoryItem && Array.isArray(categoryItem)) {
-            return categoryItem.map((item, index) => (
+        if (selectedCategories && Array.isArray(selectedCategories) && !selectedCategories.includes('all')) {
+            return selectedCategories.map((categoryId, index) => (
                 <FilterTag
                     key={`category-${index}`}
-                    categoryName={item.categoryName}
-                    categoryIconUrl={item.urlLink}
+                    categoryName={categoryId}
+                    categoryIconUrl={''}
                 />
             ));
         }
+        return null;
+    };
+
+    const handleClearAll = () => {
+        setSelectedCategories(['all']);
+        setRange([0, 350]);
+        setRangeUpper(350);
+        setRangeLower(0);
     };
 
     return (
@@ -31,11 +40,7 @@ const FilterTags = () => {
                 height="63px"
                 ml="auto"
                 cursor={'pointer'}
-                onClick={() => {
-                    setCategorySelect(['All']);
-                    setCategoryItem([]);
-                    setReviewStarsSelect(null);
-                }}
+                onClick={handleClearAll}
                 color="white"
                 _hover={{
                     color: 'primary.green.900',

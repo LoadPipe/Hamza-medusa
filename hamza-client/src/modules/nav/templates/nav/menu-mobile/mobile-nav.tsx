@@ -1,19 +1,28 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
 import HamzaBetaTitle from '@/images/logo/hamza-title-beta.svg';
 import MobileMainMenu from './menu/mobile-main-menu';
 import { WalletConnectButton } from './connect-wallet/connect-button';
 import NavProfileCurrency from '@modules/nav/components/nav-profile-currency';
+import SearchButtonMobile from './components/search-button';
 import CartButtonMobile from './components/cart-button';
+import MobileSearchModal from '@modules/search/templates/mobile-search-modal';
+import { Cart } from '@medusajs/medusa';
 
-export default async function MobileNav() {
+interface MobileNavProps {
+    cart?: Cart;
+}
+
+export default function MobileNav({ cart }: MobileNavProps) {
+    const [searchOpened, setSearchOpened] = useState(false);
     return (
         <Flex
             h={'87px'}
-            mr="1rem"
             maxWidth={'1280px'}
             width={'100%'}
             bgColor={'transparent'}
@@ -49,14 +58,22 @@ export default async function MobileNav() {
                 <Flex flex={1}>
                     <Flex ml="auto" alignItems={'center'} gap={'0px'}>
                         <NavProfileCurrency iconOnly={true} />
+                      
+                        <SearchButtonMobile
+                            onClick={() => setSearchOpened(true)}
+                        />
                         <WalletConnectButton />
-                        <CartButtonMobile />
+                        <CartButtonMobile cart={cart} />
                     </Flex>
                 </Flex>
                 <Flex>
                     <MobileMainMenu />
                 </Flex>
             </Flex>
+
+            {searchOpened && (
+                <MobileSearchModal closeModal={() => setSearchOpened(false)} />
+            )}
         </Flex>
     );
 }
