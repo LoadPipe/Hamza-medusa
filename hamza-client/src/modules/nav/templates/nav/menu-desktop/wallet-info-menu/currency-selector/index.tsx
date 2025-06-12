@@ -16,6 +16,7 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { useQueryClient } from '@tanstack/react-query';
 import { Cart } from '@medusajs/medusa';
 import { applyDiscount, removeDiscount } from '@modules/checkout/actions';
+import { acceptedCurrencyCodesAndLabels } from '@/lib/util/currencies';
 
 interface CurrencySelectorProps {
     preferredCurrencyCode?: string;
@@ -28,13 +29,7 @@ interface CurrencySelectorProps {
     usdtBalanceData?: any;
 }
 
-//TODO: HAMSTR-690: CONSOLIDATE
-const currencies = [
-    { code: 'eth', label: 'ETH' },
-    { code: 'usdc', label: 'USDC' },
-    { code: 'usdt', label: 'USDT' },
-    { code: 'btc', label: 'BTC' },
-];
+const currencies = acceptedCurrencyCodesAndLabels;
 
 const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     preferredCurrencyCode,

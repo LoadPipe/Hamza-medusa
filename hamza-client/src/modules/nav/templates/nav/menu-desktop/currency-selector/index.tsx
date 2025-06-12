@@ -17,6 +17,7 @@ import Image from 'next/image';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { setCurrency } from '@/lib/server';
+import { acceptedCurrencyCodes } from '@/lib/util/currencies';
 
 const CurrencySelector = (props: any) => {
     const preferred_currency_code = useCustomerAuthStore(
@@ -138,12 +139,7 @@ const CurrencySelector = (props: any) => {
                                     borderColor={'white'}
                                 />
                             </Box>
-                            {[
-                                'eth',
-                                'usdc',
-                                /*TODO: HAMSTR-690: CONSOLIDATE*/ 'usdt',
-                                'btc',
-                            ].map((currency) => (
+                            {acceptedCurrencyCodes.map((currency) => (
                                 <MenuItem
                                     key={currency}
                                     fontWeight={'600'}

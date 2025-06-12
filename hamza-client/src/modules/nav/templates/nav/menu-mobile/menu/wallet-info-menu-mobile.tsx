@@ -19,6 +19,7 @@ import ChainDropdown from '../components/chain-selector-dropdown';
 import CurrencySelector from '../components/currency-selector';
 import Image from 'next/image';
 import walletIconUrl from '@/images/icon/wallet_icon.svg';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 interface NewWalletInfoProps {
     chainName?: string;
@@ -97,13 +98,13 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
                 });
             }
 
-            return selectedCurrency.startsWith('us')
+            return currencyIsUsdStable(selectedCurrency)
                 ? `$${formatted} ${symbol}`
                 : `${formatted} ${symbol}`;
         }
 
         // Fallback if no balance data
-        return selectedCurrency.startsWith('us')
+        return currencyIsUsdStable(selectedCurrency)
             ? `$0.00 ${symbol}`
             : `0.0000 ${symbol}`;
     };

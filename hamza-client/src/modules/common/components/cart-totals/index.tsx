@@ -13,6 +13,7 @@ import { useCartStore } from '@/zustand/cart-store/cart-store';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatHumanReadablePrice } from '@/lib/util/get-product-price';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 type CartTotalsProps = {
     cart: CartWithCheckoutStep;
@@ -230,7 +231,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                 );
 
                 if (
-                    !preferredCurrencyCode.startsWith('us') &&
+                    !currencyIsUsdStable(preferredCurrencyCode) &&
                     preferredCurrencyCode === cartCalculations.cartCurrencyCode
                 ) {
                     toUsd = await convertPrice(
@@ -469,7 +470,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({
                                               )}
                                     </Text>
                                 </Flex>
-                                {!preferred_currency_code?.startsWith('us') && (
+                                {!currencyIsUsdStable(
+                                    preferred_currency_code
+                                ) && (
                                     <Flex
                                         justifyContent="flex-end"
                                         width="100%"

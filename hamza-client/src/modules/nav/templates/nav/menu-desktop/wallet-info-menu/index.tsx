@@ -18,6 +18,7 @@ import AddressDisplay from '../address-display';
 import CurrencySelector from './currency-selector';
 import { convertCryptoPrice } from '@/lib/util/get-product-price';
 import { getCurrencyAddress } from '@/currency.config';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 interface NewWalletInfoProps {
     chainName?: string;
@@ -87,13 +88,13 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                 });
             }
 
-            return selectedCurrency.startsWith('us')
+            return currencyIsUsdStable(selectedCurrency)
                 ? `$${formatted} ${symbol}`
                 : `${formatted} ${symbol}`;
         }
 
         // Fallback if no balance data
-        return selectedCurrency.startsWith('us')
+        return currencyIsUsdStable(selectedCurrency)
             ? `$0.00 ${symbol}`
             : `0.0000 ${symbol}`;
     };

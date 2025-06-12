@@ -5,6 +5,7 @@ import { Flex, Box, Text } from '@chakra-ui/react';
 import WishlistCard from './components/wishlist-card';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import { acceptedCurrencyCodes } from '@/lib/util/currencies';
 
 interface AccountWishListProps {
     countryCode: string; // Accept region as a prop
@@ -39,10 +40,7 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
             productPrice &&
             typeof productPrice === 'object' &&
             preferred_currency_code &&
-            //TODO: HAMSTR-690: CONSOLIDATE
-            ['eth', 'usdc', 'usdt', 'btc'].includes(
-                preferred_currency_code ?? 'usdc'
-            )
+            acceptedCurrencyCodes.includes(preferred_currency_code ?? 'usdc')
         ) {
             return productPrice[
                 preferred_currency_code as keyof PriceDictionary

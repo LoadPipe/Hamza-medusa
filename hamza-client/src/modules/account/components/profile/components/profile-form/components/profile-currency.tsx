@@ -19,6 +19,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { Cart } from '@medusajs/medusa';
 import { applyDiscount, removeDiscount } from '@modules/checkout/actions';
+import { acceptedCurrencyCodesAndLabels } from '@/lib/util/currencies';
 type ProfileCurrencyProps = {
     preferredCurrencyCode: string | null;
     defaultCurrency?: string;
@@ -35,13 +36,8 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     className,
     iconOnly = false,
 }) => {
-    //TODO: HAMSTR-690: CONSOLIDATE
-    const currencies = [
-        { code: 'usdc', label: 'USDC' },
-        { code: 'usdt', label: 'USDT' },
-        { code: 'eth', label: 'ETH' },
-        { code: 'btc', label: 'BTC' },
-    ];
+    const currencies = acceptedCurrencyCodesAndLabels;
+
     const customerId = useCustomerAuthStore(
         (state) => state.authData.customer_id
     );
@@ -102,19 +98,19 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
                                 width={20}
                                 height={20}
                             />
-                            {!iconOnly && <Text ml="8px">{currentCurrency.label}</Text>}
+                            {!iconOnly && (
+                                <Text ml="8px">{currentCurrency.label}</Text>
+                            )}
                         </Flex>
+                    ) : iconOnly ? (
+                        <Image
+                            alt="Select currency"
+                            src={currencyIcons['usdc']}
+                            width={20}
+                            height={20}
+                        />
                     ) : (
-                        iconOnly ? (
-                            <Image
-                                alt="Select currency"
-                                src={currencyIcons['usdc']}
-                                width={20}
-                                height={20}
-                            />
-                        ) : (
-                            'Select Currency'
-                        )
+                        'Select Currency'
                     )}
                 </MenuButton>
                 <MenuList backgroundColor="#020202" border="none">

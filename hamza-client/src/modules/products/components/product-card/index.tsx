@@ -72,7 +72,10 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
             event.button === 1
         ) {
             event.preventDefault();
-            window.open(`/products/${encodeURIComponent(productHandle)}`, '_blank');
+            window.open(
+                `/products/${encodeURIComponent(productHandle)}`,
+                '_blank'
+            );
             return;
         }
         event.preventDefault();
@@ -233,7 +236,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                 </Text>
                             </Flex>
 
-                            {!currencyCode?.startsWith('us') && (
+                            {!currencyIsUsdStable(currencyCode) && (
                                 <Flex
                                     flexDirection="row"
                                     ml="5px"

@@ -9,6 +9,7 @@ import currencyIcons from '../../../../../../public/images/currencies/crypto-cur
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { convertCryptoPrice } from '@lib/util/get-product-price';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 // TODO: Can this be removed?
 type ExtendedLineItem = LineItem & {
@@ -81,7 +82,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
             }
         };
 
-        if (!preferred_currency_code?.startsWith('us')) {
+        if (!currencyIsUsdStable(preferred_currency_code)) {
             fetchConvertedPrice();
         }
     }, [price, preferred_currency_code]);
@@ -158,7 +159,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         )}
 
                         {/* Spinner or Converted Price */}
-                        {!preferred_currency_code?.startsWith('us') && (
+                        {!currencyIsUsdStable(preferred_currency_code) && (
                             <>
                                 {loadingUSDPrice && isUpdatingCart ? (
                                     <Spinner size="sm" color="white" ml={1} />
