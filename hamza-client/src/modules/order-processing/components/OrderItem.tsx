@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react';
 import { Payment, ShippingMethod } from '@medusajs/medusa';
 import { convertPrice } from '@/lib/util/price-conversion';
 import { useQuery } from '@tanstack/react-query';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 interface OrderItemProps {
     order: any; // Replace with proper type

@@ -36,6 +36,7 @@ import { getAverageRatings, getReviewCount } from '@/lib/server';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,

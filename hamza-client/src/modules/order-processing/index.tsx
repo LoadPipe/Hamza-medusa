@@ -40,6 +40,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { convertPrice } from '@/lib/util/price-conversion';
 import { ethers } from 'ethers';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 const OrderProcessing = ({
     startTimestamp,
