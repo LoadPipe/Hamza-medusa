@@ -25,6 +25,7 @@ type ProfileCurrencyProps = {
     setCustomerPreferredCurrency: (currency: string) => void;
     isProfile?: boolean;
     className?: string;
+    iconOnly?: boolean;
 };
 
 const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
@@ -32,6 +33,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     setCustomerPreferredCurrency,
     isProfile,
     className,
+    iconOnly = false,
 }) => {
     //TODO: HAMSTR-690: CONSOLIDATE
     const currencies = [
@@ -80,9 +82,11 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
             <Menu>
                 <MenuButton
                     as={Button}
-                    rightIcon={<ChevronDownIcon />}
+                    rightIcon={iconOnly ? undefined : <ChevronDownIcon />}
                     borderRadius="12px"
                     height={{ base: '50px', md: '52px' }}
+                    width={iconOnly ? { base: '50px', md: '52px' } : 'auto'}
+                    minWidth={iconOnly ? { base: '50px', md: '52px' } : 'auto'}
                     backgroundColor="#020202"
                     border="none"
                     color="white"
@@ -98,10 +102,19 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
                                 width={20}
                                 height={20}
                             />
-                            <Text ml="8px">{currentCurrency.label}</Text>
+                            {!iconOnly && <Text ml="8px">{currentCurrency.label}</Text>}
                         </Flex>
                     ) : (
-                        'Select Currency'
+                        iconOnly ? (
+                            <Image
+                                alt="Select currency"
+                                src={currencyIcons['usdc']}
+                                width={20}
+                                height={20}
+                            />
+                        ) : (
+                            'Select Currency'
+                        )
                     )}
                 </MenuButton>
                 <MenuList backgroundColor="#020202" border="none">

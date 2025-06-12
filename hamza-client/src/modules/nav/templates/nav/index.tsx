@@ -2,7 +2,7 @@
 
 import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 // Images
 //import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
@@ -13,6 +13,7 @@ import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import NavSearchBar from './menu-desktop/components/nav-searchbar';
 import MobileNav from './menu-mobile/mobile-nav';
 import { WalletConnectButton } from './menu-desktop/connect-wallet';
+import NavProfileCurrency from '@modules/nav/components/nav-profile-currency';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
@@ -83,9 +84,10 @@ export default async function Nav() {
 
                         <NavSearchBar />
 
-                        <Box ml={'auto'}>
+                        <Flex ml={'auto'} alignItems={'center'} gap={'12px'}>
+                            <NavProfileCurrency />
                             <WalletConnectButton />
-                        </Box>
+                        </Flex>
 
                         <Flex flexDirection={'row'} alignItems={'center'}>
                             <Flex alignSelf={'center'}>

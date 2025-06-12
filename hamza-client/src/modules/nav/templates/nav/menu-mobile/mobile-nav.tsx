@@ -8,6 +8,7 @@ import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
 import HamzaBetaTitle from '@/images/logo/hamza-title-beta.svg';
 import MobileMainMenu from './menu/mobile-main-menu';
 import { WalletConnectButton } from './connect-wallet/connect-button';
+import NavProfileCurrency from '@modules/nav/components/nav-profile-currency';
 import SearchButtonMobile from './components/search-button';
 import CartButtonMobile from './components/cart-button';
 import MobileSearchModal from '@modules/search/templates/mobile-search-modal';
@@ -55,7 +56,9 @@ export default function MobileNav({ cart }: MobileNavProps) {
                 </Flex>
 
                 <Flex flex={1}>
-                    <Flex ml="auto">
+                    <Flex ml="auto" alignItems={'center'} gap={'0px'}>
+                        <NavProfileCurrency iconOnly={true} />
+                      
                         <SearchButtonMobile
                             onClick={() => setSearchOpened(true)}
                         />

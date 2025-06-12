@@ -93,7 +93,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({
     const cartCalculations = useMemo<CartCalculations>(() => {
         if (
             !cart ||
+            !cart.items ||
+            cart.items.length === 0 ||
             !shippingCostData ||
+            !shippingCostData.cart ||
+            shippingCostData.cart.items.length === 0 ||
             isCartLoading ||
             isShippingCostLoading
         ) {
