@@ -25,7 +25,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import { ethers } from 'ethers';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
-import { clearCart, finalizeCheckout } from '@/lib/server';
+import { clearCart, finalizeCheckout, setCurrency } from '@/lib/server';
 import toast from 'react-hot-toast';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
@@ -91,9 +91,8 @@ const CryptoPaymentButton = ({
             connector: new InjectedConnector(),
         });
 
-    const { preferred_currency_code } = useCustomerAuthStore((state) => ({
-        preferred_currency_code: state.preferred_currency_code,
-    }));
+    const { preferred_currency_code, setCustomerPreferredCurrency, authData } =
+        useCustomerAuthStore();
 
     useEffect(() => {
         const fetchChainId = async () => {
@@ -403,6 +402,20 @@ const CryptoPaymentButton = ({
         }
     };
 
+    const switchToBitcoin = async () => {
+        try {
+            setCustomerPreferredCurrency('btc');
+            await setCurrency('btc', authData.customer_id);
+        } catch (error) {
+            console.error('Error updating currency:', error);
+        }
+    };
+
+    const handleDirectBitcoinPayment = async () => {
+        await switchToBitcoin();
+        await handlePayment('direct', 'bitcoin');
+    };
+
     const handlePayment = async (paymentMode: string, chainType: string) => {
         if (!isConnected) {
             openConnectModal?.();
@@ -480,7 +493,7 @@ const CryptoPaymentButton = ({
                     backgroundColor={'#242424'}
                     isLoading={submitting}
                     isDisabled={disableButton}
-                    onClick={() => handlePayment('direct', 'bitcoin')}
+                    onClick={() => handleDirectBitcoinPayment()}
                 >
                     <Flex alignItems="center" gap={2}>
                         <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
@@ -534,7 +547,7 @@ const CryptoPaymentButton = ({
                     backgroundColor={'#242424'}
                     isLoading={submitting}
                     isDisabled={disableButton}
-                    onClick={() => handlePayment('direct', 'bitcoin')}
+                    onClick={() => handleDirectBitcoinPayment()}
                 >
                     <Flex alignItems="center" gap={2}>
                         <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
