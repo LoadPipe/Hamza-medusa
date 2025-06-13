@@ -4,6 +4,7 @@ import { isEmpty } from './isEmpty';
 import { ProductVariantInfo, RegionInfo } from '../../types/global';
 import { noDivisionCurrencies } from '@/lib/config/constants';
 import { formatCryptoPrice } from './get-product-price';
+import { currencyIsUsdStable } from './currencies';
 
 export const findCheapestRegionPrice = (
     variants: Variant[],
@@ -250,7 +251,7 @@ const getTaxRate = (region?: RegionInfo) => {
     return region && !isEmpty(region) ? region?.tax_rate / 100 : 0;
 };
 
-const traditionalCurrencies = ['usdc', 'eth', 'usdt']; // Add more as needed
+const traditionalCurrencies = ['usdc', 'eth', 'usdt', 'btc']; // Add more as needed
 
 const convertToLocale = ({
     amount = 0,
@@ -300,7 +301,7 @@ export const formatPriceBetweenCurrencies = (
     to_currency_code: string
 ) => {
     let formattedPrice: string | number = '';
-    if (from_currency_code === 'eth') {
+    if (!currencyIsUsdStable(from_currency_code)) {
         const fromPrice =
             variant_prices.find(
                 (price: any) => price.currency_code === to_currency_code

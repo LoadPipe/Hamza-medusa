@@ -36,6 +36,7 @@ import { getAverageRatings, getReviewCount } from '@/lib/server';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,
@@ -72,7 +73,10 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
             event.button === 1
         ) {
             event.preventDefault();
-            window.open(`/products/${encodeURIComponent(productHandle)}`, '_blank');
+            window.open(
+                `/products/${encodeURIComponent(productHandle)}`,
+                '_blank'
+            );
             return;
         }
         event.preventDefault();
@@ -233,7 +237,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                 </Text>
                             </Flex>
 
-                            {currencyCode === 'eth' && (
+                            {!currencyIsUsdStable(currencyCode) && (
                                 <Flex
                                     flexDirection="row"
                                     ml="5px"
