@@ -27,7 +27,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { clearCart, finalizeCheckout } from '@/lib/server';
 import toast from 'react-hot-toast';
-import { getServerConfig } from '@/lib/server/index';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
@@ -37,6 +36,7 @@ import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
 import { FaBitcoin, FaWallet } from 'react-icons/fa';
 import { WalletPaymentResponse } from './payment-handlers/common';
 import ChainSelectionInterstitial from '../chain-selector';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 //TODO: we need a global common function to replace this
 
@@ -90,6 +90,10 @@ const CryptoPaymentButton = ({
         useConnect({
             connector: new InjectedConnector(),
         });
+
+    const { preferred_currency_code } = useCustomerAuthStore((state) => ({
+        preferred_currency_code: state.preferred_currency_code,
+    }));
 
     useEffect(() => {
         const fetchChainId = async () => {
@@ -349,8 +353,8 @@ const CryptoPaymentButton = ({
             const chainId =
                 chainIdOverride ||
                 (chainType === 'evm'
-                    ? ((await walletClient?.getChainId())?.toString() ?? '')
-                    : (process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet'));
+                    ? (await walletClient?.getChainId())?.toString() ?? ''
+                    : process.env.NEXT_PUBLIC_BITCOIN_NETWORK ?? 'testnet');
 
             await new Promise((resolve, reject) => {
                 completeCart(
@@ -433,10 +437,12 @@ const CryptoPaymentButton = ({
         return 'Pay with Browser Wallet';
     };
 
+    const payWithBitcoinEnabled =
+        process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true';
+
     return (
         <>
             {loaderVisible && <HamzaLogoLoader messages={MESSAGES} />}
-
             {/* Chain Selection Interstitial */}
             <ChainSelectionInterstitial
                 isOpen={isOpen}
@@ -444,23 +450,46 @@ const CryptoPaymentButton = ({
                 onChainSelect={handleChainSelect}
             />
 
-            <Button
-                borderRadius={'full'}
-                height={{ base: '42px', md: '58px' }}
-                opacity={1}
-                color={'black'}
-                _hover={{ opacity: 0.5 }}
-                backgroundColor={'primary.green.900'}
-                isLoading={submitting}
-                isDisabled={disableButton}
-                onClick={() => handlePayment('wallet', 'evm')}
-            >
-                {getButtonText()}
-            </Button>
+            {(preferred_currency_code === 'btc'
+                ? getButtonText() !== 'Pay with Browser Wallet'
+                : true) && (
+                <>
+                    <Button
+                        borderRadius={'full'}
+                        height={{ base: '42px', md: '58px' }}
+                        opacity={1}
+                        color={'black'}
+                        _hover={{ opacity: 0.5 }}
+                        backgroundColor={'primary.green.900'}
+                        isLoading={submitting}
+                        isDisabled={disableButton}
+                        onClick={() => handlePayment('wallet', 'evm')}
+                    >
+                        {getButtonText()}
+                    </Button>
+                </>
+            )}
 
-            {(process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true' ||
-                process.env.NEXT_PUBLIC_PAY_WITH_EXTERNAL_WALLET ===
-                    'true') && (
+            {payWithBitcoinEnabled && preferred_currency_code === 'btc' && (
+                <Button
+                    borderRadius={'full'}
+                    height={{ base: '42px', md: '58px' }}
+                    opacity={1}
+                    color={'white'}
+                    _hover={{ opacity: 0.5 }}
+                    backgroundColor={'#242424'}
+                    isLoading={submitting}
+                    isDisabled={disableButton}
+                    onClick={() => handlePayment('direct', 'bitcoin')}
+                >
+                    <Flex alignItems="center" gap={2}>
+                        <Icon as={FaBitcoin} boxSize={7} color="#F7931A" />
+                        Pay with Bitcoin
+                    </Flex>
+                </Button>
+            )}
+
+            {payWithBitcoinEnabled && preferred_currency_code !== 'btc' && (
                 <>
                     <Flex alignItems="center" my="5px">
                         <Box flex="1">
@@ -476,7 +505,7 @@ const CryptoPaymentButton = ({
                 </>
             )}
 
-            {process.env.NEXT_PUBLIC_PAY_WITH_EXTERNAL_WALLET === 'true' && (
+            {preferred_currency_code !== 'btc' && (
                 <Button
                     borderRadius={'full'}
                     height={{ base: '42px', md: '58px' }}
@@ -495,7 +524,7 @@ const CryptoPaymentButton = ({
                 </Button>
             )}
 
-            {process.env.NEXT_PUBLIC_PAY_WITH_BITCOIN === 'true' && (
+            {payWithBitcoinEnabled && preferred_currency_code !== 'btc' && (
                 <Button
                     borderRadius={'full'}
                     height={{ base: '42px', md: '58px' }}
