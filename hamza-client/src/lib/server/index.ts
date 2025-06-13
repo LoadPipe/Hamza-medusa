@@ -23,6 +23,7 @@ import { SortOptions } from '@modules/shop/components/refinement-list/sort-produ
 import {
     ProductCategoryWithChildren,
     ProductPreviewType,
+    DiscountValidationResult,
 } from '@/types/global';
 import { medusaClient } from '../config/config';
 import medusaError from '@lib/util/medusa-error';
@@ -1529,4 +1530,14 @@ export async function setBestShippingAddress(
     });
 
     return address ?? null;
+}
+
+export async function validateDiscountUsage(code: string): Promise<DiscountValidationResult> {
+    try {
+        const response = await get('/custom/discount/validate', { code });
+        return response;
+    } catch (error: any) {
+        console.error('Error validating discount usage:', error);
+        throw error;
+    }
 }
