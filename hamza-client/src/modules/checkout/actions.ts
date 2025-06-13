@@ -10,6 +10,7 @@ import {
     setCartEmail,
     setPaymentSession,
     updateCart,
+    validateDiscountUsage,
 } from '@/lib/server';
 import { GiftCard, StorePostCartsCartReq } from '@medusajs/medusa';
 import { revalidateTag } from 'next/cache';
@@ -36,6 +37,27 @@ export async function applyDiscount(code: string) {
     if (!cartId) return 'No cartId cookie found';
 
     try {
+        // Validate discount usage limit before applying
+        const validationResult = await validateDiscountUsage(code);
+
+        if (validationResult) {
+            if (!validationResult.valid) {
+                throw new Error(
+                    validationResult.message || 'Discount code is invalid'
+                );
+            }
+
+            // Check usage limit if it exists
+            if (
+                validationResult.usage_limit !== null &&
+                validationResult.usage_count >= validationResult.usage_limit
+            ) {
+                throw new Error(
+                    'This discount code has reached its usage limit and cannot be applied'
+                );
+            }
+        }
+
         await updateCart(cartId, { discounts: [{ code }] }).then(() => {
             revalidateTag('cart');
         });
@@ -99,12 +121,11 @@ export async function submitDiscountForm(
     const code = formData.get('code') as string;
 
     try {
-        await applyDiscount(code).catch(async (err) => {
-            console.log(err);
-        });
+        await applyDiscount(code);
         return null;
     } catch (error: any) {
-        return error.toString();
+        console.log('Discount application error:', error);
+        return error.message || error.toString();
     }
 }
 
