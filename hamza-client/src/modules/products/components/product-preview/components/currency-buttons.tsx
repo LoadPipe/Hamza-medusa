@@ -4,7 +4,7 @@ import { Text, Flex } from '@chakra-ui/react';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 
 interface CurrencyButtonPreviewProps {
-    currencyName: 'ETH' | 'USDC' | 'USDT';
+    currencyName: 'ETH' | 'USDC' | 'USDT' | 'BTC';
     width: string;
     height: string;
 }

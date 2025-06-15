@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { convertPrice } from '@/lib/util/price-conversion';
 import { Spinner } from '@chakra-ui/react';
 import { FaBitcoin } from 'react-icons/fa';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 type PaymentTotal = {
     amount?: number | null;
@@ -40,7 +41,7 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
 
     useEffect(() => {
         const fetchConvertedPrice = async () => {
-            if (subTotal && currencyCode.toLowerCase() === 'eth') {
+            if (subTotal && !currencyIsUsdStable(currencyCode)) {
                 try {
                     const result = await convertPrice(
                         Number(formatCryptoPrice(subTotal, 'eth')),
@@ -101,13 +102,12 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
                         />
                     )}
                     <Text fontSize={'18px'} whiteSpace="nowrap">
-                        {hasBitcoinPayment ?
-                            bitcoinAmount :
-                            getAmount(amount, currency_code)
-                        }
+                        {hasBitcoinPayment
+                            ? bitcoinAmount
+                            : getAmount(amount, currency_code)}
                     </Text>
                 </Flex>
-                {currencyCode === 'eth' && !hasBitcoinPayment && (
+                {!currencyIsUsdStable(currencyCode) && !hasBitcoinPayment && (
                     <Flex alignItems="center" gap={2}>
                         {usdPrice === '' ? (
                             <Spinner size="sm" color="gray.300" />
