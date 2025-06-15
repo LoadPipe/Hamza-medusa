@@ -90,3 +90,11 @@ export interface Product {
     store_id: string;
     countryCode?: string;
 }
+
+export interface DiscountValidationResult {
+    valid: boolean;
+    message?: string;
+    usage_limit: number | null;
+    usage_count: number;
+    code: string;
+}
