@@ -7,6 +7,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import DOMPurify from 'dompurify'; // Use the correct hook for navigation
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 interface HeroImageCarouselProps {
     imgSrc: string;
@@ -139,7 +140,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                             {price}
                         </Text>
 
-                        {preferred_currency_code === 'eth' && (
+                        {!currencyIsUsdStable(preferred_currency_code) && (
                             <Text
                                 color="gray.300"
                                 fontSize="14px"
