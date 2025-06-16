@@ -7,6 +7,7 @@ import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { convertPrice } from '@/lib/util/price-conversion';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
@@ -59,7 +60,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
             setUsdPrice(formattedResult);
         };
 
-        if (currencyCode === 'eth') {
+        if (!currencyIsUsdStable(currencyCode)) {
             fetchConvertedPrice();
         }
     }, [grandTotal, currencyCode]);
@@ -72,7 +73,6 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 width={'100%'}
                 gap={'8px'}
             >
-
                 {/* Discount */}
                 <Flex color="#555555" justifyContent={'space-between'}>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
@@ -83,7 +83,6 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                         <Text fontSize={{ base: '14px', md: '16px' }}> - </Text>
                     </Flex>
                 </Flex>
-
 
                 {/* Taxes */}
                 <Flex color="#555555" justifyContent={'space-between'}>
@@ -126,7 +125,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                         </Text>
                     </Flex>
 
-                    {currencyCode === 'eth' && (
+                    {!currencyIsUsdStable(currencyCode) && (
                         <Flex ml={'auto'}>
                             {usdPrice === '' ? (
                                 <Spinner size="sm" color="white" />

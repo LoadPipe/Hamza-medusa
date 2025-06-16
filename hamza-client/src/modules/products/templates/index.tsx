@@ -301,8 +301,6 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         // Add product URL
         schema.url = `https://hamza.market/${countryCode}/products/${product.handle}`;
 
-        // console.log('FINAL ENHANCED SCHEMA:', JSON.stringify(schema, null, 2));
-
         return schema;
     };
 
