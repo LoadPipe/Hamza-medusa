@@ -488,10 +488,10 @@ const OrderProcessing = ({
                                                 onClick={() => {
                                                     const formattedAmount =
                                                         paywith === 'bitcoin'
-                                                            ? formatNativeBtc(
+                                                            ? (formatNativeBtc(
                                                                   paymentData?.expectedAmount
                                                               ) ??
-                                                              convertedBtcTotal
+                                                              convertedBtcTotal)
                                                             : formatCryptoPrice(
                                                                   paymentTotal ??
                                                                       0,
@@ -1069,19 +1069,21 @@ const OrderProcessing = ({
                                     Orders
                                 </Text>
                                 <VStack spacing={3} align="stretch">
-                                    {paymentData?.orders?.map((order) => (
-                                        <OrderItem
-                                            key={order.id}
-                                            order={order}
-                                            isOpen={openOrders[order.id]}
-                                            onToggle={() =>
-                                                toggleOrder(order.id)
-                                            }
-                                            currencyCode={
-                                                currencyCode ?? 'usdc'
-                                            }
-                                        />
-                                    ))}
+                                    {paymentData?.orders &&
+                                        paymentData?.orders.length > 1 &&
+                                        paymentData?.orders?.map((order) => (
+                                            <OrderItem
+                                                key={order.id}
+                                                order={order}
+                                                isOpen={openOrders[order.id]}
+                                                onToggle={() =>
+                                                    toggleOrder(order.id)
+                                                }
+                                                currencyCode={
+                                                    currencyCode ?? 'usdc'
+                                                }
+                                            />
+                                        ))}
                                 </VStack>
 
                                 <HStack justify="space-between" mt={4}>
