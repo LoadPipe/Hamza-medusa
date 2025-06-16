@@ -101,6 +101,8 @@ const OrderItem = ({
         setDiscountTotal(discountTotal);
     }, [order]);
 
+    console.log('order: ', order);
+
     return (
         <Box
             bg="gray.800"
@@ -140,11 +142,11 @@ const OrderItem = ({
                             </Text>
                         )}
                     </Flex>
-                    <Icon
+                    {/* <Icon
                         as={isOpen ? ChevronUpIcon : ChevronDownIcon}
                         color="white"
                         boxSize={5}
-                    />
+                    /> */}
                 </Flex>
             </HStack>
 
