@@ -14,9 +14,16 @@ import {
     ModalBody,
     ModalCloseButton,
     useDisclosure,
+    useToast,
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
 } from '@chakra-ui/react';
-import { FaBitcoin, FaCopy, FaQrcode, FaRegCheckCircle } from 'react-icons/fa';
-import { useState, useEffect, useCallback } from 'react';
+import { FaBitcoin, FaCopy, FaQrcode, FaRegCheckCircle, FaTimes } from 'react-icons/fa';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import StatusStep from './components/StatusStep';
 import OrderItem from './components/OrderItem';
@@ -27,7 +34,7 @@ import Image from 'next/image';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { STATUS_STEPS } from './types';
-import { getPaymentData } from '@/lib/server';
+import { cancelOrder, cancelPayments, getPaymentData } from '@/lib/server';
 import { useAccount } from 'wagmi';
 import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet-connect';
 import { calculateStepState } from './utils';
@@ -59,6 +66,8 @@ const OrderProcessing = ({
     fromCheckout?: boolean;
 }) => {
     const router = useRouter();
+    const toast = useToast();
+    const cancelRef = useRef<HTMLButtonElement>(null);
     const initialPaymentData = paymentsData ? paymentsData[0] : null;
     const [paymentData, setPaymentData] = useState(initialPaymentData);
     const [openOrders, setOpenOrders] = useState<Record<string, boolean>>({});
@@ -66,6 +75,12 @@ const OrderProcessing = ({
     const { isConnected } = useAccount();
     const [isClient, setIsClient] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        isOpen: isCancelDialogOpen,
+        onOpen: onCancelDialogOpen,
+        onClose: onCancelDialogClose
+    } = useDisclosure();
+    const [isCanceling, setIsCanceling] = useState(false);
     const totalOrders = initialPaymentData?.orders?.length ?? 0;
 
     //get chain name from payment data
@@ -127,6 +142,76 @@ const OrderProcessing = ({
         const totalTime = endTimestamp - startTimestamp;
         return Math.min(Math.max((usedTime / totalTime) * 100, 0), 100);
     }, [startTimestamp, endTimestamp]);
+
+    // Cancel payment handler
+    const handleCancelPayment = async () => {
+        if (!paymentData?.paymentAddress) {
+            toast({
+                title: 'Error',
+                description: 'Payment address not found',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        setIsCanceling(true);
+        const ordersToCancel = paymentData?.orders || [];
+
+        if (!ordersToCancel.length) {
+            toast({
+                title: 'Error',
+                description: 'No orders found to cancel.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+            setIsCanceling(false);
+            return;
+        }
+
+        try {
+
+            const orderIds = ordersToCancel.map(order => order.id);
+            // Call the server function to cancel the payment
+            const result = await cancelPayments(paymentData.paymentAddress, orderIds, cartId);
+
+            if (result) {
+
+                toast({
+                    title: 'Payment Canceled',
+                    description: 'Your payment has been successfully canceled. Redirecting to cart...',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+
+                // Update local state to reflect cancellation
+                setCurrentStatus('canceled');
+                setPaymentData(prev => prev ? { ...prev, status: 'expired' } : null);
+
+                // Redirect to cart after a short delay
+                setTimeout(() => {
+                    router.push(`/cart`);
+                }, 2000);
+            } else {
+                throw new Error('Failed to cancel payment');
+            }
+        } catch (error) {
+            console.error('Error canceling payment:', error);
+            toast({
+                title: 'Cancellation Failed',
+                description: error instanceof Error ? error.message : 'Failed to cancel payment. Please try again.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+        } finally {
+            setIsCanceling(false);
+            onCancelDialogClose();
+        }
+    };
 
     const { data: convertedBtcTotal } = useQuery({
         queryKey: ['convertedBtcTotal', paymentTotal, currencyCode], // ✅ Unique key per conversion
@@ -193,6 +278,12 @@ const OrderProcessing = ({
     // handling polling of payments endpoint for status updates
     useEffect(() => {
         let timer: NodeJS.Timer;
+
+        // Don't poll if payment is canceled
+        if (currentStatus === 'canceled') {
+            return;
+        }
+
         timer = setInterval(
             async () => {
                 try {
@@ -205,8 +296,8 @@ const OrderProcessing = ({
                         setPaymentData(payment);
                         setCurrentStatus(payment?.status);
 
-                        // Stop polling if payment is expired
-                        if (payment.status === 'expired') {
+                        // Stop polling if payment is expired or canceled
+                        if (payment.status === 'expired' || payment.status === 'canceled') {
                             clearInterval(timer);
                             return;
                         }
@@ -234,7 +325,7 @@ const OrderProcessing = ({
         );
 
         return () => clearInterval(timer);
-    }, [cartId, router]);
+    }, [cartId, router, currentStatus]);
 
     // Update the useEffect to run on mount and handle the initial state
     useEffect(() => {
@@ -274,39 +365,63 @@ const OrderProcessing = ({
                                 >
                                     Payment Status
                                 </Text>
-                                <Box
-                                    bg={
-                                        currentStatus === 'expired'
-                                            ? 'red.900'
-                                            : currentStatus === 'partial'
-                                              ? 'orange.900'
-                                              : 'green.900'
-                                    }
-                                    px={3}
-                                    py={1}
-                                    borderRadius="3xl"
-                                    border="2px"
-                                    borderStyle="solid"
-                                    borderColor={
-                                        currentStatus === 'expired'
-                                            ? 'red.500'
-                                            : currentStatus === 'partial'
-                                              ? 'orange.400'
-                                              : 'primary.green.900'
-                                    }
-                                >
-                                    <Text color="white" fontWeight="bold">
-                                        {currentStatus === 'expired'
-                                            ? 'Expired'
-                                            : currentStatus === 'partial'
-                                              ? 'Partial'
-                                              : STATUS_STEPS.find(
-                                                    (step) =>
-                                                        step.status ===
-                                                        currentStatus
-                                                )?.label}
-                                    </Text>
-                                </Box>
+                                <HStack spacing={3}>
+                                    <Box
+                                        bg={
+                                            currentStatus === 'expired'
+                                                ? 'red.900'
+                                                : currentStatus === 'partial'
+                                                    ? 'orange.900'
+                                                    : currentStatus === 'canceled'
+                                                        ? 'gray.700'
+                                                        : 'green.900'
+                                        }
+                                        px={3}
+                                        py={1}
+                                        borderRadius="3xl"
+                                        border="2px"
+                                        borderStyle="solid"
+                                        borderColor={
+                                            currentStatus === 'expired'
+                                                ? 'red.500'
+                                                : currentStatus === 'partial'
+                                                    ? 'orange.400'
+                                                    : currentStatus === 'canceled'
+                                                        ? 'gray.500'
+                                                        : 'primary.green.900'
+                                        }
+                                    >
+                                        <Text color="white" fontWeight="bold">
+                                            {currentStatus === 'expired'
+                                                ? 'Expired'
+                                                : currentStatus === 'partial'
+                                                    ? 'Partial'
+                                                    : currentStatus === 'canceled'
+                                                        ? 'Canceled'
+                                                        : STATUS_STEPS.find(
+                                                            (step) =>
+                                                                step.status ===
+                                                                currentStatus
+                                                        )?.label}
+                                        </Text>
+                                    </Box>
+
+                                    {/* Cancel Button - show if payment is waiting or partial */}
+                                    {(currentStatus === 'waiting' || currentStatus === 'partial') && (
+                                        <Button
+                                            size="sm"
+                                            bg="red.600"
+                                            color="white"
+                                            borderRadius="2rem"
+                                            leftIcon={<FaTimes />}
+                                            _hover={{ bg: 'red.700' }}
+                                            onClick={onCancelDialogOpen}
+                                            isDisabled={isCanceling}
+                                        >
+                                            Cancel Payment
+                                        </Button>
+                                    )}
+                                </HStack>
                             </HStack>
 
                             <Text color="gray.300">Cart ID: {cartId}</Text>
@@ -317,8 +432,7 @@ const OrderProcessing = ({
                                     (step, index) =>
                                         (step.status === currentStatus ||
                                             (step.status === 'waiting' &&
-                                                currentStatus ===
-                                                    'expired')) && (
+                                                (currentStatus === 'expired' || currentStatus === 'canceled'))) && (
                                             <StatusStep
                                                 key={step.status}
                                                 step={step}
@@ -381,7 +495,7 @@ const OrderProcessing = ({
                                             {new Date(
                                                 paymentData?.orders?.length
                                                     ? paymentData.orders[0]
-                                                          ?.created_at
+                                                        ?.created_at
                                                     : ''
                                             )
                                                 .toLocaleDateString('en-US', {
@@ -412,8 +526,8 @@ const OrderProcessing = ({
                                                         className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
                                                         src={
                                                             currencyIcons[
-                                                                currencyCode ??
-                                                                    'usdc'
+                                                            currencyCode ??
+                                                            'usdc'
                                                             ]
                                                         }
                                                         alt={
@@ -437,9 +551,9 @@ const OrderProcessing = ({
                                                         <>
                                                             {formatCryptoPrice(
                                                                 paymentTotal ??
-                                                                    0,
+                                                                0,
                                                                 currencyCode ??
-                                                                    'usdc',
+                                                                'usdc',
                                                                 false
                                                             )}{' '}
                                                             {paymentCurrency?.toUpperCase()}{' '}
@@ -448,14 +562,14 @@ const OrderProcessing = ({
                                                                 .includes(
                                                                     'usd'
                                                                 ) && (
-                                                                <>
-                                                                    ≅ $
-                                                                    {
-                                                                        convertedUsdTotal
-                                                                    }{' '}
-                                                                    USD
-                                                                </>
-                                                            )}
+                                                                    <>
+                                                                        ≅ $
+                                                                        {
+                                                                            convertedUsdTotal
+                                                                        }{' '}
+                                                                        USD
+                                                                    </>
+                                                                )}
                                                         </>
                                                     )}
                                                 </Text>
@@ -489,16 +603,16 @@ const OrderProcessing = ({
                                                     const formattedAmount =
                                                         paywith === 'bitcoin'
                                                             ? formatNativeBtc(
-                                                                  paymentData?.expectedAmount
-                                                              ) ??
-                                                              convertedBtcTotal
+                                                                paymentData?.expectedAmount
+                                                            ) ??
+                                                            convertedBtcTotal
                                                             : formatCryptoPrice(
-                                                                  paymentTotal ??
-                                                                      0,
-                                                                  currencyCode ??
-                                                                      'usdc',
-                                                                  false
-                                                              ).toString();
+                                                                paymentTotal ??
+                                                                0,
+                                                                currencyCode ??
+                                                                'usdc',
+                                                                false
+                                                            ).toString();
                                                     navigator.clipboard.writeText(
                                                         formattedAmount ?? ''
                                                     );
@@ -679,7 +793,7 @@ const OrderProcessing = ({
                                             onClick={() => {
                                                 navigator.clipboard.writeText(
                                                     paymentData?.paymentAddress ??
-                                                        ''
+                                                    ''
                                                 );
                                                 setHasCopiedAddress(true);
                                                 setTimeout(
@@ -700,6 +814,48 @@ const OrderProcessing = ({
                             </Box>
                         </VStack>
                     </Box>
+
+                    {/* Cancel Payment Confirmation Dialog */}
+                    <AlertDialog
+                        isOpen={isCancelDialogOpen}
+                        leastDestructiveRef={cancelRef}
+                        onClose={onCancelDialogClose}
+                        isCentered
+                    >
+                        <AlertDialogOverlay>
+                            <AlertDialogContent bg="gray.800" color="white">
+                                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                    Cancel Payment
+                                </AlertDialogHeader>
+
+                                <AlertDialogBody>
+                                    Are you sure you want to cancel this payment? This action cannot be undone.
+                                    You will be redirected back to your cart and can restart the checkout process later.
+                                </AlertDialogBody>
+
+                                <AlertDialogFooter>
+                                    <Button
+                                        ref={cancelRef}
+                                        onClick={onCancelDialogClose}
+                                        bg="gray.600"
+                                        color="white"
+                                        _hover={{ bg: 'gray.700' }}
+                                    >
+                                        Keep Payment
+                                    </Button>
+                                    <Button
+                                        colorScheme="red"
+                                        onClick={handleCancelPayment}
+                                        ml={3}
+                                        isLoading={isCanceling}
+                                        loadingText="Canceling..."
+                                    >
+                                        Cancel Payment
+                                    </Button>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialogOverlay>
+                    </AlertDialog>
 
                     {/* QR Code Modal */}
                     {paywith && (
@@ -819,7 +975,7 @@ const OrderProcessing = ({
                                                                         )?.toString();
                                                                     navigator.clipboard.writeText(
                                                                         formattedAmount ??
-                                                                            ''
+                                                                        ''
                                                                     );
                                                                     setHasCopiedAmount(
                                                                         true
@@ -860,8 +1016,8 @@ const OrderProcessing = ({
                                                                 className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
                                                                 src={
                                                                     currencyIcons[
-                                                                        currencyCode ??
-                                                                            'usdc'
+                                                                    currencyCode ??
+                                                                    'usdc'
                                                                     ]
                                                                 }
                                                                 alt={
@@ -877,9 +1033,9 @@ const OrderProcessing = ({
                                                             >
                                                                 {formatCryptoPrice(
                                                                     paymentTotal ??
-                                                                        0,
+                                                                    0,
                                                                     currencyCode ??
-                                                                        'usdc',
+                                                                    'usdc',
                                                                     false
                                                                 )}{' '}
                                                                 {paymentCurrency?.toUpperCase()}
@@ -915,9 +1071,9 @@ const OrderProcessing = ({
                                                                     const formattedAmount =
                                                                         formatCryptoPrice(
                                                                             paymentTotal ??
-                                                                                0,
+                                                                            0,
                                                                             currencyCode ??
-                                                                                'usdc',
+                                                                            'usdc',
                                                                             false
                                                                         ).toString();
                                                                     navigator.clipboard.writeText(
@@ -1035,7 +1191,7 @@ const OrderProcessing = ({
                                                 onClick={() => {
                                                     navigator.clipboard.writeText(
                                                         paymentData?.paymentAddress ??
-                                                            ''
+                                                        ''
                                                     );
                                                     setHasCopiedAddress(true);
                                                     setTimeout(
@@ -1094,23 +1250,22 @@ const OrderProcessing = ({
                                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
                                             src={
                                                 currencyIcons[
-                                                    currencyCode ?? 'usdc'
+                                                currencyCode ?? 'usdc'
                                                 ]
                                             }
                                             alt={currencyCode ?? 'usdc'}
                                         />
                                         <Text ml="0.4rem" color="white">
                                             {paywith === 'bitcoin'
-                                                ? `${
-                                                      formatNativeBtc(
-                                                          paymentData?.expectedAmount
-                                                      ) ?? convertedBtcTotal
-                                                  } BTC`
+                                                ? `${formatNativeBtc(
+                                                    paymentData?.expectedAmount
+                                                ) ?? convertedBtcTotal
+                                                } BTC`
                                                 : formatCryptoPrice(
-                                                      paymentTotal ?? 0,
-                                                      currencyCode ?? 'usdc',
-                                                      false
-                                                  )}
+                                                    paymentTotal ?? 0,
+                                                    currencyCode ?? 'usdc',
+                                                    false
+                                                )}
                                         </Text>
                                         {currencyCode === 'eth' && (
                                             <Text ml="0.4rem" color="white">
