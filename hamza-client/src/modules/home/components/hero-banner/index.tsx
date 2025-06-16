@@ -35,7 +35,7 @@ const HeroBanner = () => {
                                 color="cyan.300"
                                 textDecoration="underline"
                             >
-                                learn more!
+                                Learn more!
                             </Text>
                         </Text>
                     </Link>
