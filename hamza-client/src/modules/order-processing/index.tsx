@@ -326,7 +326,7 @@ const OrderProcessing = ({
         );
 
         return () => clearInterval(timer);
-    }, [cartId, router, currentStatus]);
+    }, [cartId, router]);
 
     // Update the useEffect to run on mount and handle the initial state
     useEffect(() => {
