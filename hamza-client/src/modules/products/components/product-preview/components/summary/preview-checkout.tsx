@@ -51,6 +51,10 @@ import { Cart } from '@medusajs/medusa';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Product } from '@lib/schemas/product';
 import { setCurrency } from '@/lib/server';
+import {
+    acceptedCurrencyCodes,
+    currencyIsUsdStable,
+} from '@/lib/util/currencies';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -86,12 +90,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         enabled: !!handle,
     });
 
-    console.log(
-        'PreviewCheckout component rendered with productId:',
-        productId
-    );
-
-    const currencies = ['eth', 'usdc', 'usdt'];
+    const currencies = acceptedCurrencyCodes;
 
     const [options, setOptions] = useState<Record<string, string>>({});
     const [cartModalOpen, setCartModalOpen] = useState(false);
@@ -241,18 +240,18 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     setSelectedVariant(selectedProductVariant);
 
                     // Find the price for the selected currency or default to the first price available
-                    const isEthCurrency = preferred_currency_code === 'eth';
+                    const isNonStable = !currencyIsUsdStable(
+                        preferred_currency_code
+                    );
 
                     // Determine the price based on the preferred currency or fallback
                     const price = getPriceByCurrency(
                         selectedProductVariant.prices,
-                        isEthCurrency
-                            ? 'eth'
-                            : (preferred_currency_code ?? 'usdc')
+                        preferred_currency_code ?? 'usdc'
                     );
 
                     // Update USD price if the preferred currency is 'eth'
-                    if (isEthCurrency) {
+                    if (isNonStable) {
                         setUsdPrice(
                             getPriceByCurrency(
                                 selectedProductVariant.prices,
@@ -589,7 +588,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     fontSize={'18px'}
                     color="white"
                 >
-                    {preferred_currency_code === 'eth'
+                    {!currencyIsUsdStable(preferred_currency_code)
                         ? `≅ $${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')} USD`
                         : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>

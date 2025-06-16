@@ -393,14 +393,18 @@ const chainConfig: any = {
     },
 };
 
-const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>
-    chainConfig[chainId]
+const getCurrencyAddress = (currencyId: string, chainId: number = 1) => {
+    if (currencyId === 'btc') return '';
+    return chainConfig[chainId]
         ? chainConfig[chainId][currencyId]?.contract_address ?? ''
         : '';
+};
 
-const getCurrencyPrecision = (currencyId: string, chainId: number = 1) =>
-    chainConfig[chainId]
+const getCurrencyPrecision = (currencyId: string, chainId: number = 1) => {
+    if (currencyId === 'btc') return { display: 8, db: 8, native: 8 };
+    return chainConfig[chainId]
         ? chainConfig[chainId][currencyId]?.precision
         : undefined;
+};
 
 export { getCurrencyAddress, getCurrencyPrecision };

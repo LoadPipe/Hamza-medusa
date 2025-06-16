@@ -47,6 +47,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { convertPrice } from '@/lib/util/price-conversion';
 import { ethers } from 'ethers';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 const OrderProcessing = ({
     startTimestamp,
@@ -602,10 +603,10 @@ const OrderProcessing = ({
                                                 onClick={() => {
                                                     const formattedAmount =
                                                         paywith === 'bitcoin'
-                                                            ? formatNativeBtc(
-                                                                paymentData?.expectedAmount
-                                                            ) ??
-                                                            convertedBtcTotal
+                                                            ? (formatNativeBtc(
+                                                                  paymentData?.expectedAmount
+                                                              ) ??
+                                                              convertedBtcTotal)
                                                             : formatCryptoPrice(
                                                                 paymentTotal ??
                                                                 0,
@@ -1225,19 +1226,21 @@ const OrderProcessing = ({
                                     Orders
                                 </Text>
                                 <VStack spacing={3} align="stretch">
-                                    {paymentData?.orders?.map((order) => (
-                                        <OrderItem
-                                            key={order.id}
-                                            order={order}
-                                            isOpen={openOrders[order.id]}
-                                            onToggle={() =>
-                                                toggleOrder(order.id)
-                                            }
-                                            currencyCode={
-                                                currencyCode ?? 'usdc'
-                                            }
-                                        />
-                                    ))}
+                                    {paymentData?.orders &&
+                                        paymentData?.orders.length > 1 &&
+                                        paymentData?.orders?.map((order) => (
+                                            <OrderItem
+                                                key={order.id}
+                                                order={order}
+                                                isOpen={openOrders[order.id]}
+                                                onToggle={() =>
+                                                    toggleOrder(order.id)
+                                                }
+                                                currencyCode={
+                                                    currencyCode ?? 'usdc'
+                                                }
+                                            />
+                                        ))}
                                 </VStack>
 
                                 <HStack justify="space-between" mt={4}>
@@ -1267,7 +1270,7 @@ const OrderProcessing = ({
                                                     false
                                                 )}
                                         </Text>
-                                        {currencyCode === 'eth' && (
+                                        {!currencyIsUsdStable(currencyCode) && (
                                             <Text ml="0.4rem" color="white">
                                                 ≅ {convertedUsdTotal} USD
                                             </Text>

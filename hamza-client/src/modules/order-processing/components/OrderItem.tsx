@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react';
 import { Payment, ShippingMethod } from '@medusajs/medusa';
 import { convertPrice } from '@/lib/util/price-conversion';
 import { useQuery } from '@tanstack/react-query';
+import { currencyIsUsdStable } from '@/lib/util/currencies';
 
 interface OrderItemProps {
     order: any; // Replace with proper type
@@ -100,6 +101,8 @@ const OrderItem = ({
         setDiscountTotal(discountTotal);
     }, [order]);
 
+    console.log('order: ', order);
+
     return (
         <Box
             bg="gray.800"
@@ -133,17 +136,17 @@ const OrderItem = ({
                                 order.currency_code
                             )}{' '}
                         </Text>
-                        {order.currency_code === 'eth' && (
+                        {!currencyIsUsdStable(order.currency_code) && (
                             <Text ml="0.4rem" color="white">
                                 ≅ ${convertPaymentTotaltoUsd} USD
                             </Text>
                         )}
                     </Flex>
-                    <Icon
+                    {/* <Icon
                         as={isOpen ? ChevronUpIcon : ChevronDownIcon}
                         color="white"
                         boxSize={5}
-                    />
+                    /> */}
                 </Flex>
             </HStack>
 
