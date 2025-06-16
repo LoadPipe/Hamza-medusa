@@ -52,8 +52,8 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     React.useEffect(() => {
         const fetchConvertedPrice = async () => {
             const result = await convertPrice(
-                Number(formatCryptoPrice(grandTotal, 'eth')),
-                'eth',
+                Number(formatCryptoPrice(grandTotal, currencyCode)),
+                currencyCode,
                 'usdc'
             );
             const formattedResult = Number(result).toFixed(2);
