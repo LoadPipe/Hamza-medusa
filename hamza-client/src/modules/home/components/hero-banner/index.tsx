@@ -29,16 +29,13 @@ const HeroBanner = () => {
                             fontWeight="semi-bold"
                             textColor={'white'}
                         >
-                            Hamza Beta Ship - Setting Sail. Join Us In The
-                            Journey to Decentralize Ecommerce Unveiling 3
-                            game-changing Hamza features that redefine
-                            e-commerce —{' '}
+                            Hamza Market Beta! Now accepting Bitcoin payments —{' '}
                             <Text
                                 as="span"
                                 color="cyan.300"
                                 textDecoration="underline"
                             >
-                                learn more!
+                                Learn more!
                             </Text>
                         </Text>
                     </Link>

@@ -44,8 +44,8 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
             if (subTotal && !currencyIsUsdStable(currencyCode)) {
                 try {
                     const result = await convertPrice(
-                        Number(formatCryptoPrice(subTotal, 'eth')),
-                        'eth',
+                        Number(formatCryptoPrice(subTotal, currencyCode)),
+                        currencyCode,
                         'usdc'
                     );
                     const formattedResult = Number(result).toFixed(2);
