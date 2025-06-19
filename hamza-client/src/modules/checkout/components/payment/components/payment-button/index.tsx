@@ -275,7 +275,6 @@ const CryptoPaymentButton = ({
                         : cart.shipping_address?.country_code?.toLowerCase();
 
                     // Clear cart
-                    await clearCart();
 
                     // Redirect to confirmation page
                     //if (response.status == 100) {
@@ -292,6 +291,8 @@ const CryptoPaymentButton = ({
                             showQr
                         );
                     } else {
+                        await clearCart();
+
                         console.log('redirecting to confirmation page');
                         redirectToOrderConfirmation(
                             data?.orders?.length

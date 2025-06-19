@@ -1541,3 +1541,11 @@ export async function validateDiscountUsage(code: string): Promise<DiscountValid
         throw error;
     }
 }
+
+export async function cancelPayments(paymentAddress: string, orderIds: string[], cartId: string) {
+    return putSecure('/custom/checkout/payment/cancel', {
+        payment_address: paymentAddress,
+        order_ids: orderIds,
+        cart_id: cartId,
+    });
+}
