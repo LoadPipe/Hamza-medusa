@@ -9,6 +9,10 @@ import {
     RangeSliderFilledTrack,
     RangeSliderThumb,
 } from '@chakra-ui/react';
+import {
+    FILTER_PRICE_RANGE_MAX,
+    FILTER_PRICE_RANGE_MIN,
+} from '@/zustand/products/filter/use-unified-filter-store';
 
 // Define a type for the range state
 type RangeType = [number, number];
@@ -35,8 +39,8 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
                     aria-label={['min', 'max']}
                     defaultValue={range}
-                    min={0}
-                    max={350}
+                    min={FILTER_PRICE_RANGE_MIN}
+                    max={FILTER_PRICE_RANGE_MAX}
                     onChange={handleRangeChange}
                     colorScheme="blue"
                 >

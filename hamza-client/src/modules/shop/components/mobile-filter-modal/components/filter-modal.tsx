@@ -18,7 +18,10 @@ import CategoryButtonModal from '@/modules/products/components/buttons/category-
 import RangeSliderModal from './range-slider-modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
+import useUnifiedFilterStore, {
+    FILTER_PRICE_RANGE_MAX,
+    FILTER_PRICE_RANGE_MIN,
+} from '@/zustand/products/filter/use-unified-filter-store';
 
 const USE_PRICE_FILTER: boolean = false;
 
@@ -47,7 +50,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
         setRangeLower,
     } = useUnifiedFilterStore();
 
-    const [modalSelectedCategories, setModalSelectedCategories] = useState<string[]>(selectedCategories);
+    const [modalSelectedCategories, setModalSelectedCategories] =
+        useState<string[]>(selectedCategories);
     const [localRange, setLocalRange] = useState<RangeType>(range);
 
     useEffect(() => {
@@ -64,21 +68,20 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>({
         queryKey: ['categories'],
-        queryFn: async() =>
-    {
+        queryFn: async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
             const response = await axios.get(url);
             return response.data;
-        }
+        },
     });
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     return (
@@ -113,7 +116,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                                     categoryName={category.name}
                                     url={category.metadata?.icon_url}
                                     selectedCategories={modalSelectedCategories}
-                                    setSelectedCategories={setModalSelectedCategories}
+                                    setSelectedCategories={
+                                        setModalSelectedCategories
+                                    }
                                 />
                             )
                         )}
@@ -171,9 +176,15 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         backgroundColor={'transparent'}
                         onClick={() => {
                             setSelectedCategories(['all']);
-                            setLocalRange([0, 350]);
-                            setRange([0, 350]);
-                            setRangeUpper(350);
+                            setLocalRange([
+                                FILTER_PRICE_RANGE_MIN,
+                                FILTER_PRICE_RANGE_MAX,
+                            ]);
+                            setRange([
+                                FILTER_PRICE_RANGE_MIN,
+                                FILTER_PRICE_RANGE_MAX,
+                            ]);
+                            setRangeUpper(FILTER_PRICE_RANGE_MAX);
                             setRangeLower(0);
                             onClose();
                         }}
@@ -188,7 +199,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                             } else {
                                 setSelectedCategories(modalSelectedCategories);
                             }
-                            if (localRange[0] !== 0 || localRange[1] !== 350) {
+                            if (
+                                localRange[0] !== 0 ||
+                                localRange[1] !== FILTER_PRICE_RANGE_MAX
+                            ) {
                                 setRangeLower(localRange[0]);
                                 setRangeUpper(localRange[1]);
                             }

@@ -8,8 +8,8 @@ interface CategoryItem {
 
 type RangeType = [number, number];
 
-const DEFAULT_RANGE_LOWER = 0;
-const DEFAULT_RANGE_UPPER = 350;
+export const FILTER_PRICE_RANGE_MIN = 0;
+export const FILTER_PRICE_RANGE_MAX = 5000;
 
 interface UnifiedFilterState {
     // Category filtering
@@ -53,13 +53,17 @@ const useUnifiedFilterStore = create<UnifiedFilterState>()(
             // Category filtering state
             selectedCategories: ['all'],
             setSelectedCategories: (categories: string[]) =>
-                set({ selectedCategories: categories.map((cat) => cat.toLowerCase()) }),
+                set({
+                    selectedCategories: categories.map((cat) =>
+                        cat.toLowerCase()
+                    ),
+                }),
             clearCategories: () => set({ selectedCategories: ['all'] }),
 
             // Price range state
-            range: [DEFAULT_RANGE_LOWER, DEFAULT_RANGE_UPPER],
-            rangeUpper: DEFAULT_RANGE_UPPER,
-            rangeLower: DEFAULT_RANGE_LOWER,
+            range: [FILTER_PRICE_RANGE_MIN, FILTER_PRICE_RANGE_MAX],
+            rangeUpper: FILTER_PRICE_RANGE_MAX,
+            rangeLower: FILTER_PRICE_RANGE_MIN,
             setRange: (range: RangeType) => set({ range }),
             setRangeUpper: (price: number) => set({ rangeUpper: price }),
             setRangeLower: (price: number) => set({ rangeLower: price }),
@@ -72,11 +76,15 @@ const useUnifiedFilterStore = create<UnifiedFilterState>()(
             // Category items state (if needed)
             categoryItems: [],
             setCategoryItems: (
-                items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
+                items:
+                    | CategoryItem[]
+                    | ((prev: CategoryItem[]) => CategoryItem[])
             ) =>
                 set((state) => ({
                     categoryItems:
-                        typeof items === 'function' ? items(state.categoryItems) : items,
+                        typeof items === 'function'
+                            ? items(state.categoryItems)
+                            : items,
                 })),
 
             lastAddress: null,
@@ -89,9 +97,9 @@ const useUnifiedFilterStore = create<UnifiedFilterState>()(
             clearFilters: () =>
                 set({
                     selectedCategories: ['all'],
-                    range: [DEFAULT_RANGE_LOWER, DEFAULT_RANGE_UPPER],
-                    rangeUpper: DEFAULT_RANGE_UPPER,
-                    rangeLower: DEFAULT_RANGE_LOWER,
+                    range: [FILTER_PRICE_RANGE_MIN, FILTER_PRICE_RANGE_MAX],
+                    rangeUpper: FILTER_PRICE_RANGE_MAX,
+                    rangeLower: FILTER_PRICE_RANGE_MIN,
                     selectedReviewStars: null,
                     categoryItems: [],
                 }),
