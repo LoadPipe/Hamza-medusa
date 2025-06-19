@@ -254,6 +254,8 @@ const HeroSlider: React.FC = () => {
                                     : 'transparent'
                             }
                             transition="background-color 0.3s"
+                            onClick={() => setCurrentIndex(index)}
+                            cursor="pointer"
                         />
                     ))}
                 </Flex>
