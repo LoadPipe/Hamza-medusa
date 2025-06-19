@@ -139,7 +139,7 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
                         border="none"
                         bg="transparent"
                         boxShadow="none"
-                        minW="432px"
+                        width="100vw"
                     >
                         <Box
                             bg="#121212"
