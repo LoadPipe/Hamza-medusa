@@ -80,7 +80,6 @@ interface OrderConfirmedProps {
 }
 
 const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
-
     // calculate totals
     const cartOrderTotal = orders.reduce(
         (total: number, order: ExtendedOrder) =>
@@ -133,9 +132,9 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
         let hasBitcoinPayment = false;
         let bitcoinAmount: string = '';
 
-        orders.forEach(order => {
+        orders.forEach((order) => {
             if (order.payments) {
-                order.payments.forEach(payment => {
+                order.payments.forEach((payment) => {
                     if (payment.metadata?.currency === 'btc') {
                         hasBitcoinPayment = true;
                         bitcoinAmount = payment.metadata.amount ?? '';
@@ -265,7 +264,12 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                             height={6}
                                             mr={2}
                                         />
-                                        <Text marginRight={2}>#...{order.id.replace(/^order_/, '').slice(-10)}</Text>
+                                        <Text marginRight={2}>
+                                            #...
+                                            {order.id
+                                                .replace(/^order_/, '')
+                                                .slice(-10)}
+                                        </Text>
                                         {order.store?.name}
                                     </Flex>
 
@@ -289,7 +293,8 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
 
                                 {order.items.map(
                                     (item: LineItem, itemIndex: number) => {
-                                        const productHandle = item.variant?.product?.handle;
+                                        const productHandle =
+                                            item.variant?.product?.handle;
 
                                         return (
                                             <Flex
@@ -299,7 +304,9 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                             >
                                                 <Flex gap={4} py={4}>
                                                     {productHandle ? (
-                                                        <LocalizedClientLink href={`/products/${productHandle}`}>
+                                                        <LocalizedClientLink
+                                                            href={`/products/${productHandle}`}
+                                                        >
                                                             <Box
                                                                 w="48px"
                                                                 h="48px"
@@ -307,17 +314,28 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                                                 borderRadius="8px"
                                                                 overflow="hidden"
                                                                 cursor="pointer"
-                                                                _hover={{ opacity: 0.8 }}
+                                                                _hover={{
+                                                                    opacity: 0.8,
+                                                                }}
                                                                 transition="opacity 0.2s"
                                                             >
                                                                 {item.thumbnail && (
                                                                     <Image
-                                                                        src={item.thumbnail}
-                                                                        alt={item.title}
-                                                                        width={48}
-                                                                        height={48}
+                                                                        src={
+                                                                            item.thumbnail
+                                                                        }
+                                                                        alt={
+                                                                            item.title
+                                                                        }
+                                                                        width={
+                                                                            48
+                                                                        }
+                                                                        height={
+                                                                            48
+                                                                        }
                                                                         style={{
-                                                                            objectFit: 'cover',
+                                                                            objectFit:
+                                                                                'cover',
                                                                         }}
                                                                     />
                                                                 )}
@@ -333,12 +351,17 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                                         >
                                                             {item.thumbnail && (
                                                                 <Image
-                                                                    src={item.thumbnail}
-                                                                    alt={item.title}
+                                                                    src={
+                                                                        item.thumbnail
+                                                                    }
+                                                                    alt={
+                                                                        item.title
+                                                                    }
                                                                     width={48}
                                                                     height={48}
                                                                     style={{
-                                                                        objectFit: 'cover',
+                                                                        objectFit:
+                                                                            'cover',
                                                                     }}
                                                                 />
                                                             )}
@@ -352,11 +375,15 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                                     >
                                                         {/* Clickable Title */}
                                                         {productHandle ? (
-                                                            <LocalizedClientLink href={`/products/${productHandle}`}>
+                                                            <LocalizedClientLink
+                                                                href={`/products/${productHandle}`}
+                                                            >
                                                                 <Text
                                                                     fontWeight="500"
                                                                     cursor="pointer"
-                                                                    _hover={{ color: '#94D42A' }}
+                                                                    _hover={{
+                                                                        color: '#94D42A',
+                                                                    }}
                                                                     transition="color 0.2s"
                                                                 >
                                                                     {item.title}
@@ -372,21 +399,24 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                                             color="gray.400"
                                                             fontSize="14px"
                                                         >
-                                                            Quantity: {item.quantity}
+                                                            Quantity:{' '}
+                                                            {item.quantity}
                                                             {item.variant &&
                                                                 ` | Variation: ${item.variant.title}`}
                                                         </Text>
                                                     </Flex>
                                                     <HStack
                                                         fontWeight="500"
-                                                        alignItems={'flex-start'}
+                                                        alignItems={
+                                                            'flex-start'
+                                                        }
                                                     >
                                                         <Image
                                                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] mt-[2px]"
                                                             src={
                                                                 currencyIcons[
-                                                                order.currency_code ??
-                                                                'usdc'
+                                                                    order.currency_code ??
+                                                                        'usdc'
                                                                 ]
                                                             }
                                                             alt={
@@ -397,7 +427,7 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                                         <Text>
                                                             {formatCryptoPrice(
                                                                 item.unit_price *
-                                                                item.quantity,
+                                                                    item.quantity,
                                                                 order.currency_code
                                                             )}
                                                         </Text>
@@ -598,7 +628,11 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                         <Text>Total Amount Paid:</Text>
                         <HStack>
                             {hasBitcoinPayment ? (
-                                <Icon as={FaBitcoin} boxSize="18px" color="#F7931A" />
+                                <Icon
+                                    as={FaBitcoin}
+                                    boxSize="18px"
+                                    color="#F7931A"
+                                />
                             ) : (
                                 <Image
                                     className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
@@ -607,7 +641,12 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                                 />
                             )}
                             <Text>
-                                {hasBitcoinPayment ? bitcoinAmount : formatCryptoPrice(totalPaid, currencyCode)}
+                                {hasBitcoinPayment
+                                    ? bitcoinAmount
+                                    : formatCryptoPrice(
+                                          totalPaid,
+                                          currencyCode
+                                      )}
                             </Text>
                         </HStack>
                     </Flex>
