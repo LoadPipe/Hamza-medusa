@@ -14,10 +14,9 @@ const HeroBanner = () => {
             >
                 <Flex
                     w="100%"
-                    bg="secondary.charcoal.90"
+                    bg="#181129"
                     color="white"
                     py={2}
-                    mb={4}
                     justifyContent="center"
                     alignItems="center"
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
