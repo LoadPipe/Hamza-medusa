@@ -18,7 +18,10 @@ import CategoryButtonModal from '@/modules/products/components/buttons/category-
 import RangeSliderModal from '@modules/shop/components/mobile-filter-modal/components/range-slider-modal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
+import useUnifiedFilterStore, {
+    FILTER_PRICE_RANGE_MAX,
+    FILTER_PRICE_RANGE_MIN,
+} from '@/zustand/products/filter/use-unified-filter-store';
 
 interface FilterModalProps {
     isOpen: boolean;
@@ -52,7 +55,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         setRangeLower,
     } = useUnifiedFilterStore();
 
-    const [modalSelectedCategories, setModalSelectedCategories] = useState<string[]>(selectedCategories);
+    const [modalSelectedCategories, setModalSelectedCategories] =
+        useState<string[]>(selectedCategories);
     const [modalRange, setModalRange] = useState<RangeType>(globalRange);
 
     useEffect(() => {
@@ -72,14 +76,13 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         },
     });
 
-
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     const isDisabled =
@@ -125,9 +128,11 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                                     categoryName={category.name}
                                     url={category.metadata?.icon_url}
                                     selectedCategories={modalSelectedCategories}
-                                    setSelectedCategories={setModalSelectedCategories}
+                                    setSelectedCategories={
+                                        setModalSelectedCategories
+                                    }
                                 />
-                            ),
+                            )
                         )}
                     </Flex>
 
@@ -140,7 +145,10 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         Price Range
                     </Text>
 
-                    <RangeSliderModal range={modalRange} setRange={setModalRange} />
+                    <RangeSliderModal
+                        range={modalRange}
+                        setRange={setModalRange}
+                    />
 
                     <Divider
                         mt="2rem"
@@ -165,9 +173,12 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             // Clear all filters: reset modal and global state to default
                             setModalSelectedCategories(['all']);
                             setSelectedCategories(['all']);
-                            setRange([0, 350]);
-                            setRangeUpper(350);
-                            setRangeLower(0);
+                            setRange([
+                                FILTER_PRICE_RANGE_MIN,
+                                FILTER_PRICE_RANGE_MAX,
+                            ]);
+                            setRangeUpper(FILTER_PRICE_RANGE_MAX);
+                            setRangeLower(FILTER_PRICE_RANGE_MIN);
                             onClose();
                         }}
                     >

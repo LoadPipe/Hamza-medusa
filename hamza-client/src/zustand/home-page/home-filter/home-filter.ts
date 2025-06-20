@@ -1,3 +1,7 @@
+import {
+    FILTER_PRICE_RANGE_MAX,
+    FILTER_PRICE_RANGE_MIN,
+} from '@/zustand/products/filter/use-unified-filter-store';
 import { create } from 'zustand';
 
 interface CategoryItem {
@@ -28,7 +32,7 @@ interface ShopFilterState {
 
 // Create the Zustand store
 const useHomeModalFilter = create<ShopFilterState>((set) => ({
-    range: [0, 350],
+    range: [FILTER_PRICE_RANGE_MIN, FILTER_PRICE_RANGE_MAX],
     rangeUpper: 0,
     rangeLower: 0,
     selectCategoryFilter: [], // Initialized to a default array

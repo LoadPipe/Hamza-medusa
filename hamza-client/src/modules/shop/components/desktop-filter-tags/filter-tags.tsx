@@ -2,7 +2,10 @@ import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import FilterTag from './filter-tag';
 import { IoCloseOutline } from 'react-icons/io5';
-import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
+import useUnifiedFilterStore, {
+    FILTER_PRICE_RANGE_MAX,
+    FILTER_PRICE_RANGE_MIN,
+} from '@/zustand/products/filter/use-unified-filter-store';
 
 const FilterTags = () => {
     const {
@@ -14,7 +17,11 @@ const FilterTags = () => {
     } = useUnifiedFilterStore();
 
     const filterTags = () => {
-        if (selectedCategories && Array.isArray(selectedCategories) && !selectedCategories.includes('all')) {
+        if (
+            selectedCategories &&
+            Array.isArray(selectedCategories) &&
+            !selectedCategories.includes('all')
+        ) {
             return selectedCategories.map((categoryId, index) => (
                 <FilterTag
                     key={`category-${index}`}
@@ -28,8 +35,8 @@ const FilterTags = () => {
 
     const handleClearAll = () => {
         setSelectedCategories(['all']);
-        setRange([0, 350]);
-        setRangeUpper(350);
+        setRange([FILTER_PRICE_RANGE_MIN, FILTER_PRICE_RANGE_MAX]);
+        setRangeUpper(FILTER_PRICE_RANGE_MAX);
         setRangeLower(0);
     };
 
