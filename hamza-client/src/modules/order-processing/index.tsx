@@ -42,7 +42,7 @@ import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { STATUS_STEPS } from './types';
 import {
     cancelOrder,
-    cancelPayments,
+    cancelPayment,
     copyCart,
     getPaymentData,
 } from '@/lib/server';
@@ -186,7 +186,7 @@ const OrderProcessing = ({
         try {
             const orderIds = ordersToCancel.map((order) => order.id);
             // Call the server function to cancel the payment
-            const result = await cancelPayments(
+            const result = await cancelPayment(
                 paymentData.paymentAddress,
                 orderIds,
                 cartId

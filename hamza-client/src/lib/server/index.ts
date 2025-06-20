@@ -1561,14 +1561,22 @@ export async function validateDiscountUsage(
     }
 }
 
-export async function cancelPayments(
+export async function cancelPayment(
     paymentAddress: string,
     orderIds: string[],
     cartId: string
 ) {
+    //get customer id
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customerId: string = token?.customer_id ?? '';
+
+    //call api
     return putSecure('/custom/checkout/payment/cancel', {
         payment_address: paymentAddress,
         order_ids: orderIds,
         cart_id: cartId,
+        customer_id: customerId,
     });
 }
