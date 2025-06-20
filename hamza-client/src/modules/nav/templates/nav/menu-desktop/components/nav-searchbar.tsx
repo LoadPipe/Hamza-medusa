@@ -38,7 +38,7 @@ const NavSearchBar = () => {
                 display={'flex'}
                 mx="auto"
                 alignItems={'center'}
-                maxW={'448px'}
+                maxW={'688px'}
             >
                 <Input
                     width={'100%'}
@@ -50,7 +50,7 @@ const NavSearchBar = () => {
                     pl="4rem"
                     fontSize={{ base: '14px', md: '16px' }}
                     color="#3E3E3E"
-                    placeholder="Search for product name, product..."
+                    placeholder="Search for product name, product type, brand name, category, etc..."
                     _placeholder={{ color: '#555555' }}
                     _hover={{ borderColor: 'primary.green.900' }}
                     cursor={'pointer'}

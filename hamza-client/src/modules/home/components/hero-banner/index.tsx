@@ -17,6 +17,7 @@ const HeroBanner = () => {
                     bg="#181129"
                     color="white"
                     py={2}
+                    px={4}
                     justifyContent="center"
                     alignItems="center"
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
