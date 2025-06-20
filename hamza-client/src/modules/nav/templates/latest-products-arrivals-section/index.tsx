@@ -131,7 +131,7 @@ const LatestArrivalsSection: React.FC = () => {
     }
 
     return (
-        <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }}>
+        <Box px={{ base: '4', md: '4' }} py={{ base: '8', md: '16' }}>
             <Flex justifyContent="space-between" alignItems="center" mb={{ base: '6', md: '8' }}>
                 <Text
                     fontSize={{ base: '2xl', md: '4xl' }}
