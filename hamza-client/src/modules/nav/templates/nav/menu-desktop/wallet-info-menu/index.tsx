@@ -176,13 +176,14 @@ const WalletInfo: React.FC<NewWalletInfoProps> = ({
                             position="relative"
                         >
                             <Flex
-                                justifyContent="space-between"
+                                justifyContent="flex-end"
                                 alignItems="center"
                                 mb={5}
                             >
-                                <AddressDisplay />
                                 <ChainDropdown />
                             </Flex>
+
+                            <AddressDisplay />
 
                             {/* Wallet balance row */}
                             <Flex
