@@ -157,9 +157,10 @@ const WalletInfoMobile: React.FC<NewWalletInfoProps> = ({
                                 alignItems="center"
                                 mb={5}
                             >
-                                <AddressDisplay />
                                 <ChainDropdown />
                             </Flex>
+
+                            <AddressDisplay />
 
                             {/* Wallet balance row */}
                             <Flex
