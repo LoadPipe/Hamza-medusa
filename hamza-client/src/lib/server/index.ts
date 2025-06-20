@@ -24,6 +24,7 @@ import {
     ProductCategoryWithChildren,
     ProductPreviewType,
     DiscountValidationResult,
+    LatestProductsResponse,
 } from '@/types/global';
 import { medusaClient } from '../config/config';
 import medusaError from '@lib/util/medusa-error';
@@ -275,6 +276,23 @@ export async function getAllProducts(
         offset,
     });
 }
+
+export async function getLatestProducts(
+    limit: number,
+    offset: number
+): Promise<LatestProductsResponse> {
+    try {
+        const response: LatestProductsResponse = await get('/custom/product/latest', {
+            limit,
+            offset,
+        });
+        return response;
+    } catch (error) {
+        console.error('Error fetching latest products:', error);
+        return { products: [], count: 0 };
+    }
+}
+
 
 // DELETE Wishlist Item
 export async function deleteWishlistItem(
