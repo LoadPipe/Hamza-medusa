@@ -98,3 +98,18 @@ export interface DiscountValidationResult {
     usage_count: number;
     code: string;
 }
+
+export type Store = {
+    id: string;
+    name: string;
+    handle: string;
+    icon: string;
+    created_at: string;
+    is_verified?: boolean;
+    review_count?: number;
+    avg_rating?: number;
+};
+
+export type FeaturedStoresResponse = {
+    stores: Store[];
+};
