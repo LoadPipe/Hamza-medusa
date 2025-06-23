@@ -281,7 +281,7 @@ const TwitterFeed = async () => {
                     Trusted Worldwide
                 </h2>
                 <div className="relative">
-                    <div className="flex space-x-4 overflow-x-auto pb-4">
+                    <div className="flex space-x-4 overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-[#020202] [&::-webkit-scrollbar-thumb]:bg-[#6b7280] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#9ca3af]">
                         {tweets.map((tweet) => (
                             <TweetCard key={tweet.id} tweet={tweet} />
                         ))}
