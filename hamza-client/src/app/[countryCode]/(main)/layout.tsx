@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Footer from '@/modules/nav/templates/footer';
 import Nav from '@/modules/nav/templates/nav';
 import Faq from '@/modules/nav/templates/faq';
+import TwitterFeed from '@/modules/twitter/templates/twitter-feed';
 
 const MEDUSA_CLIENT_URL =
     process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'https://localhost:8000';
@@ -20,6 +21,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
         >
             <Nav />
             {props.children}
+            <TwitterFeed />
             <Faq />
             <Footer />
         </div>
