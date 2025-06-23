@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Footer from '@/modules/nav/templates/footer';
 import Nav from '@/modules/nav/templates/nav';
 import HeroBanner from '@/modules/home/components/hero-banner';
+import Faq from '@/modules/nav/templates/faq';
 
 const MEDUSA_CLIENT_URL =
     process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'https://localhost:8000';
@@ -21,6 +22,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
             <HeroBanner />
             <Nav />
             {props.children}
+            <Faq />
             <Footer />
         </div>
     );
