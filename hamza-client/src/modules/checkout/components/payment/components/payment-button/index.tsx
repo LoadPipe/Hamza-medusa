@@ -418,7 +418,7 @@ const CryptoPaymentButton = ({
     };
 
     const handlePayment = async (paymentMode: string, chainType: string) => {
-        if (!isConnected) {
+        if (!isConnected && paymentMode != 'direct') {
             openConnectModal?.();
             return;
         }

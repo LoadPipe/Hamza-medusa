@@ -18,7 +18,7 @@ const OrderSummary = ({ cart }: { cart: CartWithCheckoutStep }) => {
     const { isAuthenticated, showAuthCheck } = useDelayedAuthCheck();
     // If the delay has passed and the user is NOT logged in, show ForceWalletConnect
     if (showAuthCheck && !isAuthenticated) {
-        return <ForceWalletConnect />;
+        //return <ForceWalletConnect />;
     }
 
     const stores = organizeCartItemsByStore(cart as CartWithCheckoutStep);
