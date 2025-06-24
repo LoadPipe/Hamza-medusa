@@ -33,12 +33,13 @@ const NavSearchBar = () => {
     }, [pathname]);
 
     return (
-        <Flex
-            width={'100%'}
-            maxW={'448px'}
-            display={{ base: 'none', md: 'flex' }}
-        >
-            <InputGroup display={'flex'} mx="1rem" alignItems={'center'}>
+        <Flex width={'100%'} display={{ base: 'none', md: 'flex' }}>
+            <InputGroup
+                display={'flex'}
+                mx="auto"
+                alignItems={'center'}
+                maxW={'688px'}
+            >
                 <Input
                     width={'100%'}
                     height={'60px'}
@@ -49,7 +50,7 @@ const NavSearchBar = () => {
                     pl="4rem"
                     fontSize={{ base: '14px', md: '16px' }}
                     color="#3E3E3E"
-                    placeholder="Search for product name, product..."
+                    placeholder="Search for product name, product type, brand name, category, etc..."
                     _placeholder={{ color: '#555555' }}
                     _hover={{ borderColor: 'primary.green.900' }}
                     cursor={'pointer'}

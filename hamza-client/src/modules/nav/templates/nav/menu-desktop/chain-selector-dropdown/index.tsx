@@ -70,6 +70,7 @@ const ChainDropdown: React.FC = () => {
                 py="10px"
                 color="white"
                 border="none"
+                width="100%"
                 _hover={{ bg: '#242424' }}
                 _active={{ bg: '#242424' }}
             >
@@ -82,7 +83,14 @@ const ChainDropdown: React.FC = () => {
                             borderRadius="full"
                         />
                     )}
-                    <TriangleDownIcon boxSize="14px" />
+                    <Text fontSize="16px" fontWeight={400} color="white">
+                        {chain?.name}
+                    </Text>
+                    <TriangleDownIcon
+                        boxSize="14px"
+                        position="absolute"
+                        right="16px"
+                    />
                 </Flex>
             </MenuButton>
 
