@@ -24,6 +24,7 @@ import {
     ProductCategoryWithChildren,
     ProductPreviewType,
     DiscountValidationResult,
+    LatestProductsResponse,
 } from '@/types/global';
 import { medusaClient } from '../config/config';
 import medusaError from '@lib/util/medusa-error';
@@ -276,6 +277,23 @@ export async function getAllProducts(
     });
 }
 
+export async function getLatestProducts(
+    limit: number,
+    offset: number
+): Promise<LatestProductsResponse> {
+    try {
+        const response: LatestProductsResponse = await get('/custom/product/latest', {
+            limit,
+            offset,
+        });
+        return response;
+    } catch (error) {
+        console.error('Error fetching latest products:', error);
+        return { products: [], count: 0 };
+    }
+}
+
+
 // DELETE Wishlist Item
 export async function deleteWishlistItem(
     customer_id: string,
@@ -311,6 +329,11 @@ export async function getAllVendorProducts() {
 //Get product collection for hero slider
 export async function getProductCollection() {
     return get('/custom/product/hero-collection');
+}
+
+// for a specific category (used in category page hero section)
+export async function getHeroProductByCategory(handle: string) {
+  return get(`/custom/product/hero-by-category?category=${handle}`);
 }
 
 // Get All Store Names

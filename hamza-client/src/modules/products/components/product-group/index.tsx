@@ -610,7 +610,7 @@ const ProductCardGroup = ({
                     !isLoading &&
                     !loadingInitialBatches &&
                     !isLoadingInitialBatches && (
-                        <Text textAlign="center" fontSize="lg" my={8}>
+                        <Text textAlign="center" fontSize="lg" my={8} color="whiteAlpha.800">
                             No products found. Try adjusting your filters.
                         </Text>
                     )}

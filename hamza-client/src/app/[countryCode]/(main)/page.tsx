@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-query';
 import HeroSlider from '@/modules/home/components/hero-slider';
 import NavSearchBar from '@/modules/nav/templates/nav/menu-desktop/components/nav-searchbar';
+import CategoryGrid from '@/modules/categories/components/category-grid';
 
 /**
  * Author: Garo Nazarian
@@ -71,6 +72,7 @@ export default async function Home({
             <Box backgroundColor={'transparent'}>
                 <NavSearchBar />
                 <HeroSlider />
+                <CategoryGrid/>
                 <SearchAndFilterPanel />
             </Box>
         </HydrationBoundary>
