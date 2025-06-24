@@ -10,6 +10,7 @@ import {
     HydrationBoundary,
 } from '@tanstack/react-query';
 import HeroSlider from '@/modules/home/components/hero-slider';
+import CategoryGrid from '@/modules/categories/components/category-grid';
 
 /**
  * Author: Garo Nazarian
@@ -70,6 +71,7 @@ export default async function Home({
             <Box backgroundColor={'transparent'}>
                 <HeroBanner />
                 <HeroSlider />
+                <CategoryGrid/>
                 <SearchAndFilterPanel />
             </Box>
         </HydrationBoundary>
