@@ -98,3 +98,7 @@ export interface DiscountValidationResult {
     usage_count: number;
     code: string;
 }
+export interface LatestProductsResponse {
+    products: Product[];
+    count: number;
+}
