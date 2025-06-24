@@ -105,76 +105,91 @@ const LatestArrivalsTemplate = () => {
     }
 
     return (
-        <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }}>
-            <Flex justifyContent="flex-start" alignItems="center" mb={{ base: '6', md: '8' }}>
-                <Text
-                    fontSize={{ base: '2xl', md: '4xl' }}
-                    fontWeight="bold"
-                    color="white"
+        <Box px={{ base: '4', md: '4' }} py={{ base: '4', md: '4' }}>
+            <Flex
+                maxW="1340px"
+                w="100%"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                mx={{ base: '0', md: 'auto' }}
+                my="2rem"
+            >
+                <Flex
+                    justifyContent="flex-start"
+                    alignItems="center"
+                    w="100%"
+                    mb={{ base: '10', md: '16' }} 
                 >
-                    Latest Arrivals
-                </Text>
-            </Flex>
-            <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={{ base: '4', md: '8' }}>
-                {latestProducts.map((product) => {
-                    try {
-                        const variant = product.variants?.[0];
-                        if (!variant) {
-                            console.warn(`Product ${product.id} has no variants, skipping.`);
+                    <Text
+                        fontSize={{ base: '2xl', md: '4xl' }}
+                        fontWeight="bold"
+                        color="white"
+                    >
+                        Latest Arrivals
+                    </Text>
+                </Flex>
+                <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={{ base: '4', md: '8' }}>
+                    {latestProducts.map((product) => {
+                        try {
+                            const variant = product.variants?.[0];
+                            if (!variant) {
+                                console.warn(`Product ${product.id} has no variants, skipping.`);
+                                return null;
+                            }
+
+                            const formattedPrice = getFormattedProductPrice(
+                                variant,
+                                preferred_currency_code ?? 'usdc'
+                            );
+
+                            const usdcFormattedPrice = formatPriceBetweenCurrencies(
+                                variant?.prices,
+                                preferred_currency_code ?? 'usdc',
+                                'usdc'
+                            );
+
+                            // Calculate review stats
+                            const reviewCounter = product.reviews?.length || 0;
+                            const totalRatingSum = (product.reviews || []).reduce(
+                                (acc, review) => acc + (review?.rating || 0),
+                                0
+                            );
+                            const avgRating = reviewCounter
+                                ? totalRatingSum / reviewCounter
+                                : 0;
+                            const roundedAvgRating = parseFloat(
+                                avgRating.toFixed(2)
+                            );
+
+                            return (
+                                <ProductCard
+                                    key={product.id}
+                                    reviewCount={reviewCounter}
+                                    totalRating={roundedAvgRating}
+                                    productHandle={product.handle}
+                                    variantID={variant.id}
+                                    countryCode={product.origin_country || 'us'}
+                                    productName={product.title}
+                                    productPrice={formattedPrice}
+                                    usdcProductPrice={usdcFormattedPrice}
+                                    currencyCode={preferred_currency_code || 'usdc'}
+                                    imageSrc={product.thumbnail || 'https://via.placeholder.com/200'}
+                                    hasDiscount={product.is_giftcard || false}
+                                    discountValue={product.discountValue || ''}
+                                    productId={product.id}
+                                    inventory={variant.inventory_quantity}
+                                    allow_backorder={variant.allow_backorder}
+                                    storeId={product.store_id || ''}
+                                />
+                            );
+                        } catch (err) {
+                            console.error('Error rendering product card:', err, product);
                             return null;
                         }
-
-                        const formattedPrice = getFormattedProductPrice(
-                            variant,
-                            preferred_currency_code ?? 'usdc'
-                        );
-
-                        const usdcFormattedPrice = formatPriceBetweenCurrencies(
-                            variant?.prices,
-                            preferred_currency_code ?? 'usdc',
-                            'usdc'
-                        );
-
-                        // Calculate review stats
-                        const reviewCounter = product.reviews?.length || 0;
-                        const totalRatingSum = (product.reviews || []).reduce(
-                            (acc, review) => acc + (review?.rating || 0),
-                            0
-                        );
-                        const avgRating = reviewCounter
-                            ? totalRatingSum / reviewCounter
-                            : 0;
-                        const roundedAvgRating = parseFloat(
-                            avgRating.toFixed(2)
-                        );
-
-                        return (
-                            <ProductCard
-                                key={product.id}
-                                reviewCount={reviewCounter}
-                                totalRating={roundedAvgRating}
-                                productHandle={product.handle}
-                                variantID={variant.id}
-                                countryCode={product.origin_country || 'us'}
-                                productName={product.title}
-                                productPrice={formattedPrice}
-                                usdcProductPrice={usdcFormattedPrice}
-                                currencyCode={preferred_currency_code || 'usdc'}
-                                imageSrc={product.thumbnail || 'https://via.placeholder.com/200'}
-                                hasDiscount={product.is_giftcard || false}
-                                discountValue={product.discountValue || ''}
-                                productId={product.id}
-                                inventory={variant.inventory_quantity}
-                                allow_backorder={variant.allow_backorder}
-                                storeId={product.store_id || ''}
-                            />
-                        );
-                    } catch (err) {
-                        console.error('Error rendering product card:', err, product);
-                        return null;
-                    }
-                })}
-            </SimpleGrid>
+                    })}
+                </SimpleGrid>
+            </Flex>
         </Box>
     );
 };
