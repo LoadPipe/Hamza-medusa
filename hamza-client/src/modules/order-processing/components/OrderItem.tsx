@@ -101,8 +101,6 @@ const OrderItem = ({
         setDiscountTotal(discountTotal);
     }, [order]);
 
-    console.log('order: ', order);
-
     return (
         <Box
             bg="gray.800"

@@ -43,6 +43,7 @@ import { STATUS_STEPS } from './types';
 import {
     cancelOrder,
     cancelPayment,
+    clearCart,
     copyCart,
     getPaymentData,
 } from '@/lib/server';
