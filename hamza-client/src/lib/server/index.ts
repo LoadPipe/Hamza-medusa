@@ -331,6 +331,11 @@ export async function getProductCollection() {
     return get('/custom/product/hero-collection');
 }
 
+// for a specific category (used in category page hero section)
+export async function getHeroProductByCategory(handle: string) {
+  return get(`/custom/product/hero-by-category?category=${handle}`);
+}
+
 // Get All Store Names
 export async function getAllStoreNames() {
     return get('/custom/store/name');
