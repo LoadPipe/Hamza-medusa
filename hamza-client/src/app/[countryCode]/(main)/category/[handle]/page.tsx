@@ -1,6 +1,10 @@
-import ShopTemplate from '@/modules/shop';
-import { Box } from '@chakra-ui/react';
+'use client';
+
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Flex, Text } from '@chakra-ui/react';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import CategoryHero from '@/modules/categories/components/category-banner';
+import CategoryTemplate from '@/modules/categories';
 
 type Params = {
     params: {
@@ -25,7 +29,42 @@ export default function CategoryShopPage({ params }: Params) {
                 background: 'linear-gradient(to bottom, #020202 20vh, #2C272D 70vh)',
             }}
         >
-            <ShopTemplate category={handle} />
+            {/* Breadcrumb Section */}
+            <Flex
+                maxW="1340px"
+                w="100%"
+                mx="auto"
+                px={{ base: '1rem', md: '2rem' }}
+                pt="5.5rem"
+                alignItems="center"
+            >
+                <Breadcrumb
+                    fontWeight="medium"
+                    fontSize="sm"
+                    spacing="8px"
+                    separator="/"
+                    color="whiteAlpha.800"
+                >
+                    <BreadcrumbItem>
+                        <BreadcrumbLink as={Link} href={`/${countryCode}`}>
+                            Home
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+
+                    <BreadcrumbItem isCurrentPage>
+                        <BreadcrumbLink _hover={{ textDecoration: 'none' }}>
+                            {normalizedHandle.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                </Breadcrumb>
+            </Flex>
+
+
+            {/* Hero Section */}
+            <CategoryHero category={normalizedHandle} />
+
+            {/* Main Shop Template */}
+            <CategoryTemplate category={normalizedHandle} />
         </Box>
     );
 }

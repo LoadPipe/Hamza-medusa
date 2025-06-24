@@ -10,6 +10,8 @@ import {
     HydrationBoundary,
 } from '@tanstack/react-query';
 import HeroSlider from '@/modules/home/components/hero-slider';
+import NavSearchBar from '@/modules/nav/templates/nav/menu-desktop/components/nav-searchbar';
+import CategoryGrid from '@/modules/categories/components/category-grid';
 
 /**
  * Author: Garo Nazarian
@@ -68,8 +70,9 @@ export default async function Home({
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <Box backgroundColor={'transparent'}>
-                <HeroBanner />
+                <NavSearchBar />
                 <HeroSlider />
+                <CategoryGrid/>
                 <SearchAndFilterPanel />
             </Box>
         </HydrationBoundary>
