@@ -18,7 +18,7 @@ interface CustomerAuthStoreState {
 }
 
 const shortenAddress = (addr: string): string =>
-    `${addr.slice(0, 12)}...${addr.slice(-4)}`;
+    `${addr.slice(0, 19)}...${addr.slice(-4)}`;
 
 const AddressDisplay: React.FC = (): JSX.Element | null => {
     const { authData, hnsName } = useCustomerAuthStore(
@@ -40,9 +40,7 @@ const AddressDisplay: React.FC = (): JSX.Element | null => {
             : shortenAddress(authData.wallet_address);
 
     const fullValue: string =
-        hnsName && hnsName.trim() !== ''
-            ? hnsName
-            : authData.wallet_address;
+        hnsName && hnsName.trim() !== '' ? hnsName : authData.wallet_address;
 
     const handleMouseEnter = (): void => {
         if (!isCopied) {
@@ -67,7 +65,7 @@ const AddressDisplay: React.FC = (): JSX.Element | null => {
     };
 
     return (
-        <Flex alignItems="center" gap="8px">
+        <Flex alignItems="center" gap="8px" mb={5}>
             {/* Wallet icon */}
             <Box boxSize="20px" color="#E8EAED">
                 <MdWallet size={20} />
@@ -82,7 +80,6 @@ const AddressDisplay: React.FC = (): JSX.Element | null => {
             >
                 {displayValue}
             </Text>
-
 
             {/* Copy icon with a controlled tooltip */}
             <Tooltip
