@@ -5,32 +5,42 @@ import {
     Box,
     Text,
     SimpleGrid,
-    Link as ChakraLink,
     Flex,
     Skeleton,
     SkeletonText,
     GridItem,
 } from '@chakra-ui/react';
-import ProductCard from '../../../products/components/product-card'
-import { Product, ProductReview, ProductPrice, LatestProductsResponse } from '@/types/global';
-import { useQuery } from '@tanstack/react-query';
+import ProductCard from '@modules/products/components/product-card';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 import { getLatestProducts } from '@/lib/server';
-import { useRouter } from 'next/navigation';
+import { LatestProductsResponse, Product, ProductPrice, ProductVariants } from '@/types/global';
 
+const PRODUCTS_PER_PAGE = 24;
 
-const LatestArrivalsSection: React.FC = () => {
+const LatestArrivalsTemplate = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
-    const PRODUCTS_TO_DISPLAY_INITIAL = 4;
-    const router = useRouter();
-
     const [latestProducts, setLatestProducts] = useState<Product[]>([]);
 
+    const { data, isLoading, isError, error } = useQuery<LatestProductsResponse>({
+        queryKey: ['latestProducts', preferred_currency_code, PRODUCTS_PER_PAGE],
+        queryFn: () => getLatestProducts(PRODUCTS_PER_PAGE, 0),
+        staleTime: 5 * 60 * 1000,
+        retry: 1,
+    });
+
+    useEffect(() => {
+        if (data?.products) {
+            setLatestProducts(data.products);
+        }
+    }, [data]);
+
+    // Utility for price formatting
     function getFormattedProductPrice(
-        variant: any,
-        preferred_currency_code: string | null
+        variant: ProductVariants,
+        preferred_currency_code: string
     ) {
         const productPricing =
             variant?.prices?.find(
@@ -40,54 +50,20 @@ const LatestArrivalsSection: React.FC = () => {
             variant?.prices?.[0]?.amount ||
             0;
 
-        return formatCryptoPrice(
-            productPricing ?? 0,
-            preferred_currency_code as string
-        );
+        return formatCryptoPrice(productPricing ?? 0, preferred_currency_code);
     }
 
-    const { data, isLoading, isError, error } = useQuery<LatestProductsResponse>({
-        queryKey: ['latestProducts', preferred_currency_code],
-        queryFn: () => getLatestProducts(PRODUCTS_TO_DISPLAY_INITIAL, 0),
-        staleTime: 5 * 60 * 1000,
-        retry: 1,
-    });
-
-    // Update latestProducts when new data arrives
-    useEffect(() => {
-        if (data?.products) {
-            setLatestProducts(data.products.slice(0, PRODUCTS_TO_DISPLAY_INITIAL));
-        }
-    }, [data]);
-
-    // Handler for "View all" click
-    const handleViewAllClick = () => {
-        router.push(`/latest-arrivals`);
-    };
-
-    // Initial Loading State
+    // Loading state
     if (isLoading) {
         return (
-            <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }} mt={{ base: '8', md: '16' }}>
-                <Flex justifyContent="space-between" alignItems="center" mb={{ base: '6', md: '8' }}>
-                    <Text
-                        fontSize={{ base: '2xl', md: '4xl' }}
-                        fontWeight="bold"
-                        color="white"
-                    >
-                        Latest Arrivals
-                    </Text>
-                    {/* Skeleton for "View All" */}
-                    <Skeleton width="100px" height="24px" />
-                </Flex>
-                <SimpleGrid
-                    columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
-                    spacing={{ base: '4', md: '8' }}
-                >
-                    {/* Render skeletons */}
-                    {Array.from({ length: PRODUCTS_TO_DISPLAY_INITIAL }).map((_, index) => (
+            <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }}>
+                <Text fontSize={{ base: '2xl', md: '4xl' }} fontWeight="bold" color="white" mb="8">
+                    Latest Arrivals
+                </Text>
+                <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={{ base: '4', md: '8' }}>
+                    {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, idx) => (
                         <GridItem
-                            key={index}
+                            key={idx}
                             minHeight="243.73px"
                             height={{ base: '100%', md: '399px' }}
                             width="100%"
@@ -97,11 +73,7 @@ const LatestArrivalsSection: React.FC = () => {
                         >
                             <Skeleton height={{ base: '134.73px', md: '238px' }} width="100%" />
                             <Box p={{ base: '2', md: '4' }}>
-                                <SkeletonText
-                                    mt={{ base: '1', md: '4' }}
-                                    noOfLines={2}
-                                    spacing={{ base: '3', md: '4' }}
-                                />
+                                <SkeletonText mt={{ base: '1', md: '4' }} noOfLines={2} spacing={{ base: '3', md: '4' }} />
                             </Box>
                         </GridItem>
                     ))}
@@ -113,7 +85,7 @@ const LatestArrivalsSection: React.FC = () => {
     // Error State
     if (isError) {
         return (
-            <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }} mt={{ base: '8', md: '16' }}>
+            <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }}>
                 <Text color="red.500" textAlign="center" fontSize="xl">
                     Error loading latest arrivals: {error?.message || 'Unknown error.'}
                 </Text>
@@ -124,7 +96,7 @@ const LatestArrivalsSection: React.FC = () => {
     // No Products State
     if (latestProducts.length === 0 && !isLoading) {
         return (
-            <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }} mt={{ base: '8', md: '16' }}>
+            <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }}>
                 <Text color="gray.500" textAlign="center" fontSize="xl">
                     No latest products available.
                 </Text>
@@ -133,8 +105,8 @@ const LatestArrivalsSection: React.FC = () => {
     }
 
     return (
-        <Box px={{ base: '4', md: '4' }} py={{ base: '8', md: '16' }}>
-            <Flex justifyContent="space-between" alignItems="center" mb={{ base: '6', md: '8' }}>
+        <Box px={{ base: '4', md: '16' }} py={{ base: '8', md: '16' }}>
+            <Flex justifyContent="flex-start" alignItems="center" mb={{ base: '6', md: '8' }}>
                 <Text
                     fontSize={{ base: '2xl', md: '4xl' }}
                     fontWeight="bold"
@@ -142,29 +114,11 @@ const LatestArrivalsSection: React.FC = () => {
                 >
                     Latest Arrivals
                 </Text>
-                <ChakraLink
-                    fontSize={{ base: 'md', md: 'lg' }}
-                    color="primary.green.900"
-                    _hover={{ textDecoration: 'underline', color: 'gray.300' }}
-                    display="flex"
-                    alignItems="center"
-                    onClick={handleViewAllClick}
-                    cursor="pointer"
-                >
-                    View all
-                    <Box as="span" ml="2" display="inline-block" transform="translateX(0)" transition="transform 0.2s ease-in-out" _groupHover={{ transform: 'translateX(4px)' }}>
-                        &rarr;
-                    </Box>
-                </ChakraLink>
             </Flex>
-
-            <SimpleGrid
-                columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
-                spacing={{ base: '4', md: '8' }}
-            >
+            <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={{ base: '4', md: '8' }}>
                 {latestProducts.map((product) => {
                     try {
-                        const variant = product.variants[0];
+                        const variant = product.variants?.[0];
                         if (!variant) {
                             console.warn(`Product ${product.id} has no variants, skipping.`);
                             return null;
@@ -172,7 +126,7 @@ const LatestArrivalsSection: React.FC = () => {
 
                         const formattedPrice = getFormattedProductPrice(
                             variant,
-                            preferred_currency_code
+                            preferred_currency_code ?? 'usdc'
                         );
 
                         const usdcFormattedPrice = formatPriceBetweenCurrencies(
@@ -184,8 +138,7 @@ const LatestArrivalsSection: React.FC = () => {
                         // Calculate review stats
                         const reviewCounter = product.reviews?.length || 0;
                         const totalRatingSum = (product.reviews || []).reduce(
-                            (acc: number, review: ProductReview) =>
-                                acc + (review?.rating || 0),
+                            (acc, review) => acc + (review?.rating || 0),
                             0
                         );
                         const avgRating = reviewCounter
@@ -194,7 +147,6 @@ const LatestArrivalsSection: React.FC = () => {
                         const roundedAvgRating = parseFloat(
                             avgRating.toFixed(2)
                         );
-
 
                         return (
                             <ProductCard
@@ -227,4 +179,4 @@ const LatestArrivalsSection: React.FC = () => {
     );
 };
 
-export default LatestArrivalsSection;
+export default LatestArrivalsTemplate;
