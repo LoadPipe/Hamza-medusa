@@ -1559,10 +1559,14 @@ export async function setBestShippingAddress(
 }
 
 export async function validateDiscountUsage(
-    code: string
+    code: string,
+    customerId: string
 ): Promise<DiscountValidationResult> {
     try {
-        const response = await get('/custom/discount/validate', { code });
+        const response = await getSecure('/custom/discount/validate', {
+            code,
+            customer_id: customerId,
+        });
         return response;
     } catch (error: any) {
         console.error('Error validating discount usage:', error);
