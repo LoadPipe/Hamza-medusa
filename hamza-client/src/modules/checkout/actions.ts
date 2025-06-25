@@ -2,9 +2,7 @@
 
 import { cookies } from 'next/headers';
 import {
-    addDefaultShippingMethod,
     addShippingMethod,
-    completeCart,
     deleteDiscount,
     getCart,
     setCartEmail,
@@ -14,9 +12,6 @@ import {
 } from '@/lib/server';
 import { GiftCard, StorePostCartsCartReq } from '@medusajs/medusa';
 import { revalidateTag } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { medusaClient } from '@/lib/config/config';
-import axios from 'axios';
 
 export async function cartUpdate(data: StorePostCartsCartReq) {
     const cartId = cookies().get('_medusa_cart_id')?.value;
@@ -37,8 +32,13 @@ export async function applyDiscount(code: string) {
     if (!cartId) return 'No cartId cookie found';
 
     try {
+        // get cart to extract customer_id from cart
+        const cart = await getCart(cartId);
+
+        const customerId = cart.customer_id;
+
         // Validate discount usage limit before applying
-        const validationResult = await validateDiscountUsage(code);
+        const validationResult = await validateDiscountUsage(code, customerId);
 
         if (validationResult) {
             if (!validationResult.valid) {

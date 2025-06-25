@@ -69,6 +69,7 @@ const ProcessingOrder = ({ order }: { order: any }) => {
                             )}
                             paymentStatus={order.payment_status}
                             paymentType={'Processing'}
+                            cartId={order.cart_id}
                         />
                     ) : null}
                     {/*item: {item.id} <br />*/}

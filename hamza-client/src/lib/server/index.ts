@@ -24,6 +24,7 @@ import {
     ProductCategoryWithChildren,
     ProductPreviewType,
     DiscountValidationResult,
+    FeaturedStoresResponse,
     LatestProductsResponse,
 } from '@/types/global';
 import { medusaClient } from '../config/config';
@@ -282,17 +283,19 @@ export async function getLatestProducts(
     offset: number
 ): Promise<LatestProductsResponse> {
     try {
-        const response: LatestProductsResponse = await get('/custom/product/latest', {
-            limit,
-            offset,
-        });
+        const response: LatestProductsResponse = await get(
+            '/custom/product/latest',
+            {
+                limit,
+                offset,
+            }
+        );
         return response;
     } catch (error) {
         console.error('Error fetching latest products:', error);
         return { products: [], count: 0 };
     }
 }
-
 
 // DELETE Wishlist Item
 export async function deleteWishlistItem(
@@ -333,7 +336,7 @@ export async function getProductCollection() {
 
 // for a specific category (used in category page hero section)
 export async function getHeroProductByCategory(handle: string) {
-  return get(`/custom/product/hero-by-category?category=${handle}`);
+    return get(`/custom/product/hero-by-category?category=${handle}`);
 }
 
 // Get All Store Names
@@ -1573,10 +1576,14 @@ export async function setBestShippingAddress(
 }
 
 export async function validateDiscountUsage(
-    code: string
+    code: string,
+    customerId: string
 ): Promise<DiscountValidationResult> {
     try {
-        const response = await get('/custom/discount/validate', { code });
+        const response = await getSecure('/custom/discount/validate', {
+            code,
+            customer_id: customerId,
+        });
         return response;
     } catch (error: any) {
         console.error('Error validating discount usage:', error);
@@ -1602,4 +1609,25 @@ export async function cancelPayment(
         cart_id: cartId,
         customer_id: customerId,
     });
+}
+
+export async function getFeaturedStores(
+    categoryHandles?: string[]
+): Promise<FeaturedStoresResponse> {
+    try {
+        let queryParams = {};
+
+        if (categoryHandles && categoryHandles.length > 0) {
+            queryParams = { category: categoryHandles.join(',') };
+        }
+        const response: FeaturedStoresResponse = await get(
+            '/custom/store/featured',
+            queryParams
+        );
+        console.log('Featured stores response:', response);
+        return response;
+    } catch (error) {
+        console.error('Error fetching featured stores:', error);
+        return { stores: [] };
+    }
 }
