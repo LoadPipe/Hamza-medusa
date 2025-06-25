@@ -94,6 +94,7 @@ const OrderProcessing = ({
         onClose: onCancelDialogClose,
     } = useDisclosure();
     const [isCanceling, setIsCanceling] = useState(false);
+    const [cancelEnabled, setCancelEnabled] = useState(false);
     const totalOrders = initialPaymentData?.orders?.length ?? 0;
     const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY || 'en';
 
@@ -324,6 +325,9 @@ const OrderProcessing = ({
                         await getOrSetCart(countryCode);
                     }
 
+                    //now we can cancel if we want to
+                    setCancelEnabled(true);
+
                     if (payments && payments.length > 0) {
                         const payment = payments[0];
 
@@ -454,7 +458,9 @@ const OrderProcessing = ({
                                             leftIcon={<FaTimes />}
                                             _hover={{ bg: 'red.700' }}
                                             onClick={onCancelDialogOpen}
-                                            isDisabled={isCanceling}
+                                            isDisabled={
+                                                isCanceling || !cancelEnabled
+                                            }
                                         >
                                             Cancel Payment
                                         </Button>
