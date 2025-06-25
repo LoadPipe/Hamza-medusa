@@ -620,6 +620,23 @@ export async function createCart(data = {}) {
     return postSecure('/custom/cart', { data });
 }
 
+export async function copyCart(oldCartId: string) {
+    //get cart id and customer id
+    const headers = getMedusaHeaders(['cart']);
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customerId: string = token?.customer_id ?? '';
+    const newCartId = cookies().get('_medusa_cart_id')?.value;
+
+    //post
+    const cart = await postSecure('/custom/cart/copy', {
+        customer_id: customerId,
+        source_cart_id: oldCartId,
+        cart_id: newCartId,
+    });
+}
+
 export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
     const headers = getMedusaHeaders(['cart']);
 
@@ -1574,15 +1591,23 @@ export async function validateDiscountUsage(
     }
 }
 
-export async function cancelPayments(
+export async function cancelPayment(
     paymentAddress: string,
     orderIds: string[],
     cartId: string
 ) {
+    //get customer id
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customerId: string = token?.customer_id ?? '';
+
+    //call api
     return putSecure('/custom/checkout/payment/cancel', {
         payment_address: paymentAddress,
         order_ids: orderIds,
         cart_id: cartId,
+        customer_id: customerId,
     });
 }
 
