@@ -2,13 +2,13 @@
 
 import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 // Images
 //import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
 //import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 //import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
-import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
+import HamzaLogo from '../../../../../public/images/logo/logo.png';
 //  Components
 import NavSearchBar from './menu-desktop/components/nav-searchbar';
 import MobileNav from './menu-mobile/mobile-nav';
@@ -66,9 +66,8 @@ export default async function Nav() {
                 >
                     <Flex width={'100%'} alignItems="center" gap={'18px'}>
                         <LocalizedClientLink href="/">
-                            <Flex
-                                width={'190px'}
-                                height={'80px'}
+                            <HStack
+                                height={'71px'}
                                 marginLeft="auto"
                                 flexShrink={0}
                             >
@@ -79,10 +78,19 @@ export default async function Nav() {
                                     src={HamzaLogo}
                                     alt="Hamza"
                                 />
-                            </Flex>
+                                <Box
+                                    fontSize={'13px'}
+                                    fontWeight={'bold'}
+                                    color={'white'}
+                                    ml={'10px'}
+                                >
+                                    BUY & SELL PRODUCTS USING{' '}
+                                    <span style={{ color: '#94D42A' }}>
+                                        CRYPTO!
+                                    </span>
+                                </Box>
+                            </HStack>
                         </LocalizedClientLink>
-
-                        <NavSearchBar />
 
                         <Flex ml={'auto'} alignItems={'center'} gap={'12px'}>
                             <NavProfileCurrency />

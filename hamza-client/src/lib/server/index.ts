@@ -25,6 +25,7 @@ import {
     ProductPreviewType,
     DiscountValidationResult,
     FeaturedStoresResponse,
+    LatestProductsResponse,
 } from '@/types/global';
 import { medusaClient } from '../config/config';
 import medusaError from '@lib/util/medusa-error';
@@ -277,6 +278,25 @@ export async function getAllProducts(
     });
 }
 
+export async function getLatestProducts(
+    limit: number,
+    offset: number
+): Promise<LatestProductsResponse> {
+    try {
+        const response: LatestProductsResponse = await get(
+            '/custom/product/latest',
+            {
+                limit,
+                offset,
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error('Error fetching latest products:', error);
+        return { products: [], count: 0 };
+    }
+}
+
 // DELETE Wishlist Item
 export async function deleteWishlistItem(
     customer_id: string,
@@ -312,6 +332,11 @@ export async function getAllVendorProducts() {
 //Get product collection for hero slider
 export async function getProductCollection() {
     return get('/custom/product/hero-collection');
+}
+
+// for a specific category (used in category page hero section)
+export async function getHeroProductByCategory(handle: string) {
+    return get(`/custom/product/hero-by-category?category=${handle}`);
 }
 
 // Get All Store Names
@@ -1533,7 +1558,9 @@ export async function setBestShippingAddress(
     return address ?? null;
 }
 
-export async function validateDiscountUsage(code: string): Promise<DiscountValidationResult> {
+export async function validateDiscountUsage(
+    code: string
+): Promise<DiscountValidationResult> {
     try {
         const response = await get('/custom/discount/validate', { code });
         return response;
@@ -1543,7 +1570,11 @@ export async function validateDiscountUsage(code: string): Promise<DiscountValid
     }
 }
 
-export async function cancelPayments(paymentAddress: string, orderIds: string[], cartId: string) {
+export async function cancelPayments(
+    paymentAddress: string,
+    orderIds: string[],
+    cartId: string
+) {
     return putSecure('/custom/checkout/payment/cancel', {
         payment_address: paymentAddress,
         order_ids: orderIds,

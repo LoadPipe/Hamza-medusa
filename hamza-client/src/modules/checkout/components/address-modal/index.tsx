@@ -63,6 +63,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const queryClient = useQueryClient();
     const [emailError, setEmailError] = useState<string>('');
     const [phoneError, setPhoneError] = useState<string>('');
+    const [shippingAddressRequired, setShippingAddressRequired] =
+        useState<boolean>(false);
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -121,6 +123,22 @@ const AddressModal: React.FC<AddressModalProps> = ({
         }
     }, [isOpen, cart]);
 
+    const isShippingAddressRequired = () => {
+        if (cart?.items?.length == 0) return true;
+
+        for (let n = 0; n < (cart?.items?.length ?? 0); n++) {
+            if (
+                cart?.items[
+                    n
+                ].variant.product.metadata?.no_shipping_address?.toString() !==
+                'true'
+            ) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     useEffect(() => {
         // If in edit mode and customer has addresses, compare current address to address book
         if (addressType === 'edit' && customer?.shipping_addresses) {
@@ -131,6 +149,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
             setSavedAddressId(
                 matchingAddress?.id ? matchingAddress.id : selectedAddressId
             );
+            setShippingAddressRequired(isShippingAddressRequired());
         }
     }, [cart, countryCode, addressType, customer, selectedAddressId]);
 
@@ -362,217 +381,231 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     <ModalCloseButton color={'white'} />
                     <ModalBody>
                         <Flex flexDir="column" gap="8">
-                            {/* Name Fields */}
-                            <Flex
-                                gap="4"
-                                flexDir={{ base: 'column', md: 'row' }}
-                            >
-                                <FormControl isRequired>
-                                    <Input
-                                        placeholder="First Name"
-                                        height={'50px'}
-                                        fontSize={'14px'}
-                                        bgColor={'#040404'}
-                                        borderWidth={0}
-                                        borderRadius={'12px'}
-                                        name="shipping_address.first_name"
-                                        color={'white'}
-                                        _placeholder={{
-                                            color: 'rgba(194, 194, 194, 0.7)',
-                                        }}
-                                        value={
-                                            formData[
-                                                'shipping_address.first_name'
-                                            ]
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </FormControl>
-                                <FormControl isRequired>
-                                    <Input
-                                        placeholder="Last Name"
-                                        height={'50px'}
-                                        fontSize={'14px'}
-                                        bgColor={'#040404'}
-                                        borderWidth={0}
-                                        borderRadius={'12px'}
-                                        name="shipping_address.last_name"
-                                        color={'white'}
-                                        _placeholder={{
-                                            color: 'rgba(194, 194, 194, 0.7)',
-                                        }}
-                                        value={
-                                            formData[
-                                                'shipping_address.last_name'
-                                            ]
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </FormControl>
-                            </Flex>
+                            {shippingAddressRequired && (
+                                <>
+                                    {/* Name Fields */}
+                                    <Flex
+                                        gap="4"
+                                        flexDir={{ base: 'column', md: 'row' }}
+                                    >
+                                        <FormControl isRequired>
+                                            <Input
+                                                placeholder="First Name"
+                                                height={'50px'}
+                                                fontSize={'14px'}
+                                                bgColor={'#040404'}
+                                                borderWidth={0}
+                                                borderRadius={'12px'}
+                                                name="shipping_address.first_name"
+                                                color={'white'}
+                                                _placeholder={{
+                                                    color: 'rgba(194, 194, 194, 0.7)',
+                                                }}
+                                                value={
+                                                    formData[
+                                                        'shipping_address.first_name'
+                                                    ]
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </FormControl>
+                                        <FormControl isRequired>
+                                            <Input
+                                                placeholder="Last Name"
+                                                height={'50px'}
+                                                fontSize={'14px'}
+                                                bgColor={'#040404'}
+                                                borderWidth={0}
+                                                borderRadius={'12px'}
+                                                name="shipping_address.last_name"
+                                                color={'white'}
+                                                _placeholder={{
+                                                    color: 'rgba(194, 194, 194, 0.7)',
+                                                }}
+                                                value={
+                                                    formData[
+                                                        'shipping_address.last_name'
+                                                    ]
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </FormControl>
+                                    </Flex>
 
-                            {/* Address Fields */}
-                            <FormControl isRequired>
-                                <Input
-                                    placeholder="Address 1"
-                                    height={'50px'}
-                                    fontSize={'14px'}
-                                    bgColor={'#040404'}
-                                    borderWidth={0}
-                                    borderRadius={'12px'}
-                                    name="shipping_address.address_1"
-                                    color={'white'}
-                                    _placeholder={{
-                                        color: 'rgba(194, 194, 194, 0.7)',
-                                    }}
-                                    value={
-                                        formData['shipping_address.address_1']
-                                    }
-                                    onChange={handleChange}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <Input
-                                    placeholder="Address 2"
-                                    height={'50px'}
-                                    fontSize={'14px'}
-                                    bgColor={'#040404'}
-                                    borderWidth={0}
-                                    borderRadius={'12px'}
-                                    name="shipping_address.address_2"
-                                    color={'white'}
-                                    _placeholder={{
-                                        color: 'rgba(194, 194, 194, 0.7)',
-                                    }}
-                                    value={
-                                        formData['shipping_address.address_2']
-                                    }
-                                    onChange={handleChange}
-                                />
-                            </FormControl>
+                                    {/* Address Fields */}
+                                    <FormControl isRequired>
+                                        <Input
+                                            placeholder="Address 1"
+                                            height={'50px'}
+                                            fontSize={'14px'}
+                                            bgColor={'#040404'}
+                                            borderWidth={0}
+                                            borderRadius={'12px'}
+                                            name="shipping_address.address_1"
+                                            color={'white'}
+                                            _placeholder={{
+                                                color: 'rgba(194, 194, 194, 0.7)',
+                                            }}
+                                            value={
+                                                formData[
+                                                    'shipping_address.address_1'
+                                                ]
+                                            }
+                                            onChange={handleChange}
+                                        />
+                                    </FormControl>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Address 2"
+                                            height={'50px'}
+                                            fontSize={'14px'}
+                                            bgColor={'#040404'}
+                                            borderWidth={0}
+                                            borderRadius={'12px'}
+                                            name="shipping_address.address_2"
+                                            color={'white'}
+                                            _placeholder={{
+                                                color: 'rgba(194, 194, 194, 0.7)',
+                                            }}
+                                            value={
+                                                formData[
+                                                    'shipping_address.address_2'
+                                                ]
+                                            }
+                                            onChange={handleChange}
+                                        />
+                                    </FormControl>
 
-                            {/* City, State, Country, Zip Code */}
-                            <Flex
-                                gap="4"
-                                flexDir={{ base: 'column', md: 'row' }}
-                            >
-                                <FormControl isRequired>
-                                    <Input
-                                        placeholder="City"
-                                        bgColor={'#040404'}
-                                        height={'50px'}
-                                        fontSize={'14px'}
-                                        borderWidth={0}
-                                        borderRadius={'12px'}
-                                        name="shipping_address.city"
-                                        color={'white'}
-                                        _placeholder={{
-                                            color: 'rgba(194, 194, 194, 0.7)',
-                                        }}
-                                        value={
-                                            formData['shipping_address.city']
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </FormControl>
-                                <FormControl isRequired>
-                                    <Input
-                                        placeholder="State / Province"
-                                        height={'50px'}
-                                        fontSize={'14px'}
-                                        bgColor={'#040404'}
-                                        borderWidth={0}
-                                        borderRadius={'12px'}
-                                        name="shipping_address.province"
-                                        color={'white'}
-                                        _placeholder={{
-                                            color: 'rgba(194, 194, 194, 0.7)',
-                                        }}
-                                        value={
-                                            formData[
-                                                'shipping_address.province'
-                                            ]
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </FormControl>
-                            </Flex>
+                                    {/* City, State, Country, Zip Code */}
+                                    <Flex
+                                        gap="4"
+                                        flexDir={{ base: 'column', md: 'row' }}
+                                    >
+                                        <FormControl isRequired>
+                                            <Input
+                                                placeholder="City"
+                                                bgColor={'#040404'}
+                                                height={'50px'}
+                                                fontSize={'14px'}
+                                                borderWidth={0}
+                                                borderRadius={'12px'}
+                                                name="shipping_address.city"
+                                                color={'white'}
+                                                _placeholder={{
+                                                    color: 'rgba(194, 194, 194, 0.7)',
+                                                }}
+                                                value={
+                                                    formData[
+                                                        'shipping_address.city'
+                                                    ]
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </FormControl>
+                                        <FormControl isRequired>
+                                            <Input
+                                                placeholder="State / Province"
+                                                height={'50px'}
+                                                fontSize={'14px'}
+                                                bgColor={'#040404'}
+                                                borderWidth={0}
+                                                borderRadius={'12px'}
+                                                name="shipping_address.province"
+                                                color={'white'}
+                                                _placeholder={{
+                                                    color: 'rgba(194, 194, 194, 0.7)',
+                                                }}
+                                                value={
+                                                    formData[
+                                                        'shipping_address.province'
+                                                    ]
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </FormControl>
+                                    </Flex>
 
-                            <Flex
-                                gap="4"
-                                flexDir={{ base: 'column', md: 'row' }}
-                            >
-                                <FormControl isRequired>
-                                    <CountrySelect
-                                        name="shipping_address.country_code"
-                                        autoComplete="country"
-                                        region={cart?.region}
-                                        color={'white'}
-                                        value={
-                                            formData[
-                                                'shipping_address.country_code'
-                                            ] ?? 'us'
-                                        }
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </FormControl>
-                                <FormControl isRequired>
-                                    <Input
-                                        placeholder="Zip Code"
-                                        height={'50px'}
-                                        fontSize={'14px'}
-                                        bgColor={'#040404'}
-                                        borderWidth={0}
-                                        borderRadius={'12px'}
-                                        name="shipping_address.postal_code"
-                                        color={'white'}
-                                        _placeholder={{
-                                            color: 'rgba(194, 194, 194, 0.7)',
-                                        }}
-                                        value={
-                                            formData[
-                                                'shipping_address.postal_code'
-                                            ]
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </FormControl>
-                            </Flex>
+                                    <Flex
+                                        gap="4"
+                                        flexDir={{ base: 'column', md: 'row' }}
+                                    >
+                                        <FormControl isRequired>
+                                            <CountrySelect
+                                                name="shipping_address.country_code"
+                                                autoComplete="country"
+                                                region={cart?.region}
+                                                color={'white'}
+                                                value={
+                                                    formData[
+                                                        'shipping_address.country_code'
+                                                    ] ?? 'us'
+                                                }
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </FormControl>
+                                        <FormControl isRequired>
+                                            <Input
+                                                placeholder="Zip Code"
+                                                height={'50px'}
+                                                fontSize={'14px'}
+                                                bgColor={'#040404'}
+                                                borderWidth={0}
+                                                borderRadius={'12px'}
+                                                name="shipping_address.postal_code"
+                                                color={'white'}
+                                                _placeholder={{
+                                                    color: 'rgba(194, 194, 194, 0.7)',
+                                                }}
+                                                value={
+                                                    formData[
+                                                        'shipping_address.postal_code'
+                                                    ]
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </FormControl>
+                                    </Flex>
+                                </>
+                            )}
 
                             {/* Phone and Email Fields */}
                             <Flex
                                 gap="4"
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
-                                <FormControl isInvalid={!!phoneError}>
-                                    <Input
-                                        placeholder="Phone Number"
-                                        height={'50px'}
-                                        fontSize={'14px'}
-                                        bgColor={'#040404'}
-                                        borderWidth={0}
-                                        borderRadius={'12px'}
-                                        name="shipping_address.phone"
-                                        color={'white'}
-                                        _placeholder={{
-                                            color: 'rgba(194, 194, 194, 0.7)',
-                                        }}
-                                        value={
-                                            formData['shipping_address.phone']
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                    {phoneError && (
-                                        <Text
-                                            color="red.500"
-                                            fontSize="sm"
-                                            mt={1}
-                                        >
-                                            {phoneError}
-                                        </Text>
-                                    )}
-                                </FormControl>
+                                {shippingAddressRequired && (
+                                    <FormControl isInvalid={!!phoneError}>
+                                        <Input
+                                            placeholder="Phone Number"
+                                            height={'50px'}
+                                            fontSize={'14px'}
+                                            bgColor={'#040404'}
+                                            borderWidth={0}
+                                            borderRadius={'12px'}
+                                            name="shipping_address.phone"
+                                            color={'white'}
+                                            _placeholder={{
+                                                color: 'rgba(194, 194, 194, 0.7)',
+                                            }}
+                                            value={
+                                                formData[
+                                                    'shipping_address.phone'
+                                                ]
+                                            }
+                                            onChange={handleChange}
+                                        />
+                                        {phoneError && (
+                                            <Text
+                                                color="red.500"
+                                                fontSize="sm"
+                                                mt={1}
+                                            >
+                                                {phoneError}
+                                            </Text>
+                                        )}
+                                    </FormControl>
+                                )}
                                 <FormControl
                                     isRequired
                                     isInvalid={!!emailError}

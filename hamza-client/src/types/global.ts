@@ -113,3 +113,7 @@ export type Store = {
 export type FeaturedStoresResponse = {
     stores: Store[];
 };
+export interface LatestProductsResponse {
+    products: Product[];
+    count: number;
+}
