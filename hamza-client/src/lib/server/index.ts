@@ -24,6 +24,7 @@ import {
     ProductCategoryWithChildren,
     ProductPreviewType,
     DiscountValidationResult,
+    FeaturedStoresResponse,
     LatestProductsResponse,
 } from '@/types/global';
 import { medusaClient } from '../config/config';
@@ -282,17 +283,19 @@ export async function getLatestProducts(
     offset: number
 ): Promise<LatestProductsResponse> {
     try {
-        const response: LatestProductsResponse = await get('/custom/product/latest', {
-            limit,
-            offset,
-        });
+        const response: LatestProductsResponse = await get(
+            '/custom/product/latest',
+            {
+                limit,
+                offset,
+            }
+        );
         return response;
     } catch (error) {
         console.error('Error fetching latest products:', error);
         return { products: [], count: 0 };
     }
 }
-
 
 // DELETE Wishlist Item
 export async function deleteWishlistItem(
@@ -333,7 +336,7 @@ export async function getProductCollection() {
 
 // for a specific category (used in category page hero section)
 export async function getHeroProductByCategory(handle: string) {
-  return get(`/custom/product/hero-by-category?category=${handle}`);
+    return get(`/custom/product/hero-by-category?category=${handle}`);
 }
 
 // Get All Store Names
@@ -1555,7 +1558,9 @@ export async function setBestShippingAddress(
     return address ?? null;
 }
 
-export async function validateDiscountUsage(code: string): Promise<DiscountValidationResult> {
+export async function validateDiscountUsage(
+    code: string
+): Promise<DiscountValidationResult> {
     try {
         const response = await get('/custom/discount/validate', { code });
         return response;
@@ -1565,10 +1570,35 @@ export async function validateDiscountUsage(code: string): Promise<DiscountValid
     }
 }
 
-export async function cancelPayments(paymentAddress: string, orderIds: string[], cartId: string) {
+export async function cancelPayments(
+    paymentAddress: string,
+    orderIds: string[],
+    cartId: string
+) {
     return putSecure('/custom/checkout/payment/cancel', {
         payment_address: paymentAddress,
         order_ids: orderIds,
         cart_id: cartId,
     });
+}
+
+export async function getFeaturedStores(
+    categoryHandles?: string[]
+): Promise<FeaturedStoresResponse> {
+    try {
+        let queryParams = {};
+
+        if (categoryHandles && categoryHandles.length > 0) {
+            queryParams = { category: categoryHandles.join(',') };
+        }
+        const response: FeaturedStoresResponse = await get(
+            '/custom/store/featured',
+            queryParams
+        );
+        console.log('Featured stores response:', response);
+        return response;
+    } catch (error) {
+        console.error('Error fetching featured stores:', error);
+        return { stores: [] };
+    }
 }
