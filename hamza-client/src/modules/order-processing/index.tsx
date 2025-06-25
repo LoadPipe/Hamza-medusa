@@ -41,10 +41,10 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { STATUS_STEPS } from './types';
 import {
-    cancelOrder,
     cancelPayment,
     clearCart,
     copyCart,
+    getCart,
     getPaymentData,
 } from '@/lib/server';
 import { useAccount } from 'wagmi';
@@ -58,8 +58,8 @@ import {
 } from '../chain-select';
 import { useQuery } from '@tanstack/react-query';
 import { convertPrice } from '@/lib/util/price-conversion';
-import { ethers } from 'ethers';
 import { currencyIsUsdStable } from '@/lib/util/currencies';
+import { getOrSetCart } from '../cart/actions';
 
 const OrderProcessing = ({
     startTimestamp,
@@ -95,6 +95,7 @@ const OrderProcessing = ({
     } = useDisclosure();
     const [isCanceling, setIsCanceling] = useState(false);
     const totalOrders = initialPaymentData?.orders?.length ?? 0;
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY || 'en';
 
     //get chain name from payment data
     const _paymentData = initialPaymentData?.orders?.length
@@ -313,6 +314,15 @@ const OrderProcessing = ({
                 try {
                     // console.log('Polling payment status...');
                     const payments = await getPaymentData(cartId);
+                    const cart = await getOrSetCart(countryCode);
+
+                    if (cart.completed_at != null) {
+                        console.log(
+                            'AWAIT FROM MY WINDOW==================================================='
+                        );
+                        await clearCart();
+                        await getOrSetCart(countryCode);
+                    }
 
                     if (payments && payments.length > 0) {
                         const payment = payments[0];
