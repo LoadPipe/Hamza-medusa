@@ -24,6 +24,7 @@ import {
     ProductCategoryWithChildren,
     ProductPreviewType,
     DiscountValidationResult,
+    FeaturedStoresResponse,
     LatestProductsResponse,
 } from '@/types/global';
 import { medusaClient } from '../config/config';
@@ -1583,4 +1584,25 @@ export async function cancelPayments(
         order_ids: orderIds,
         cart_id: cartId,
     });
+}
+
+export async function getFeaturedStores(
+    categoryHandles?: string[]
+): Promise<FeaturedStoresResponse> {
+    try {
+        let queryParams = {};
+
+        if (categoryHandles && categoryHandles.length > 0) {
+            queryParams = { category: categoryHandles.join(',') };
+        }
+        const response: FeaturedStoresResponse = await get(
+            '/custom/store/featured',
+            queryParams
+        );
+        console.log('Featured stores response:', response);
+        return response;
+    } catch (error) {
+        console.error('Error fetching featured stores:', error);
+        return { stores: [] };
+    }
 }
