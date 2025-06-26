@@ -34,9 +34,10 @@ import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
 import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
 import { FaBitcoin, FaWallet } from 'react-icons/fa';
-import { WalletPaymentResponse } from './payment-handlers/common';
+import { checkWalletBalance, WalletPaymentResponse } from './payment-handlers/common';
 import ChainSelectionInterstitial from '../chain-selector';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import { getCurrencyPrecision } from '@/currency.config'; 
 
 //TODO: we need a global common function to replace this
 
@@ -112,6 +113,72 @@ const CryptoPaymentButton = ({
     const displayError = (errMsg: string) => {
         setErrorMessage(errMsg);
         toast.error(errMsg);
+    };
+
+    // helper function to convert amounts for balance checking
+    const convertToNativeAmount = (
+        currency: string,
+        amount: any,
+        chainId: number
+    ) => {
+        const precision = getCurrencyPrecision(currency, chainId);
+        const adjustmentFactor = Math.pow(10, precision.native - precision.db);
+        const nativeAmount = BigInt(amount) * BigInt(adjustmentFactor);
+        return ethers.toBigInt(nativeAmount);
+    };
+
+    // function to check balance without signing
+    const checkBalanceBeforePayment = async (
+        chainId: number,
+        checkoutData: any
+    ): Promise<boolean> => {
+        if (!walletClient) return false;
+
+        try {
+            const provider = new ethers.BrowserProvider(walletClient, chainId);
+            const signer = await provider.getSigner();
+
+            const paymentGroups: { [key: string]: any } = {};
+            if (checkoutData.orders) {
+                checkoutData.orders.forEach((o: any) => {
+                    let currency = o.currency_code;
+                    if (!currency?.length) currency = 'eth';
+                    let amount = o.amount;
+                    if (paymentGroups[currency]) amount += paymentGroups[currency];
+                    paymentGroups[currency] = amount;
+                });
+            }
+
+            // Check balance for each currency
+            for (const currency in paymentGroups) {
+                let amount = convertToNativeAmount(
+                    currency,
+                    paymentGroups[currency],
+                    chainId
+                );
+
+                amount = process.env.NEXT_PUBLIC_ONE_SATOSHI_DISCOUNT
+                    ? BigInt(1)
+                    : amount;
+
+                const hasBalance = await checkWalletBalance(
+                    provider,
+                    signer,
+                    chainId,
+                    currency,
+                    amount
+                );
+
+                if (!hasBalance) {
+                    return false;
+                }
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error checking balance:', error);
+            return false;
+        }
     };
 
     /**
@@ -244,6 +311,21 @@ const CryptoPaymentButton = ({
                 }
             );
             const data = checkoutData.data;
+
+            // Add balance check for direct payments before proceeding
+            if (paymentMode === 'direct') {
+                const hasBalance = await checkBalanceBeforePayment(
+                    parseInt(chainId),
+                    data
+                );
+                if (!hasBalance) {
+                    setLoaderVisible(false);
+                    setIsProcessingOrder(false);
+                    displayError('Insufficient balance');
+                    await cancelOrderFromCart(cartId);
+                    return;
+                }
+            }
 
             let output: WalletPaymentResponse | undefined = {
                 chain_id: parseInt(chainId),
