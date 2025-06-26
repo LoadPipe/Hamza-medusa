@@ -82,34 +82,34 @@ const allowedChains = (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS ?? '').split(
     ','
 );
 
+const chainConfig = {
+    mainnet,
+    1: mainnet,
+    optimism,
+    10: optimism,
+    bsc,
+    56: bsc,
+    polygon,
+    137: polygon,
+    base,
+    8453: base,
+    arbitrum,
+    42161: arbitrum,
+    amoy,
+    80002: amoy,
+    sepolia,
+    11155111: sepolia,
+    baseSepolia,
+    84532: baseSepolia,
+    scrollSepolia,
+    534351: scrollSepolia,
+    avalanche,
+    43114: avalanche,
+};
+
 if (allowedChains.length === 0) {
     allowedChains.push('sepolia');
 } else {
-    const chainConfig = {
-        mainnet,
-        1: mainnet,
-        optimism,
-        10: optimism,
-        bsc,
-        56: bsc,
-        polygon,
-        137: polygon,
-        base,
-        8453: base,
-        arbitrum,
-        42161: arbitrum,
-        amoy,
-        80002: amoy,
-        sepolia,
-        11155111: sepolia,
-        baseSepolia,
-        84532: baseSepolia,
-        scrollSepolia,
-        534351: scrollSepolia,
-        43114: avalanche,
-        avalanche,
-    };
-
     wagmiChains = allowedChains.map(
         (c) => chainConfig[c as keyof typeof chainConfig]
     );
@@ -194,6 +194,7 @@ type Props = {
     enabled: boolean;
 };
 
+//TODO: this should be obsolete
 export function getBlockchainNetworkName(chainId: number | string) {
     if (EXTRA_LOGGING) console.log('RB: getBlockchainNetworkName', chainId);
 
