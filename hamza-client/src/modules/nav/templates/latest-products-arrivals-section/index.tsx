@@ -18,11 +18,13 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 import { getLatestProducts } from '@/lib/server';
+import { useRouter } from 'next/navigation';
 
 
 const LatestArrivalsSection: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const PRODUCTS_TO_DISPLAY_INITIAL = 4;
+    const router = useRouter();
 
     const [latestProducts, setLatestProducts] = useState<Product[]>([]);
 
@@ -60,7 +62,7 @@ const LatestArrivalsSection: React.FC = () => {
 
     // Handler for "View all" click
     const handleViewAllClick = () => {
-        console.log('View All clicked! This feature will be available in a future sprint.');
+        router.push(`/latest-arrivals`);
     };
 
     // Initial Loading State

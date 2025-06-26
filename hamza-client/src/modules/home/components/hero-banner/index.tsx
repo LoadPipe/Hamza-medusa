@@ -22,14 +22,18 @@ const HeroBanner = () => {
                     alignItems="center"
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
                 >
-                    <Link href="https://blog.hamza.market/beta" isExternal>
+                    <Link
+                        href="https://blog.hamza.market/multichain-feature/"
+                        isExternal
+                    >
                         <Text
                             fontSize={{ base: '12px', md: '16px' }}
                             textAlign={'center'}
                             fontWeight="semi-bold"
                             textColor={'white'}
                         >
-                            Hamza Market Beta! Now accepting Bitcoin payments —{' '}
+                            Shop Smarter with Hamza! Use Bitcoin, stablecoins,
+                            and more — instantly. —{' '}
                             <Text
                                 as="span"
                                 color="cyan.300"

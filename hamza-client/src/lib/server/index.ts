@@ -24,6 +24,7 @@ import {
     ProductCategoryWithChildren,
     ProductPreviewType,
     DiscountValidationResult,
+    FeaturedStoresResponse,
     LatestProductsResponse,
 } from '@/types/global';
 import { medusaClient } from '../config/config';
@@ -282,17 +283,19 @@ export async function getLatestProducts(
     offset: number
 ): Promise<LatestProductsResponse> {
     try {
-        const response: LatestProductsResponse = await get('/custom/product/latest', {
-            limit,
-            offset,
-        });
+        const response: LatestProductsResponse = await get(
+            '/custom/product/latest',
+            {
+                limit,
+                offset,
+            }
+        );
         return response;
     } catch (error) {
         console.error('Error fetching latest products:', error);
         return { products: [], count: 0 };
     }
 }
-
 
 // DELETE Wishlist Item
 export async function deleteWishlistItem(
@@ -333,7 +336,7 @@ export async function getProductCollection() {
 
 // for a specific category (used in category page hero section)
 export async function getHeroProductByCategory(handle: string) {
-  return get(`/custom/product/hero-by-category?category=${handle}`);
+    return get(`/custom/product/hero-by-category?category=${handle}`);
 }
 
 // Get All Store Names
@@ -615,6 +618,23 @@ export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
 
     return postSecure('/custom/cart', { data });
+}
+
+export async function copyCart(oldCartId: string) {
+    //get cart id and customer id
+    const headers = getMedusaHeaders(['cart']);
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customerId: string = token?.customer_id ?? '';
+    const newCartId = cookies().get('_medusa_cart_id')?.value;
+
+    //post
+    const cart = await postSecure('/custom/cart/copy', {
+        customer_id: customerId,
+        source_cart_id: oldCartId,
+        cart_id: newCartId,
+    });
 }
 
 export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
@@ -1555,9 +1575,15 @@ export async function setBestShippingAddress(
     return address ?? null;
 }
 
-export async function validateDiscountUsage(code: string): Promise<DiscountValidationResult> {
+export async function validateDiscountUsage(
+    code: string,
+    customerId: string
+): Promise<DiscountValidationResult> {
     try {
-        const response = await get('/custom/discount/validate', { code });
+        const response = await getSecure('/custom/discount/validate', {
+            code,
+            customer_id: customerId,
+        });
         return response;
     } catch (error: any) {
         console.error('Error validating discount usage:', error);
@@ -1565,10 +1591,43 @@ export async function validateDiscountUsage(code: string): Promise<DiscountValid
     }
 }
 
-export async function cancelPayments(paymentAddress: string, orderIds: string[], cartId: string) {
+export async function cancelPayment(
+    paymentAddress: string,
+    orderIds: string[],
+    cartId: string
+) {
+    //get customer id
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customerId: string = token?.customer_id ?? '';
+
+    //call api
     return putSecure('/custom/checkout/payment/cancel', {
         payment_address: paymentAddress,
         order_ids: orderIds,
         cart_id: cartId,
+        customer_id: customerId,
     });
+}
+
+export async function getFeaturedStores(
+    categoryHandles?: string[]
+): Promise<FeaturedStoresResponse> {
+    try {
+        let queryParams = {};
+
+        if (categoryHandles && categoryHandles.length > 0) {
+            queryParams = { category: categoryHandles.join(',') };
+        }
+        const response: FeaturedStoresResponse = await get(
+            '/custom/store/featured',
+            queryParams
+        );
+        console.log('Featured stores response:', response);
+        return response;
+    } catch (error) {
+        console.error('Error fetching featured stores:', error);
+        return { stores: [] };
+    }
 }

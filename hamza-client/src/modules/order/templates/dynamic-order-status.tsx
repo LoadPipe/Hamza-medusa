@@ -7,10 +7,12 @@ const DynamicOrderStatus = ({
     orderDate,
     paymentStatus,
     paymentType: paymentType,
+    cartId,
 }: {
     orderDate?: string;
     paymentStatus?: string;
     paymentType?: string;
+    cartId?: string;
 }) => {
     const capitalizeFirstLetter = (str?: string) =>
         str ? str.replace(/(?:^|\s)\S/g, (match) => match.toUpperCase()) : '';
@@ -53,7 +55,26 @@ const DynamicOrderStatus = ({
             >
                 <LuBox width="18px" height="20px" />
 
-                <Text>Payment {capitalizeFirstLetter(paymentStatus)}</Text>
+                {paymentStatus === 'awaiting' && cartId ? (
+                    <a
+                        href={`http://localhost:8000/en/order/processing/${cartId}?paywith=evm&openqrmodal=true&checkout=true`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            background: '#94D42A',
+                            color: 'black',
+                            border: 'none',
+                            borderRadius: '16px',
+                            padding: '4px 12px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        Payment Awaiting
+                    </a>
+                ) : (
+                    <Text>Payment {capitalizeFirstLetter(paymentStatus)}</Text>
+                )}
 
                 <IoMdInformationCircleOutline
                     color="94D42A"
