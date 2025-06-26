@@ -391,6 +391,34 @@ const chainConfig: any = {
             },
         },
     },
+    //Avalanche
+    43114: {
+        chain_name: 'Avalanche',
+        usdc: {
+            contract_address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+            precision: {
+                display: 2,
+                db: 2,
+                native: 6,
+            },
+        },
+        usdt: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                display: 2,
+                db: 2,
+                native: 6,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                display: 5,
+                db: 8,
+                native: 18,
+            },
+        },
+    },
 };
 
 const getCurrencyAddress = (currencyId: string, chainId: number = 1) => {
