@@ -58,19 +58,20 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
     if (isCategoryLoading || (isFallbackLoading && !products.length)) {
         return (
             <Flex
-                mt={{ base: '-4rem', md: '0' }}
-                mb={{ base: '0', md: '-4rem' }}
+                mt={{ base: '0', md: '0' }}
+                mb={{ base: '2rem', md: '-4rem' }}
                 maxW="1280px"
-                height={{ base: '300px', md: '625px' }}
+                height={{ base: 'auto', md: '625px' }}
+                minHeight={{ base: '280px', md: '625px' }}
                 justifyContent="space-between"
                 flexDir="row"
                 px={{ base: '1rem', md: '50px' }}
-                py="62px"
+                py={{ base: '1rem', md: '62px' }}
                 mx="auto"
                 position="relative"
                 borderRadius="24px"
             >
-                <Flex width={{ base: '100%', md: '50%' }} flexDir="column" mt="4rem" gap={5}>
+                <Flex width={{ base: '100%', md: '50%' }} flexDir="column" mt={{ base: '1rem', md: '4rem' }} gap={5}>
                     <Skeleton height={{ base: '24px', md: '56px' }} width="80%" />
                     <Skeleton height={{ base: '12px', md: '24px' }} width="90%" />
                     <SkeletonText mt="4" noOfLines={3} spacing="4" skeletonHeight={{ base: '12px', md: '20px' }} />
@@ -91,7 +92,7 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
     // No products anywhere
     if (!products.length) {
         return (
-            <Text color="red.500" textAlign="center">
+            <Text color="red.500" textAlign="center" py="2rem">
                 No products found in this category yet.
             </Text>
         );
@@ -118,25 +119,32 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
     return (
         <Flex
             maxW="1280px"
-            height={{ base: '300px', md: '625px' }}
-            mt={{ base: '-4rem', md: '0' }}
-            mb={{ base: '0', md: '-4rem' }}
+            height={{ base: 'auto', md: '625px' }}
+            minHeight={{ base: '320px', md: '625px' }}
+            mt={{ base: '0', md: '0' }}
+            mb={{ base: '2rem', md: '-4rem' }}
             justifyContent="space-between"
             flexDir="row"
             px={{ base: '1rem', md: '20px' }}
-            py="62px"
-            pt="0"
+            py={{ base: '1.5rem', md: '62px' }}
+            pt={{ base: '1rem', md: '0' }}
             mx="auto"
             position="relative"
             borderRadius={'24px'}
         >
             {/* Left Section */}
-            <Flex width={{ base: '100%', md: '40%' }} flexDir="column" mt="4.15rem" gap={6}>
+            <Flex
+                width={{ base: '100%', md: '40%' }}
+                flexDir="column"
+                mt={{ base: '0', md: '4.15rem' }}
+                gap={{ base: 4, md: 6 }}
+                justifyContent={{ base: 'flex-start', md: 'unset' }}
+            >
                 <Text
                     textAlign={{ base: 'center', md: 'unset' }}
                     color="white"
-                    fontSize={{ base: '24px', md: '56px' }}
-                    lineHeight={{ base: '1.2', md: '1' }}
+                    fontSize={{ base: '20px', md: '56px' }}
+                    lineHeight={{ base: '1.3', md: '1' }}
                 >
                     Buy{' '}
                     <Text as="span" color="primary.green.900">
@@ -148,15 +156,17 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
                         display="inline-flex"
                         gap="1"
                         alignItems="center"
+                        flexWrap="wrap"
+                        justifyContent={{ base: 'center', md: 'flex-start' }}
                     >
                         {currencies.map((code) => (
                             <Box
                                 key={code}
                                 display="inline-block"
-                                width={{ base: '16px', md: '28px' }}
-                                height={{ base: '16px', md: '28px' }}
+                                width={{ base: '14px', md: '28px' }}
+                                height={{ base: '14px', md: '28px' }}
                                 position="relative"
-                                ml={{ base: '0', md: '8px' }}
+                                ml={{ base: '2px', md: '8px' }}
                             >
                                 <Image
                                     src={currencyIcons[code]}
@@ -170,14 +180,20 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
                 </Text>
                 <Text
                     textAlign={{ base: 'center', md: 'unset' }}
-                    fontSize={{ base: '12px', md: '24px' }}
+                    fontSize={{ base: '14px', md: '24px' }}
                     color="white"
                     lineHeight={1.6}
                     maxW={{ base: '100%', md: '520px' }}
+                    px={{ base: '0.5rem', md: '0' }}
                 >
-                    Discover the world’s first decentralized commerce marketplace. Buy and sell directly, securely, powered by blockchain.
+                    Discover the world's first decentralized commerce marketplace. Buy and sell directly, securely, powered by blockchain.
                 </Text>
-                <Box color="whiteAlpha.800" fontSize="sm" mt={4}>
+                <Box
+                    color="whiteAlpha.800"
+                    fontSize={{ base: 'xs', md: 'sm' }}
+                    mt={{ base: 2, md: 4 }}
+                    px={{ base: '0.5rem', md: '0' }}
+                >
                     <Box display="flex" alignItems="center" gap={2} mb={2}>
                         <Image src={safeIcon} alt="Safe" width={16} height={16} />
                         <Box as="span">
