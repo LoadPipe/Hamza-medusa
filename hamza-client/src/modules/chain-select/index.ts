@@ -6,6 +6,7 @@ import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
 import polygonLogo from '@/images/chains/polygon-matic-logo.png';
 import baseLogo from '@/images/chains/base-logo-in-blue.png';
 import bscLogo from '@/images/chains/bnb-logo.png';
+import avalancheLogo from '@/images/chains/avalanche.png';
 
 export const chainMap: {
     [key: string]: { id: number; logo: any; linkUrl: string; title: string };
@@ -62,6 +63,13 @@ export const chainMap: {
         linkUrl:
             'https://coinmarketcap.com/academy/article/how-to-bridge-to-arbitrum',
         title: 'Arbitrum',
+    },
+    Avalanche: {
+        id: 43114,
+        logo: avalancheLogo,
+        linkUrl:
+            'https://coinmarketcap.com/academy/article/how-to-bridge-to-avalanche',
+        title: 'Avalanche',
     },
 };
 

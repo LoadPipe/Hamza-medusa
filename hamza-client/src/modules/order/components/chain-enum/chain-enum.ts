@@ -4,6 +4,7 @@ import optimismLogo from '@/images/chains/optimism-ethereum-op-logo.png';
 import polygonLogo from '@/images/chains/polygon-matic-logo.png';
 import baseLogo from '@/images/chains/base-logo-in-blue.png';
 import bscLogo from '@/images/chains/bnb-logo.png';
+import avalancheLogo from '@/images/chains/avalanche.png';
 
 enum ChainNames {
     Mainnet = 1,
@@ -16,6 +17,8 @@ enum ChainNames {
     OpSepolia = 11155420,
     BaseSepolia = 84532,
     ScrollSepolia = 534351,
+    Binance = 56,
+    Avalanche = 43114,
 }
 
 export const chainIdToName = (id: number): string => {
@@ -43,6 +46,8 @@ export const getChainLogo = (id: number): string => {
         80002: polygonLogo.src, // Amoy (fallback to Polygon)
         84532: baseLogo.src, //Base Sepolia
         534351: ethLogo.src, //Scroll Sepolia
+        56: bscLogo.src, //Binance
+        43114: avalancheLogo.src, //Avalanche
     };
 
     return logos[id] || ethLogo.src; // Default to Ethereum logo
