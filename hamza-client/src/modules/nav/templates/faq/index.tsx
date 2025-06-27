@@ -15,15 +15,15 @@ import React from 'react';
 const faqData = [
     {
         question: 'What payment methods do you accept?',
-        answer: 'We exclusively accept cryptocurrency payments in Bitcoin (BTC), Ethereum (ETH), USDC, and USDT. To make a purchase, you will need to connect a cryptocurrency wallet like MetaMask or another compatible wallet.',
+        answer: 'We exclusively accept cryptocurrency payments in Bitcoin (BTC), Ethereum (ETH), USDC, and USDT. Currently we allow payment on the following blockchains: Bitcoin mainnet, Optimism, Base, Polygon, and Arbitrum... but we`re adding new ones all the time. To make a purchase, you will need to connect a cryptocurrency wallet like MetaMask or another compatible wallet.',
     },
     {
         question: 'How long does shipping take?',
-        answer: 'Domestic shipping usually takes 3-5 business days. International shipping times vary depending on the destination, but typically range from 7-14 business days.',
+        answer: 'Domestic shipping usually takes 3-5 business days. International shipping times vary depending on the destination, but typically range from 7-14 business days. Please be sure to read each individual seller`s shipping policy on their product pages, as shipping prices and times may vary from seller to seller and product to product',
     },
     {
         question: 'Do you offer international shipping?',
-        answer: 'Yes, we ship to most countries worldwide. Please proceed to checkout to see if we ship to your location and to calculate the shipping costs.',
+        answer: 'Yes, we ship to most countries worldwide, but it depends on the seller and the product. Please proceed to checkout to see if we ship to your location and to calculate the shipping costs.',
     },
     {
         question: 'What is your return policy?',
@@ -75,10 +75,7 @@ const Faq = () => {
                 </Text>
             </Box>
 
-            <Accordion
-                allowMultiple
-                borderTop="1px solid #C2C2C2"
-            >
+            <Accordion allowMultiple borderTop="1px solid #C2C2C2">
                 {faqData.map((item, index) => (
                     <AccordionItem
                         key={index}
