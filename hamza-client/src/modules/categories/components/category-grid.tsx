@@ -1,49 +1,43 @@
 import Image from 'next/image';
-import Link from "next/link";
-import allCategoryImg from "@/images/categories/all-category.png";
-import artCategoryImg from "@/images/categories/art-category.png";
-import booksCategoryImg from "@/images/categories/books-category.png";
-import electronicsCategoryImg from "@/images/categories/electronics-category.png";
-import gamesCategoryImg from "@/images/categories/games-category.png";
-import giftCardsCategoryImg from "@/images/categories/gift-cards-category.png";
-import merchCategoryImg from "@/images/categories/merch-category.png";
-
+import Link from 'next/link';
+import allCategoryImg from '@/images/categories/all-category.png';
+import artCategoryImg from '@/images/categories/art-category.png';
+import booksCategoryImg from '@/images/categories/books-category.png';
+import electronicsCategoryImg from '@/images/categories/electronics-category.png';
+import gamesCategoryImg from '@/images/categories/games-category.png';
+import giftCardsCategoryImg from '@/images/categories/gift-cards-category.png';
+import merchCategoryImg from '@/images/categories/merch-category.png';
 
 const staticCategories = [
     {
-        name: "Electronics",
+        name: 'Electronics',
         icon: electronicsCategoryImg,
-        handle: "electronics",
+        handle: 'electronics',
     },
     {
-        name: "Games",
-        icon: gamesCategoryImg,
-        handle: "games",
-    },
-    {
-        name: "Gift Cards",
+        name: 'Gift Cards',
         icon: giftCardsCategoryImg,
-        handle: "gift-cards",
+        handle: 'gift-cards',
     },
     {
-        name: "Books",
+        name: 'Books',
         icon: booksCategoryImg,
-        handle: "books",
+        handle: 'books',
     },
     {
-        name: "Merch",
+        name: 'Merch',
         icon: merchCategoryImg,
-        handle: "merch",
+        handle: 'merch',
     },
     {
-        name: "Art",
+        name: 'Art',
         icon: artCategoryImg,
-        handle: "art",
+        handle: 'art',
     },
     {
-        name: "All",
+        name: 'All',
         icon: allCategoryImg,
-        handle: "all",
+        handle: 'all',
     },
 ];
 
