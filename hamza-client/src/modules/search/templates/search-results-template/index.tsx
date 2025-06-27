@@ -1,7 +1,8 @@
 import { Heading, Text } from '@medusajs/ui';
+import { Flex, Box } from '@chakra-ui/react';
 import RefinementList from '@modules/shop/components/refinement-list';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import PaginatedProducts from '@/modules/shop/components/pagination';
+import SearchProductCardGroup from '@modules/search/components/search-product-card-group';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 type SearchResultsTemplateProps = {
@@ -22,44 +23,93 @@ const SearchResultsTemplate = ({
     const pageNumber = page ? parseInt(page) : 1;
 
     return (
-        <>
-            <div className="flex justify-between border-b w-full py-6 px-8 small:px-14 items-center">
-                <div className="flex flex-col items-start">
-                    <Text className="text-ui-fg-muted">
-                        Search Results for:
-                    </Text>
-                    <Heading>
-                        {query} ({ids.length})
-                    </Heading>
-                </div>
-                <LocalizedClientLink
-                    href="/shop"
-                    className="txt-medium text-ui-fg-subtle hover:text-ui-fg-base"
+        <Flex justifyContent={'center'}>
+            <Flex
+                maxW="1340px"
+                w={'100%'}
+                flexDirection={'column'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                mx={{ base: '0', md: '1rem' }}
+                my="2rem"
+            >
+                {/* Search Results Header */}
+                <Flex
+                    justifyContent={'space-between'}
+                    borderBottom="1px solid"
+                    borderColor="gray.200"
+                    w="100%"
+                    py={6}
+                    px={{ base: 8, md: 14 }}
+                    alignItems={'center'}
                 >
-                    Clear
-                </LocalizedClientLink>
-            </div>
-            <div className="flex flex-col small:flex-row small:items-start p-6">
-                {ids.length > 0 ? (
-                    <>
-                        <RefinementList
-                            sortBy={sortBy || 'created_at'}
-                            search
-                        />
-                        <div className="content-container">
-                            <PaginatedProducts
-                                productsIds={ids}
-                                sortBy={sortBy}
-                                page={pageNumber}
-                                countryCode={countryCode}
-                            />
-                        </div>
-                    </>
-                ) : (
-                    <Text className="ml-8 small:ml-14 mt-3">No results.</Text>
-                )}
-            </div>
-        </>
+                    <Flex flexDirection={'column'} alignItems={'flex-start'}>
+                        <Text
+                            className="text-ui-fg-muted"
+                            style={{ color: 'white' }}
+                        >
+                            Search Results for:
+                        </Text>
+                        <Heading style={{ color: 'white' }}>
+                            {query} ({ids.length})
+                        </Heading>
+                    </Flex>
+                    <LocalizedClientLink
+                        href="/shop"
+                        className="txt-medium text-ui-fg-subtle hover:text-ui-fg-base"
+                    >
+                        Clear
+                    </LocalizedClientLink>
+                </Flex>
+
+                {/* Content Area */}
+                <Flex
+                    mt={{ base: '-3rem', md: '0' }}
+                    mx="1rem"
+                    maxW="1307.74px"
+                    w="100%"
+                    flexDirection={{ base: 'column', md: 'row' }}
+                    alignItems={'flex-start'}
+                    gap={'20px'}
+                    justifyContent={'flex-start'}
+                    p={6}
+                >
+                    {ids.length > 0 ? (
+                        <>
+                            <Box>
+                                <RefinementList
+                                    sortBy={sortBy || 'created_at'}
+                                    search
+                                />
+                            </Box>
+                            <Flex
+                                maxW="941px"
+                                w="100%"
+                                flexDirection={'column'}
+                            >
+                                <Box mt={{ base: '0', md: '1rem' }}>
+                                    <SearchProductCardGroup
+                                        productsIds={ids}
+                                        sortBy={sortBy}
+                                        page={pageNumber}
+                                        countryCode={countryCode}
+                                        columns={{ base: 2, lg: 3 }}
+                                        gap={{ base: 4, md: '7' }}
+                                        skeletonCount={9}
+                                        productsPerPage={24}
+                                        padding={{ base: '1rem', md: '0' }}
+                                    />
+                                </Box>
+                            </Flex>
+                        </>
+                    ) : (
+                        <Box ml={{ base: 8, md: 14 }} mt={3}>
+                            <Text>No results.</Text>
+                        </Box>
+                    )}
+                </Flex>
+            </Flex>
+        </Flex>
     );
 };
 

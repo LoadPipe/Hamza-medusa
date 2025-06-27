@@ -20,7 +20,10 @@ const FilterRadioGroup = ({
 }: FilterRadioGroupProps) => {
     return (
         <div className="flex gap-x-3 flex-col gap-y-3">
-            <Text className="txt-compact-small-plus text-ui-fg-muted">
+            <Text
+                className="txt-compact-small-plus text-ui-fg-muted"
+                style={{ color: 'white' }}
+            >
                 {title}
             </Text>
             <RadioGroup>
@@ -30,6 +33,7 @@ const FilterRadioGroup = ({
                         className={clx('flex gap-x-2 items-center', {
                             'ml-[-1.75rem]': i.value === value,
                         })}
+                        style={{ color: 'white' }}
                     >
                         {i.value === value && <EllipseMiniSolid />}
                         <RadioGroup.Item
@@ -54,6 +58,7 @@ const FilterRadioGroup = ({
                                     'text-ui-fg-base': i.value === value,
                                 }
                             )}
+                            style={{ color: 'white' }}
                         >
                             {i.label}
                         </Label>
