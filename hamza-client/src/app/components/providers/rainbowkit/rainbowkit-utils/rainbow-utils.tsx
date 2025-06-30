@@ -7,20 +7,6 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import { WalletConnectButton } from '@/components/providers/rainbowkit/connect-button/connect-button';
 import { configureChains, createConfig, useWalletClient } from 'wagmi';
-import {
-    mainnet,
-    optimism,
-    sepolia,
-    polygon,
-    arbitrum,
-    base,
-    scroll,
-    mantle,
-    bsc,
-    baseSepolia,
-    scrollSepolia,
-    avalanche,
-} from 'wagmi/chains';
 import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
@@ -33,7 +19,9 @@ import {
     ModalBody,
     Text,
 } from '@chakra-ui/react';
-// import sepoliaImage from '../../../../../../public/images/sepolia/sepolia.webp';
+
+// Import from centralized chain configuration
+import { getAllowedChains, chainIdToName } from '@/config/chains';
 
 const WALLETCONNECT_ID =
     process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
@@ -49,72 +37,8 @@ export const darkThemeConfig = darkTheme({
 
 const EXTRA_LOGGING = false;
 
-//import Polygon testnet
-const amoy: Chain = {
-    id: 80002,
-    name: 'Polygon Amoy',
-    network: 'Polygon Amoy',
-    nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
-    rpcUrls: {
-        default: {
-            http: ['https://rpc-amoy.polygon.technology'],
-        },
-        public: { http: ['https://rpc-amoy.polygon.technology/'] },
-    },
-    blockExplorers: {
-        default: {
-            name: 'PolygonScan',
-            url: 'https://amoy.polygonscan.com',
-        },
-    },
-    contracts: {
-        multicall3: {
-            address: '0xca11bde05977b3631167028862be2a173976ca11',
-            blockCreated: 3127388,
-        },
-    },
-    testnet: true,
-};
-
-let wagmiChains: Chain[] = [];
-
-const allowedChains = (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS ?? '').split(
-    ','
-);
-
-const chainConfig = {
-    mainnet,
-    1: mainnet,
-    optimism,
-    10: optimism,
-    bsc,
-    56: bsc,
-    polygon,
-    137: polygon,
-    base,
-    8453: base,
-    arbitrum,
-    42161: arbitrum,
-    amoy,
-    80002: amoy,
-    sepolia,
-    11155111: sepolia,
-    baseSepolia,
-    84532: baseSepolia,
-    scrollSepolia,
-    534351: scrollSepolia,
-    avalanche,
-    43114: avalanche,
-};
-
-if (allowedChains.length === 0) {
-    allowedChains.push('sepolia');
-} else {
-    wagmiChains = allowedChains.map(
-        (c) => chainConfig[c as keyof typeof chainConfig]
-    );
-}
-
+// Get wagmi chains from centralized configuration
+const wagmiChains: Chain[] = getAllowedChains();
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
     wagmiChains,
     [
@@ -201,24 +125,10 @@ export function getBlockchainNetworkName(chainId: number | string) {
     //ensure number
     try {
         chainId = chainId ? parseInt(chainId.toString()) : 10;
-    } catch {}
+    } catch { }
 
-    switch (chainId) {
-        case 10:
-            return 'Optimism';
-        case 11155111:
-            // Sepolia
-            return 'Sepolia';
-        case 11155420:
-            //  Op-Sepolia
-            return 'Op-Sepolia';
-        case 1:
-            //  Eth Main
-            return 'Ethereum Mainnet';
-        default:
-            //  Sepolia
-            return 'Unknown';
-    }
+    // Use centralized configuration instead of manual switch statement
+    return chainIdToName(chainId as number);
 }
 
 /**
