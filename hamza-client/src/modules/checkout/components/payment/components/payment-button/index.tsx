@@ -34,10 +34,13 @@ import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
 import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
 import { FaBitcoin, FaWallet } from 'react-icons/fa';
-import { checkWalletBalance, WalletPaymentResponse } from './payment-handlers/common';
+import {
+    checkWalletBalance,
+    WalletPaymentResponse,
+} from './payment-handlers/common';
 import ChainSelectionInterstitial from '../chain-selector';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getCurrencyPrecision } from '@/currency.config'; 
+import { getCurrencyPrecision } from '@/currency.config';
 
 //TODO: we need a global common function to replace this
 
@@ -144,7 +147,8 @@ const CryptoPaymentButton = ({
                     let currency = o.currency_code;
                     if (!currency?.length) currency = 'eth';
                     let amount = o.amount;
-                    if (paymentGroups[currency]) amount += paymentGroups[currency];
+                    if (paymentGroups[currency])
+                        amount += paymentGroups[currency];
                     paymentGroups[currency] = amount;
                 });
             }
@@ -500,7 +504,7 @@ const CryptoPaymentButton = ({
     };
 
     const handlePayment = async (paymentMode: string, chainType: string) => {
-        if (!isConnected) {
+        if (!isConnected && paymentMode != 'direct') {
             openConnectModal?.();
             return;
         }
@@ -518,7 +522,7 @@ const CryptoPaymentButton = ({
     const searchParams = useSearchParams();
     const step = searchParams.get('step');
     const isCartEmpty = cart?.items.length === 0;
-    const isMissingAddress = !cart?.shipping_address;
+    const isMissingAddress = false; //!cart?.shipping_address; //TODO: fix this
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
         isCartEmpty ||
