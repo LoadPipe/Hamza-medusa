@@ -22,6 +22,7 @@ import {
     bsc,
     scrollSepolia,
     avalanche,
+    baseSepolia
 } from 'wagmi/chains';
 import { ChainsConfig } from './types';
 
@@ -679,5 +680,6 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 precision: { display: 6, db: 8, native: 18 },
             },
         },
+        wagmiChain: baseSepolia,
     },
 };
