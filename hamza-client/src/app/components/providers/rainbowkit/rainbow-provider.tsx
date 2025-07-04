@@ -134,6 +134,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             status: 'unauthenticated',
             token: '',
             wallet_address: '',
+            anonymous: false,
         });
         clearAuthCookie();
     };
@@ -225,6 +226,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                             customer_id: data.data?.customer_id,
                             is_verified: data.data?.is_verified,
                             status: 'authenticated',
+                            anonymous: false,
                         });
 
                         // setCustomerPreferredCurrency(
