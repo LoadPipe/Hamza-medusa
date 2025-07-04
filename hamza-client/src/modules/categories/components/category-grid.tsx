@@ -65,13 +65,12 @@ export default function CategoryGrid() {
                                     flex 
                                     flex-col 
                                     items-center 
-                                    bg-black 
                                     rounded-xl 
                                     px-0 py-6
-                                    hover:bg-zinc-900 
                                     transition-all
                                     w-full
                                 "
+                        style={{ backgroundColor: '#0B0A0B' }}
                     >
                         <Image
                             src={cat.icon}
