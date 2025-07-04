@@ -4,6 +4,7 @@ import CategoryButton from '@/modules/products/components/buttons/category-butto
 import { CgChevronRight } from 'react-icons/cg';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Category {
     id: string;
@@ -64,6 +65,16 @@ const FilterBarStore = () => {
             />
         ));
 
+    const variants = {
+        initial: { x: 80, opacity: 0 },
+        animate: {
+            x: 0,
+            opacity: 1,
+            transition: { type: "spring", stiffness: 80, damping: 20 }
+        },
+        exit: { x: 0, opacity: 1, transition: { duration: 0 } }
+    };
+
     return (
         <Flex
             maxW={'941px'}
@@ -82,6 +93,7 @@ const FilterBarStore = () => {
                     maxW={'941px'}
                     width={'100%'}
                     overflow={'hidden'}
+                    alignItems="center"
                     gap={{ base: '12px', md: '20px' }}
                 >
                     <CategoryButton
@@ -90,15 +102,30 @@ const FilterBarStore = () => {
                             'https://images.hamza.market/category-icons/all.svg'
                         }
                     />
-                    {isLoading
-                        ? skeletons // Show skeletons while loading
-                        : visibleCategories.map((category, index) => (
-                              <CategoryButton
-                                  key={index}
-                                  categoryName={category.name}
-                                  url={category.metadata?.icon_url}
-                              />
-                          ))}
+                    <AnimatePresence initial={false} mode="wait">
+                        <motion.div
+                            key={startIdx}
+                            variants={variants}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                            style={{
+                                display: "flex",
+                                gap: 20,
+                                alignItems: "center"
+                            }}
+                        >
+                            {isLoading
+                                ? skeletons
+                                : visibleCategories.map((category, index) => (
+                                    <CategoryButton
+                                        key={index}
+                                        categoryName={category.name}
+                                        url={category.metadata?.icon_url}
+                                    />
+                                ))}
+                        </motion.div>
+                    </AnimatePresence>
                 </Flex>
                 <Flex
                     w="123px"

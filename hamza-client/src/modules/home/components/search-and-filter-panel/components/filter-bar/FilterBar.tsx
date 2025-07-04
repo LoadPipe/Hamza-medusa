@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Flex, useDisclosure, Skeleton, Box } from '@chakra-ui/react';
 import CategoryButton from '@/modules/products/components/buttons/category-button';
 import FilterButton from './components/FilterButton';
-import { CgChevronRight, CgChevronLeft } from 'react-icons/cg'; // Import both chevrons
+import { CgChevronRight } from 'react-icons/cg';
 import FilterModalHome from './components/FilterModal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Define the category structure
 interface Category {
@@ -71,6 +72,17 @@ const FilterBar = () => {
             />
         ));
 
+
+    const variants = {
+        initial: { x: 80, opacity: 0 },
+        animate: {
+            x: 0,
+            opacity: 1,
+            transition: { type: "spring", stiffness: 80, damping: 20 }
+        },
+        exit: { x: 0, opacity: 1, transition: { duration: 0 } }
+    };
+
     return (
         <Flex
             mt={{ base: '0.5rem', md: '0' }}
@@ -124,17 +136,34 @@ const FilterBar = () => {
                             'https://images.hamza.market/category-icons/all.svg'
                         }
                     />
-                    {isLoading
-                        ? skeletons // Show skeletons while loading
-                        : visibleCategories.map((category, index) => {
-                              return (
-                                  <CategoryButton
-                                      key={index}
-                                      categoryName={category.name}
-                                      url={category.metadata?.icon_url}
-                                  />
-                              );
-                          })}
+
+                    <AnimatePresence initial={false} mode="wait">
+                        <motion.div
+                            key={startIdx}
+                            variants={variants}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                            style={{
+                                display: "flex",
+                                gap: 20,
+                                width: "100%",
+                                alignItems: "center",
+                                position: "relative"
+                            }}
+                        >
+                            {isLoading
+                                ? skeletons // Show skeletons while loading
+                                : visibleCategories.map((category, index) => (
+                                    <CategoryButton
+                                        key={index}
+                                        categoryName={category.name}
+                                        url={category.metadata?.icon_url}
+                                    />
+                                ))}
+                        </motion.div>
+                    </AnimatePresence>
+
                     {/* Right gradient overlay */}
                     <Flex
                         position="absolute"
