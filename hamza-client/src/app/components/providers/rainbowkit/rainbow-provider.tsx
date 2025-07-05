@@ -38,6 +38,7 @@ const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
 const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
 const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
+const CREATE_URL = `${MEDUSA_SERVER_URL}/custom/customer/anonymous`;
 
 async function sendVerifyRequest(message: any, signature: any) {
     return await axios.post(
@@ -76,7 +77,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         authData,
         preferred_currency_code,
         setCustomerAuthData,
-        setCustomerPreferredCurrency,
         setWhitelistConfig,
         setHnsAvatar,
         setHnsName,
