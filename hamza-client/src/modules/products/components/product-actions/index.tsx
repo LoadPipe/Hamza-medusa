@@ -16,7 +16,10 @@ import MobileActions from './components/mobile-actions';
 import ProductPrice from '../product-price';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getInventoryCount, getStore } from '@/lib/server';
+import { getInventoryCount, getStore, getToken } from '@/lib/server';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+import { cookies } from 'next/headers';
 
 type ProductActionsProps = {
     product: PricedProduct;
@@ -46,6 +49,10 @@ export default function ProductActions({
     const { whitelist_config, authData } = useCustomerAuthStore();
     const [isWhitelisted, setIsWhitelisted] = useState(false);
     const { wishlist } = useWishlistStore();
+
+    const MEDUSA_SERVER_URL =
+        process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
+    const CREATE_URL = `${MEDUSA_SERVER_URL}/custom/customer/anonymous`;
 
     const variants = product.variants;
     const variant_id = variants[0].id;
@@ -141,10 +148,50 @@ export default function ProductActions({
 
     const inView = useIntersection(actionsRef, '0px');
 
+    async function callCreateAnonymousCustomer(cartId?: string) {
+        return await axios.post(
+            CREATE_URL,
+            { cart_id: cartId },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-control': 'no-cache, no-store',
+                    Accept: 'application/json',
+                },
+            }
+        );
+    }
+
+    async function createAnonymousCustomer() {
+        const cartId = cookies().get('_medusa_cart_id')?.value;
+        const response = await callCreateAnonymousCustomer(cartId);
+
+        if (response.status == 201) {
+            const tokenResponse = await getToken({
+                wallet_address: response.data.wallet_address,
+                email: response.data?.email?.trim()?.toLowerCase(),
+                password: '',
+            });
+            const customer = response.data;
+
+            return {
+                token: tokenResponse,
+                customer,
+            };
+        } else {
+            console.log('running verify unauthenticated');
+        }
+
+        return { token: null, customer: null };
+    }
+
     // add the selected variant to the cart
     const handleAddToCart = async () => {
         if (!variant?.id) return;
         setIsAdding(true);
+        if (authData.customer_id?.length) {
+            await createAnonymousCustomer();
+        }
         await addToCart({
             variantId: variant.id,
             quantity: 1,
@@ -158,6 +205,9 @@ export default function ProductActions({
     //FYI: If user clicks buy now and then navigates back to the product preview and clicks again it will increase quanitity again
     const handleBuyNow = async () => {
         if (!variant?.id) return;
+        if (authData.customer_id?.length) {
+            await createAnonymousCustomer();
+        }
         setBuyNowLoader(true);
         await addToCart({
             variantId: variant.id,
