@@ -317,6 +317,7 @@ const CryptoPaymentButton = ({
             const data = checkoutData.data;
 
             // Add balance check for direct payments before proceeding
+            /*
             if (paymentMode === 'direct') {
                 const hasBalance = await checkBalanceBeforePayment(
                     parseInt(chainId),
@@ -329,7 +330,7 @@ const CryptoPaymentButton = ({
                     await cancelOrderFromCart(cartId);
                     return;
                 }
-            }
+            }*/
 
             let output: WalletPaymentResponse | undefined = {
                 chain_id: parseInt(chainId),
