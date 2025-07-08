@@ -95,8 +95,12 @@ const CryptoPaymentButton = ({
             connector: new InjectedConnector(),
         });
 
-    const { preferred_currency_code, setCustomerPreferredCurrency, authData } =
-        useCustomerAuthStore();
+    const {
+        preferred_currency_code,
+        setCustomerPreferredCurrency,
+        authData,
+        setCustomerAuthData,
+    } = useCustomerAuthStore();
 
     useEffect(() => {
         const fetchChainId = async () => {
@@ -316,22 +320,6 @@ const CryptoPaymentButton = ({
             );
             const data = checkoutData.data;
 
-            // Add balance check for direct payments before proceeding
-            /*
-            if (paymentMode === 'direct') {
-                const hasBalance = await checkBalanceBeforePayment(
-                    parseInt(chainId),
-                    data
-                );
-                if (!hasBalance) {
-                    setLoaderVisible(false);
-                    setIsProcessingOrder(false);
-                    displayError('Insufficient balance');
-                    await cancelOrderFromCart(cartId);
-                    return;
-                }
-            }*/
-
             let output: WalletPaymentResponse | undefined = {
                 chain_id: parseInt(chainId),
                 transaction_id: '',
@@ -505,9 +493,19 @@ const CryptoPaymentButton = ({
     };
 
     const handlePayment = async (paymentMode: string, chainType: string) => {
-        if (!isConnected && paymentMode != 'direct') {
-            openConnectModal?.();
-            return;
+        if (paymentMode != 'direct') {
+            if (!isConnected || authData.anonymous) {
+                setCustomerAuthData({
+                    wallet_address: '',
+                    customer_id: '',
+                    anonymous: false,
+                    is_verified: false,
+                    token: '',
+                    status: 'unauthenticated',
+                });
+                openConnectModal?.();
+                return;
+            }
         }
 
         // For direct EVM payments, open the chain selection interstitial
