@@ -208,7 +208,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     async function createAnonymousCustomer() {
         const response = await callCreateAnonymousCustomer();
-        console.log('CREATING ANONYMOUS CUSTOMER ========================');
 
         if (response.status == 201) {
             const tokenResponse = await getToken({
@@ -224,7 +223,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 console.log('customer wallet: ', customer.wallet_address);
                 console.log('customer id: ', customer.id);
 
-                console.log('SETCUSTOMERAUTH DATA 6');
                 setCustomerAuthData({
                     token: tokenResponse ?? '',
                     wallet_address: customer.wallet_address
@@ -235,6 +233,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     anonymous: true,
                     status: 'authenticated',
                 });
+
+                setCustomerPreferredCurrency('usdc');
             }
 
             return {
