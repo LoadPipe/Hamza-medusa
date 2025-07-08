@@ -221,9 +221,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
-                        //localStorage.setItem('_medusa_jwt', tokenResponse);
 
-                        console.log('SETCUSTOMERAUTH DATA 1');
                         setCustomerAuthData({
                             token: tokenResponse,
                             wallet_address: message?.address,
@@ -233,9 +231,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                             anonymous: false,
                         });
 
-                        // setCustomerPreferredCurrency(
-                        //     data.data?.preferred_currency?.code
-                        // );
                         if (preferred_currency_code) {
                             await setCurrency(
                                 preferred_currency_code,
