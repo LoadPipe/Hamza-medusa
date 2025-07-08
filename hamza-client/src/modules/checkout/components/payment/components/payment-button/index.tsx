@@ -90,10 +90,9 @@ const CryptoPaymentButton = ({
     const { isUpdatingCart } = useCartStore();
     const { setIsProcessingOrder } = useCartStore();
     const router = useRouter();
-    const { connect, connectors, error, isLoading, pendingConnector } =
-        useConnect({
-            connector: new InjectedConnector(),
-        });
+    const { connect, connectors } = useConnect({
+        connector: new InjectedConnector(),
+    });
 
     const {
         preferred_currency_code,
@@ -120,73 +119,6 @@ const CryptoPaymentButton = ({
     const displayError = (errMsg: string) => {
         setErrorMessage(errMsg);
         toast.error(errMsg);
-    };
-
-    // helper function to convert amounts for balance checking
-    const convertToNativeAmount = (
-        currency: string,
-        amount: any,
-        chainId: number
-    ) => {
-        const precision = getCurrencyPrecision(currency, chainId);
-        const adjustmentFactor = Math.pow(10, precision.native - precision.db);
-        const nativeAmount = BigInt(amount) * BigInt(adjustmentFactor);
-        return ethers.toBigInt(nativeAmount);
-    };
-
-    // function to check balance without signing
-    const checkBalanceBeforePayment = async (
-        chainId: number,
-        checkoutData: any
-    ): Promise<boolean> => {
-        if (!walletClient) return false;
-
-        try {
-            const provider = new ethers.BrowserProvider(walletClient, chainId);
-            const signer = await provider.getSigner();
-
-            const paymentGroups: { [key: string]: any } = {};
-            if (checkoutData.orders) {
-                checkoutData.orders.forEach((o: any) => {
-                    let currency = o.currency_code;
-                    if (!currency?.length) currency = 'eth';
-                    let amount = o.amount;
-                    if (paymentGroups[currency])
-                        amount += paymentGroups[currency];
-                    paymentGroups[currency] = amount;
-                });
-            }
-
-            // Check balance for each currency
-            for (const currency in paymentGroups) {
-                let amount = convertToNativeAmount(
-                    currency,
-                    paymentGroups[currency],
-                    chainId
-                );
-
-                amount = process.env.NEXT_PUBLIC_ONE_SATOSHI_DISCOUNT
-                    ? BigInt(1)
-                    : amount;
-
-                const hasBalance = await checkWalletBalance(
-                    provider,
-                    signer,
-                    chainId,
-                    currency,
-                    amount
-                );
-
-                if (!hasBalance) {
-                    return false;
-                }
-            }
-
-            return true;
-        } catch (error) {
-            console.error('Error checking balance:', error);
-            return false;
-        }
     };
 
     /**
@@ -226,7 +158,6 @@ const CryptoPaymentButton = ({
                 provider = new ethers.BrowserProvider(walletClient, chainId);
                 signer = await provider.getSigner();
             } else {
-                //TODO: get provider, chain id & signer from window.ethereum
                 if (window.ethereum?.providers) {
                     provider = new ethers.BrowserProvider(
                         window.ethereum?.providers[0]
@@ -533,6 +464,7 @@ const CryptoPaymentButton = ({
         if (isCartEmpty) return 'Add products to order';
         if (isMissingAddress) return 'Add address to order';
         if (isUpdatingCart) return <Spinner />;
+        if (authData.anonymous) return 'Connect Wallet';
         return 'Pay with Browser Wallet';
     };
 
