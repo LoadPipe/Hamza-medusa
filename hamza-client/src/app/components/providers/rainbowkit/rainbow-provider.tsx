@@ -154,7 +154,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     ) {
                         console.log('Hamza Customer: ', hamzaCustomer);
                         console.log('Medusa Customer: ', customer);
-                        clearLogin();
+
+                        //if both are empty, no need to clear login
+                        if (customer?.id || hamzaCustomer?.id) clearLogin();
                     }
                 });
             });
@@ -254,13 +256,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         console.log(data.data?.wallet_address);
                         console.log(clientWallet);
                         console.log(message?.address);
-                        clearLogin();
+                        clearLogin(true);
                         clearCartCookie();
                         return false;
                     }
                 } else {
                     console.log('running verify unauthenticated');
-                    clearLogin();
+                    clearLogin(true);
                     throw new Error(data.message);
                 }
 

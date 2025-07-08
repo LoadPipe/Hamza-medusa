@@ -192,7 +192,13 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         );
     };
 
+    /**
+     * Call the API method to create an anonymous customer.
+     * @param cartId Optional; associates that new customer with the current cart.
+     * @returns
+     */
     async function callCreateAnonymousCustomer(cartId?: string) {
+        console.log('Calling createAnonymousCustomer with cart', cartId);
         return await axios.post(
             CREATE_URL,
             { cart_id: cartId },
@@ -206,8 +212,13 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         );
     }
 
+    /**
+     * Create a new anonymous customer via the API, then set the credentials in local cache.
+     * @returns
+     */
     async function createAnonymousCustomer() {
-        const response = await callCreateAnonymousCustomer();
+        const cartId = Cookies.get('_medusa_cart_id');
+        const response = await callCreateAnonymousCustomer(cartId);
 
         if (response.status == 201) {
             const tokenResponse = await getToken({
@@ -348,12 +359,14 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 await createAnonymousCustomer();
             }
 
+            //add product to cart
             await addToCart({
                 variantId: selectedVariant.id!,
                 quantity: quantity,
                 countryCode: countryCode,
             });
 
+            //notify
             if (showPopup) {
                 setCartModalOpen(true);
             }
