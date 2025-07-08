@@ -343,12 +343,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
 
         try {
-            console.log('BUYNOW ========================');
             console.log(authData.customer_id);
             if (!authData.customer_id?.length) {
                 await createAnonymousCustomer();
             }
-            //TODO: is this used, and why is eth hard-coded?
+
             await addToCart({
                 variantId: selectedVariant.id!,
                 quantity: quantity,

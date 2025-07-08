@@ -452,7 +452,7 @@ const CryptoPaymentButton = ({
     const searchParams = useSearchParams();
     const step = searchParams.get('step');
     const isCartEmpty = cart?.items.length === 0;
-    const isMissingAddress = false; //!cart?.shipping_address; //TODO: fix this
+    const isMissingAddress = !cart?.shipping_address; //TODO: fix this
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
         isCartEmpty ||

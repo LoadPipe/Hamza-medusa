@@ -16,7 +16,7 @@ import MobileActions from './components/mobile-actions';
 import ProductPrice from '../product-price';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getInventoryCount, getStore, getToken } from '@/lib/server';
+import { getInventoryCount, getStore } from '@/lib/server';
 
 type ProductActionsProps = {
     product: PricedProduct;
