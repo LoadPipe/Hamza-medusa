@@ -41,6 +41,7 @@ import {
 import ChainSelectionInterstitial from '../chain-selector';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { getCurrencyPrecision } from '@/currency.config';
+import { isShippingAddressRequired } from '@/modules/checkout/utils';
 
 //TODO: we need a global common function to replace this
 
@@ -449,10 +450,33 @@ const CryptoPaymentButton = ({
         await proceedWithPayment(paymentMode, chainType);
     };
 
+    const isMissingShippingAddress = (cart: any) => {
+        //if no shipping address, then definitely it's missing
+        if (!cart.shipping_address) return true;
+
+        //if shipping address is required, then we have to have the full address
+        if (isShippingAddressRequired(cart)) {
+            if (
+                !cart.shipping_address.first_name ||
+                !cart.shipping_address.last_name ||
+                !cart.shipping_address.address_1 ||
+                !cart.shipping_address.city ||
+                !cart.shipping_address.postal_code ||
+                !cart.shipping_address.country_code
+            ) {
+                return true;
+            }
+        }
+
+        //email is always required
+        console.log('cart email is', cart.email);
+        return cart.email?.length ? false : true;
+    };
+
     const searchParams = useSearchParams();
     const step = searchParams.get('step');
     const isCartEmpty = cart?.items.length === 0;
-    const isMissingAddress = !cart?.shipping_address; //TODO: fix this
+    const isMissingAddress = isMissingShippingAddress(cart);
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
         isCartEmpty ||

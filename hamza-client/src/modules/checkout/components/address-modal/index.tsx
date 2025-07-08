@@ -28,6 +28,7 @@ import compareSelectedAddress from '@/lib/util/compare-address-select';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { isShippingAddressRequired } from '../../utils';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -64,7 +65,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const [emailError, setEmailError] = useState<string>('');
     const [phoneError, setPhoneError] = useState<string>('');
     const [shippingAddressRequired, setShippingAddressRequired] =
-        useState<boolean>(false);
+        useState<boolean>(true);
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -123,22 +124,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
         }
     }, [isOpen, cart]);
 
-    const isShippingAddressRequired = () => {
-        if (cart?.items?.length == 0) return true;
-
-        for (let n = 0; n < (cart?.items?.length ?? 0); n++) {
-            if (
-                cart?.items[
-                    n
-                ].variant.product.metadata?.no_shipping_address?.toString() !==
-                'true'
-            ) {
-                return true;
-            }
-        }
-        return false;
-    };
-
     useEffect(() => {
         // If in edit mode and customer has addresses, compare current address to address book
         if (addressType === 'edit' && customer?.shipping_addresses) {
@@ -149,8 +134,15 @@ const AddressModal: React.FC<AddressModalProps> = ({
             setSavedAddressId(
                 matchingAddress?.id ? matchingAddress.id : selectedAddressId
             );
-            setShippingAddressRequired(isShippingAddressRequired());
         }
+
+        const shippingAddressRequired = isShippingAddressRequired(cart);
+        console.log(
+            'full shipping address is',
+            shippingAddressRequired ? '' : 'not',
+            'required'
+        );
+        setShippingAddressRequired(shippingAddressRequired);
     }, [cart, countryCode, addressType, customer, selectedAddressId]);
 
     const validateEmail = (email: string): boolean => {
