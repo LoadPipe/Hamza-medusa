@@ -38,7 +38,6 @@ const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
 const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
 const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
-const CREATE_URL = `${MEDUSA_SERVER_URL}/custom/customer/anonymous`;
 
 async function sendVerifyRequest(message: any, signature: any) {
     return await axios.post(
@@ -126,22 +125,26 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         }
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
-    const clearLogin = () => {
-        console.log('CLEARING LOGIN');
-        setCustomerAuthData({
-            customer_id: '',
-            is_verified: false,
-            status: 'unauthenticated',
-            token: '',
-            wallet_address: '',
-            anonymous: false,
-        });
-        clearAuthCookie();
+    const clearLogin = (includingAnon: boolean = false) => {
+        if (!authData.anonymous || includingAnon) {
+            console.log('CLEARING LOGIN');
+            setCustomerAuthData({
+                customer_id: '',
+                is_verified: false,
+                status: 'unauthenticated',
+                token: '',
+                wallet_address: '',
+                anonymous: false,
+            });
+            clearAuthCookie();
+        }
     };
 
     useEffect(() => {
         console.log('Saved wallet address', clientWallet);
-        if (clientWallet?.length) {
+        console.log('Authdata wallet address', authData.wallet_address);
+        console.log('Authdata anonymous', authData.anonymous);
+        if (clientWallet?.length && !authData.anonymous) {
             getHamzaCustomer().then((hamzaCustomer) => {
                 getCustomer().then((customer) => {
                     if (
@@ -220,6 +223,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         Cookies.set('_medusa_jwt', tokenResponse);
                         //localStorage.setItem('_medusa_jwt', tokenResponse);
 
+                        console.log('SETCUSTOMERAUTH DATA 1');
                         setCustomerAuthData({
                             token: tokenResponse,
                             wallet_address: message?.address,
@@ -273,17 +277,20 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         signOut: async () => {
-            setCustomerAuthData({
-                ...authData,
-                status: 'unauthenticated',
-                token: '',
-                wallet_address: '',
-                customer_id: '',
-                is_verified: false,
-            });
-            await signOut();
-            router.replace('/');
-            return;
+            if (!authData.anonymous) {
+                console.log('SIGNING OUT');
+                setCustomerAuthData({
+                    ...authData,
+                    status: 'unauthenticated',
+                    token: '',
+                    wallet_address: '',
+                    customer_id: '',
+                    is_verified: false,
+                });
+                await signOut();
+                router.replace('/');
+                return;
+            }
         },
     });
 
