@@ -44,11 +44,9 @@ import {
     cancelPayment,
     clearCart,
     copyCart,
-    getCart,
     getPaymentData,
 } from '@/lib/server';
 import { useAccount } from 'wagmi';
-import { ModalCoverWalletConnect } from '../common/components/modal-cover-wallet-connect';
 import { calculateStepState } from './utils';
 import {
     getChainLogoFromName,
