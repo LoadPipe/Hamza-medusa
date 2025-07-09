@@ -9,7 +9,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import MainMenu from '../main-menu';
 import WalletInfo from '../wallet-info-menu';
 import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
-import { signOut } from '@/modules/account/actions';
+import { usePathname } from 'next/navigation';
 
 export const WalletConnectButton = () => {
     const setWalletAddress = useCustomerAuthStore(
@@ -20,6 +20,7 @@ export const WalletConnectButton = () => {
         (state) => state.preferred_currency_code
     );
     const { address, isConnecting, isReconnecting } = useAccount();
+    const pathname = usePathname();
 
     const account = useAccount();
 
@@ -100,6 +101,11 @@ export const WalletConnectButton = () => {
                     openChainModal();
                 }
 
+                //if we're on order processing page, don't show any of this stuff
+                if (pathname.includes('/order/processing/cart_')) {
+                    return <></>;
+                }
+
                 return (
                     <div
                         {...(!ready && {
@@ -128,7 +134,7 @@ export const WalletConnectButton = () => {
                                 height="48px"
                                 fontSize="16px"
                             >
-                                Connect Wallet
+                                Connect Wallet A
                             </Button>
                         ) : (
                             <Flex
