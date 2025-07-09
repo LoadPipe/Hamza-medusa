@@ -92,6 +92,7 @@ const OrderProcessing = ({
         onClose: onCancelDialogClose,
     } = useDisclosure();
     const [isCanceling, setIsCanceling] = useState(false);
+    const [paymentIsExpired, setPaymentIsExpired] = useState(false);
     const [cancelEnabled, setCancelEnabled] = useState(false);
     const totalOrders = initialPaymentData?.orders?.length ?? 0;
     const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY || 'en';
@@ -237,6 +238,14 @@ const OrderProcessing = ({
         }
     };
 
+    const handleExpiredPayment = async () => {
+        if (!paymentIsExpired) {
+            setPaymentIsExpired(true);
+            //copy a new cart
+            await copyCart(cartId);
+        }
+    };
+
     const { data: convertedBtcTotal } = useQuery({
         queryKey: ['convertedBtcTotal', paymentTotal, currencyCode], // ✅ Unique key per conversion
         queryFn: async () => {
@@ -337,7 +346,13 @@ const OrderProcessing = ({
                             payment.status === 'expired' ||
                             payment.status === 'canceled'
                         ) {
+                            //stop timer
                             clearInterval(timer);
+
+                            //special handling for expired
+                            if (payment.status === 'expired')
+                                handleExpiredPayment();
+
                             return;
                         }
 
