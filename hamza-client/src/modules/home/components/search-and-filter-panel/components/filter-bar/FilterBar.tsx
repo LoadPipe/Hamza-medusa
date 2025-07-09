@@ -34,22 +34,15 @@ const FilterBar = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     // Show more logic for categories (next or previous)
     const toggleShowMore = () => {
-        // Calculate the remaining categories after the current start index
-        const remainingCategories = uniqueCategories.length - startIdx;
-
-        // If fewer than 3 categories are left, increase by the remaining count, otherwise increase by 3
-        const increment = remainingCategories >= 3 ? 3 : remainingCategories;
-
-        // Calculate the new index
-        const nextIndex = startIdx + increment;
+        const nextIndex = startIdx + 1;
 
         // If the nextIndex exceeds the array length, loop back to the start
         setStartIdx(nextIndex >= uniqueCategories.length ? 0 : nextIndex);
