@@ -76,7 +76,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         authData,
         preferred_currency_code,
         setCustomerAuthData,
-        setCustomerPreferredCurrency,
         setWhitelistConfig,
         setHnsAvatar,
         setHnsName,
@@ -126,21 +125,26 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         }
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
-    const clearLogin = () => {
-        console.log('CLEARING LOGIN');
-        setCustomerAuthData({
-            customer_id: '',
-            is_verified: false,
-            status: 'unauthenticated',
-            token: '',
-            wallet_address: '',
-        });
-        clearAuthCookie();
+    const clearLogin = (includingAnon: boolean = false) => {
+        if (!authData.anonymous || includingAnon) {
+            console.log('CLEARING LOGIN');
+            setCustomerAuthData({
+                customer_id: '',
+                is_verified: false,
+                status: 'unauthenticated',
+                token: '',
+                wallet_address: '',
+                anonymous: false,
+            });
+            clearAuthCookie();
+        }
     };
 
     useEffect(() => {
         console.log('Saved wallet address', clientWallet);
-        if (clientWallet?.length) {
+        console.log('Authdata wallet address', authData.wallet_address);
+        console.log('Authdata anonymous', authData.anonymous);
+        if (clientWallet?.length && !authData.anonymous) {
             getHamzaCustomer().then((hamzaCustomer) => {
                 getCustomer().then((customer) => {
                     if (
@@ -150,7 +154,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     ) {
                         console.log('Hamza Customer: ', hamzaCustomer);
                         console.log('Medusa Customer: ', customer);
-                        clearLogin();
+
+                        //if both are empty, no need to clear login
+                        if (customer?.id || hamzaCustomer?.id) clearLogin();
                     }
                 });
             });
@@ -217,7 +223,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
-                        //localStorage.setItem('_medusa_jwt', tokenResponse);
 
                         setCustomerAuthData({
                             token: tokenResponse,
@@ -225,11 +230,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                             customer_id: data.data?.customer_id,
                             is_verified: data.data?.is_verified,
                             status: 'authenticated',
+                            anonymous: false,
                         });
 
-                        // setCustomerPreferredCurrency(
-                        //     data.data?.preferred_currency?.code
-                        // );
                         if (preferred_currency_code) {
                             await setCurrency(
                                 preferred_currency_code,
@@ -253,13 +256,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         console.log(data.data?.wallet_address);
                         console.log(clientWallet);
                         console.log(message?.address);
-                        clearLogin();
+                        clearLogin(true);
                         clearCartCookie();
                         return false;
                     }
                 } else {
                     console.log('running verify unauthenticated');
-                    clearLogin();
+                    clearLogin(true);
                     throw new Error(data.message);
                 }
 
@@ -271,17 +274,20 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         signOut: async () => {
-            setCustomerAuthData({
-                ...authData,
-                status: 'unauthenticated',
-                token: '',
-                wallet_address: '',
-                customer_id: '',
-                is_verified: false,
-            });
-            await signOut();
-            router.replace('/');
-            return;
+            if (!authData.anonymous) {
+                console.log('SIGNING OUT');
+                setCustomerAuthData({
+                    ...authData,
+                    status: 'unauthenticated',
+                    token: '',
+                    wallet_address: '',
+                    customer_id: '',
+                    is_verified: false,
+                });
+                await signOut();
+                router.replace('/');
+                return;
+            }
         },
     });
 

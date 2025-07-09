@@ -47,7 +47,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     const discountCode = cart?.discounts?.[0]?.code;
 
     const currentCurrency = currencies.find(
-        (currency) => currency.code === preferredCurrencyCode
+        (currency) => currency.code === (preferredCurrencyCode ?? 'usdc')
     );
 
     const handleCurrencySelect = async (currencyCode: string) => {

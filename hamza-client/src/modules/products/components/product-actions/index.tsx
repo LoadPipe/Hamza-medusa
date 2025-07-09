@@ -45,7 +45,6 @@ export default function ProductActions({
         countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
     const { whitelist_config, authData } = useCustomerAuthStore();
     const [isWhitelisted, setIsWhitelisted] = useState(false);
-    const { wishlist } = useWishlistStore();
 
     const variants = product.variants;
     const variant_id = variants[0].id;

@@ -12,6 +12,7 @@ type State = {
         customer_id: string;
         status: AuthenticationStatus;
         is_verified: boolean;
+        anonymous: boolean;
     };
     whitelist_config: {
         is_whitelisted: boolean;
@@ -42,6 +43,7 @@ export const useCustomerAuthStore = create<State & Actions>()(
                 status: 'unauthenticated' as AuthenticationStatus, // Make sure to cast if needed
                 token: '',
                 wallet_address: '',
+                anonymous: false,
             },
             preferred_currency_code: null,
             whitelist_config: {

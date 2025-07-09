@@ -9,11 +9,13 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import MainMenu from '../main-menu';
 import WalletInfo from '../wallet-info-menu';
 import useUnifiedFilterStore from '@/zustand/products/filter/use-unified-filter-store';
+import { signOut } from '@/modules/account/actions';
 
 export const WalletConnectButton = () => {
     const setWalletAddress = useCustomerAuthStore(
         (state) => state.setWalletAddress
     );
+    const { setCustomerAuthData } = useCustomerAuthStore();
     const preferred_currency_code = useCustomerAuthStore(
         (state) => state.preferred_currency_code
     );
@@ -112,7 +114,17 @@ export const WalletConnectButton = () => {
                             <Button
                                 borderRadius="30px"
                                 backgroundColor="primary.green.900"
-                                onClick={openConnectModal}
+                                onClick={() => {
+                                    setCustomerAuthData({
+                                        wallet_address: '',
+                                        customer_id: '',
+                                        anonymous: false,
+                                        is_verified: false,
+                                        token: '',
+                                        status: 'unauthenticated',
+                                    });
+                                    openConnectModal();
+                                }}
                                 height="48px"
                                 fontSize="16px"
                             >
