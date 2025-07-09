@@ -34,10 +34,13 @@ import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
 import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
 import { FaBitcoin, FaWallet } from 'react-icons/fa';
-import { checkWalletBalance, WalletPaymentResponse } from './payment-handlers/common';
+import {
+    checkWalletBalance,
+    WalletPaymentResponse,
+} from './payment-handlers/common';
 import ChainSelectionInterstitial from '../chain-selector';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getCurrencyPrecision } from '@/currency.config'; 
+import { getCurrencyPrecision } from '@/currency.config';
 
 //TODO: we need a global common function to replace this
 
@@ -144,7 +147,8 @@ const CryptoPaymentButton = ({
                     let currency = o.currency_code;
                     if (!currency?.length) currency = 'eth';
                     let amount = o.amount;
-                    if (paymentGroups[currency]) amount += paymentGroups[currency];
+                    if (paymentGroups[currency])
+                        amount += paymentGroups[currency];
                     paymentGroups[currency] = amount;
                 });
             }
@@ -271,13 +275,14 @@ const CryptoPaymentButton = ({
         cartId: string,
         fromCheckout: boolean = false,
         payWith: string = 'evm',
-        showQrCode: boolean = false
+        showQrCode: boolean = false,
+        paymentMode: string = ''
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (cartId?.length) {
             setIsProcessingOrder(false);
             router.push(
-                `/order/processing/${cartId}?paywith=${payWith}&openqrmodal=${showQrCode ? 'true' : 'false'}&checkout=${fromCheckout ? 'true' : 'false'}`
+                `/order/processing/${cartId}?paywith=${payWith}&openqrmodal=${showQrCode ? 'true' : 'false'}&checkout=${fromCheckout ? 'true' : 'false'}&paymentmode=${paymentMode}`
             );
         }
     };
@@ -370,7 +375,8 @@ const CryptoPaymentButton = ({
                             cart.id,
                             true,
                             payWith,
-                            showQr
+                            showQr,
+                            paymentMode
                         );
                     } else {
                         await clearCart();
