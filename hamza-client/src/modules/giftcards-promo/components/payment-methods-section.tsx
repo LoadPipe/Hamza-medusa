@@ -240,8 +240,8 @@ const PaymentMethodsSection = memo(() => {
             />
 
             <Container maxW="6xl" position="relative" zIndex={1}>
-                <VStack spacing={16}>
-                    <VStack spacing={6} textAlign="center">
+                <VStack spacing={{ base: "4", md: "16" }}>
+                    <VStack spacing={{ base: "3", md: "6" }} textAlign="center">
                         <Text
                             fontSize={{ base: 'xs', md: 'sm' }}
                             fontWeight="300"
@@ -257,7 +257,7 @@ const PaymentMethodsSection = memo(() => {
                             Payment Methods
                         </Text>
 
-                        <VStack spacing={4}>
+                        <VStack spacing={{ base: "0", md: "4" }}>
                             <HStack
                                 spacing={2}
                                 flexWrap="wrap"

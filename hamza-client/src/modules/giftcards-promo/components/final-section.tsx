@@ -8,6 +8,7 @@ import {
     Button,
     SimpleGrid,
     Icon,
+    Stack,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { Zap, Shield, Globe } from 'lucide-react';
@@ -187,54 +188,75 @@ const FinalCTASection = memo(() => {
                                 transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
                                 transition="all 0.6s ease 0.4s"
                             >
+                                {/* Mobile View */}
                                 <Text
-                                    fontSize={{ base: '2xl', md: '3xl', lg: '6xl' }}
+                                    display={{ base: 'block', md: 'none' }}
+                                    fontSize="3xl"
                                     fontWeight="300"
                                     fontFamily="Arial, Helvetica, sans-serif"
                                     letterSpacing="-0.025em"
                                     color="white"
-                                    lineHeight="1"
+                                    lineHeight="1.2"
                                     textAlign="center"
                                 >
-                                    Start Shopping Gift Cards
-                                </Text>
-                                <HStack spacing={2} flexWrap="wrap" justify="center">
-                                    <Text
-                                        fontSize={{ base: '2xl', md: '3xl', lg: '6xl' }}
-                                        fontWeight="300"
-                                        fontFamily="Arial, Helvetica, sans-serif"
-                                        letterSpacing="-0.025em"
-                                        color="white"
-                                        lineHeight="1"
-                                    >
-                                        with
-                                    </Text>
-                                    <Text
-                                        fontSize={{ base: '2xl', md: '3xl', lg: '6xl' }}
-                                        fontWeight="300"
-                                        fontFamily="Arial, Helvetica, sans-serif"
-                                        letterSpacing="-0.025em"
-                                        lineHeight="1"
-                                        bgGradient="linear(to-r, #22c55e, #a855f7)"
-                                        bgClip="text"
-                                    >
+                                    Start Shopping Gift Cards with{' '}
+                                    <Text as="span" bgGradient="linear(to-r, #22c55e, #a855f7)" bgClip="text">
                                         Crypto
-                                    </Text>
+                                    </Text>{' '}
+                                    on Hamza
+                                </Text>
+
+                                {/* Desktop View */}
+                                <Box display={{ base: 'none', md: 'block' }}>
                                     <Text
-                                        fontSize={{ base: '2xl', md: '3xl', lg: '6xl' }}
+                                        fontSize={{ md: '3xl', lg: '6xl' }}
                                         fontWeight="300"
                                         fontFamily="Arial, Helvetica, sans-serif"
                                         letterSpacing="-0.025em"
                                         color="white"
                                         lineHeight="1"
+                                        textAlign="center"
                                     >
-                                        on Hamza
+                                        Start Shopping Gift Cards
                                     </Text>
-                                </HStack>
+                                    <HStack spacing={2} flexWrap="wrap" justify="center">
+                                        <Text
+                                            fontSize={{ md: '3xl', lg: '6xl' }}
+                                            fontWeight="300"
+                                            fontFamily="Arial, Helvetica, sans-serif"
+                                            letterSpacing="-0.025em"
+                                            color="white"
+                                            lineHeight="1"
+                                        >
+                                            with
+                                        </Text>
+                                        <Text
+                                            fontSize={{ md: '3xl', lg: '6xl' }}
+                                            fontWeight="300"
+                                            fontFamily="Arial, Helvetica, sans-serif"
+                                            letterSpacing="-0.025em"
+                                            lineHeight="1"
+                                            bgGradient="linear(to-r, #22c55e, #a855f7)"
+                                            bgClip="text"
+                                        >
+                                            Crypto
+                                        </Text>
+                                        <Text
+                                            fontSize={{ md: '3xl', lg: '6xl' }}
+                                            fontWeight="300"
+                                            fontFamily="Arial, Helvetica, sans-serif"
+                                            letterSpacing="-0.025em"
+                                            color="white"
+                                            lineHeight="1"
+                                        >
+                                            on Hamza
+                                        </Text>
+                                    </HStack>
+                                </Box>
                             </VStack>
 
                             <Text
-                                fontSize="2xl"
+                                fontSize={{ base: 'lg', md: '2xl' }}
                                 fontWeight="300"
                                 fontFamily="Arial, Helvetica, sans-serif"
                                 color="white"
@@ -251,7 +273,7 @@ const FinalCTASection = memo(() => {
                                 with instant delivery and worldwide access.
                             </Text>
 
-                            <HStack spacing={8} mb={8} flexWrap="wrap" justify="center">
+                            <HStack spacing={{ base: "0", md: "8" }} mb={8} flexWrap="wrap" justify="center">
                                 {features.map((feature, index) => (
                                     <FeatureBadge
                                         key={feature.text}
@@ -287,6 +309,7 @@ const FinalCTASection = memo(() => {
                                         lineHeight="1.75rem"
                                         borderRadius="full"
                                         h="2.75rem"
+                                        w={{ base: "100%", md: "auto" }}
                                         _hover={{
                                             bg: "linear-gradient(to right, #22c55e, #16a34a)",
                                             transform: "translateY(-2px)",
@@ -325,6 +348,7 @@ const FinalCTASection = memo(() => {
                                     borderRadius="full"
                                     bg="transparent"
                                     h="2.75rem"
+                                    w={{ base: "100%", md: "auto" }}
                                     _hover={{
                                         borderColor: "purple.400",
                                         bg: "rgba(168, 85, 247, 0.2)",
@@ -339,42 +363,43 @@ const FinalCTASection = memo(() => {
                                 </Button>
                             </HStack>
 
-                            <HStack
-                                spacing={8}
+                            <Stack
+                                direction={{ base: 'column', md: 'row' }}
+                                spacing={{ base: 3, md: 8 }}
                                 justify="center"
+                                align="center"
                                 mb={8}
                                 opacity={isVisible ? 1 : 0}
                                 transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
                                 transition="all 0.6s ease 1.8s"
-                                flexWrap="wrap"
                             >
                                 <Text
-                                    fontSize={{ base: 'sm', md: 'md' }}
+                                    fontSize={{ base: 'xs', md: 'md' }}
                                     fontWeight="light"
                                     fontFamily="Arial, Helvetica, sans-serif"
                                     color="gray.300"
                                 >
                                     Decentralized marketplace
                                 </Text>
-                                <Text color="gray.500">|</Text>
+                                <Text color="gray.500" display={{ base: 'none', md: 'block' }}>|</Text>
                                 <Text
-                                    fontSize={{ base: 'sm', md: 'md' }}
+                                    fontSize={{ base: 'xs', md: 'md' }}
                                     fontWeight="light"
                                     fontFamily="Arial, Helvetica, sans-serif"
                                     color="gray.300"
                                 >
                                     Secure payments
                                 </Text>
-                                <Text color="gray.500">|</Text>
+                                <Text color="gray.500" display={{ base: 'none', md: 'block' }}>|</Text>
                                 <Text
-                                    fontSize={{ base: 'sm', md: 'md' }}
+                                    fontSize={{ base: 'xs', md: 'md' }}
                                     fontWeight="light"
                                     fontFamily="Arial, Helvetica, sans-serif"
                                     color="gray.300"
                                 >
                                     Worldwide access
                                 </Text>
-                            </HStack>
+                            </Stack>
 
                             <Box
                                 w="100%"
@@ -387,7 +412,7 @@ const FinalCTASection = memo(() => {
                             />
 
                             <SimpleGrid
-                                columns={{ base: 1, md: 3 }}
+                                columns={3}
                                 spacing={{ base: 8, md: 16 }}
                                 w="100%"
                                 maxW="3xl"

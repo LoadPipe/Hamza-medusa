@@ -223,7 +223,7 @@ const CategorySection = memo(() => {
             />
 
             <Container maxW="6xl" position="relative" zIndex={1}>
-                <VStack spacing={16}>
+                <VStack spacing={{ base: "6", md: "16" }}>
                     <VStack spacing={6} textAlign="center">
                         <Text
                             fontSize={{ base: 'xs', md: 'sm' }}
@@ -258,7 +258,7 @@ const CategorySection = memo(() => {
                             </Text>
 
                             <Text
-                                fontSize={{ base: 'xl', md: '2xl' }}
+                                fontSize={{ base: 'm', md: '2xl' }}
                                 fontFamily="Arial, Helvetica, sans-serif"
                                 color="white"
                                 maxW="3xl"
@@ -267,11 +267,22 @@ const CategorySection = memo(() => {
                                 opacity={isVisible ? 1 : 0}
                                 transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
                                 transition="all 0.6s ease 0.6s"
+                                mb={{ base: 3, md: 6 }}
                             >
                                 Choose from the world's most popular brands and retailers on
                                 Hamza. From gaming to shopping, streaming to dining - we've got
                                 you covered.
                             </Text>
+
+                            <Box
+                                w={{ base: "4rem", sm: "6rem" }}
+                                h="2px"
+                                bgGradient="linear(to-r, transparent, green.400, transparent)"
+                                mx="auto"
+                                opacity={isVisible ? 1 : 0}
+                                transform={isVisible ? 'scaleX(1)' : 'scaleX(0)'}
+                                transition="all 0.6s ease 0.6s"
+                            />
                         </VStack>
                     </VStack>
 

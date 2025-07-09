@@ -202,7 +202,7 @@ const WhyChooseSection = memo(() => {
             />
 
             <Container maxW="6xl" position="relative" zIndex={1}>
-                <VStack spacing={16}>
+                <VStack spacing={6}>
                     {/* Section Header */}
                     <VStack spacing={6} textAlign="center">
                         <Text
@@ -220,7 +220,7 @@ const WhyChooseSection = memo(() => {
                             Why Choose Hamza
                         </Text>
 
-                        <VStack spacing={4} mb={16}>
+                        <VStack spacing={4}>
                             <Text
                                 fontSize={{ base: '2xl', md: '3xl', lg: '60px' }}
                                 fontWeight="light"
@@ -253,6 +253,17 @@ const WhyChooseSection = memo(() => {
                             </Text>
                         </VStack>
                     </VStack>
+
+                    <Box
+                        w={{ base: "5rem", sm: "8rem" }}
+                        h="2px"
+                        bgGradient="linear(to-r, transparent, green.400, transparent)"
+                        mx="auto"
+                        opacity={isVisible ? 1 : 0}
+                        transform={isVisible ? 'scaleX(1)' : 'scaleX(0)'}
+                        transition="all 0.6s ease 0.6s"
+                        mb={{ base: 12, md: 24 }}
+                    />
 
                     {/* Feature Cards Grid */}
                     <SimpleGrid

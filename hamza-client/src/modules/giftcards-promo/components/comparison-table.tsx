@@ -12,6 +12,7 @@ import {
     Td,
     HStack,
     Icon,
+    Stack,
 } from '@chakra-ui/react';
 import { Check, X } from 'lucide-react';
 
@@ -191,7 +192,7 @@ const ComparisonTable = memo(() => {
             <Container maxW="5xl" position="relative" zIndex={1}>
                 <VStack>
                     {/* Section Header */}
-                    <VStack spacing={6} textAlign="center">
+                    <VStack spacing={{ base: "2", md: "6" }} textAlign="center">
                         <Text
                             fontSize={{ base: 'xs', md: 'sm' }}
                             fontWeight="300"
@@ -207,11 +208,11 @@ const ComparisonTable = memo(() => {
                             Platform Comparison
                         </Text>
 
-                        <HStack
-                            spacing={4}
+                        <Stack
+                            direction={{ base: 'column', md: 'row' }}
+                            spacing={{ base: "0", md: "4" }}
                             align="center"
                             justify="center"
-                            flexWrap="wrap"
                             marginBottom="1rem"
                             opacity={isVisible ? 1 : 0}
                             transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
@@ -248,7 +249,7 @@ const ComparisonTable = memo(() => {
                             >
                                 Hamza
                             </Text>
-                        </HStack>
+                        </Stack>
                     </VStack>
 
                     <Box
@@ -262,7 +263,131 @@ const ComparisonTable = memo(() => {
                         transition="all 0.6s ease 0.6s"
                     />
 
-                    {/* Comparison Table */}
+                    {/* Mobile Card View */}
+                    <VStack
+                        spacing={6}
+                        w="100%"
+                        display={{ base: 'flex', md: 'none' }}
+                        opacity={isVisible ? 1 : 0}
+                        transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
+                        transition="all 0.6s ease 0.8s"
+                    >
+                        {comparisonData.map((row, index) => (
+                            <VStack
+                                key={row.feature}
+                                spacing={4}
+                                w="100%"
+                                opacity={isVisible ? 1 : 0}
+                                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                                style={{
+                                    transition: `all 0.6s ease ${1.2 + (index * 0.1)}s`
+                                }}
+                                bg="blackAlpha.500"
+                                border="1px solid"
+                                borderColor="gray.800"
+                                borderRadius="lg"
+                                p={4}
+                                backdropFilter="blur(4px)"
+                            >
+                                <Text
+                                    fontSize="lg"
+                                    fontWeight="medium"
+                                    color="white"
+                                    textAlign="center"
+                                >
+                                    {row.feature}
+                                </Text>
+
+                                <Box
+                                    w="40px"
+                                    h="1px"
+                                    bg="gray.700"
+                                />
+
+                                <HStack spacing={4} w="100%">
+                                    {/* Traditional Card */}
+                                    <Box
+                                        flex={1}
+                                        bg="#080101"
+                                        border="1px solid rgba(239, 68, 68, 0.3)"
+                                        borderRadius="lg"
+                                        p={4}
+                                    >
+                                        <VStack spacing={3}>
+                                            <Text
+                                                fontSize="xs"
+                                                fontWeight="bold"
+                                                color="red.300"
+                                                textTransform="uppercase"
+                                                letterSpacing="wider"
+                                            >
+                                                Traditional
+                                            </Text>
+                                            <Text
+                                                fontSize="sm"
+                                                color="gray.300"
+                                                textAlign="center"
+                                            >
+                                                {row.traditional}
+                                            </Text>
+                                            <Box
+                                                w={8}
+                                                h={8}
+                                                borderRadius="full"
+                                                bg="#410B0B"
+                                                display="flex"
+                                                alignItems="center"
+                                                justifyContent="center"
+                                            >
+                                                <Icon as={X} w={5} h={5} color="red.400" />
+                                            </Box>
+                                        </VStack>
+                                    </Box>
+
+                                    {/* Hamza Card */}
+                                    <Box
+                                        flex={1}
+                                        bg="#000601"
+                                        border="1px solid rgba(34, 197, 94, 0.3)"
+                                        borderRadius="lg"
+                                        p={4}
+                                    >
+                                        <VStack spacing={3}>
+                                            <Text
+                                                fontSize="xs"
+                                                fontWeight="bold"
+                                                color="green.300"
+                                                textTransform="uppercase"
+                                                letterSpacing="wider"
+                                            >
+                                                Hamza
+                                            </Text>
+                                            <Text
+                                                fontSize="sm"
+                                                color="gray.300"
+                                                textAlign="center"
+                                            >
+                                                {row.hamza}
+                                            </Text>
+                                            <Box
+                                                w={8}
+                                                h={8}
+                                                borderRadius="full"
+                                                bg="rgba(34, 197, 94, 0.2)"
+                                                display="flex"
+                                                alignItems="center"
+                                                justifyContent="center"
+                                            >
+                                                <Icon as={Check} w={5} h={5} color="green.400" />
+                                            </Box>
+                                        </VStack>
+                                    </Box>
+                                </HStack>
+                            </VStack>
+                        ))}
+                    </VStack>
+
+                    {/* Desktop Table View */}
                     <Box
                         w="100%"
                         bg="rgba(255, 255, 255, 0.02)"
@@ -273,6 +398,7 @@ const ComparisonTable = memo(() => {
                         opacity={isVisible ? 1 : 0}
                         transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
                         transition="all 0.6s ease 0.8s"
+                        display={{ base: 'none', md: 'block' }}
                     >
                         <Table variant="unstyled" size="lg">
                             <Thead>

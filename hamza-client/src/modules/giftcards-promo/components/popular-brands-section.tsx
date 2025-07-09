@@ -173,7 +173,7 @@ const PopularBrandsSection = memo(() => {
                     </VStack>
 
                     <SimpleGrid
-                        columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
+                        columns={{ base: 2, sm: 3, lg: 4 }}
                         spacing={{ base: 4, md: 6 }}
                         w="100%"
                     >

@@ -8,6 +8,7 @@ import {
     Button,
     Image,
     Icon,
+    Stack,
 } from '@chakra-ui/react';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { Zap, Shield, Gift, ArrowDown } from 'lucide-react';
@@ -131,7 +132,13 @@ const HeroSection = memo(() => {
                         Meet Crypto
                     </Text>
 
-                    <HStack spacing={4} alignItems="center" justify="center" mb={6}>
+                    <Stack
+                        direction={{ base: 'column', md: 'row' }}
+                        spacing={4}
+                        alignItems="center"
+                        justify="center"
+                        mb={6}
+                    >
                         <Text
                             fontSize={{ base: '2xl', md: '4xl', lg: '7xl' }}
                             fontFamily="Arial, Helvetica, sans-serif"
@@ -146,7 +153,7 @@ const HeroSection = memo(() => {
                         </Text>
 
                         {/* Crypto Icons */}
-                        <HStack spacing={3} ml={4}>
+                        <HStack spacing={3} ml={{ base: 0, md: 4 }}>
                             {cryptoIcons.map((crypto, index) => (
                                 <Box
                                     key={crypto.code}
@@ -172,11 +179,11 @@ const HeroSection = memo(() => {
                                 </Box>
                             ))}
                         </HStack>
-                    </HStack>
+                    </Stack>
 
                     {/* Description */}
                     <Text
-                        fontSize={{ base: 'lg', md: 'xl', lg: '3xl' }}
+                        fontSize={{ base: '14px', md: 'xl', lg: '3xl' }}
                         fontFamily="Arial, Helvetica, sans-serif"
                         fontWeight="300"
                         letterSpacing="0.025em"
@@ -195,10 +202,11 @@ const HeroSection = memo(() => {
                     </Text>
 
                     {/* Feature Badges */}
-                    <HStack
-                        spacing={6}
+                    <Stack
+                        direction={{ base: 'column', md: 'row' }}
+                        spacing={{ base: 0, md: 6 }}
                         mt={8}
-                        flexWrap="wrap"
+                        align="center"
                         justify="center"
                         opacity={showAnimations ? 1 : 0}
                         transform={showAnimations ? 'translateY(0)' : 'translateY(30px)'}
@@ -225,7 +233,7 @@ const HeroSection = memo(() => {
                                 </Text>
                             </HStack>
                         ))}
-                    </HStack>
+                    </Stack>
 
                     {/* Learn More Button */}
                     <Button
