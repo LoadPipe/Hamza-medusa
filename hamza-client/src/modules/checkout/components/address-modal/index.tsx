@@ -64,7 +64,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const [emailError, setEmailError] = useState<string>('');
     const [phoneError, setPhoneError] = useState<string>('');
     const [shippingAddressRequired, setShippingAddressRequired] =
-        useState<boolean>(false);
+        useState<boolean>(true);
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',

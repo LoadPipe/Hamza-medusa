@@ -8,24 +8,25 @@ type NavProfileCurrencyProps = {
     iconOnly?: boolean;
 };
 
-const NavProfileCurrency: React.FC<NavProfileCurrencyProps> = ({ iconOnly = false }) => {
+const NavProfileCurrency: React.FC<NavProfileCurrencyProps> = ({
+    iconOnly = false,
+}) => {
     const preferred_currency_code = useCustomerAuthStore(
         (state) => state.preferred_currency_code
     );
     const setCustomerPreferredCurrency = useCustomerAuthStore(
         (state) => state.setCustomerPreferredCurrency
     );
-    const authStatus = useCustomerAuthStore(
-        (state) => state.authData.status
-    );
+    const authStatus = useCustomerAuthStore((state) => state.authData.status);
     const customerId = useCustomerAuthStore(
         (state) => state.authData.customer_id
     );
+    const anonymous = useCustomerAuthStore((state) => state.authData.anonymous);
 
     // Only show if user is not logged in (unauthenticated or no customer_id)
     const isLoggedIn = authStatus === 'authenticated' && customerId;
-    
-    if (isLoggedIn) {
+
+    if (isLoggedIn && !anonymous) {
         return null;
     }
 

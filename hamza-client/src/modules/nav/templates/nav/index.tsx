@@ -10,7 +10,6 @@ import Image from 'next/image';
 //import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
 import HamzaLogo from '../../../../../public/images/logo/logo.png';
 //  Components
-import NavSearchBar from './menu-desktop/components/nav-searchbar';
 import MobileNav from './menu-mobile/mobile-nav';
 import { WalletConnectButton } from './menu-desktop/connect-wallet';
 import NavProfileCurrency from '@modules/nav/components/nav-profile-currency';

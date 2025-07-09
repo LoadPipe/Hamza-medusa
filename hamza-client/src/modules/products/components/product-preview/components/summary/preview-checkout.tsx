@@ -36,6 +36,7 @@ import {
     getReviewCount,
     clearCart,
     getProductTermsByProductHandle,
+    getToken,
 } from '@/lib/server';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import shieldIcon from '@/images/icon/shield.png';
@@ -55,6 +56,9 @@ import {
     acceptedCurrencyCodes,
     currencyIsUsdStable,
 } from '@/lib/util/currencies';
+import axios from 'axios';
+import { cookies } from 'next/headers';
+import Cookies from 'js-cookie';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -67,6 +71,10 @@ type ProductTerms = {
     terms_and_conditions: string;
     require: boolean;
 };
+
+const MEDUSA_SERVER_URL =
+    process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
+const CREATE_URL = `${MEDUSA_SERVER_URL}/custom/customer/anonymous`;
 
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
 const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
@@ -120,8 +128,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
 
-    const { preferred_currency_code, setCustomerPreferredCurrency } =
-        useCustomerAuthStore();
+    const {
+        preferred_currency_code,
+        setCustomerPreferredCurrency,
+        setCustomerAuthData,
+    } = useCustomerAuthStore();
     //console.log('user preferred currency code: ', preferred_currency_code);
 
     const { whitelist_config, setWhitelistConfig, authData } =
@@ -180,6 +191,73 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             </>
         );
     };
+
+    /**
+     * Call the API method to create an anonymous customer.
+     * @param cartId Optional; associates that new customer with the current cart.
+     * @returns
+     */
+    async function callCreateAnonymousCustomer(cartId?: string) {
+        console.log('Calling createAnonymousCustomer with cart', cartId);
+        return await axios.post(
+            CREATE_URL,
+            { cart_id: cartId },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-control': 'no-cache, no-store',
+                    Accept: 'application/json',
+                },
+            }
+        );
+    }
+
+    /**
+     * Create a new anonymous customer via the API, then set the credentials in local cache.
+     * @returns
+     */
+    async function createAnonymousCustomer() {
+        const cartId = Cookies.get('_medusa_cart_id');
+        const response = await callCreateAnonymousCustomer(cartId);
+
+        if (response.status == 201) {
+            const tokenResponse = await getToken({
+                wallet_address: response.data.wallet_address,
+                email: response.data?.email?.trim()?.toLowerCase(),
+                password: '',
+            });
+            const customer = response.data;
+
+            if (customer) {
+                Cookies.set('_medusa_jwt', tokenResponse ?? '');
+
+                console.log('customer wallet: ', customer.wallet_address);
+                console.log('customer id: ', customer.id);
+
+                setCustomerAuthData({
+                    token: tokenResponse ?? '',
+                    wallet_address: customer.wallet_address
+                        .trim()
+                        .toLowerCase(),
+                    customer_id: customer.id,
+                    is_verified: false,
+                    anonymous: true,
+                    status: 'authenticated',
+                });
+
+                setCustomerPreferredCurrency('usdc');
+            }
+
+            return {
+                token: tokenResponse,
+                customer,
+            };
+        } else {
+            console.log('running verify unauthenticated');
+        }
+
+        return { token: null, customer: null };
+    }
 
     const variantRecord = useMemo(() => {
         const map: Record<string, Record<string, string>> = {};
@@ -276,13 +354,19 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
 
         try {
-            //TODO: is this used, and why is eth hard-coded?
+            //Here create a new anonymous customer if nobody is currently logged in
+            if (!authData.customer_id?.length) {
+                await createAnonymousCustomer();
+            }
+
+            //add product to cart
             await addToCart({
                 variantId: selectedVariant.id!,
                 quantity: quantity,
                 countryCode: countryCode,
             });
 
+            //notify
             if (showPopup) {
                 setCartModalOpen(true);
             }
@@ -290,6 +374,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.error('Error adding to cart:', error);
         }
     };
+
     useEffect(() => {
         if (
             authData.status == 'authenticated' &&

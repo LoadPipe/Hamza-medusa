@@ -41,6 +41,7 @@ const AccountNavDesktop = ({
             token: '',
             wallet_address: '',
             status: 'unauthenticated',
+            anonymous: false,
         });
         Cookies.remove('_medusa_jwt');
         Cookies.remove('_medusa_cart_id');
