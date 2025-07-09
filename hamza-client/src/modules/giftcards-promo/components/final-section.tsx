@@ -334,33 +334,36 @@ const FinalCTASection = memo(() => {
                                     </Button>
                                 </Link>
 
-                                <Button
-                                    size="lg"
-                                    variant="outline"
-                                    borderColor="purple.400"
-                                    color="purple.400"
-                                    fontWeight="500"
-                                    fontFamily="Arial, Helvetica, sans-serif"
-                                    px={10}
-                                    py={5}
-                                    fontSize="xl"
-                                    lineHeight="1.75rem"
-                                    borderRadius="full"
-                                    bg="transparent"
-                                    h="2.75rem"
-                                    w={{ base: "100%", md: "auto" }}
-                                    _hover={{
-                                        borderColor: "purple.400",
-                                        bg: "rgba(168, 85, 247, 0.2)",
-                                        transform: "translateY(-2px)",
-                                    }}
-                                    _active={{
-                                        transform: "translateY(0)",
-                                    }}
-                                    transition="all 0.3s ease"
-                                >
-                                    Learn More
-                                </Button>
+                                <Link href="/en/how-it-works" passHref>
+                                    <Button
+                                        as="a"
+                                        size="lg"
+                                        variant="outline"
+                                        borderColor="purple.400"
+                                        color="purple.400"
+                                        fontWeight="500"
+                                        fontFamily="Arial, Helvetica, sans-serif"
+                                        px={10}
+                                        py={5}
+                                        fontSize="xl"
+                                        lineHeight="1.75rem"
+                                        borderRadius="full"
+                                        bg="transparent"
+                                        h="2.75rem"
+                                        w={{ base: "100%", md: "auto" }}
+                                        _hover={{
+                                            borderColor: "purple.400",
+                                            bg: "rgba(168, 85, 247, 0.2)",
+                                            transform: "translateY(-2px)",
+                                        }}
+                                        _active={{
+                                            transform: "translateY(0)",
+                                        }}
+                                        transition="all 0.3s ease"
+                                    >
+                                        Learn More
+                                    </Button>
+                                </Link>
                             </HStack>
 
                             <Stack

@@ -34,7 +34,7 @@ const steps = [
         stepNumber: 'Step 1',
         icon: Search,
         title: 'Choose Your Brand',
-        description: 'Browse 8,500+ gift cards from popular brands like Amazon, Apple, Steam, and more',
+        description: 'Browse thousands of gift cards from popular brands like Amazon, Apple, Steam, and more',
     },
     {
         stepNumber: 'Step 2',

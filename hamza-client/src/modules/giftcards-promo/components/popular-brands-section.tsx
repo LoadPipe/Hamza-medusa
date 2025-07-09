@@ -7,6 +7,7 @@ import {
     SimpleGrid,
     Button,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 
 interface BrandCardProps {
     name: string;
@@ -236,36 +237,40 @@ const PopularBrandsSection = memo(() => {
                                 </Text>
                             </VStack>
 
-                            <Button
-                                size="lg"
-                                bg="linear-gradient(135deg, #22c55e, #16a34a)"
-                                color="white"
-                                fontWeight="bold"
-                                px={8}
-                                py={6}
-                                borderRadius="full"
-                                _hover={{
-                                    bg: "linear-gradient(135deg, #16a34a, #15803d)",
-                                    transform: "translateY(-2px)",
-                                }}
-                                _active={{
-                                    transform: "translateY(0)",
-                                }}
-                                transition="all 0.3s ease"
-                                rightIcon={
-                                    <Box
-                                        as="span"
-                                        fontSize="lg"
-                                        transform="rotate(-45deg)"
-                                        transition="transform 0.3s ease"
-                                        _groupHover={{ transform: "rotate(0deg)" }}
-                                    >
-                                        →
-                                    </Box>
-                                }
-                            >
-                                Request a Brand
-                            </Button>
+                            {/* TODO: Replace with actual form URL once available */}
+                            <Link href="/en/contact" passHref>
+                                <Button
+                                    as="a"
+                                    size="lg"
+                                    bg="linear-gradient(135deg, #22c55e, #16a34a)"
+                                    color="white"
+                                    fontWeight="bold"
+                                    px={8}
+                                    py={6}
+                                    borderRadius="full"
+                                    _hover={{
+                                        bg: "linear-gradient(135deg, #16a34a, #15803d)",
+                                        transform: "translateY(-2px)",
+                                    }}
+                                    _active={{
+                                        transform: "translateY(0)",
+                                    }}
+                                    transition="all 0.3s ease"
+                                    rightIcon={
+                                        <Box
+                                            as="span"
+                                            fontSize="lg"
+                                            transform="rotate(-45deg)"
+                                            transition="transform 0.3s ease"
+                                            _groupHover={{ transform: "rotate(0deg)" }}
+                                        >
+                                            →
+                                        </Box>
+                                    }
+                                >
+                                    Request a Brand
+                                </Button>
+                            </Link>
                         </VStack>
                     </Box>
                 </VStack>
