@@ -62,26 +62,34 @@ export default function CategoryGrid() {
                         key={cat.name}
                         href={`/category/${cat.handle}`}
                         className="
+                                    group
                                     flex 
                                     flex-col 
                                     items-center 
-                                    bg-black 
                                     rounded-xl 
                                     px-0 py-6
-                                    hover:bg-zinc-900 
                                     transition-all
+                                    duration-300
+                                    ease-in-out
                                     w-full
+                                    hover:scale-105
+                                    transform
+                                    cursor-pointer
+                                    hover:bg-[#3A3A3A]
                                 "
+                        style={{ backgroundColor: '#0B0A0B' }}
                     >
-                        <Image
-                            src={cat.icon}
-                            alt={cat.name}
-                            width={64}
-                            height={64}
-                            className="mb-3"
-                            draggable={false}
-                        />
-                        <span className="text-white text-lg font-medium text-center">
+                        <div className="transition-transform duration-300 ease-in-out group-hover:scale-110 mb-3">
+                            <Image
+                                src={cat.icon}
+                                alt={cat.name}
+                                width={64}
+                                height={64}
+                                className="transition-all duration-300"
+                                draggable={false}
+                            />
+                        </div>
+                        <span className="text-white text-lg font-medium text-center transition-all duration-300">
                             {cat.name}
                         </span>
                     </Link>
