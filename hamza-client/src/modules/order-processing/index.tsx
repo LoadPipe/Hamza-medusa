@@ -438,117 +438,28 @@ const OrderProcessing = ({
                                                       currentStatus
                                               )?.label}
                                 </Text>
+                            </Box>
 
-                                <HStack spacing={3}>
-                                    <Box
-                                        bg={
-                                            currentStatus === 'expired'
-                                                ? 'red.900'
-                                                : currentStatus === 'partial'
-                                                  ? 'orange.900'
-                                                  : currentStatus === 'canceled'
-                                                    ? 'gray.700'
-                                                    : 'green.900'
-                                        }
-                                        px={3}
-                                        py={1}
-                                        borderRadius="3xl"
-                                        border="2px"
-                                        borderStyle="solid"
-                                        borderColor={
-                                            currentStatus === 'expired'
-                                                ? 'red.500'
-                                                : currentStatus === 'partial'
-                                                  ? 'orange.400'
-                                                  : currentStatus === 'canceled'
-                                                    ? 'gray.500'
-                                                    : 'primary.green.900'
+                            {/* Cancel Button - show if payment is waiting or partial */}
+                            {(currentStatus === 'waiting' ||
+                                currentStatus === 'partial') &&
+                                paymentMode !== 'wallet' && (
+                                    <Button
+                                        size="sm"
+                                        bg="red.600"
+                                        color="white"
+                                        borderRadius="2rem"
+                                        leftIcon={<FaTimes />}
+                                        _hover={{ bg: 'red.700' }}
+                                        onClick={onCancelDialogOpen}
+                                        isDisabled={
+                                            isCanceling || !cancelEnabled
                                         }
                                     >
-                                        <Text color="white" fontWeight="bold">
-                                            {currentStatus === 'expired'
-                                                ? 'Expired'
-                                                : currentStatus === 'partial'
-                                                  ? 'Partial'
-                                                  : currentStatus === 'canceled'
-                                                    ? 'Canceled'
-                                                    : STATUS_STEPS.find(
-                                                          (step) =>
-                                                              step.status ===
-                                                              currentStatus
-                                                      )?.label}
-                                        </Text>
-                                    </Box>
-
-                                    {/* Cancel Button - show if payment is waiting or partial */}
-                                    {(currentStatus === 'waiting' ||
-                                        currentStatus === 'partial') &&
-                                        paymentMode !== 'wallet' && (
-                                            <Button
-                                                size="sm"
-                                                bg="red.600"
-                                                color="white"
-                                                borderRadius="2rem"
-                                                leftIcon={<FaTimes />}
-                                                _hover={{ bg: 'red.700' }}
-                                                onClick={onCancelDialogOpen}
-                                                isDisabled={
-                                                    isCanceling ||
-                                                    !cancelEnabled
-                                                }
-                                            >
-                                                Cancel Payment
-                                            </Button>
-                                        )}
-                                </HStack>
-                            </Box>
+                                        Cancel Payment
+                                    </Button>
+                                )}
                         </HStack>
-
-                        <Text color="gray.300">Cart ID: {cartId}</Text>
-
-                        {/* Status Steps */}
-                        <Box display={{ base: 'block', md: 'none' }}>
-                            {STATUS_STEPS.map(
-                                (step, index) =>
-                                    (step.status === currentStatus ||
-                                        (step.status === 'waiting' &&
-                                            (currentStatus === 'expired' ||
-                                                currentStatus ===
-                                                    'canceled'))) && (
-                                        <StatusStep
-                                            key={step.status}
-                                            step={step}
-                                            index={index}
-                                            progress={progress}
-                                            currentStatus={currentStatus}
-                                            {...calculateStepState(
-                                                step.status,
-                                                currentStatus,
-                                                progress,
-                                                endTimestamp,
-                                                startTimestamp
-                                            )}
-                                        />
-                                    )
-                            )}
-                        </Box>
-
-                        {/* Cancel Button - show if payment is waiting or partial */}
-                        {(currentStatus === 'waiting' ||
-                            currentStatus === 'partial') && (
-                            <Button
-                                size="sm"
-                                bg="red.600"
-                                color="white"
-                                borderRadius="2rem"
-                                leftIcon={<FaTimes />}
-                                _hover={{ bg: 'red.700' }}
-                                onClick={onCancelDialogOpen}
-                                isDisabled={isCanceling || !cancelEnabled}
-                            >
-                                Cancel Payment
-                            </Button>
-                        )}
                     </HStack>
 
                     <Text color="gray.300">Cart ID: {cartId}</Text>
