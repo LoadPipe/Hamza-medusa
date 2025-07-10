@@ -134,7 +134,7 @@ export const WalletConnectButton = () => {
                                 height="48px"
                                 fontSize="16px"
                             >
-                                Connect Wallet A
+                                Connect Wallet
                             </Button>
                         ) : (
                             <Flex
