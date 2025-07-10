@@ -2,7 +2,7 @@ import { clx } from '@medusajs/ui';
 import { Flex, Container, Text, Box, Divider } from '@chakra-ui/react';
 import { getCategoriesList, getCollectionsList } from '@/lib/server';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { FaDiscord } from 'react-icons/fa6';
+import { FaDiscord, FaTelegram } from 'react-icons/fa6';
 import Link from 'next/link';
 import Image from 'next/image';
 import Reputation from '@modules/home/components/reputation';
@@ -249,6 +249,20 @@ export default async function Footer() {
                             target="_blank"
                         >
                             <FaDiscord size={24} />
+                        </Link>
+                        <Link
+                            href="https://t.me/decomnetwork"
+                            target="_blank"
+                            title="English Telegram"
+                        >
+                            <FaTelegram size={24} />
+                        </Link>
+                        <Link
+                            href="https://t.me/hamza_espanol"
+                            target="_blank"
+                            title="Spanish Telegram"
+                        >
+                            <FaTelegram size={24} />
                         </Link>
                     </Flex>
 
