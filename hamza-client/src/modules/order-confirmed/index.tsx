@@ -146,6 +146,23 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
         return { hasBitcoinPayment, bitcoinAmount };
     };
 
+    const orderContainsDigitalItems = (order: any) => {
+        for (let item of order?.items) {
+            if (item?.variant?.product?.metadata) {
+                console.log(item?.variant?.product?.metadata);
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const checkoutContainsDigitalItems = () => {
+        for (let order of orders) {
+            if (orderContainsDigitalItems(order)) return true;
+        }
+        return false;
+    };
+
     const { hasBitcoinPayment, bitcoinAmount } = getBitcoinPaymentInfo();
 
     return (
@@ -522,6 +539,30 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                     );
                 })}
             </Box>
+
+            {/* Special Note */}
+            {checkoutContainsDigitalItems() && (
+                <Box>
+                    <Text fontSize="18px" fontWeight="600" mb={4}>
+                        IMPORTANT:
+                    </Text>
+                    <Flex direction="column" gap={3}>
+                        <Text color="gray.400" fontSize="14px">
+                            If you ordered a digital product and did not receive
+                            it, please contact us right away at{' '}
+                            <b>
+                                <u>support@hamza.market</u>
+                            </b>
+                            , or{' '}
+                            <b>
+                                click the green chat icon in the bottom right of
+                                the page
+                            </b>
+                            .
+                        </Text>
+                    </Flex>
+                </Box>
+            )}
 
             {/* Payment Summary */}
             <Box>
