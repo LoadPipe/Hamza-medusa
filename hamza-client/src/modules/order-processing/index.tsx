@@ -66,6 +66,7 @@ const OrderProcessing = ({
     cartId,
     paywith,
     openqrmodal,
+    paymentMode,
     fromCheckout,
 }: {
     cartId: string;
@@ -74,6 +75,7 @@ const OrderProcessing = ({
     paymentsData: PaymentsDataProps[];
     paywith?: string;
     openqrmodal?: boolean;
+    paymentMode?: string;
     fromCheckout?: boolean;
 }) => {
     const router = useRouter();
@@ -440,20 +442,23 @@ const OrderProcessing = ({
 
                             {/* Cancel Button - show if payment is waiting or partial */}
                             {(currentStatus === 'waiting' ||
-                                currentStatus === 'partial') && (
-                                <Button
-                                    size="sm"
-                                    bg="red.600"
-                                    color="white"
-                                    borderRadius="2rem"
-                                    leftIcon={<FaTimes />}
-                                    _hover={{ bg: 'red.700' }}
-                                    onClick={onCancelDialogOpen}
-                                    isDisabled={isCanceling || !cancelEnabled}
-                                >
-                                    Cancel Payment
-                                </Button>
-                            )}
+                                currentStatus === 'partial') &&
+                                paymentMode !== 'wallet' && (
+                                    <Button
+                                        size="sm"
+                                        bg="red.600"
+                                        color="white"
+                                        borderRadius="2rem"
+                                        leftIcon={<FaTimes />}
+                                        _hover={{ bg: 'red.700' }}
+                                        onClick={onCancelDialogOpen}
+                                        isDisabled={
+                                            isCanceling || !cancelEnabled
+                                        }
+                                    >
+                                        Cancel Payment
+                                    </Button>
+                                )}
                         </HStack>
                     </HStack>
 

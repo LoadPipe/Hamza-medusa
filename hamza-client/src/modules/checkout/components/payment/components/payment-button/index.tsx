@@ -211,13 +211,14 @@ const CryptoPaymentButton = ({
         cartId: string,
         fromCheckout: boolean = false,
         payWith: string = 'evm',
-        showQrCode: boolean = false
+        showQrCode: boolean = false,
+        paymentMode: string = ''
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (cartId?.length) {
             setIsProcessingOrder(false);
             router.push(
-                `/order/processing/${cartId}?paywith=${payWith}&openqrmodal=${showQrCode ? 'true' : 'false'}&checkout=${fromCheckout ? 'true' : 'false'}`
+                `/order/processing/${cartId}?paywith=${payWith}&openqrmodal=${showQrCode ? 'true' : 'false'}&checkout=${fromCheckout ? 'true' : 'false'}&paymentmode=${paymentMode}`
             );
         }
     };
@@ -295,7 +296,8 @@ const CryptoPaymentButton = ({
                             cart.id,
                             true,
                             payWith,
-                            showQr
+                            showQr,
+                            paymentMode
                         );
                     } else {
                         await clearCart();
