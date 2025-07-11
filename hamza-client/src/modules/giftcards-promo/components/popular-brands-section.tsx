@@ -31,71 +31,80 @@ const brands = [
     { name: 'eBay', category: 'Marketplace' },
 ];
 
-const BrandCard = memo(({ name, category, index, isVisible }: BrandCardProps) => {
-    return (
-        <Box
-            bg="rgba(255, 255, 255, 0.02)"
-            border="1px solid rgba(255, 255, 255, 0.1)"
-            borderRadius="xl"
-            p={6}
-            backdropFilter="blur(10px)"
-            position="relative"
-            overflow="hidden"
-            cursor="pointer"
-            opacity={isVisible ? 1 : 0}
-            transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
-            transition={`all 0.6s ease ${1.2 + (index * 0.1)}s`}
-            _hover={{
-                transform: 'translateY(-2px)',
-                borderColor: 'rgba(34, 197, 94, 0.3)',
-                bg: 'rgba(255, 255, 255, 0.05)',
-            }}
-            role="group"
-        >
+const BrandCard = memo(
+    ({ name, category, index, isVisible }: BrandCardProps) => {
+        return (
             <Box
-                position="absolute"
-                top={0}
-                left={0}
-                right={0}
-                bottom={0}
-                bg="linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)"
-                opacity={0}
-                _groupHover={{ opacity: 1 }}
-                transition="opacity 0.3s ease"
-            />
-
-            <VStack spacing={3} align="center" justify="center" position="relative" zIndex={1} h="100%">
-                <Text
-                    fontSize={{ base: 'lg', md: 'xl' }}
-                    fontWeight="bold"
-                    color="white"
-                    textAlign="center"
-                    _groupHover={{ color: 'green.300' }}
-                    transition="color 0.3s ease"
-                >
-                    {name}
-                </Text>
-
+                bg="rgba(255, 255, 255, 0.02)"
+                border="1px solid rgba(255, 255, 255, 0.1)"
+                borderRadius="xl"
+                p={6}
+                backdropFilter="blur(10px)"
+                position="relative"
+                overflow="hidden"
+                cursor="pointer"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
+                transition={`all 0.6s ease ${1.2 + index * 0.1}s`}
+                _hover={{
+                    transform: 'translateY(-2px)',
+                    borderColor: 'rgba(34, 197, 94, 0.3)',
+                    bg: 'rgba(255, 255, 255, 0.05)',
+                }}
+                role="group"
+            >
                 <Box
-                    w="40px"
-                    h="1px"
-                    bg="gray.700"
-                    _groupHover={{ bg: "green.400" }}
-                    transition="background-color 0.3s ease"
+                    position="absolute"
+                    top={0}
+                    left={0}
+                    right={0}
+                    bottom={0}
+                    bg="linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)"
+                    opacity={0}
+                    _groupHover={{ opacity: 1 }}
+                    transition="opacity 0.3s ease"
                 />
 
-                <Text
-                    fontSize="sm"
-                    color="gray.400"
-                    fontWeight="medium"
-                    textAlign="center"
+                <VStack
+                    spacing={3}
+                    align="center"
+                    justify="center"
+                    position="relative"
+                    zIndex={1}
+                    h="100%"
                 >
-                    {category}
-                </Text>
-            </VStack>
-        </Box>
-    );
-});
+                    <Text
+                        fontSize={{ base: 'lg', md: 'xl' }}
+                        fontWeight="bold"
+                        color="white"
+                        textAlign="center"
+                        _groupHover={{ color: 'green.300' }}
+                        transition="color 0.3s ease"
+                    >
+                        {name}
+                    </Text>
+
+                    <Box
+                        w="40px"
+                        h="1px"
+                        bg="gray.700"
+                        _groupHover={{ bg: 'green.400' }}
+                        transition="background-color 0.3s ease"
+                    />
+
+                    <Text
+                        fontSize="sm"
+                        color="gray.400"
+                        fontWeight="medium"
+                        textAlign="center"
+                    >
+                        {category}
+                    </Text>
+                </VStack>
+            </Box>
+        );
+    }
+);
 
 BrandCard.displayName = 'BrandCard';
 
@@ -103,16 +112,19 @@ const PopularBrandsSection = memo(() => {
     const [isVisible, setIsVisible] = useState(false);
     const sectionRef = useRef<HTMLDivElement>(null);
 
-    const handleIntersection = useCallback(([entry]: IntersectionObserverEntry[]) => {
-        if (entry.isIntersecting) {
-            setIsVisible(true);
-        }
-    }, []);
+    const handleIntersection = useCallback(
+        ([entry]: IntersectionObserverEntry[]) => {
+            if (entry.isIntersecting) {
+                setIsVisible(true);
+            }
+        },
+        []
+    );
 
     useEffect(() => {
         const observer = new IntersectionObserver(handleIntersection, {
             threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
+            rootMargin: '0px 0px -100px 0px',
         });
 
         const currentRef = sectionRef.current;
@@ -150,7 +162,9 @@ const PopularBrandsSection = memo(() => {
                         spacing={0}
                         textAlign="center"
                         opacity={isVisible ? 1 : 0}
-                        transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                        transform={
+                            isVisible ? 'translateY(0)' : 'translateY(30px)'
+                        }
                         transition="all 0.6s ease 0.2s"
                     >
                         <Text
@@ -165,12 +179,7 @@ const PopularBrandsSection = memo(() => {
                             Most Popular Brands
                         </Text>
 
-                        <Box
-                            w="4rem"
-                            h="1px"
-                            bg="#875BB1"
-                            mx="auto"
-                        />
+                        <Box w="4rem" h="1px" bg="#875BB1" mx="auto" />
                     </VStack>
 
                     <SimpleGrid
@@ -200,7 +209,9 @@ const PopularBrandsSection = memo(() => {
                         position="relative"
                         overflow="hidden"
                         opacity={isVisible ? 1 : 0}
-                        transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
+                        transform={
+                            isVisible ? 'translateY(0)' : 'translateY(50px)'
+                        }
                         transition="all 0.6s ease 2.4s"
                     >
                         <Box
@@ -232,13 +243,17 @@ const PopularBrandsSection = memo(() => {
                                     maxW="2xl"
                                     lineHeight="1.6"
                                 >
-                                    We're constantly adding new brands and retailers to Hamza. Contact us to
-                                    request a specific gift card.
+                                    We're constantly adding new brands and
+                                    retailers to Hamza. Contact us to request a
+                                    specific gift card.
                                 </Text>
                             </VStack>
 
                             {/* TODO: Replace with actual form URL once available */}
-                            <Link href="/en/contact" passHref>
+                            <Link
+                                href="https://secure.hamza.market/request-product/"
+                                passHref
+                            >
                                 <Button
                                     as="a"
                                     size="lg"
@@ -249,11 +264,11 @@ const PopularBrandsSection = memo(() => {
                                     py={6}
                                     borderRadius="full"
                                     _hover={{
-                                        bg: "linear-gradient(135deg, #16a34a, #15803d)",
-                                        transform: "translateY(-2px)",
+                                        bg: 'linear-gradient(135deg, #16a34a, #15803d)',
+                                        transform: 'translateY(-2px)',
                                     }}
                                     _active={{
-                                        transform: "translateY(0)",
+                                        transform: 'translateY(0)',
                                     }}
                                     transition="all 0.3s ease"
                                     rightIcon={
@@ -262,7 +277,9 @@ const PopularBrandsSection = memo(() => {
                                             fontSize="lg"
                                             transform="rotate(-45deg)"
                                             transition="transform 0.3s ease"
-                                            _groupHover={{ transform: "rotate(0deg)" }}
+                                            _groupHover={{
+                                                transform: 'rotate(0deg)',
+                                            }}
                                         >
                                             →
                                         </Box>
