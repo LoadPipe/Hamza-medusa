@@ -93,7 +93,7 @@ export default async function Nav() {
 
                         <Flex ml={'auto'} alignItems={'center'} gap={'12px'}>
                             <NavProfileCurrency />
-                            <LocalizedClientLink href="/start-selling">
+                            <LocalizedClientLink href="/seller">
                                 <Button
                                     borderRadius="30px"
                                     backgroundColor="transparent"

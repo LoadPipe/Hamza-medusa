@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Box } from '@chakra-ui/react';
-import StartSellingTemplate from '@/modules/start-selling';
+import StartSellingTemplate from '@/modules/seller';
 
 export const metadata: Metadata = {
     title: 'Sell on Hamza - Join the Decentralized Marketplace | Hamza',
