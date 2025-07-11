@@ -19,6 +19,7 @@ import { EscrowStatusString } from '@/lib/server/enums';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { FaBitcoin } from 'react-icons/fa';
+import chatIcon from '@/images/icon/chat.png';
 
 // Define types for the component
 interface LineItem {
@@ -220,6 +221,27 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                     </Text>
                 </Box>
             </Flex>
+
+            {/* Special Note */}
+            {checkoutContainsDigitalItems() && (
+                <Box>
+                    <Text fontSize="18px" fontWeight="600" mb={4}>
+                        IMPORTANT NOTE on DIGITAL ITEMS:
+                    </Text>
+                    <Flex direction="column" gap={3}>
+                        <Text color="gray.400" fontSize="14px">
+                            If you ordered a digital product and did not receive
+                            it, please contact us right away at{' '}
+                            <b>
+                                <u>support@hamza.market</u>
+                            </b>
+                            , or click the green chat icon at the bottom right
+                            of the page.{' '}
+                            <Image src={chatIcon} alt="chat icon" height={30} />{' '}
+                        </Text>
+                    </Flex>
+                </Box>
+            )}
 
             {/* Order Summary */}
             <Box>
@@ -539,30 +561,6 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                     );
                 })}
             </Box>
-
-            {/* Special Note */}
-            {checkoutContainsDigitalItems() && (
-                <Box>
-                    <Text fontSize="18px" fontWeight="600" mb={4}>
-                        IMPORTANT:
-                    </Text>
-                    <Flex direction="column" gap={3}>
-                        <Text color="gray.400" fontSize="14px">
-                            If you ordered a digital product and did not receive
-                            it, please contact us right away at{' '}
-                            <b>
-                                <u>support@hamza.market</u>
-                            </b>
-                            , or{' '}
-                            <b>
-                                click the green chat icon in the bottom right of
-                                the page
-                            </b>
-                            .
-                        </Text>
-                    </Flex>
-                </Box>
-            )}
 
             {/* Payment Summary */}
             <Box>
