@@ -22,7 +22,7 @@ import {
     bsc,
     scrollSepolia,
     avalanche,
-    baseSepolia
+    baseSepolia,
 } from 'wagmi/chains';
 import { ChainsConfig } from './types';
 
@@ -58,7 +58,10 @@ const opSepolia = {
         public: { http: ['https://sepolia.optimism.io'] },
     },
     blockExplorers: {
-        default: { name: 'OP Sepolia Explorer', url: 'https://sepolia-optimism.etherscan.io' },
+        default: {
+            name: 'OP Sepolia Explorer',
+            url: 'https://sepolia-optimism.etherscan.io',
+        },
     },
     testnet: true,
 };
@@ -81,7 +84,7 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 default: 'https://ethereum-rpc.publicnode.com',
                 fallback: [
                     'https://ethereum.publicnode.com',
-                    'https://rpc.ankr.com/eth'
+                    'https://rpc.ankr.com/eth',
                 ],
             },
             blockExplorer: {
@@ -111,10 +114,11 @@ export const CHAINS_CONFIG: ChainsConfig = {
         chainId: 10,
         metadata: {
             name: 'optimism',
-            displayName: 'Optimism',
+            displayName: 'OP Mainnet',
             isTestnet: false,
             logo: optimismLogo,
-            bridgeUrl: 'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism',
+            bridgeUrl:
+                'https://coinmarketcap.com/academy/article/how-to-bridge-to-optimism',
             nativeCurrency: {
                 name: 'Ether',
                 symbol: 'ETH',
@@ -124,7 +128,7 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 default: 'https://mainnet.optimism.io',
                 fallback: [
                     'https://optimism.publicnode.com',
-                    'https://rpc.ankr.com/optimism'
+                    'https://rpc.ankr.com/optimism',
                 ],
             },
             blockExplorer: {
@@ -167,7 +171,7 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 default: 'https://bsc-dataseed.binance.org',
                 fallback: [
                     'https://bsc.publicnode.com',
-                    'https://rpc.ankr.com/bsc'
+                    'https://rpc.ankr.com/bsc',
                 ],
             },
             blockExplorer: {
@@ -200,7 +204,8 @@ export const CHAINS_CONFIG: ChainsConfig = {
             displayName: 'Polygon',
             isTestnet: false,
             logo: polygonLogo,
-            bridgeUrl: 'https://coinmarketcap.com/academy/article/how-to-bridge-to-polygon',
+            bridgeUrl:
+                'https://coinmarketcap.com/academy/article/how-to-bridge-to-polygon',
             nativeCurrency: {
                 name: 'MATIC',
                 symbol: 'MATIC',
@@ -210,7 +215,7 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 default: 'https://polygon-rpc.com',
                 fallback: [
                     'https://polygon.publicnode.com',
-                    'https://rpc.ankr.com/polygon'
+                    'https://rpc.ankr.com/polygon',
                 ],
             },
             blockExplorer: {
@@ -321,7 +326,8 @@ export const CHAINS_CONFIG: ChainsConfig = {
             displayName: 'Base',
             isTestnet: false,
             logo: baseLogo,
-            bridgeUrl: 'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
+            bridgeUrl:
+                'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
             nativeCurrency: {
                 name: 'Ether',
                 symbol: 'ETH',
@@ -331,7 +337,7 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 default: 'https://mainnet.base.org',
                 fallback: [
                     'https://base.publicnode.com',
-                    'https://rpc.ankr.com/base'
+                    'https://rpc.ankr.com/base',
                 ],
             },
             blockExplorer: {
@@ -364,7 +370,8 @@ export const CHAINS_CONFIG: ChainsConfig = {
             displayName: 'Arbitrum One',
             isTestnet: false,
             logo: arbLogo,
-            bridgeUrl: 'https://coinmarketcap.com/academy/article/how-to-bridge-to-arbitrum',
+            bridgeUrl:
+                'https://coinmarketcap.com/academy/article/how-to-bridge-to-arbitrum',
             nativeCurrency: {
                 name: 'Ether',
                 symbol: 'ETH',
@@ -374,7 +381,7 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 default: 'https://arb1.arbitrum.io/rpc',
                 fallback: [
                     'https://arbitrum.publicnode.com',
-                    'https://rpc.ankr.com/arbitrum'
+                    'https://rpc.ankr.com/arbitrum',
                 ],
             },
             blockExplorer: {
@@ -446,7 +453,8 @@ export const CHAINS_CONFIG: ChainsConfig = {
             displayName: 'Avalanche',
             isTestnet: false,
             logo: avalancheLogo,
-            bridgeUrl: 'https://coinmarketcap.com/academy/article/how-to-bridge-to-avalanche',
+            bridgeUrl:
+                'https://coinmarketcap.com/academy/article/how-to-bridge-to-avalanche',
             nativeCurrency: {
                 name: 'AVAX',
                 symbol: 'AVAX',
@@ -456,7 +464,7 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 default: 'https://api.avax.network/ext/bc/C/rpc',
                 fallback: [
                     'https://avalanche-rpc.publicnode.com',
-                    'https://rpc.ankr.com/avalanche'
+                    'https://rpc.ankr.com/avalanche',
                 ],
             },
             blockExplorer: {
@@ -540,7 +548,7 @@ export const CHAINS_CONFIG: ChainsConfig = {
                 fallback: [
                     'https://scroll-sepolia-rpc.publicnode.com',
                     'https://rpc.ankr.com/scroll_sepolia_testnet',
-                    'https://scroll-sepolia.chainstacklabs.com'
+                    'https://scroll-sepolia.chainstacklabs.com',
                 ],
             },
             blockExplorer: {
@@ -651,7 +659,8 @@ export const CHAINS_CONFIG: ChainsConfig = {
             displayName: 'Base Sepolia',
             isTestnet: true,
             logo: baseLogo,
-            bridgeUrl: 'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
+            bridgeUrl:
+                'https://coinmarketcap.com/academy/article/how-to-bridge-to-base-mainnet',
             nativeCurrency: {
                 name: 'Sepolia Ether',
                 symbol: 'ETH',
