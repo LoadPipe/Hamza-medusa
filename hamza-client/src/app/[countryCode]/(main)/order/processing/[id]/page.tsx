@@ -15,7 +15,12 @@ export const metadata: Metadata = {
 
 type Props = {
     params: { id: string };
-    searchParams: { paywith?: string; openqrmodal?: string; checkout?: string };
+    searchParams: {
+        paywith?: string;
+        openqrmodal?: string;
+        checkout?: string;
+        paymentmode?: string;
+    };
 };
 
 interface BlockchainData {
@@ -96,6 +101,7 @@ export default async function ProcessingPage({ params, searchParams }: Props) {
 
     const paywith = searchParams.paywith;
     const openqrmodal = searchParams.openqrmodal == 'true';
+    const paymentMode = searchParams.paymentmode;
     const fromCheckout: boolean = searchParams.checkout == 'true';
 
     const paymentsData = await buildPaymentsData(cartId);
@@ -109,6 +115,7 @@ export default async function ProcessingPage({ params, searchParams }: Props) {
                 cartId={cartId}
                 paywith={paywith}
                 openqrmodal={openqrmodal}
+                paymentMode={paymentMode}
                 fromCheckout={fromCheckout}
             />
         </Container>
