@@ -1,178 +1,246 @@
-'use client';
-import { CreditCard } from 'lucide-react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
+import {
+    Box,
+    Container,
+    VStack,
+    Text,
+    SimpleGrid,
+    Image,
+} from '@chakra-ui/react';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 
 interface AcceptedCryptoProps {
     selectedLanguage: string;
 }
 
+interface CryptoCardProps {
+    crypto: {
+        name: string;
+        symbol: string;
+        icon: string;
+    };
+    index: number;
+    isVisible: boolean;
+}
+
 const cryptos = [
-    { name: 'Bitcoin', symbol: 'BTC', icon: '/icons/bitcoin.svg' },
-    { name: 'Ethereum', symbol: 'ETH', icon: '/icons/ethereum.svg' },
-    { name: 'USDT', symbol: 'USDT', icon: '/icons/tether.svg' },
-    { name: 'USDC', symbol: 'USDC', icon: '/icons/usdc.svg' },
+    { name: 'Bitcoin', symbol: 'BTC', icon: currencyIcons['btc'].src },
+    { name: 'Ethereum', symbol: 'ETH', icon: currencyIcons.eth.src },
+    { name: 'USDT', symbol: 'USDT', icon: currencyIcons.usdt.src },
+    { name: 'USDC', symbol: 'USDC', icon: currencyIcons.usdc.src },
 ];
 
-export default function AcceptedCrypto({
-    selectedLanguage,
-}: AcceptedCryptoProps) {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: '-100px' });
+const CryptoCard = memo(({ crypto, index, isVisible }: CryptoCardProps) => {
+    const [isHovered, setIsHovered] = useState(false);
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.3,
-            },
-        },
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 30, scale: 0.9 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            transition: {
-                duration: 0.6,
-                ease: 'easeOut',
-            },
-        },
-    };
+    const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+    const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
     return (
-        <section
-            id="crypto"
-            className="mt-12 sm:mt-16 max-w-[1200px] mx-auto px-4 relative z-10"
-            ref={ref}
+        <Box
+            bg="rgba(0, 0, 0, 0.5)"
+            backdropFilter="blur(4px)"
+            borderRadius={{ base: '2xl', sm: '3xl' }}
+            p={{ base: 6, sm: 8, lg: 12 }}
+            textAlign="center"
+            cursor="pointer"
+            border="1px solid"
+            borderColor="rgba(31, 41, 55, 0.5)"
+            opacity={isVisible ? 1 : 0}
+            transform={isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'}
+            transition={`all 0.6s ease-out ${0.3 + (index * 0.1)}s`}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            _hover={{
+                transform: 'translateY(-12px) scale(1.05)',
+                borderColor: 'rgba(34, 197, 94, 0.5)',
+                boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4)',
+            }}
+            _active={{
+                transform: 'translateY(-8px) scale(0.98)',
+            }}
+            sx={{
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
         >
-            {/* Typography Hierarchy - Section Header with Green Theme */}
-            <motion.div
-                className="text-center mb-16 sm:mb-20 lg:mb-24"
-                initial={{ opacity: 0, y: 30 }}
-                animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
-                }
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-            >
-                {/* Overline */}
-                <div className="text-gray-500 text-xs sm:text-sm font-light tracking-[0.2em] uppercase mb-4 sm:mb-6">
-                    Payment Methods
-                </div>
+            {/* Icon */}
+            <Box mb={{ base: 6, sm: 8 }} mx="auto" w="fit-content">
+                <Image
+                    src={crypto.icon || "/placeholder.svg"}
+                    alt={`${crypto.name} logo`}
+                    w={{ base: 16, sm: 20, lg: 24 }}
+                    h={{ base: 16, sm: 20, lg: 24 }}
+                />
+            </Box>
 
-                {/* Primary heading - Mobile-optimized */}
-                <h2 className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-light text-white mb-6 sm:mb-8 tracking-tight leading-[1.1] px-2">
-                    We Accept a Wide Range of{' '}
-                    <span className="text-green-400 font-medium">
-                        Cryptocurrencies
-                    </span>
-                </h2>
+            {/* Typography */}
+            <VStack spacing={{ base: 2, sm: 3 }}>
+                <Text
+                    fontSize={{ base: 'lg', sm: 'xl', lg: '2xl' }}
+                    fontWeight="500"
+                    color={isHovered ? "green.400" : "white"}
+                    transition="color 0.3s ease"
+                    lineHeight="tight"
+                    letterSpacing="wide"
+                    opacity={isVisible ? 1 : 0}
+                    transitionDelay={`${0.5 + (index * 0.1)}s`}
+                >
+                    {crypto.name}
+                </Text>
 
                 {/* Visual separator */}
-                <div className="w-16 sm:w-24 h-px bg-gradient-to-r from-transparent via-green-400 to-transparent mx-auto"></div>
-            </motion.div>
+                <Box
+                    w={{ base: 6, sm: 8 }}
+                    h="1px"
+                    bg={isHovered ? "green.400" : "gray.700"}
+                    transition="background-color 0.3s ease"
+                    mx="auto"
+                />
+
+                <Text
+                    color="gray.400"
+                    fontSize={{ base: 'sm', sm: 'base', lg: 'lg' }}
+                    fontWeight="300"
+                    letterSpacing="0.1em"
+                    textTransform="uppercase"
+                    opacity={isVisible ? 1 : 0}
+                    transitionDelay={`${0.6 + (index * 0.1)}s`}
+                >
+                    {crypto.symbol}
+                </Text>
+            </VStack>
+        </Box>
+    );
+});
+
+CryptoCard.displayName = 'CryptoCard';
+
+const AcceptedCrypto = memo(({ selectedLanguage }: AcceptedCryptoProps) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const sectionRef = useRef<HTMLDivElement>(null);
+
+    const handleIntersection = useCallback(([entry]: IntersectionObserverEntry[]) => {
+        if (entry.isIntersecting) {
+            setIsVisible(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(handleIntersection, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        });
+
+        const currentRef = sectionRef.current;
+        if (currentRef) {
+            observer.observe(currentRef);
+        }
+
+        return () => {
+            if (currentRef) {
+                observer.unobserve(currentRef);
+            }
+        };
+    }, [handleIntersection]);
+
+    return (
+        <Box
+            ref={sectionRef}
+            as="section"
+            id="crypto"
+            mt={{ base: 12, sm: 16 }}
+            maxW="1200px"
+            mx="auto"
+            px={4}
+            position="relative"
+        >
+            {/* Typography Hierarchy - Section Header with Green Theme */}
+            <VStack
+                spacing={6}
+                textAlign="center"
+                mb={{ base: 16, sm: 20, lg: 24 }}
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                transition="all 0.8s ease-out"
+            >
+                {/* Overline */}
+                <Text
+                    color="gray.500"
+                    fontSize={{ base: 'xs', sm: 'sm' }}
+                    fontWeight="300"
+                    letterSpacing="0.2em"
+                    textTransform="uppercase"
+                    mb={{ base: 4, sm: 6 }}
+                >
+                    Payment Methods
+                </Text>
+
+                {/* Primary heading - Mobile-optimized */}
+                <Text
+                    fontSize={{ base: '2xl', sm: '3xl', lg: '5xl', xl: '6xl' }}
+                    fontWeight="300"
+                    color="white"
+                    mb={{ base: 6, sm: 8 }}
+                    letterSpacing="tight"
+                    lineHeight="1.1"
+                    px={2}
+                >
+                    We Accept a Wide Range of{' '}
+                    <Text as="span" color="green.400" fontWeight="500">
+                        Cryptocurrencies
+                    </Text>
+                </Text>
+
+                {/* Visual separator */}
+                <Box
+                    w={{ base: 16, sm: 24 }}
+                    h="1px"
+                    bgGradient="linear(to-r, transparent, green.400, transparent)"
+                    mx="auto"
+                />
+            </VStack>
 
             {/* Crypto Grid - Mobile-optimized */}
-            <motion.div
-                className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-12 mb-12 sm:mb-16"
-                variants={containerVariants}
-                initial="hidden"
-                animate={isInView ? 'visible' : 'hidden'}
+            <SimpleGrid
+                columns={{ base: 2, sm: 2, md: 4 }}
+                spacing={{ base: 4, sm: 6, lg: 12 }}
+                mb={{ base: 12, sm: 16 }}
             >
                 {cryptos.map((crypto, index) => (
-                    <motion.div
+                    <CryptoCard
                         key={crypto.symbol}
-                        className="bg-black/50 backdrop-blur-sm rounded-2xl sm:rounded-3xl overflow-hidden p-6 sm:p-8 lg:p-12 text-center group cursor-pointer border border-gray-800/50 hover:border-green-400/30"
-                        variants={itemVariants}
-                        whileHover={{
-                            scale: 1.05,
-                            y: -12,
-                            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4)',
-                            borderColor: 'rgba(34, 197, 94, 0.5)',
-                        }}
-                        whileTap={{ scale: 0.98 }}
-                        transition={{
-                            type: 'spring',
-                            stiffness: 400,
-                            damping: 17,
-                        }}
-                    >
-                        {/* Icon - REMOVED HOVER ANIMATIONS 
-            <div className="mb-6 sm:mb-8 mx-auto w-fit">
-              {crypto.icon === CreditCard ? (
-                <CreditCard className="h-12 w-12 sm:h-16 sm:w-16 text-green-400" />
-              ) : (
-                <Image
-                  src={crypto.icon || "/placeholder.svg"}
-                  alt={`${crypto.name} logo`}
-                  width={64}
-                  height={64}
-                  className="h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24"
-                />
-              )}
-            </div>*/}
-
-                        {/* Typography - Mobile-optimized */}
-                        <div className="space-y-2 sm:space-y-3">
-                            <motion.h3
-                                className="text-lg sm:text-xl lg:text-2xl font-medium text-white group-hover:text-green-400 transition-colors duration-300 leading-tight tracking-wide"
-                                initial={{ opacity: 0 }}
-                                animate={
-                                    isInView ? { opacity: 1 } : { opacity: 0 }
-                                }
-                                transition={{
-                                    duration: 0.5,
-                                    delay: 0.5 + index * 0.1,
-                                }}
-                            >
-                                {crypto.name}
-                            </motion.h3>
-
-                            {/* Visual separator */}
-                            <div className="w-6 sm:w-8 h-px bg-gray-700 group-hover:bg-green-400 transition-colors duration-300 mx-auto"></div>
-
-                            <motion.p
-                                className="text-gray-400 text-sm sm:text-base lg:text-lg font-light tracking-[0.1em] uppercase"
-                                initial={{ opacity: 0 }}
-                                animate={
-                                    isInView ? { opacity: 1 } : { opacity: 0 }
-                                }
-                                transition={{
-                                    duration: 0.5,
-                                    delay: 0.6 + index * 0.1,
-                                }}
-                            >
-                                {crypto.symbol}
-                            </motion.p>
-                        </div>
-                    </motion.div>
+                        crypto={crypto}
+                        index={index}
+                        isVisible={isVisible}
+                    />
                 ))}
-            </motion.div>
+            </SimpleGrid>
 
-            {/* Footer text - REMOVED 3 DOTS */}
-            <motion.div
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                }
-                transition={{
-                    duration: 0.6,
-                    delay: 0.8,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                }}
+            {/* Footer text */}
+            <Box
+                textAlign="center"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                transition="all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s"
             >
-                <p className="text-gray-400 text-base sm:text-lg lg:text-xl font-light leading-relaxed tracking-wide max-w-2xl mx-auto px-2">
+                <Text
+                    color="gray.400"
+                    fontSize={{ base: 'base', sm: 'lg', lg: 'xl' }}
+                    fontWeight="300"
+                    lineHeight="relaxed"
+                    letterSpacing="wide"
+                    maxW="2xl"
+                    mx="auto"
+                    px={2}
+                >
                     More cryptocurrencies are being added continuously. Stay
                     tuned for updates!
-                </p>
-            </motion.div>
-        </section>
+                </Text>
+            </Box>
+        </Box>
     );
-}
+});
+
+AcceptedCrypto.displayName = 'AcceptedCrypto';
+
+export default AcceptedCrypto;

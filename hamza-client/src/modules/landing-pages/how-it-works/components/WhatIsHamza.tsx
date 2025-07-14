@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { Check, X } from 'lucide-react';
 import Image from 'next/image';
+import smartContractInfographic from '@/images/how-it-works/smart-contract-infographic.png';
 
 interface WhatIsHamzaProps {
     selectedLanguage: string;
@@ -138,7 +139,8 @@ const comparisonData = [
 const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
     return (
         <Tr
-            borderBottom="1px solid rgba(255, 255, 255, 0.1)"
+            borderBottom="1px solid"
+            borderColor="rgba(255, 255, 255, 0.08)"
             _last={{ borderBottom: 'none' }}
             opacity={isVisible ? 1 : 0}
             transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
@@ -152,11 +154,10 @@ const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
                 <VStack spacing={{ base: 2, sm: 3 }} align="start">
                     <Text
                         color="white"
-                        fontWeight="500"
+                        fontWeight="medium"
                         fontSize={{ base: 'sm', sm: 'lg', lg: 'xl' }}
                         lineHeight="tight"
                         letterSpacing="wide"
-                        fontFamily="Arial, Helvetica, sans-serif"
                     >
                         {row.feature}
                     </Text>
@@ -170,9 +171,8 @@ const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
                     <Text
                         color="gray.500"
                         fontSize={{ base: 'xs', sm: 'sm' }}
-                        fontWeight="300"
+                        fontWeight="light"
                         letterSpacing="wide"
-                        fontFamily="Arial, Helvetica, sans-serif"
                     >
                         Key Difference
                     </Text>
@@ -187,7 +187,7 @@ const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
                         _hover={{
                             transform: "scale(1.2) rotate(-5deg)"
                         }}
-                        transition="transform 0.3s ease"
+                        transition="transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
                         cursor="pointer"
                     >
                         {row.traditional.emoji}
@@ -195,13 +195,14 @@ const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
                     <VStack spacing={{ base: 2, sm: 3 }}>
                         <Text
                             color="gray.300"
-                            fontSize={{ base: 'xs', sm: 'md', lg: 'lg' }}
+                            fontSize={{ base: 'xs', sm: 'base', lg: 'lg' }}
                             lineHeight="relaxed"
-                            maxW={{ base: 32, sm: 48 }}
-                            mx="auto"
-                            fontWeight="300"
+                            textAlign="center"
+                            fontWeight="light"
                             letterSpacing="wide"
-                            fontFamily="Arial, Helvetica, sans-serif"
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            px={2}
                         >
                             {row.traditional.text}
                         </Text>
@@ -209,7 +210,7 @@ const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
                             display="flex"
                             justifyContent="center"
                             _hover={{ transform: "scale(1.1)" }}
-                            transition="transform 0.3s ease"
+                            transition="transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
                             cursor="pointer"
                         >
                             <Box
@@ -237,7 +238,7 @@ const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
                         _hover={{
                             transform: "scale(1.2) rotate(5deg)"
                         }}
-                        transition="transform 0.3s ease"
+                        transition="transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
                         cursor="pointer"
                     >
                         {row.hamza.emoji}
@@ -245,13 +246,14 @@ const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
                     <VStack spacing={{ base: 2, sm: 3 }}>
                         <Text
                             color="gray.300"
-                            fontSize={{ base: 'xs', sm: 'md', lg: 'lg' }}
+                            fontSize={{ base: 'xs', sm: 'base', lg: 'lg' }}
                             lineHeight="relaxed"
-                            maxW={{ base: 32, sm: 48 }}
-                            mx="auto"
-                            fontWeight="300"
+                            textAlign="center"
+                            fontWeight="light"
                             letterSpacing="wide"
-                            fontFamily="Arial, Helvetica, sans-serif"
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            px={2}
                         >
                             {row.hamza.text}
                         </Text>
@@ -259,7 +261,7 @@ const ComparisonRow = memo(({ row, index, isVisible }: ComparisonRowProps) => {
                             display="flex"
                             justifyContent="center"
                             _hover={{ transform: "scale(1.1)" }}
-                            transition="transform 0.3s ease"
+                            transition="transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
                             cursor="pointer"
                         >
                             <Box
@@ -289,7 +291,8 @@ const MobileComparisonCard = memo(({ row, index, isVisible }: MobileComparisonCa
         <Box
             bg="rgba(0, 0, 0, 0.5)"
             backdropFilter="blur(10px)"
-            border="1px solid rgba(255, 255, 255, 0.1)"
+            border="1px solid"
+            borderColor="gray.800"
             borderRadius="xl"
             p={4}
             opacity={isVisible ? 1 : 0}
@@ -300,10 +303,9 @@ const MobileComparisonCard = memo(({ row, index, isVisible }: MobileComparisonCa
             <VStack spacing={0} mb={4}>
                 <Text
                     color="white"
-                    fontWeight="500"
-                    fontSize="md"
+                    fontWeight="medium"
+                    fontSize="base"
                     letterSpacing="wide"
-                    fontFamily="Arial, Helvetica, sans-serif"
                     textAlign="center"
                 >
                     {row.feature}
@@ -325,10 +327,9 @@ const MobileComparisonCard = memo(({ row, index, isVisible }: MobileComparisonCa
                         <Text
                             color="red.400"
                             fontSize="xs"
-                            fontWeight="500"
+                            fontWeight="medium"
                             letterSpacing="0.1em"
                             textTransform="uppercase"
-                            fontFamily="Arial, Helvetica, sans-serif"
                         >
                             Traditional
                         </Text>
@@ -339,8 +340,7 @@ const MobileComparisonCard = memo(({ row, index, isVisible }: MobileComparisonCa
                             color="gray.300"
                             fontSize="xs"
                             lineHeight="relaxed"
-                            fontWeight="300"
-                            fontFamily="Arial, Helvetica, sans-serif"
+                            fontWeight="light"
                         >
                             {row.traditional.text}
                         </Text>
@@ -373,10 +373,9 @@ const MobileComparisonCard = memo(({ row, index, isVisible }: MobileComparisonCa
                         <Text
                             color="purple.400"
                             fontSize="xs"
-                            fontWeight="500"
+                            fontWeight="medium"
                             letterSpacing="0.1em"
                             textTransform="uppercase"
-                            fontFamily="Arial, Helvetica, sans-serif"
                         >
                             Hamza
                         </Text>
@@ -387,8 +386,7 @@ const MobileComparisonCard = memo(({ row, index, isVisible }: MobileComparisonCa
                             color="gray.300"
                             fontSize="xs"
                             lineHeight="relaxed"
-                            fontWeight="300"
-                            fontFamily="Arial, Helvetica, sans-serif"
+                            fontWeight="light"
                         >
                             {row.hamza.text}
                         </Text>
@@ -465,11 +463,10 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                 <Text
                     color="gray.500"
                     fontSize={{ base: 'xs', sm: 'sm' }}
-                    fontWeight="300"
+                    fontWeight="light"
                     letterSpacing="0.2em"
                     textTransform="uppercase"
                     mb={{ base: 4, sm: 6 }}
-                    fontFamily="Arial, Helvetica, sans-serif"
                 >
                     Platform Overview
                 </Text>
@@ -477,16 +474,15 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                 {/* Primary heading */}
                 <Text
                     fontSize={{ base: '2xl', sm: '3xl', lg: '5xl', xl: '6xl' }}
-                    fontWeight="300"
+                    fontWeight="light"
                     color="white"
                     mb={{ base: 6, sm: 8 }}
                     letterSpacing="tight"
                     lineHeight="1.1"
-                    fontFamily="Arial, Helvetica, sans-serif"
                     px={2}
                 >
                     What is{' '}
-                    <Text as="span" color="purple.400" fontWeight="500">
+                    <Text as="span" color="purple.400" fontWeight="medium">
                         Hamza
                     </Text>
                     ?
@@ -495,12 +491,11 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                 {/* Subtitle */}
                 <Box maxW="4xl" mx="auto" px={2}>
                     <Text
-                        fontSize={{ base: 'md', sm: 'lg', lg: '2xl' }}
-                        fontWeight="300"
+                        fontSize={{ base: 'base', sm: 'lg', lg: '2xl' }}
+                        fontWeight="light"
                         lineHeight="relaxed"
                         color="gray.300"
                         letterSpacing="wide"
-                        fontFamily="Arial, Helvetica, sans-serif"
                     >
                         Hamza is a revolutionary decentralized e-commerce
                         platform that eliminates traditional intermediaries,
@@ -514,7 +509,7 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                 <Box
                     w={{ base: 16, sm: 24 }}
                     h="1px"
-                    bg="linear-gradient(to right, transparent, #c084fc, transparent)"
+                    bgGradient="linear(to-r, transparent, purple.400, transparent)"
                     mx="auto"
                     mt={{ base: 6, sm: 8 }}
                 />
@@ -534,12 +529,13 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                         bg="#08090b"
                         backdropFilter="blur(10px)"
                         borderRadius={{ base: '2xl', sm: '3xl' }}
-                        border="1px solid rgba(255, 255, 255, 0.1)"
+                        border="1px solid"
+                        borderColor="gray.800"
                         maxW="3xl"
                         w="100%"
                         overflow="hidden"
                         _hover={{ transform: "scale(1.02)" }}
-                        transition="transform 0.3s ease"
+                        transition="transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                         cursor="pointer"
                     >
                         <VStack spacing={{ base: 8, sm: 12 }}>
@@ -554,11 +550,10 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                             >
                                 <Text
                                     fontSize={{ base: 'lg', sm: '2xl', lg: '3xl' }}
-                                    fontWeight="300"
+                                    fontWeight="light"
                                     color="white"
                                     mb={{ base: 4, sm: 6 }}
                                     letterSpacing="wide"
-                                    fontFamily="Arial, Helvetica, sans-serif"
                                     px={2}
                                 >
                                     Direct Connection Through Smart Contracts
@@ -575,7 +570,7 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                 _hover={{ transform: "scale(1.05)" }}
                             >
                                 <Image
-                                    src="/smart-contract-infographic.png"
+                                    src={smartContractInfographic}
                                     alt="Smart Contract connecting Buyer and Seller"
                                     width={800}
                                     height={500}
@@ -593,15 +588,14 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                 transition="all 0.6s ease 0.9s"
                             >
                                 <Text
-                                    fontSize={{ base: 'sm', sm: 'md', lg: 'lg' }}
+                                    fontSize={{ base: 'sm', sm: 'base', lg: 'lg' }}
                                     color="gray.300"
-                                    fontWeight="300"
+                                    fontWeight="light"
                                     letterSpacing="wide"
                                     lineHeight="relaxed"
                                     maxW="2xl"
                                     mx="auto"
                                     px={2}
-                                    fontFamily="Arial, Helvetica, sans-serif"
                                 >
                                     Smart contracts eliminate the need for
                                     traditional intermediaries, enabling direct,
@@ -627,23 +621,21 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                             <Text
                                 color="gray.500"
                                 fontSize={{ base: 'xs', sm: 'sm' }}
-                                fontWeight="300"
+                                fontWeight="light"
                                 letterSpacing="0.2em"
                                 textTransform="uppercase"
                                 mb={{ base: 4, sm: 6 }}
-                                fontFamily="Arial, Helvetica, sans-serif"
                             >
                                 Platform Comparison
                             </Text>
 
                             <Text
                                 fontSize={{ base: 'xl', sm: '3xl', lg: '4xl', xl: '5xl' }}
-                                fontWeight="300"
+                                fontWeight="light"
                                 color="white"
                                 mb={{ base: 6, sm: 8 }}
                                 letterSpacing="tight"
                                 lineHeight="1.1"
-                                fontFamily="Arial, Helvetica, sans-serif"
                                 px={2}
                             >
                                 Traditional E-commerce
@@ -652,13 +644,13 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                     display={{ base: 'block', sm: 'inline' }}
                                     mx={{ sm: 4, lg: 8 }}
                                     color="gray.600"
-                                    fontWeight="100"
+                                    fontWeight="thin"
                                     fontSize={{ base: 'lg', sm: '2xl', lg: '3xl' }}
                                     my={{ base: 2, sm: 0 }}
                                 >
                                     vs.
                                 </Text>
-                                <Text as="span" color="purple.400" fontWeight="500">
+                                <Text as="span" color="purple.400" fontWeight="medium">
                                     Hamza
                                 </Text>
                             </Text>
@@ -666,7 +658,7 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                             <Box
                                 w={{ base: 20, sm: 32 }}
                                 h="1px"
-                                bg="linear-gradient(to right, transparent, #c084fc, transparent)"
+                                bgGradient="linear(to-r, transparent, purple.400, transparent)"
                                 mx="auto"
                             />
                         </Box>
@@ -674,22 +666,30 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                         <Box
                             bg="rgba(0, 0, 0, 0.5)"
                             backdropFilter="blur(10px)"
-                            border="1px solid rgba(255, 255, 255, 0.1)"
+                            border="1px solid"
+                            borderColor="gray.800"
                             borderRadius={{ base: '2xl', sm: '3xl' }}
                             overflow="hidden"
                         >
-                            <TableContainer>
-                                <Table variant="unstyled">
+                            <TableContainer
+                                sx={{
+                                    '&::-webkit-scrollbar': {
+                                        display: 'none'
+                                    },
+                                    '-ms-overflow-style': 'none',
+                                    'scrollbar-width': 'none'
+                                }}
+                            >
+                                <Table variant="unstyled" size="lg">
                                     <Thead>
-                                        <Tr borderBottom="1px solid rgba(255, 255, 255, 0.1)">
+                                        <Tr borderBottom="1px solid" borderColor="rgba(255, 255, 255, 0.08)">
                                             <Th p={{ base: 6, sm: 8, lg: 10 }} w="33.33%">
                                                 <VStack spacing={{ base: 2, sm: 3 }} align="start">
                                                     <Text
                                                         color="gray.300"
-                                                        fontWeight="500"
-                                                        fontSize={{ base: 'md', sm: 'xl', lg: '2xl' }}
+                                                        fontWeight="medium"
+                                                        fontSize={{ base: 'base', sm: 'xl', lg: '2xl' }}
                                                         letterSpacing="wide"
-                                                        fontFamily="Arial, Helvetica, sans-serif"
                                                     >
                                                         Feature
                                                     </Text>
@@ -697,10 +697,9 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                                     <Text
                                                         color="gray.500"
                                                         fontSize={{ base: 'xs', sm: 'sm' }}
-                                                        fontWeight="300"
+                                                        fontWeight="light"
                                                         letterSpacing="0.1em"
                                                         textTransform="uppercase"
-                                                        fontFamily="Arial, Helvetica, sans-serif"
                                                     >
                                                         Comparison
                                                     </Text>
@@ -710,10 +709,9 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                                 <VStack spacing={{ base: 2, sm: 3 }}>
                                                     <Text
                                                         color="red.400"
-                                                        fontWeight="500"
-                                                        fontSize={{ base: 'md', sm: 'xl', lg: '2xl' }}
+                                                        fontWeight="medium"
+                                                        fontSize={{ base: 'base', sm: 'xl', lg: '2xl' }}
                                                         letterSpacing="wide"
-                                                        fontFamily="Arial, Helvetica, sans-serif"
                                                     >
                                                         Traditional
                                                     </Text>
@@ -721,10 +719,9 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                                     <Text
                                                         color="gray.500"
                                                         fontSize={{ base: 'xs', sm: 'sm' }}
-                                                        fontWeight="300"
+                                                        fontWeight="light"
                                                         letterSpacing="0.1em"
                                                         textTransform="uppercase"
-                                                        fontFamily="Arial, Helvetica, sans-serif"
                                                     >
                                                         Legacy Systems
                                                     </Text>
@@ -734,10 +731,9 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                                 <VStack spacing={{ base: 2, sm: 3 }}>
                                                     <Text
                                                         color="purple.400"
-                                                        fontWeight="500"
-                                                        fontSize={{ base: 'md', sm: 'xl', lg: '2xl' }}
+                                                        fontWeight="medium"
+                                                        fontSize={{ base: 'base', sm: 'xl', lg: '2xl' }}
                                                         letterSpacing="wide"
-                                                        fontFamily="Arial, Helvetica, sans-serif"
                                                     >
                                                         Hamza
                                                     </Text>
@@ -745,10 +741,9 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                                     <Text
                                                         color="gray.500"
                                                         fontSize={{ base: 'xs', sm: 'sm' }}
-                                                        fontWeight="300"
+                                                        fontWeight="light"
                                                         letterSpacing="0.1em"
                                                         textTransform="uppercase"
-                                                        fontFamily="Arial, Helvetica, sans-serif"
                                                     >
                                                         Blockchain-Powered
                                                     </Text>
@@ -771,10 +766,11 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
 
                             {/* Footer */}
                             <Box
-                                bg="linear-gradient(to right, rgba(168, 85, 247, 0.05), rgba(168, 85, 247, 0.1))"
+                                bgGradient="linear(to-r, rgba(168, 85, 247, 0.05), rgba(168, 85, 247, 0.1))"
                                 p={{ base: 6, sm: 12 }}
                                 textAlign="center"
-                                borderTop="1px solid rgba(255, 255, 255, 0.1)"
+                                borderTop="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.08)"
                                 opacity={isVisible ? 1 : 0}
                                 transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
                                 transition="all 0.6s ease 1.2s"
@@ -782,10 +778,9 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                 <VStack spacing={{ base: 3, sm: 4 }}>
                                     <Text
                                         color="white"
-                                        fontSize={{ base: 'md', sm: 'lg', lg: 'xl' }}
-                                        fontWeight="500"
+                                        fontSize={{ base: 'base', sm: 'lg', lg: 'xl' }}
+                                        fontWeight="medium"
                                         letterSpacing="wide"
-                                        fontFamily="Arial, Helvetica, sans-serif"
                                         px={2}
                                     >
                                         Experience the difference with
@@ -794,15 +789,14 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                     <Box
                                         w={{ base: 16, sm: 24 }}
                                         h="1px"
-                                        bg="linear-gradient(to right, #c084fc, #a855f7)"
+                                        bgGradient="linear(to-r, purple.400, purple.500)"
                                         mx="auto"
                                     />
                                     <Text
                                         color="gray.400"
-                                        fontSize={{ base: 'sm', sm: 'md' }}
-                                        fontWeight="300"
+                                        fontSize={{ base: 'sm', sm: 'base' }}
+                                        fontWeight="light"
                                         letterSpacing="wide"
-                                        fontFamily="Arial, Helvetica, sans-serif"
                                         px={2}
                                     >
                                         Join the decentralized revolution today
@@ -826,42 +820,40 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                             <Text
                                 color="gray.500"
                                 fontSize="xs"
-                                fontWeight="300"
+                                fontWeight="light"
                                 letterSpacing="0.2em"
                                 textTransform="uppercase"
                                 mb={3}
-                                fontFamily="Arial, Helvetica, sans-serif"
                             >
                                 Platform Comparison
                             </Text>
                             <Text
                                 fontSize="xl"
-                                fontWeight="300"
+                                fontWeight="light"
                                 color="white"
                                 mb={4}
                                 letterSpacing="tight"
                                 lineHeight="1.1"
-                                fontFamily="Arial, Helvetica, sans-serif"
                             >
                                 Traditional E-commerce
                                 <Text
                                     as="span"
                                     display="block"
                                     color="gray.600"
-                                    fontWeight="100"
-                                    fontSize="md"
+                                    fontWeight="thin"
+                                    fontSize="base"
                                     my={1}
                                 >
                                     vs.
                                 </Text>
-                                <Text as="span" color="purple.400" fontWeight="500">
+                                <Text as="span" color="purple.400" fontWeight="medium">
                                     Hamza
                                 </Text>
                             </Text>
                             <Box
                                 w={16}
                                 h="1px"
-                                bg="linear-gradient(to right, transparent, #c084fc, transparent)"
+                                bgGradient="linear(to-r, transparent, purple.400, transparent)"
                                 mx="auto"
                             />
                         </Box>
@@ -880,10 +872,11 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
 
                         {/* Mobile footer */}
                         <Box
-                            bg="linear-gradient(to right, rgba(168, 85, 247, 0.05), rgba(168, 85, 247, 0.1))"
+                            bgGradient="linear(to-r, rgba(168, 85, 247, 0.05), rgba(168, 85, 247, 0.1))"
                             p={6}
                             textAlign="center"
-                            border="1px solid rgba(255, 255, 255, 0.1)"
+                            border="1px solid"
+                            borderColor="rgba(255, 255, 255, 0.08)"
                             borderRadius="xl"
                             mt={6}
                             opacity={isVisible ? 1 : 0}
@@ -894,9 +887,8 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                 <Text
                                     color="white"
                                     fontSize="sm"
-                                    fontWeight="500"
+                                    fontWeight="medium"
                                     letterSpacing="wide"
-                                    fontFamily="Arial, Helvetica, sans-serif"
                                 >
                                     Experience the difference with
                                     blockchain-powered commerce
@@ -904,15 +896,14 @@ const WhatIsHamza = memo(({ selectedLanguage }: WhatIsHamzaProps) => {
                                 <Box
                                     w={12}
                                     h="1px"
-                                    bg="linear-gradient(to right, #c084fc, #a855f7)"
+                                    bgGradient="linear(to-r, purple.400, purple.500)"
                                     mx="auto"
                                 />
                                 <Text
                                     color="gray.400"
                                     fontSize="xs"
-                                    fontWeight="300"
+                                    fontWeight="light"
                                     letterSpacing="wide"
-                                    fontFamily="Arial, Helvetica, sans-serif"
                                 >
                                     Join the decentralized revolution today
                                 </Text>

@@ -1,287 +1,484 @@
-"use client"
-import { ArrowDown } from "lucide-react"
-import { motion } from "framer-motion"
-import Image from "next/image"
+import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
+import {
+  Box,
+  VStack,
+  HStack,
+  Text,
+  Image,
+  SimpleGrid,
+  Flex,
+  Icon,
+} from '@chakra-ui/react';
+import { ArrowDown } from 'lucide-react';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 
 interface LandingPageHeroProps {
-  selectedLanguage: string
+  selectedLanguage: string;
 }
 
-export default function LandingPageHero({ selectedLanguage }: LandingPageHeroProps) {
+const LandingPageHero = memo(({ selectedLanguage }: LandingPageHeroProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
   const cryptoLogos = [
-    { name: "Bitcoin", icon: "/icons/bitcoin.svg" },
-    { name: "Ethereum", icon: "/icons/ethereum.svg" },
-    { name: "USDT", icon: "/icons/tether.svg" },
-    { name: "USDC", icon: "/icons/usdc.svg" },
-  ]
+    { name: "Bitcoin", icon: currencyIcons['btc'].src },
+    { name: "Ethereum", icon: currencyIcons.eth.src },
+    { name: "USDT", icon: currencyIcons.usdt.src },
+    { name: "USDC", icon: currencyIcons.usdc.src },
+  ];
+
+  // Mount animation trigger
+  useEffect(() => {
+    setIsMounted(true);
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const scrollToSection = () => {
+    document.getElementById("what-is-hamza")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4">
+    <Box
+      ref={sectionRef}
+      as="section"
+      position="relative"
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      px={4}
+      bg="black"
+      color="white"
+    >
       {/* Background Pattern */}
-      <motion.div
-        className="absolute inset-0 opacity-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
+      <Box
+        position="absolute"
+        inset="0"
+        opacity={isVisible ? 0.1 : 0}
+        transition="opacity 2s ease-out"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-transparent to-purple-500/20"></div>
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 25% 25%, rgba(0, 255, 0, 0.1) 0%, transparent 50%), 
-                           radial-gradient(circle at 75% 75%, rgba(128, 0, 128, 0.1) 0%, transparent 50%)`,
-          }}
-        ></div>
-      </motion.div>
+        <Box
+          position="absolute"
+          inset="0"
+          bgGradient="linear(to-br, rgba(34, 197, 94, 0.2), transparent, rgba(147, 51, 234, 0.2))"
+        />
+        <Box
+          position="absolute"
+          inset="0"
+          background={`radial-gradient(circle at 25% 25%, rgba(0, 255, 0, 0.1) 0%, transparent 50%), 
+                               radial-gradient(circle at 75% 75%, rgba(128, 0, 128, 0.1) 0%, transparent 50%)`}
+        />
+      </Box>
 
       {/* Desktop/Web Version - Hidden on mobile */}
-      <div className="hidden sm:block max-w-[1200px] mx-auto text-center relative z-10 w-full">
-        <div className="space-y-12 lg:space-y-16">
+      <Box
+        display={{ base: 'none', sm: 'block' }}
+        maxW="1200px"
+        mx="auto"
+        textAlign="center"
+        position="relative"
+        w="100%"
+      >
+        <VStack spacing={{ base: 12, lg: 16 }}>
           {/* Typography Hierarchy - Primary Headline */}
-          <motion.div
-            className="space-y-6 sm:space-y-8"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
+          <VStack spacing={{ base: 6, sm: 8 }}>
             {/* Overline - Small caps with tracking */}
-            <motion.div
-              className="text-gray-400 text-xs sm:text-sm font-light tracking-[0.2em] uppercase mb-6 sm:mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+            <Text
+              color="gray.400"
+              fontSize={{ base: 'xs', sm: 'sm' }}
+              fontWeight="300"
+              letterSpacing="0.2em"
+              textTransform="uppercase"
+              mb={{ base: 6, sm: 8 }}
+              opacity={isVisible ? 1 : 0}
+              transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+              transition="all 0.8s ease-out 0.1s"
             >
               The Future of Commerce
-            </motion.div>
+            </Text>
 
             {/* Primary Display Type */}
-            <h1 className="space-y-2 sm:space-y-4 lg:space-y-6">
-              <motion.div
-                className="text-4xl sm:text-6xl lg:text-8xl xl:text-9xl font-extralight leading-[0.9] tracking-tight"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            <VStack as="h1" spacing={{ base: 2, sm: 4, lg: 6 }}>
+              <Box
+                fontSize={{ base: '4xl', sm: '6xl', lg: '8xl', xl: '9xl' }}
+                fontWeight="200"
+                lineHeight="0.9"
+                letterSpacing="tight"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                transition="all 0.8s ease-out 0.3s"
               >
-                <span className="bg-gradient-to-r from-green-400 to-purple-500 bg-clip-text text-transparent">
+                <Text
+                  as="span"
+                  bgGradient="linear(to-r, green.400, purple.500)"
+                  bgClip="text"
+                >
                   Decentralized
-                </span>
-              </motion.div>
+                </Text>
+              </Box>
 
-              <motion.div
-                className="text-3xl sm:text-5xl lg:text-7xl xl:text-8xl font-light leading-[0.9] tracking-tight text-white"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              <Text
+                fontSize={{ base: '3xl', sm: '5xl', lg: '7xl', xl: '8xl' }}
+                fontWeight="300"
+                lineHeight="0.9"
+                letterSpacing="tight"
+                color="white"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                transition="all 0.8s ease-out 0.5s"
               >
                 E-Commerce
-              </motion.div>
+              </Text>
 
               {/* Reimagined with crypto icons */}
-              <motion.div
-                className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 lg:gap-12 pt-2 sm:pt-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+              <Flex
+                direction={{ base: 'column', sm: 'row' }}
+                align="center"
+                justify="center"
+                gap={{ base: 4, sm: 8, lg: 12 }}
+                pt={{ base: 2, sm: 4 }}
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                transition="all 0.8s ease-out 0.7s"
               >
-                <span className="text-2xl sm:text-4xl lg:text-6xl xl:text-7xl font-light text-white tracking-tight">
+                <Text
+                  fontSize={{ base: '2xl', sm: '4xl', lg: '6xl', xl: '7xl' }}
+                  fontWeight="300"
+                  color="white"
+                  letterSpacing="tight"
+                >
                   Reimagined
-                </span>
+                </Text>
 
                 {/* Crypto Icons */}
-                <motion.div
-                  className="flex items-center gap-4 sm:gap-6 lg:gap-8"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+                <HStack
+                  spacing={{ base: 4, sm: 6, lg: 8 }}
+                  opacity={isVisible ? 1 : 0}
+                  transform={isVisible ? 'translateX(0)' : 'translateX(20px)'}
+                  transition="all 0.8s ease-out 0.9s"
                 >
                   {cryptoLogos.map((crypto, index) => (
-                    <motion.div
+                    <Box
                       key={crypto.name}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        duration: 0.6,
-                        delay: 1.0 + index * 0.1,
-                        ease: "easeOut",
+                      opacity={isVisible ? 1 : 0}
+                      transform={isVisible ? 'scale(1)' : 'scale(0.8)'}
+                      transition={`all 0.6s ease-out ${1.1 + (index * 0.1)}s`}
+                      _hover={{
+                        transform: 'scale(1.15)',
+                        filter: 'brightness(1.3)',
+                      }}
+                      cursor="pointer"
+                      sx={{
+                        animation: isVisible ? `float${index} 3s ease-in-out infinite ${1.5 + (index * 0.2)}s` : 'none',
+                        '@keyframes float0': {
+                          '0%, 100%': { transform: 'translateY(0px)' },
+                          '50%': { transform: 'translateY(-8px)' },
+                        },
+                        '@keyframes float1': {
+                          '0%, 100%': { transform: 'translateY(0px)' },
+                          '50%': { transform: 'translateY(-6px)' },
+                        },
+                        '@keyframes float2': {
+                          '0%, 100%': { transform: 'translateY(0px)' },
+                          '50%': { transform: 'translateY(-10px)' },
+                        },
+                        '@keyframes float3': {
+                          '0%, 100%': { transform: 'translateY(0px)' },
+                          '50%': { transform: 'translateY(-7px)' },
+                        },
                       }}
                     >
                       <Image
                         src={crypto.icon || "/placeholder.svg"}
                         alt={`${crypto.name} logo`}
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 opacity-80"
+                        w={{ base: 10, sm: 12, lg: 14 }}
+                        h={{ base: 10, sm: 12, lg: 14 }}
+                        opacity="0.8"
                       />
-                    </motion.div>
+                    </Box>
                   ))}
-                </motion.div>
-              </motion.div>
-            </h1>
+                </HStack>
+              </Flex>
+            </VStack>
 
             {/* Subtitle */}
-            <motion.div
-              className="pt-6 sm:pt-8 lg:pt-12"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.4, ease: "easeOut" }}
+            <Box
+              pt={{ base: 6, sm: 8, lg: 12 }}
+              opacity={isVisible ? 1 : 0}
+              transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+              transition="all 0.8s ease-out 1.5s"
             >
-              <p className="text-lg sm:text-xl lg:text-3xl font-light leading-relaxed text-gray-300 max-w-4xl mx-auto tracking-wide px-4">
+              <Text
+                fontSize={{ base: 'lg', sm: 'xl', lg: '3xl' }}
+                fontWeight="300"
+                lineHeight="relaxed"
+                color="gray.300"
+                maxW="4xl"
+                mx="auto"
+                letterSpacing="wide"
+                px={4}
+              >
                 The world's first truly decentralized marketplace where buyers and sellers trade directly, securely, and
                 transparently on the blockchain.
-              </p>
-            </motion.div>
-          </motion.div>
+              </Text>
+            </Box>
+          </VStack>
 
           {/* Call to Action */}
-          <motion.div
-            className="pt-12 lg:pt-20 flex justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.6, ease: "easeOut" }}
+          <Box
+            pt={{ base: 12, lg: 20 }}
+            display="flex"
+            justifyContent="center"
+            opacity={isVisible ? 1 : 0}
+            transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+            transition="all 0.8s ease-out 1.7s"
           >
-            <motion.button
-              onClick={() => document.getElementById("what-is-hamza")?.scrollIntoView({ behavior: "smooth" })}
-              className="group flex flex-col items-center space-y-4 sm:space-y-6 text-gray-400 hover:text-green-400 transition-colors duration-500"
-              whileHover={{ y: -8 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            <VStack
+              as="button"
+              onClick={scrollToSection}
+              spacing={{ base: 4, sm: 6 }}
+              color="gray.400"
+              cursor="pointer"
+              _hover={{
+                color: "green.400",
+                transform: "translateY(-8px)",
+              }}
+              transition="all 0.5s ease"
             >
-              <div className="text-center space-y-2">
-                <div className="text-xs sm:text-sm font-medium tracking-[0.15em] uppercase">Learn More</div>
-                <div className="w-12 sm:w-16 h-px bg-gray-600 group-hover:bg-green-400 transition-colors duration-500 mx-auto"></div>
-              </div>
-              <motion.div
-                animate={{ y: [0, 12, 0] }}
-                transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+              <VStack spacing={2} textAlign="center">
+                <Text
+                  fontSize={{ base: 'xs', sm: 'sm' }}
+                  fontWeight="500"
+                  letterSpacing="0.15em"
+                  textTransform="uppercase"
+                >
+                  Learn More
+                </Text>
+                <Box
+                  w={{ base: 12, sm: 16 }}
+                  h="1px"
+                  bg="gray.600"
+                  _groupHover={{ bg: "green.400" }}
+                  transition="background-color 0.5s ease"
+                  mx="auto"
+                />
+              </VStack>
+              <Box
+                sx={{
+                  animation: `smoothBounce 2.5s ease-in-out infinite`,
+                  '@keyframes smoothBounce': {
+                    '0%, 100%': {
+                      transform: 'translateY(0)',
+                    },
+                    '50%': {
+                      transform: 'translateY(12px)',
+                    },
+                  },
+                }}
               >
-                <ArrowDown className="h-5 w-5 sm:h-6 sm:w-6" />
-              </motion.div>
-            </motion.button>
-          </motion.div>
-        </div>
-      </div>
+                <Icon as={ArrowDown} w={{ base: 5, sm: 6 }} h={{ base: 5, sm: 6 }} />
+              </Box>
+            </VStack>
+          </Box>
+        </VStack>
+      </Box>
 
       {/* Mobile Version - Only visible on mobile */}
-      <div className="block sm:hidden max-w-[400px] mx-auto text-center relative z-10 w-full py-8">
-        <div className="space-y-8">
+      <Box
+        display={{ base: 'block', sm: 'none' }}
+        maxW="400px"
+        mx="auto"
+        textAlign="center"
+        position="relative"
+        zIndex={10}
+        w="100%"
+        py={8}
+      >
+        <VStack spacing={8}>
           {/* Typography Hierarchy - Mobile Optimized */}
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
+          <VStack spacing={6}>
             {/* Overline */}
-            <motion.div
-              className="text-gray-400 text-xs font-light tracking-[0.2em] uppercase"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+            <Text
+              color="gray.400"
+              fontSize="xs"
+              fontWeight="300"
+              letterSpacing="0.2em"
+              textTransform="uppercase"
+              opacity={isVisible ? 1 : 0}
+              transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+              transition="all 0.8s ease-out 0.1s"
             >
               The Future of Commerce
-            </motion.div>
+            </Text>
 
             {/* Mobile-optimized heading stack */}
-            <div className="space-y-3">
-              <motion.div
-                className="text-3xl font-extralight leading-[0.9] tracking-tight"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            <VStack spacing={3}>
+              <Text
+                fontSize="3xl"
+                fontWeight="200"
+                lineHeight="0.9"
+                letterSpacing="tight"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                transition="all 0.8s ease-out 0.3s"
               >
-                <span className="bg-gradient-to-r from-green-400 to-purple-500 bg-clip-text text-transparent">
+                <Text
+                  as="span"
+                  bgGradient="linear(to-r, green.400, purple.500)"
+                  bgClip="text"
+                >
                   Decentralized
-                </span>
-              </motion.div>
+                </Text>
+              </Text>
 
-              <motion.div
-                className="text-2xl font-light leading-[0.9] tracking-tight text-white"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              <Text
+                fontSize="2xl"
+                fontWeight="300"
+                lineHeight="0.9"
+                letterSpacing="tight"
+                color="white"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                transition="all 0.8s ease-out 0.5s"
               >
                 E-Commerce
-              </motion.div>
+              </Text>
 
-              <motion.div
-                className="text-xl font-light text-white tracking-tight"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+              <Text
+                fontSize="xl"
+                fontWeight="300"
+                color="white"
+                letterSpacing="tight"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                transition="all 0.8s ease-out 0.7s"
               >
                 Reimagined
-              </motion.div>
-            </div>
+              </Text>
+            </VStack>
 
-            {/* Mobile crypto icons - 2x2 grid */}
-            <motion.div
-              className="grid grid-cols-4 gap-4 justify-items-center max-w-48 mx-auto pt-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+            {/* Mobile crypto icons - 4x1 grid */}
+            <SimpleGrid
+              columns={4}
+              spacing={4}
+              maxW="48"
+              mx="auto"
+              pt={4}
+              opacity={isVisible ? 1 : 0}
+              transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+              transition="all 0.8s ease-out 0.9s"
             >
               {cryptoLogos.map((crypto, index) => (
-                <motion.div
+                <Box
                   key={crypto.name}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    duration: 0.6,
-                    delay: 1.0 + index * 0.1,
-                    ease: "easeOut",
+                  opacity={isVisible ? 1 : 0}
+                  transform={isVisible ? 'scale(1)' : 'scale(0.8)'}
+                  transition={`all 0.6s ease-out ${1.1 + (index * 0.1)}s`}
+                  _hover={{
+                    transform: 'scale(1.1)',
+                    filter: 'brightness(1.2)',
                   }}
+                  cursor="pointer"
                 >
                   <Image
                     src={crypto.icon || "/placeholder.svg"}
                     alt={`${crypto.name} logo`}
-                    width={32}
-                    height={32}
-                    className="h-8 w-8 opacity-80"
+                    w={8}
+                    h={8}
+                    opacity="0.8"
                   />
-                </motion.div>
+                </Box>
               ))}
-            </motion.div>
+            </SimpleGrid>
 
             {/* Mobile subtitle */}
-            <motion.div
-              className="pt-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.4, ease: "easeOut" }}
+            <Box
+              pt={4}
+              opacity={isVisible ? 1 : 0}
+              transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+              transition="all 0.8s ease-out 1.5s"
             >
-              <p className="text-sm font-light leading-relaxed text-gray-300 tracking-wide px-2">
+              <Text
+                fontSize="sm"
+                fontWeight="300"
+                lineHeight="relaxed"
+                color="gray.300"
+                letterSpacing="wide"
+                px={2}
+              >
                 The world's first truly decentralized marketplace where buyers and sellers trade directly, securely, and
                 transparently on the blockchain.
-              </p>
-            </motion.div>
-          </motion.div>
+              </Text>
+            </Box>
+          </VStack>
 
           {/* Mobile Call to Action */}
-          <motion.div
-            className="pt-8 flex justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.6, ease: "easeOut" }}
+          <Box
+            pt={8}
+            display="flex"
+            justifyContent="center"
+            opacity={isVisible ? 1 : 0}
+            transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+            transition="all 0.8s ease-out 1.7s"
           >
-            <motion.button
-              onClick={() => document.getElementById("what-is-hamza")?.scrollIntoView({ behavior: "smooth" })}
-              className="group flex flex-col items-center space-y-3 text-gray-400 hover:text-green-400 transition-colors duration-500"
-              whileHover={{ y: -4 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            <VStack
+              as="button"
+              onClick={scrollToSection}
+              spacing={3}
+              color="gray.400"
+              cursor="pointer"
+              _hover={{
+                color: "green.400",
+                transform: "translateY(-4px)",
+              }}
+              transition="all 0.5s ease"
             >
-              <div className="text-center space-y-2">
-                <div className="text-xs font-medium tracking-[0.15em] uppercase">Learn More</div>
-                <div className="w-10 h-px bg-gray-600 group-hover:bg-green-400 transition-colors duration-500 mx-auto"></div>
-              </div>
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+              <VStack spacing={2} textAlign="center">
+                <Text
+                  fontSize="xs"
+                  fontWeight="500"
+                  letterSpacing="0.15em"
+                  textTransform="uppercase"
+                >
+                  Learn More
+                </Text>
+                <Box
+                  w={10}
+                  h="1px"
+                  bg="gray.600"
+                  _groupHover={{ bg: "green.400" }}
+                  transition="background-color 0.5s ease"
+                  mx="auto"
+                />
+              </VStack>
+              <Box
+                sx={{
+                  animation: `bounceSmall 2.5s ease-in-out infinite`,
+                  '@keyframes bounceSmall': {
+                    '0%, 100%': {
+                      transform: 'translateY(0)',
+                    },
+                    '50%': {
+                      transform: 'translateY(8px)',
+                    },
+                  },
+                }}
               >
-                <ArrowDown className="h-4 w-4" />
-              </motion.div>
-            </motion.button>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  )
-}
+                <Icon as={ArrowDown} w={4} h={4} />
+              </Box>
+            </VStack>
+          </Box>
+        </VStack>
+      </Box>
+    </Box>
+  );
+});
+
+LandingPageHero.displayName = 'LandingPageHero';
+
+export default LandingPageHero;

@@ -75,7 +75,7 @@ const escrowSteps = [
 
 const EscrowStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps) => {
     return (
-        <VStack spacing={0}>
+        <VStack spacing={0} align="center" h="400px">
             <Box
                 w={{ base: 16, sm: 20, lg: 28 }}
                 h={{ base: 16, sm: 20, lg: 28 }}
@@ -87,17 +87,18 @@ const EscrowStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps
                 mb={{ base: 6, lg: 8 }}
                 opacity={isVisible ? 1 : 0}
                 transform={isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'}
-                transition={`all 0.6s ease ${0.2 + (index * 0.1)}s`}
+                transition={`all 0.6s ease ${0.1 + (index * 0.1)}s`}
                 _hover={{
                     transform: "scale(1.1)",
-                    bg: "rgba(168, 85, 247, 0.3)"
+                    bg: "rgba(168, 85, 247, 0.3)",
+                    transition: "all 0.15s ease"
                 }}
                 cursor="pointer"
             >
                 <Icon as={step.icon} w={{ base: 8, sm: 10, lg: 14 }} h={{ base: 8, sm: 10, lg: 14 }} color="purple.400" />
             </Box>
 
-            <VStack spacing={4} textAlign="center" maxW="44">
+            <VStack spacing={4} textAlign="center" maxW="44" flex={1} justify="flex-start">
                 <Text
                     color="purple.400"
                     fontSize="sm"
@@ -107,7 +108,7 @@ const EscrowStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps
                     fontFamily="Arial, Helvetica, sans-serif"
                     opacity={isVisible ? 1 : 0}
                     transform={isVisible ? 'translateY(0)' : 'translateY(10px)'}
-                    transition={`all 0.5s ease ${0.3 + (index * 0.1)}s`}
+                    transition={`all 0.5s ease ${0.2 + (index * 0.1)}s`}
                 >
                     Step {step.id}
                 </Text>
@@ -121,25 +122,29 @@ const EscrowStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps
                     fontFamily="Arial, Helvetica, sans-serif"
                     opacity={isVisible ? 1 : 0}
                     transform={isVisible ? 'translateY(0)' : 'translateY(10px)'}
-                    transition={`all 0.5s ease ${0.4 + (index * 0.1)}s`}
+                    transition={`all 0.5s ease ${0.3 + (index * 0.1)}s`}
+                    whiteSpace="nowrap"
                 >
                     {step.title}
                 </Text>
 
-                <Box w={8} h="1px" bg="gray.700" opacity={isVisible ? 1 : 0} transition={`all 0.5s ease ${0.5 + (index * 0.1)}s`} />
+                <Box w={8} h="1px" bg="gray.700" opacity={isVisible ? 1 : 0} transition={`all 0.5s ease ${0.4 + (index * 0.1)}s`} />
 
-                <Text
-                    fontSize="sm"
-                    color="gray.400"
-                    lineHeight="relaxed"
-                    letterSpacing="wide"
-                    fontFamily="Arial, Helvetica, sans-serif"
-                    opacity={isVisible ? 1 : 0}
-                    transform={isVisible ? 'translateY(0)' : 'translateY(10px)'}
-                    transition={`all 0.5s ease ${0.6 + (index * 0.1)}s`}
-                >
-                    {step.description}
-                </Text>
+                <Box minH="80px" display="flex" alignItems="flex-start">
+                    <Text
+                        fontSize="sm"
+                        color="gray.400"
+                        lineHeight="relaxed"
+                        letterSpacing="wide"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                        opacity={isVisible ? 1 : 0}
+                        transform={isVisible ? 'translateY(0)' : 'translateY(10px)'}
+                        transition={`all 0.5s ease ${0.5 + (index * 0.1)}s`}
+                        textAlign="center"
+                    >
+                        {step.description}
+                    </Text>
+                </Box>
             </VStack>
         </VStack>
     );
@@ -159,10 +164,11 @@ const MobileStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps
                 w="100%"
                 opacity={isVisible ? 1 : 0}
                 transform={isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'}
-                transition={`all 0.6s ease ${0.2 + (index * 0.1)}s`}
+                transition={`all 0.6s ease ${0.1 + (index * 0.1)}s`}
                 _hover={{
                     transform: "scale(1.02)",
-                    bg: "rgba(168, 85, 247, 0.08)"
+                    bg: "rgba(168, 85, 247, 0.08)",
+                    transition: "all 0.15s ease"
                 }}
                 cursor="pointer"
             >
@@ -175,8 +181,10 @@ const MobileStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps
                     alignItems="center"
                     justifyContent="center"
                     flexShrink={0}
-                    _hover={{ transform: "scale(1.1)" }}
-                    transition="transform 0.3s ease"
+                    _hover={{
+                        transform: "scale(1.1)",
+                        transition: "transform 0.15s ease"
+                    }}
                 >
                     <Icon as={step.icon} w={{ base: 8, sm: 10 }} h={{ base: 8, sm: 10 }} color="purple.400" />
                 </Box>
@@ -192,6 +200,7 @@ const MobileStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps
                     >
                         Step {step.id}
                     </Text>
+
                     <Text
                         fontWeight="500"
                         fontSize={{ base: 'lg', sm: 'xl' }}
@@ -221,11 +230,27 @@ const MobileStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps
                     display="flex"
                     justifyContent="center"
                     my={{ base: 4, sm: 6 }}
-                    opacity={isVisible ? 1 : 0}
+                    opacity={isVisible ? 0.6 : 0}
                     transform={isVisible ? 'translateY(0)' : 'translateY(-10px)'}
-                    transition={`all 0.5s ease ${0.3 + (index * 0.1)}s`}
+                    transition={`all 0.5s ease ${0.2 + (index * 0.1)}s`}
                 >
-                    <Icon as={ArrowDown} w={{ base: 5, sm: 6 }} h={{ base: 5, sm: 6 }} color="gray.600" />
+                    <Icon
+                        as={ArrowDown}
+                        w={{ base: 5, sm: 6 }}
+                        h={{ base: 5, sm: 6 }}
+                        color="purple.400"
+                        sx={{
+                            animation: `slideArrowY 2s ease-in-out infinite`,
+                            '@keyframes slideArrowY': {
+                                '0%, 100%': {
+                                    transform: 'translateY(0px)',
+                                },
+                                '50%': {
+                                    transform: 'translateY(7px)',
+                                },
+                            },
+                        }}
+                    />
                 </Box>
             )}
         </VStack>
@@ -266,8 +291,11 @@ const FeatureList = memo(({ title, features, icon, colorScheme, isVisible, delay
                         alignItems="start"
                         opacity={isVisible ? 1 : 0}
                         transform={isVisible ? 'translateX(0)' : 'translateX(-20px)'}
-                        transition={`all 0.5s ease ${delay + 0.1 + (index * 0.1)}s`}
-                        _hover={{ transform: "translateX(8px)" }}
+                        transition={`all 0.5s ease ${delay + 0.05 + (index * 0.05)}s`}
+                        _hover={{
+                            transform: "translateX(8px)",
+                            transition: "transform 0.15s ease"
+                        }}
                         cursor="pointer"
                     >
                         <Icon
@@ -278,8 +306,10 @@ const FeatureList = memo(({ title, features, icon, colorScheme, isVisible, delay
                             mt={1}
                             mr={{ base: 3, sm: 4 }}
                             flexShrink={0}
-                            _hover={{ transform: "scale(1.2) rotate(360deg)" }}
-                            transition="transform 0.3s ease"
+                            _hover={{
+                                transform: "scale(1.2) rotate(360deg)",
+                                transition: "transform 0.15s ease"
+                            }}
                         />
                         <Text
                             color="white"
@@ -358,7 +388,7 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
                 mb={{ base: 16, sm: 20, lg: 32 }}
                 opacity={isVisible ? 1 : 0}
                 transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
-                transition="all 0.8s ease"
+                transition="all 0.6s ease 0.2s"
             >
                 {/* Overline */}
                 <Text
@@ -409,16 +439,20 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
 
                 {/* Visual separator */}
                 <Box
-                    w={{ base: 16, sm: 24 }}
+                    w={{ base: "5rem", sm: "6rem" }}
                     h="1px"
-                    bg="linear-gradient(to right, transparent, #c084fc, transparent)"
+                    bgGradient="linear(to-r, transparent, #c084fc, transparent)"
                     mx="auto"
-                    mt={{ base: 6, sm: 8 }}
+                    mb={{ base: 12, md: 20 }}
+                    mt={{ base: 4, sm: 6 }}
+                    opacity={isVisible ? 1 : 0}
+                    transform={isVisible ? 'scaleX(1)' : 'scaleX(0)'}
+                    transition="all 0.6s ease 0.4s"
                 />
             </Box>
 
             {/* Process Flow Section */}
-            <Box mb={{ base: 20, sm: 24, lg: 40 }}>
+            <Box mb={{ base: 6, sm: 8, lg: 16 }}>
                 <Box
                     textAlign="center"
                     mb={{ base: 12, sm: 16 }}
@@ -448,10 +482,10 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
                 </Box>
 
                 {/* Desktop Flow */}
-                <Box display={{ base: 'none', lg: 'block' }} mb={16}>
-                    <HStack spacing={8} justify="space-between" maxW="5xl" mx="auto">
+                <Box display={{ base: 'none', lg: 'block' }} mb={8}>
+                    <HStack spacing={0} justify="space-between" maxW="5xl" mx="auto">
                         {escrowSteps.map((step, index) => (
-                            <HStack key={step.id} spacing={0}>
+                            <React.Fragment key={step.id}>
                                 <EscrowStepCard
                                     step={step}
                                     index={index}
@@ -460,18 +494,35 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
                                 />
                                 {index < escrowSteps.length - 1 && (
                                     <Box
-                                        mx={8}
-                                        minW="20"
                                         display="flex"
-                                        alignItems="center"
-                                        opacity={isVisible ? 1 : 0}
-                                        transform={isVisible ? 'translateX(0)' : 'translateX(-10px)'}
-                                        transition={`all 0.5s ease ${0.4 + (index * 0.1)}s`}
+                                        alignItems="flex-start"
+                                        justifyContent="center"
+                                        w={16}
+                                        h={20}
+                                        mt={-8}
+                                        opacity={isVisible ? 0.6 : 0}
+                                        transition={`all 0.5s ease ${0.3 + (index * 0.1)}s`}
                                     >
-                                        <Icon as={ArrowRight} w={6} h={6} color="gray.600" />
+                                        <Icon
+                                            as={ArrowRight}
+                                            w={6}
+                                            h={6}
+                                            color="purple.400"
+                                            sx={{
+                                                animation: `slideArrowX 2s ease-in-out infinite`,
+                                                '@keyframes slideArrowX': {
+                                                    '0%, 100%': {
+                                                        transform: 'translateX(0px)',
+                                                    },
+                                                    '50%': {
+                                                        transform: 'translateX(7px)',
+                                                    },
+                                                },
+                                            }}
+                                        />
                                     </Box>
                                 )}
-                            </HStack>
+                            </React.Fragment>
                         ))}
                     </HStack>
                 </Box>
@@ -494,7 +545,7 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
             <Box
                 opacity={isVisible ? 1 : 0}
                 transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
-                transition="all 0.8s ease 0.6s"
+                transition="all 0.6s ease 0.4s"
             >
                 <Box
                     bg="rgba(0, 0, 0, 0.5)"
@@ -502,9 +553,9 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
                     borderRadius={{ base: '2xl', sm: '3xl' }}
                     p={{ base: 8, sm: 10, lg: 16 }}
                     _hover={{
-                        borderColor: "rgba(168, 85, 247, 0.5)"
+                        borderColor: "rgba(168, 85, 247, 0.5)",
+                        transition: "border-color 0.15s ease"
                     }}
-                    transition="border-color 0.5s ease"
                 >
                     {/* Section header */}
                     <Box
@@ -512,7 +563,7 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
                         mb={{ base: 12, sm: 16 }}
                         opacity={isVisible ? 1 : 0}
                         transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
-                        transition="all 0.6s ease 0.8s"
+                        transition="all 0.6s ease 0.6s"
                     >
                         <Box display="flex" alignItems="center" justifyContent="center" mb={{ base: 4, sm: 6 }}>
                             <Icon
@@ -520,8 +571,10 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
                                 w={{ base: 10, sm: 12 }}
                                 h={{ base: 10, sm: 12 }}
                                 color="purple.400"
-                                _hover={{ transform: "rotate(360deg)" }}
-                                transition="transform 0.6s ease"
+                                _hover={{
+                                    transform: "rotate(360deg)",
+                                    transition: "transform 0.3s ease"
+                                }}
                                 cursor="pointer"
                             />
                         </Box>
@@ -552,18 +605,18 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
                                 trust between parties.
                             </Text>
                         </Box>
-
-                        <Box w={{ base: 12, sm: 16 }} h="1px" bg="purple.400" mx="auto" mt={{ base: 4, sm: 6 }} />
+                        <Box w="4rem" h="1px" bg="rgb(192 132 252)" mx="auto" mt={6} />
                     </Box>
+
 
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 8, sm: 12, lg: 16 }}>
                         <FeatureList
                             title="Security Features"
                             features={securityFeatures}
                             icon={CheckCircle}
-                            colorScheme="green"
+                            colorScheme="purple"
                             isVisible={isVisible}
-                            delay={1.0}
+                            delay={0.6}
                         />
 
                         <FeatureList
@@ -572,7 +625,7 @@ const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) =>
                             icon={AlertTriangle}
                             colorScheme="green"
                             isVisible={isVisible}
-                            delay={1.2}
+                            delay={0.7}
                         />
                     </SimpleGrid>
                 </Box>

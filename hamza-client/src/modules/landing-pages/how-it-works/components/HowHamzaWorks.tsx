@@ -1,11 +1,39 @@
-"use client"
-import { Search, FileText, CreditCard, Package, Truck, CheckCircle, ArrowRight, ArrowDown } from "lucide-react"
-import { motion } from "framer-motion"
-import { useInView } from "framer-motion"
-import { useRef } from "react"
+import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
+import {
+  Box,
+  Container,
+  VStack,
+  HStack,
+  Text,
+  SimpleGrid,
+  Icon,
+  Flex,
+} from '@chakra-ui/react';
+import {
+  Search,
+  FileText,
+  CreditCard,
+  Package,
+  Truck,
+  CheckCircle,
+  ArrowRight,
+  ArrowDown,
+} from 'lucide-react';
 
 interface HowHamzaWorksProps {
-  selectedLanguage: string
+  selectedLanguage: string;
+}
+
+interface StepCardProps {
+  step: {
+    id: number;
+    title: string;
+    description: string;
+    icon: React.ElementType;
+  };
+  index: number;
+  isVisible: boolean;
+  showArrow?: boolean;
 }
 
 const workflowSteps = [
@@ -45,201 +73,382 @@ const workflowSteps = [
     description: "Smart contract releases payment to seller",
     icon: CheckCircle,
   },
-]
+];
 
-export default function HowHamzaWorks({ selectedLanguage }: HowHamzaWorksProps) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+const StepCard = memo(({ step, index, isVisible, showArrow = false }: StepCardProps) => {
+  const [isIconHovered, setIsIconHovered] = useState(false);
+  const [isContentHovered, setIsContentHovered] = useState(false);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
-      },
-    },
-  }
-
-  const stepVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  }
+  const handleIconMouseEnter = useCallback(() => setIsIconHovered(true), []);
+  const handleIconMouseLeave = useCallback(() => setIsIconHovered(false), []);
+  const handleContentMouseEnter = useCallback(() => setIsContentHovered(true), []);
+  const handleContentMouseLeave = useCallback(() => setIsContentHovered(false), []);
 
   return (
-    <section id="how-it-works" className="max-w-[1200px] mx-auto px-4 relative z-10" ref={ref}>
+    <>
+      {/* Desktop Layout */}
+      <Flex direction="column" align="center" w="100%" position="relative" display={{ base: 'none', lg: 'flex' }}>
+        <VStack
+          spacing={8}
+          opacity={isVisible ? 1 : 0}
+          transform={isVisible ? 'translateY(0) scale(1)' : 'translateY(50px) scale(0.9)'}
+          transition={`all 0.6s ease-out ${0.3 + (index * 0.15)}s`}
+        >
+          {/* Step Icon with proper spacing and alignment */}
+          <Box position="relative" >
+            <Box
+              bg={isIconHovered
+                ? "linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.4))"
+                : "rgba(34, 197, 94, 0.2)"
+              }
+              borderRadius="2xl"
+              w={24}
+              h={24}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              mx="auto"
+              onMouseEnter={handleIconMouseEnter}
+              onMouseLeave={handleIconMouseLeave}
+              cursor="pointer"
+              transform={isIconHovered ? "scale(1.1)" : "scale(1)"}
+              transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+              _hover={{
+                bg: "linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.4))",
+              }}
+            >
+              <Icon as={step.icon} w={12} h={12} color="green.400" />
+            </Box>
+          </Box>
+
+          {/* Arrow between steps - Fixed positioning */}
+          {showArrow && (
+            <Box
+              position="absolute"
+              top={12}
+              right={-3}
+              transform="translateY(-50%)"
+              opacity={isVisible ? 1 : 0}
+              transition={`all 0.5s ease ${0.5 + (index * 0.1)}s`}
+            >
+              <Icon
+                as={ArrowRight}
+                w={6}
+                h={6}
+                color="gray.600"
+                sx={{
+                  animation: `slideArrowX 2.5s ease-in-out infinite`,
+                  '@keyframes slideArrowX': {
+                    '0%, 100%': {
+                      transform: 'translateX(0px)',
+                    },
+                    '50%': {
+                      transform: 'translateX(8px)',
+                    },
+                  },
+                }}
+              />
+            </Box>
+          )}
+
+          {/* Step Content with typography hierarchy and proper alignment */}
+          <VStack
+            spacing={4}
+            textAlign="center"
+            w="100%"
+            onMouseEnter={handleContentMouseEnter}
+            onMouseLeave={handleContentMouseLeave}
+            cursor="pointer"
+            transform={isContentHovered ? "translateY(-8px)" : "translateY(0)"}
+            transition="all 0.3s cubic-bezier(0.3, 0, 0.2, 1)"
+          >
+            {/* Step number with proper styling */}
+            <Text
+              color="green.400"
+              fontSize="sm"
+              fontWeight="500"
+              letterSpacing="0.1em"
+              textTransform="uppercase"
+            >
+              Step {step.id}
+            </Text>
+
+            {/* Step title with proper weight and spacing */}
+            <Text
+              color="white"
+              fontWeight="500"
+              fontSize="lg"
+              lineHeight="tight"
+              letterSpacing="wide"
+              px={2}
+            >
+              {step.title}
+            </Text>
+
+            {/* Visual separator */}
+            <Box w={8} h="1px" bg="gray.700" mx="auto" />
+
+            {/* Description with proper line spacing and alignment */}
+            <Text
+              color="gray.400"
+              fontSize="sm"
+              lineHeight="relaxed"
+              letterSpacing="wide"
+              px={2}
+            >
+              {step.description}
+            </Text>
+          </VStack>
+        </VStack>
+      </Flex>
+
+      {/* Mobile Layout */}
+      <VStack spacing={{ base: 6, sm: 8 }} w="100%" position="relative" display={{ base: 'flex', lg: 'none' }}>
+        <HStack
+          spacing={{ base: 4, sm: 6 }}
+          w="100%"
+          align="flex-start"
+          opacity={isVisible ? 1 : 0}
+          transform={isVisible ? 'translateY(0) scale(1)' : 'translateY(50px) scale(0.9)'}
+          transition={`all 0.6s ease-out ${0.3 + (index * 0.15)}s`}
+        >
+          {/* Step Icon - Mobile-optimized */}
+          <Box
+            position="relative"
+            bg="rgba(34, 197, 94, 0.2)"
+            borderRadius={{ base: 'xl', sm: '2xl' }}
+            w={{ base: 16, sm: 18 }}
+            h={{ base: 16, sm: 18 }}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            flexShrink={0}
+            _hover={{
+              bg: "linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.4))",
+              transform: "scale(1.1)",
+            }}
+            transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+          >
+            <Icon
+              as={step.icon}
+              w={{ base: 8, sm: 9 }}
+              h={{ base: 8, sm: 9 }}
+              color="green.400"
+            />
+          </Box>
+
+          {/* Step Content - Mobile-optimized */}
+          <VStack
+            spacing={{ base: 2, sm: 4 }}
+            align="flex-start"
+            flex={1}
+            pt={{ base: 1, sm: 2 }}
+            _hover={{
+              transform: "translateX(8px)",
+            }}
+            transition="all 0.3s cubic-bezier(0.3, 0, 0.2, 1)"
+          >
+            {/* Step number */}
+            <Text
+              color="green.400"
+              fontSize={{ base: 'xs', sm: 'sm' }}
+              fontWeight="500"
+              letterSpacing="0.1em"
+              textTransform="uppercase"
+            >
+              Step {step.id}
+            </Text>
+
+            {/* Step title */}
+            <Text
+              color="white"
+              fontWeight="500"
+              fontSize={{ base: 'lg', sm: 'xl' }}
+              lineHeight="tight"
+              letterSpacing="wide"
+            >
+              {step.title}
+            </Text>
+
+            {/* Visual separator */}
+            <Box w={{ base: 8, sm: 12 }} h="1px" bg="gray.700" />
+
+            {/* Description */}
+            <Text
+              color="gray.400"
+              fontSize={{ base: 'sm', sm: 'base' }}
+              lineHeight="relaxed"
+              letterSpacing="wide"
+              pr={2}
+            >
+              {step.description}
+            </Text>
+          </VStack>
+        </HStack>
+
+        {/* Arrow between steps - Mobile-optimized */}
+        {showArrow && (
+          <Flex
+            justify="center"
+            mt={{ base: 6, sm: 8 }}
+            ml={{ base: 8, sm: 10 }}
+            opacity={isVisible ? 1 : 0}
+            transition={`all 0.5s ease ${0.3 + (index * 0.1)}s`}
+          >
+            <Icon
+              as={ArrowDown}
+              w={{ base: 5, sm: 6 }}
+              h={{ base: 5, sm: 6 }}
+              color="gray.600"
+              sx={{
+                animation: `slideArrowY 2.5s ease-in-out infinite`,
+                '@keyframes slideArrowY': {
+                  '0%, 100%': {
+                    transform: 'translateY(0px)',
+                  },
+                  '50%': {
+                    transform: 'translateY(8px)',
+                  },
+                },
+              }}
+            />
+          </Flex>
+        )}
+      </VStack>
+    </>
+  );
+});
+
+StepCard.displayName = 'StepCard';
+
+const HowHamzaWorks = memo(({ selectedLanguage }: HowHamzaWorksProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const handleIntersection = useCallback(([entry]: IntersectionObserverEntry[]) => {
+    if (entry.isIntersecting) {
+      setIsVisible(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleIntersection, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    });
+
+    const currentRef = sectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [handleIntersection]);
+
+  return (
+    <Box
+      ref={sectionRef}
+      as="section"
+      id="how-it-works"
+      maxW="1200px"
+      mx="auto"
+      px={4}
+      position="relative"
+    >
       {/* Typography Hierarchy - Section Header with Green Theme */}
-      <motion.div
-        className="text-center mb-16 sm:mb-20 lg:mb-32"
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+      <VStack
+        spacing={6}
+        textAlign="center"
+        mb={{ base: 16, sm: 20, lg: 32 }}
+        opacity={isVisible ? 1 : 0}
+        transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+        transition="all 0.8s ease-out"
       >
         {/* Overline with proper tracking */}
-        <div className="text-gray-500 text-xs sm:text-sm font-light tracking-[0.2em] uppercase mb-4 sm:mb-6">
+        <Text
+          color="gray.500"
+          fontSize={{ base: 'xs', sm: 'sm' }}
+          fontWeight="300"
+          letterSpacing="0.2em"
+          textTransform="uppercase"
+          mb={{ base: 4, sm: 6 }}
+        >
           Process Overview
-        </div>
+        </Text>
 
         {/* Primary heading with mobile-optimized scale */}
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white mb-6 sm:mb-8 tracking-tight leading-[1.1] px-2">
-          How <span className="text-green-400 font-medium">Hamza</span> Works
-        </h2>
+        <Text
+          fontSize={{ base: '3xl', sm: '4xl', lg: '5xl', xl: '6xl' }}
+          fontWeight="300"
+          color="white"
+          mb={{ base: 6, sm: 8 }}
+          letterSpacing="tight"
+          lineHeight="1.1"
+          px={2}
+        >
+          How <Text as="span" color="green.400" fontWeight="500">Hamza</Text> Works
+        </Text>
 
         {/* Subtitle with mobile-optimized text size */}
-        <div className="max-w-3xl mx-auto px-2">
-          <p className="text-lg sm:text-xl lg:text-2xl font-light leading-relaxed text-gray-300 tracking-wide">
+        <Box maxW="3xl" mx="auto" px={2}>
+          <Text
+            fontSize={{ base: 'lg', sm: 'xl', lg: '2xl' }}
+            fontWeight="300"
+            lineHeight="relaxed"
+            color="gray.300"
+            letterSpacing="wide"
+          >
             Experience seamless, secure, and transparent e-commerce through our innovative blockchain-powered platform.
-          </p>
-        </div>
+          </Text>
+        </Box>
 
         {/* Visual separator */}
-        <div className="w-16 sm:w-24 h-px bg-gradient-to-r from-transparent via-green-400 to-transparent mx-auto mt-6 sm:mt-8"></div>
-      </motion.div>
+        <Box
+          w={{ base: 16, sm: 24 }}
+          h="1px"
+          bgGradient="linear(to-r, transparent, green.400, transparent)"
+          mx="auto"
+          mt={{ base: 6, sm: 8 }}
+        />
+      </VStack>
 
       {/* Desktop Flow - Hidden on mobile */}
-      <div className="hidden lg:block mb-24">
-        <motion.div
-          className="relative"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          <div className="grid grid-cols-6 gap-6 items-start">
+      <Box display={{ base: 'none', lg: 'block' }} mb={24}>
+        <Box position="relative">
+          <SimpleGrid columns={6} spacing={6}>
             {workflowSteps.map((step, index) => (
-              <motion.div key={step.id} className="relative flex flex-col items-center" variants={stepVariants}>
-                {/* Step Icon with proper spacing and alignment */}
-                <motion.div
-                  className="relative z-10 bg-gradient-to-br from-green-400/20 to-green-500/20 rounded-2xl w-24 h-24 flex items-center justify-center mx-auto mb-8"
-                  whileHover={{
-                    scale: 1.1,
-                    background: "linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.4))",
-                  }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <step.icon className="h-12 w-12 text-green-400" />
-                </motion.div>
-
-                {/* Arrow between steps - Fixed positioning */}
-                {index < workflowSteps.length - 1 && (
-                  <motion.div
-                    className="absolute top-12 -right-3 transform -translate-y-1/2 z-0"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-                    transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-                  >
-                    <motion.div
-                      animate={{ x: [0, 8, 0] }}
-                      transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                    >
-                      <ArrowRight className="h-6 w-6 text-gray-600" />
-                    </motion.div>
-                  </motion.div>
-                )}
-
-                {/* Step Content with typography hierarchy and proper alignment */}
-                <motion.div
-                  className="text-center w-full"
-                  whileHover={{ y: -8 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                >
-                  <div className="space-y-4">
-                    {/* Step number with proper styling */}
-                    <div className="text-green-400 text-sm font-medium tracking-[0.1em] uppercase">Step {step.id}</div>
-
-                    {/* Step title with proper weight and spacing */}
-                    <h3 className="text-white font-medium text-lg leading-tight tracking-wide px-2">{step.title}</h3>
-
-                    {/* Visual separator */}
-                    <div className="w-8 h-px bg-gray-700 mx-auto"></div>
-
-                    {/* Description with proper line spacing and alignment */}
-                    <p className="text-gray-400 text-sm leading-relaxed tracking-wide px-2">{step.description}</p>
-                  </div>
-                </motion.div>
-              </motion.div>
+              <StepCard
+                key={step.id}
+                step={step}
+                index={index}
+                isVisible={isVisible}
+                showArrow={index < workflowSteps.length - 1}
+              />
             ))}
-          </div>
-        </motion.div>
-      </div>
+          </SimpleGrid>
+        </Box>
+      </Box>
 
       {/* Mobile & Tablet Flow - Enhanced for mobile */}
-      <motion.div
-        className="lg:hidden space-y-8 sm:space-y-12"
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-      >
+      <VStack spacing={{ base: 8, sm: 12 }} display={{ base: 'flex', lg: 'none' }}>
         {workflowSteps.map((step, index) => (
-          <motion.div key={step.id} className="relative" variants={stepVariants}>
-            <div className="flex items-start space-x-4 sm:space-x-6 lg:space-x-8">
-              {/* Step Icon - Mobile-optimized */}
-              <motion.div
-                className="relative z-10 bg-gradient-to-br from-green-400/20 to-green-500/20 rounded-xl sm:rounded-2xl w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 flex items-center justify-center flex-shrink-0"
-                whileHover={{
-                  scale: 1.1,
-                  background: "linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.4))",
-                }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                <step.icon className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 text-green-400" />
-              </motion.div>
-
-              {/* Step Content - Mobile-optimized */}
-              <motion.div
-                className="flex-1 pt-1 sm:pt-2"
-                whileHover={{ x: 8 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              >
-                <div className="space-y-2 sm:space-y-4">
-                  {/* Step number */}
-                  <div className="text-green-400 text-xs sm:text-sm font-medium tracking-[0.1em] uppercase">
-                    Step {step.id}
-                  </div>
-
-                  {/* Step title */}
-                  <h3 className="text-white font-medium text-lg sm:text-xl leading-tight tracking-wide">
-                    {step.title}
-                  </h3>
-
-                  {/* Visual separator */}
-                  <div className="w-8 sm:w-12 h-px bg-gray-700"></div>
-
-                  {/* Description */}
-                  <p className="text-gray-400 text-sm sm:text-base leading-relaxed tracking-wide pr-2">
-                    {step.description}
-                  </p>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Arrow between steps - Mobile-optimized */}
-            {index < workflowSteps.length - 1 && (
-              <motion.div
-                className="flex justify-center mt-6 sm:mt-8 ml-8 sm:ml-10"
-                initial={{ opacity: 0, y: -10 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-              >
-                <motion.div
-                  animate={{ y: [0, 8, 0] }}
-                  transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                >
-                  <ArrowDown className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
-                </motion.div>
-              </motion.div>
-            )}
-          </motion.div>
+          <StepCard
+            key={step.id}
+            step={step}
+            index={index}
+            isVisible={isVisible}
+            showArrow={index < workflowSteps.length - 1}
+          />
         ))}
-      </motion.div>
-    </section>
-  )
-}
+      </VStack>
+    </Box>
+  );
+});
+
+HowHamzaWorks.displayName = 'HowHamzaWorks';
+
+export default HowHamzaWorks;

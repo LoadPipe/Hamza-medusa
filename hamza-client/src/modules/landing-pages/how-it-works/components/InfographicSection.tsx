@@ -1,252 +1,475 @@
-"use client"
-
-import { ShoppingCart, Lock, Package, CheckCircle, DollarSign, Gift, ArrowRight } from "lucide-react"
-import { motion } from "framer-motion"
-import { useInView } from "framer-motion"
-import { useRef } from "react"
+import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
+import {
+  Box,
+  Container,
+  VStack,
+  Text,
+  HStack,
+  Icon,
+  Flex,
+} from '@chakra-ui/react';
+import {
+  ShoppingCart,
+  Lock,
+  Package,
+  CheckCircle,
+  DollarSign,
+  Gift,
+  ArrowRight,
+  ArrowDown,
+} from 'lucide-react';
 
 interface InfographicSectionProps {
-  selectedLanguage: string
+  selectedLanguage: string;
 }
 
-export default function InfographicSection({ selectedLanguage }: InfographicSectionProps) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+interface StepCardProps {
+  stepNumber: string;
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  showArrow?: boolean;
+  arrowIndex?: number;
+  index: number;
+  isVisible: boolean;
+}
 
-  const steps = [
-    {
-      id: 1,
-      title: "Buyer Adds to Cart",
-      description: "Customer selects products and proceeds to checkout",
-      icon: ShoppingCart,
-    },
-    {
-      id: 2,
-      title: "Escrow Created",
-      description: "Smart contract holds funds securely",
-      icon: Lock,
-    },
-    {
-      id: 3,
-      title: "Seller Ships Product",
-      description: "Product is shipped to buyer",
-      icon: Package,
-    },
-    {
-      id: 4,
-      title: "Buyer Confirms Receipt",
-      description: "Buyer confirms product received",
-      icon: CheckCircle,
-    },
-    {
-      id: 5,
-      title: "Funds Released",
-      description: "Payment released to seller",
-      icon: DollarSign,
-    },
-    {
-      id: 6,
-      title: "DECOM Rewards",
-      description: "Both parties earn DECOM tokens",
-      icon: Gift,
-    },
-  ]
+const steps = [
+  {
+    stepNumber: 'Step 1',
+    icon: ShoppingCart,
+    title: 'Buyer Adds to Cart',
+    description: 'Customer selects products and proceeds to checkout',
+  },
+  {
+    stepNumber: 'Step 2',
+    icon: Lock,
+    title: 'Escrow Created',
+    description: 'Smart contract holds funds securely',
+  },
+  {
+    stepNumber: 'Step 3',
+    icon: Package,
+    title: 'Seller Ships Product',
+    description: 'Product is shipped to buyer',
+  },
+  {
+    stepNumber: 'Step 4',
+    icon: CheckCircle,
+    title: 'Buyer Confirms Receipt',
+    description: 'Buyer confirms product received',
+  },
+  {
+    stepNumber: 'Step 5',
+    icon: DollarSign,
+    title: 'Funds Released',
+    description: 'Payment released to seller',
+  },
+  {
+    stepNumber: 'Step 6',
+    icon: Gift,
+    title: 'DECOM Rewards',
+    description: 'Both parties earn DECOM tokens',
+  },
+];
 
-  const stepVariants = {
-    hidden: { opacity: 0, y: 40, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  }
+const StepCard = memo(({ stepNumber, icon, title, description, showArrow = false, index, isVisible }: StepCardProps) => {
+  const [isIconHovered, setIsIconHovered] = useState(false);
+  const [isTextHovered, setIsTextHovered] = useState(false);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.3,
-      },
-    },
-  }
+  const handleIconMouseEnter = useCallback(() => setIsIconHovered(true), []);
+  const handleIconMouseLeave = useCallback(() => setIsIconHovered(false), []);
+  const handleTextMouseEnter = useCallback(() => setIsTextHovered(true), []);
+  const handleTextMouseLeave = useCallback(() => setIsTextHovered(false), []);
 
   return (
-    <section id="infographic" className="max-w-[1200px] mx-auto px-4 relative z-10" ref={ref}>
-      {/* Typography Hierarchy - Section Header with Purple Theme */}
-      <motion.div
-        className="text-center mb-16 sm:mb-20 lg:mb-32"
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        {/* Overline */}
-        <div className="text-gray-500 text-xs sm:text-sm font-light tracking-[0.2em] uppercase mb-4 sm:mb-6">
-          Transaction Journey
-        </div>
-
-        {/* Primary heading - Mobile-optimized */}
-        <h2 className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-light text-white mb-6 sm:mb-8 tracking-tight leading-[1.1] px-2">
-          Hamza <span className="text-purple-400 font-medium">Transaction Flow</span>
-        </h2>
-
-        {/* Subtitle - Mobile-optimized */}
-        <div className="max-w-3xl mx-auto px-2">
-          <p className="text-base sm:text-lg lg:text-2xl font-light leading-relaxed text-gray-300 tracking-wide">
-            See how every transaction on Hamza is secured and automated through our smart contract system.
-          </p>
-        </div>
-
-        {/* Visual separator */}
-        <div className="w-16 sm:w-24 h-px bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto mt-6 sm:mt-8"></div>
-      </motion.div>
-
-      {/* Desktop Flow - Hidden on mobile/tablet */}
-      <div className="hidden lg:block">
-        <motion.div
-          className="flex items-start justify-between max-w-6xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+    <>
+      {/* Desktop Layout */}
+      <Flex align="flex-start" w="100%" display={{ base: 'none', lg: 'flex' }}>
+        <VStack
+          spacing={6}
+          flex={1}
+          textAlign="center"
+          opacity={isVisible ? 1 : 0}
+          transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
+          transition={`all 0.6s ease ${1.2 + (index * 0.2)}s`}
         >
-          {steps.map((step, index) => (
-            <motion.div key={step.id} className="flex items-start relative" variants={stepVariants}>
-              <div className="flex flex-col items-center text-center">
-                {/* Step Icon - Fixed alignment */}
-                <motion.div
-                  className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-400/20 to-purple-500/20 flex items-center justify-center mb-8"
-                  whileHover={{
-                    scale: 1.15,
-                    background: "linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(168, 85, 247, 0.4))",
-                  }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <step.icon className="h-12 w-12 text-purple-400" />
-                </motion.div>
-
-                {/* Step Content - Fixed width and alignment */}
-                <div className="w-40 space-y-4">
-                  {/* Step number */}
-                  <div className="text-purple-400 text-sm font-medium tracking-[0.1em] uppercase">Step {step.id}</div>
-
-                  {/* Step title */}
-                  <motion.h3
-                    className="font-medium text-base lg:text-lg text-white leading-tight tracking-wide"
-                    initial={{ opacity: 0 }}
-                    animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-                  >
-                    {step.title}
-                  </motion.h3>
-
-                  {/* Visual separator */}
-                  <div className="w-8 h-px bg-gray-700 mx-auto"></div>
-
-                  {/* Description */}
-                  <motion.p
-                    className="text-sm text-gray-400 leading-relaxed tracking-wide"
-                    initial={{ opacity: 0 }}
-                    animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
-                  >
-                    {step.description}
-                  </motion.p>
-                </div>
-              </div>
-
-              {/* Arrow between steps - Fixed positioning */}
-              {index < steps.length - 1 && (
-                <motion.div
-                  className="absolute top-12 -right-8 transform -translate-y-1/2"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-                  transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-                >
-                  <motion.div
-                    animate={{ x: [0, 10, 0] }}
-                    transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                  >
-                    <ArrowRight className="h-6 w-6 text-gray-600" />
-                  </motion.div>
-                </motion.div>
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Mobile & Tablet Flow - Enhanced for mobile */}
-      <motion.div
-        className="lg:hidden space-y-8 sm:space-y-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-      >
-        {steps.map((step, index) => (
-          <motion.div
-            key={step.id}
-            className="flex items-start space-x-4 sm:space-x-6 lg:space-x-8"
-            variants={stepVariants}
-          >
-            {/* Step Icon - Mobile-optimized */}
-            <motion.div
-              className="w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-400/20 to-purple-500/20 flex items-center justify-center flex-shrink-0"
-              whileHover={{
-                scale: 1.1,
-                background: "linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(168, 85, 247, 0.4))",
+          <Box position="relative">
+            <Box
+              w={24}
+              h={24}
+              borderRadius="2xl"
+              bg={isIconHovered ? "#411E64" : "#281839"}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              position="relative"
+              zIndex={10}
+              mx="auto"
+              onMouseEnter={handleIconMouseEnter}
+              onMouseLeave={handleIconMouseLeave}
+              cursor="pointer"
+              transform={isIconHovered ? "scale(1.15)" : "scale(1)"}
+              transition="all 0.3s ease"
+              _hover={{
+                bg: "rgba(168, 85, 247, 0.3)",
               }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <step.icon className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 text-purple-400" />
-            </motion.div>
+              <Icon
+                as={icon}
+                w={12}
+                h={12}
+                color="purple.400"
+              />
+            </Box>
+          </Box>
 
-            {/* Step Content - Mobile-optimized */}
-            <motion.div
-              className="flex-1 pt-1 sm:pt-2 space-y-2 sm:space-y-3"
-              whileHover={{ x: 8 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          <VStack
+            spacing={4}
+            maxW="240px"
+            onMouseEnter={handleTextMouseEnter}
+            onMouseLeave={handleTextMouseLeave}
+            cursor="pointer"
+            transform={isTextHovered ? "translateY(-8px)" : "translateY(0)"}
+            transition="all 0.3s ease"
+          >
+            <Text
+              fontSize="sm"
+              fontWeight="500"
+              fontFamily="Arial, Helvetica, sans-serif"
+              color="purple.400"
+              letterSpacing="0.1em"
+              textTransform="uppercase"
+              lineHeight="1.25rem"
             >
-              {/* Step number */}
-              <div className="text-purple-400 text-xs sm:text-sm font-medium tracking-[0.1em] uppercase">
-                Step {step.id}
-              </div>
+              {stepNumber}
+            </Text>
 
-              {/* Step title */}
-              <h3 className="font-medium text-white text-lg sm:text-xl leading-tight tracking-wide">{step.title}</h3>
+            <Text
+              fontSize={{ base: 'md', md: 'lg' }}
+              fontWeight="600"
+              color="white"
+              lineHeight="1.3"
+              letterSpacing="wide"
+            >
+              {title}
+            </Text>
 
-              {/* Visual separator */}
-              <div className="w-8 sm:w-12 h-px bg-gray-700"></div>
+            <Box
+              w="32px"
+              h="1px"
+              bg="gray.700"
+              transition="background-color 0.3s ease"
+            />
 
-              {/* Description */}
-              <p className="text-sm sm:text-base text-gray-400 leading-relaxed tracking-wide pr-2">
-                {step.description}
-              </p>
-            </motion.div>
+            <Text
+              fontSize={{ base: 'sm', md: 'sm' }}
+              fontFamily="Arial, Helvetica, sans-serif"
+              letterSpacing="0.025em"
+              color="gray.400"
+              lineHeight="1.625"
+              textAlign="center"
+              px={2}
+            >
+              {description}
+            </Text>
+          </VStack>
+        </VStack>
 
-            {/* Arrow between steps - Mobile-optimized */}
-            {index < steps.length - 1 && (
-              <motion.div
-                className="flex justify-center ml-8 sm:ml-10 mt-6 sm:mt-8"
-                initial={{ opacity: 0, y: -10 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+        {showArrow && (
+          <Box
+            display="flex"
+            alignItems="flex-start"
+            justifyContent="center"
+            w={16}
+            h={24}
+            mt={12}
+            opacity={isVisible ? 0.6 : 0}
+            transition={`all 0.6s ease ${1.4 + (index * 0.2)}s`}
+          >
+            <Icon
+              as={ArrowRight}
+              w={6}
+              h={6}
+              color="gray.600"
+              sx={{
+                animation: `slideArrowX 2.5s ease-in-out infinite`,
+                '@keyframes slideArrowX': {
+                  '0%, 100%': {
+                    transform: 'translateX(0px)',
+                  },
+                  '50%': {
+                    transform: 'translateX(10px)',
+                  },
+                },
+              }}
+            />
+          </Box>
+        )}
+      </Flex>
+
+      {/* Mobile Layout */}
+      <VStack spacing={6} w="100%" display={{ base: 'flex', lg: 'none' }}>
+        <HStack
+          spacing={4}
+          w="100%"
+          align="flex-start"
+          opacity={isVisible ? 1 : 0}
+          transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
+          transition={`all 0.6s ease ${1.2 + (index * 0.2)}s`}
+        >
+          <Box
+            w={{ base: 16, sm: 18 }}
+            h={{ base: 16, sm: 18 }}
+            borderRadius={{ base: 'xl', sm: '2xl' }}
+            bg="rgba(168, 85, 247, 0.2)"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            flexShrink={0}
+            _hover={{
+              bg: "rgba(168, 85, 247, 0.3)",
+              transform: "scale(1.1)",
+            }}
+            transition="all 0.3s ease"
+          >
+            <Icon
+              as={icon}
+              w={{ base: 8, sm: 9 }}
+              h={{ base: 8, sm: 9 }}
+              color="purple.400"
+            />
+          </Box>
+
+          <VStack
+            spacing={{ base: 2, sm: 3 }}
+            align="flex-start"
+            flex={1}
+            pt={{ base: 1, sm: 2 }}
+            _hover={{
+              transform: "translateX(8px)",
+            }}
+            transition="all 0.3s ease"
+          >
+            <Text
+              fontSize={{ base: 'xs', sm: 'sm' }}
+              fontWeight="500"
+              fontFamily="Arial, Helvetica, sans-serif"
+              color="purple.400"
+              letterSpacing="0.1em"
+              textTransform="uppercase"
+            >
+              {stepNumber}
+            </Text>
+
+            <Text
+              fontSize={{ base: 'lg', sm: 'xl' }}
+              fontWeight="600"
+              color="white"
+              lineHeight="1.3"
+              letterSpacing="wide"
+            >
+              {title}
+            </Text>
+
+            <Box
+              w={{ base: "32px", sm: "48px" }}
+              h="1px"
+              bg="gray.700"
+            />
+
+            <Text
+              fontSize={{ base: 'sm', sm: 'base' }}
+              fontFamily="Arial, Helvetica, sans-serif"
+              letterSpacing="0.025em"
+              color="gray.400"
+              lineHeight="1.625"
+              pr={2}
+            >
+              {description}
+            </Text>
+          </VStack>
+        </HStack>
+
+        {showArrow && (
+          <Box
+            display="flex"
+            justifyContent="center"
+            w="100%"
+            mt={{ base: 6, sm: 8 }}
+            opacity={isVisible ? 0.6 : 0}
+            transition={`all 0.6s ease ${1.4 + (index * 0.2)}s`}
+          >
+            <Icon
+              as={ArrowDown}
+              w={{ base: 5, sm: 6 }}
+              h={{ base: 5, sm: 6 }}
+              color="gray.600"
+              sx={{
+                animation: `slideArrowY 2.5s ease-in-out infinite`,
+                '@keyframes slideArrowY': {
+                  '0%, 100%': {
+                    transform: 'translateY(0px)',
+                  },
+                  '50%': {
+                    transform: 'translateY(10px)',
+                  },
+                },
+              }}
+            />
+          </Box>
+        )}
+      </VStack>
+    </>
+  );
+});
+
+StepCard.displayName = 'StepCard';
+
+const InfographicSection = memo(({ selectedLanguage }: InfographicSectionProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const handleIntersection = useCallback(([entry]: IntersectionObserverEntry[]) => {
+    if (entry.isIntersecting) {
+      setIsVisible(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleIntersection, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    });
+
+    const currentRef = sectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [handleIntersection]);
+
+  return (
+    <Box
+      ref={sectionRef}
+      py={{ base: 16, md: 24 }}
+      bg="black"
+      position="relative"
+      id="infographic"
+    >
+      <Container maxW="7xl" position="relative" zIndex={1}>
+        <VStack spacing={6}>
+          {/* Section Header */}
+          <VStack spacing={6} textAlign="center">
+            <Text
+              fontSize={{ base: 'xs', md: 'sm' }}
+              fontWeight="300"
+              fontFamily="Arial, Helvetica, sans-serif"
+              letterSpacing="0.2em"
+              textTransform="uppercase"
+              color="gray.500"
+              lineHeight="1.25rem"
+              opacity={isVisible ? 1 : 0}
+              transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+              transition="all 0.8s ease 0.2s"
+            >
+              Transaction Journey
+            </Text>
+
+            <VStack spacing={4}>
+              <Text
+                fontSize={{ base: '2xl', sm: '3xl', lg: '5xl', xl: '6xl' }}
+                fontWeight="300"
+                fontFamily="Arial, Helvetica, sans-serif"
+                letterSpacing="-0.025em"
+                color="white"
+                lineHeight="1.1"
+                px={2}
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                transition="all 0.8s ease 0.4s"
               >
-                <motion.div
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                >
-                  <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600 rotate-90" />
-                </motion.div>
-              </motion.div>
-            )}
-          </motion.div>
-        ))}
-      </motion.div>
-    </section>
-  )
-}
+                Hamza{' '}
+                <Text as="span" bgGradient="linear(to-r, #a855f7, #8b5cf6)" bgClip="text" fontWeight="500">
+                  Transaction Flow
+                </Text>
+              </Text>
+
+              <Text
+                fontSize={{ base: 'base', sm: 'lg', lg: '2xl' }}
+                fontFamily="Arial, Helvetica, sans-serif"
+                fontWeight="300"
+                letterSpacing="0.025em"
+                color="gray.300"
+                maxW="3xl"
+                lineHeight="1.625"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                transition="all 0.8s ease 0.6s"
+              >
+                See how every transaction on Hamza is secured and automated through our smart contract system.
+              </Text>
+            </VStack>
+          </VStack>
+
+          {/* Visual separator */}
+          <Box
+            w={{ base: "4rem", sm: "6rem" }}
+            h="1px"
+            bgGradient="linear(to-r, transparent, #a855f7, transparent)"
+            mx="auto"
+            mb={{ base: 12, md: 20 }}
+            opacity={isVisible ? 1 : 0}
+            transform={isVisible ? 'scaleX(1)' : 'scaleX(0)'}
+            transition="all 0.8s ease 0.8s"
+          />
+
+          {/* Desktop View */}
+          <Box display={{ base: 'none', lg: 'block' }} w="100%">
+            <HStack spacing={0} justify="space-between" align="flex-start" maxW="6xl" mx="auto">
+              {steps.map((step, index) => (
+                <StepCard
+                  key={step.stepNumber}
+                  stepNumber={step.stepNumber}
+                  icon={step.icon}
+                  title={step.title}
+                  description={step.description}
+                  showArrow={index < steps.length - 1}
+                  arrowIndex={index}
+                  index={index}
+                  isVisible={isVisible}
+                />
+              ))}
+            </HStack>
+          </Box>
+
+          {/* Mobile View */}
+          <VStack spacing={{ base: 8, sm: 10 }} w="100%" display={{ base: 'flex', lg: 'none' }}>
+            {steps.map((step, index) => (
+              <StepCard
+                key={step.stepNumber}
+                stepNumber={step.stepNumber}
+                icon={step.icon}
+                title={step.title}
+                description={step.description}
+                showArrow={index < steps.length - 1}
+                arrowIndex={index}
+                index={index}
+                isVisible={isVisible}
+              />
+            ))}
+          </VStack>
+        </VStack>
+      </Container>
+    </Box>
+  );
+});
+
+InfographicSection.displayName = 'InfographicSection';
+
+export default InfographicSection;

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { memo } from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, VStack } from '@chakra-ui/react';
 import LandingPageHero from './components/LandingPageHero';
 import WhatIsHamza from './components/WhatIsHamza';
 import HowHamzaWorks from './components/HowHamzaWorks';
@@ -11,26 +11,30 @@ import InfographicSection from './components/InfographicSection';
 import AboutUsAccordion from './components/AboutUsAccordion';
 import CallToAction from './components/CallToAction';
 
-const HowItWorksTemplate = memo(() => {
+interface HowItWorksTemplateProps {
+    selectedLanguage?: string;
+}
+
+const HowItWorksTemplate = memo<HowItWorksTemplateProps>(({
+    selectedLanguage = 'en'
+}) => {
     return (
-        <div className="min-h-screen bg-black text-white">
-            <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
-                <div className="relative z-10">
-                    {/* Main content without navbar padding */}
-                    <div className="space-y-32 lg:space-y-48">
-                        <LandingPageHero selectedLanguage={'en'} />
-                        <WhatIsHamza selectedLanguage={'en'} />
-                        <HowHamzaWorks selectedLanguage={'en'} />
-                        <EscrowExplanation selectedLanguage={'en'} />
-                        <AcceptedCrypto selectedLanguage={'en'} />
-                        <InfographicSection selectedLanguage={'en'} />
-                        <AboutUsAccordion selectedLanguage={'en'} />
-                        <CallToAction selectedLanguage={'en'} />
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Box minH="100vh" bg="black" color="white">
+            <VStack
+                spacing={{ base: 16, sm: 24, lg: 32, xl: 40 }}
+                as="main"
+                align="stretch"
+            >
+                <LandingPageHero selectedLanguage={selectedLanguage} />
+                <WhatIsHamza selectedLanguage={selectedLanguage} />
+                <HowHamzaWorks selectedLanguage={selectedLanguage} />
+                <EscrowExplanation selectedLanguage={selectedLanguage} />
+                <AcceptedCrypto selectedLanguage={selectedLanguage} />
+                <InfographicSection selectedLanguage={selectedLanguage} />
+                <AboutUsAccordion selectedLanguage={selectedLanguage} />
+                <CallToAction selectedLanguage={selectedLanguage} />
+            </VStack>
+        </Box>
     );
 });
 
