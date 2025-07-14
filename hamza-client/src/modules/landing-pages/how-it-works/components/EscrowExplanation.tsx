@@ -1,10 +1,18 @@
-'use client';
+import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
 import {
-    Card,
-    CardContent,
-} from '@modules/landing-pages/how-it-works/components/ui/card';
-import { Shield, AlertTriangle } from 'lucide-react';
+    Box,
+    Container,
+    VStack,
+    Text,
+    HStack,
+    SimpleGrid,
+    Icon,
+    List,
+    ListItem,
+} from '@chakra-ui/react';
 import {
+    Shield,
+    AlertTriangle,
     ShoppingCart,
     Package,
     CheckCircle,
@@ -12,20 +20,37 @@ import {
     ArrowRight,
     ArrowDown,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
 
 interface EscrowExplanationProps {
     selectedLanguage: string;
+}
+
+interface EscrowStepProps {
+    step: {
+        id: number;
+        title: string;
+        description: string;
+        icon: React.ElementType;
+    };
+    index: number;
+    isVisible: boolean;
+    isLast: boolean;
+}
+
+interface FeatureListProps {
+    title: string;
+    features: string[];
+    icon: React.ElementType;
+    colorScheme: string;
+    isVisible: boolean;
+    delay: number;
 }
 
 const escrowSteps = [
     {
         id: 1,
         title: 'Order Placed',
-        description:
-            'Buyer places order and funds are locked in smart contract',
+        description: 'Buyer places order and funds are locked in smart contract',
         icon: ShoppingCart,
     },
     {
@@ -48,441 +73,514 @@ const escrowSteps = [
     },
 ];
 
-export default function EscrowExplanation({
-    selectedLanguage,
-}: EscrowExplanationProps) {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: '-100px' });
+const EscrowStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps) => {
+    return (
+        <VStack spacing={0}>
+            <Box
+                w={{ base: 16, sm: 20, lg: 28 }}
+                h={{ base: 16, sm: 20, lg: 28 }}
+                borderRadius={{ base: 'xl', lg: '2xl' }}
+                bg="rgba(168, 85, 247, 0.2)"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                mb={{ base: 6, lg: 8 }}
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'}
+                transition={`all 0.6s ease ${0.2 + (index * 0.1)}s`}
+                _hover={{
+                    transform: "scale(1.1)",
+                    bg: "rgba(168, 85, 247, 0.3)"
+                }}
+                cursor="pointer"
+            >
+                <Icon as={step.icon} w={{ base: 8, sm: 10, lg: 14 }} h={{ base: 8, sm: 10, lg: 14 }} color="purple.400" />
+            </Box>
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2,
-            },
-        },
-    };
+            <VStack spacing={4} textAlign="center" maxW="44">
+                <Text
+                    color="purple.400"
+                    fontSize="sm"
+                    fontWeight="500"
+                    letterSpacing="0.1em"
+                    textTransform="uppercase"
+                    fontFamily="Arial, Helvetica, sans-serif"
+                    opacity={isVisible ? 1 : 0}
+                    transform={isVisible ? 'translateY(0)' : 'translateY(10px)'}
+                    transition={`all 0.5s ease ${0.3 + (index * 0.1)}s`}
+                >
+                    Step {step.id}
+                </Text>
 
-    const stepVariants = {
-        hidden: { opacity: 0, y: 30, scale: 0.9 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            transition: {
-                duration: 0.6,
-                ease: 'easeOut',
-            },
-        },
-    };
+                <Text
+                    fontWeight="500"
+                    fontSize="lg"
+                    color="white"
+                    lineHeight="tight"
+                    letterSpacing="wide"
+                    fontFamily="Arial, Helvetica, sans-serif"
+                    opacity={isVisible ? 1 : 0}
+                    transform={isVisible ? 'translateY(0)' : 'translateY(10px)'}
+                    transition={`all 0.5s ease ${0.4 + (index * 0.1)}s`}
+                >
+                    {step.title}
+                </Text>
 
-    const featureVariants = {
-        hidden: { opacity: 0, x: -20 },
-        visible: {
-            opacity: 1,
-            x: 0,
-            transition: {
-                duration: 0.5,
-                ease: 'easeOut',
-            },
-        },
-    };
+                <Box w={8} h="1px" bg="gray.700" opacity={isVisible ? 1 : 0} transition={`all 0.5s ease ${0.5 + (index * 0.1)}s`} />
+
+                <Text
+                    fontSize="sm"
+                    color="gray.400"
+                    lineHeight="relaxed"
+                    letterSpacing="wide"
+                    fontFamily="Arial, Helvetica, sans-serif"
+                    opacity={isVisible ? 1 : 0}
+                    transform={isVisible ? 'translateY(0)' : 'translateY(10px)'}
+                    transition={`all 0.5s ease ${0.6 + (index * 0.1)}s`}
+                >
+                    {step.description}
+                </Text>
+            </VStack>
+        </VStack>
+    );
+});
+
+EscrowStepCard.displayName = 'EscrowStepCard';
+
+const MobileStepCard = memo(({ step, index, isVisible, isLast }: EscrowStepProps) => {
+    return (
+        <VStack spacing={0}>
+            <HStack
+                spacing={{ base: 4, sm: 6 }}
+                p={{ base: 6, sm: 8 }}
+                borderRadius={{ base: '2xl', sm: '3xl' }}
+                bg="rgba(168, 85, 247, 0.05)"
+                border="1px solid rgba(168, 85, 247, 0.2)"
+                w="100%"
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'}
+                transition={`all 0.6s ease ${0.2 + (index * 0.1)}s`}
+                _hover={{
+                    transform: "scale(1.02)",
+                    bg: "rgba(168, 85, 247, 0.08)"
+                }}
+                cursor="pointer"
+            >
+                <Box
+                    w={{ base: 16, sm: 20 }}
+                    h={{ base: 16, sm: 20 }}
+                    borderRadius={{ base: 'xl', sm: '2xl' }}
+                    bg="rgba(168, 85, 247, 0.2)"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    flexShrink={0}
+                    _hover={{ transform: "scale(1.1)" }}
+                    transition="transform 0.3s ease"
+                >
+                    <Icon as={step.icon} w={{ base: 8, sm: 10 }} h={{ base: 8, sm: 10 }} color="purple.400" />
+                </Box>
+
+                <VStack spacing={{ base: 1, sm: 2 }} align="start" flex={1}>
+                    <Text
+                        color="purple.400"
+                        fontSize={{ base: 'xs', sm: 'sm' }}
+                        fontWeight="500"
+                        letterSpacing="0.1em"
+                        textTransform="uppercase"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                    >
+                        Step {step.id}
+                    </Text>
+                    <Text
+                        fontWeight="500"
+                        fontSize={{ base: 'lg', sm: 'xl' }}
+                        color="white"
+                        lineHeight="tight"
+                        letterSpacing="wide"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                    >
+                        {step.title}
+                    </Text>
+                    <Box w={{ base: 8, sm: 12 }} h="1px" bg="gray.700" />
+                    <Text
+                        fontSize={{ base: 'sm', sm: 'md' }}
+                        color="gray.400"
+                        lineHeight="relaxed"
+                        letterSpacing="wide"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                        pr={2}
+                    >
+                        {step.description}
+                    </Text>
+                </VStack>
+            </HStack>
+
+            {!isLast && (
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    my={{ base: 4, sm: 6 }}
+                    opacity={isVisible ? 1 : 0}
+                    transform={isVisible ? 'translateY(0)' : 'translateY(-10px)'}
+                    transition={`all 0.5s ease ${0.3 + (index * 0.1)}s`}
+                >
+                    <Icon as={ArrowDown} w={{ base: 5, sm: 6 }} h={{ base: 5, sm: 6 }} color="gray.600" />
+                </Box>
+            )}
+        </VStack>
+    );
+});
+
+MobileStepCard.displayName = 'MobileStepCard';
+
+const FeatureList = memo(({ title, features, icon, colorScheme, isVisible, delay }: FeatureListProps) => {
+    const iconColor = colorScheme === 'purple' ? 'purple.400' : 'green.400';
 
     return (
-        <section
+        <VStack
+            spacing={{ base: 6, sm: 8 }}
+            align="start"
+            opacity={isVisible ? 1 : 0}
+            transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+            transition={`all 0.6s ease ${delay}s`}
+        >
+            <VStack spacing={2} align="start">
+                <Text
+                    fontSize={{ base: 'lg', sm: 'xl', lg: '2xl' }}
+                    fontWeight="500"
+                    color="white"
+                    letterSpacing="wide"
+                    fontFamily="Arial, Helvetica, sans-serif"
+                >
+                    {title}
+                </Text>
+                <Box w={{ base: 8, sm: 12 }} h="1px" bg={iconColor} />
+            </VStack>
+
+            <List spacing={{ base: 4, sm: 6 }}>
+                {features.map((feature, index) => (
+                    <ListItem
+                        key={index}
+                        display="flex"
+                        alignItems="start"
+                        opacity={isVisible ? 1 : 0}
+                        transform={isVisible ? 'translateX(0)' : 'translateX(-20px)'}
+                        transition={`all 0.5s ease ${delay + 0.1 + (index * 0.1)}s`}
+                        _hover={{ transform: "translateX(8px)" }}
+                        cursor="pointer"
+                    >
+                        <Icon
+                            as={icon}
+                            w={{ base: 5, sm: 6 }}
+                            h={{ base: 5, sm: 6 }}
+                            color={iconColor}
+                            mt={1}
+                            mr={{ base: 3, sm: 4 }}
+                            flexShrink={0}
+                            _hover={{ transform: "scale(1.2) rotate(360deg)" }}
+                            transition="transform 0.3s ease"
+                        />
+                        <Text
+                            color="white"
+                            fontSize={{ base: 'sm', sm: 'md', lg: 'lg' }}
+                            fontWeight="300"
+                            lineHeight="relaxed"
+                            letterSpacing="wide"
+                            fontFamily="Arial, Helvetica, sans-serif"
+                        >
+                            {feature}
+                        </Text>
+                    </ListItem>
+                ))}
+            </List>
+        </VStack>
+    );
+});
+
+FeatureList.displayName = 'FeatureList';
+
+const EscrowExplanation = memo(({ selectedLanguage }: EscrowExplanationProps) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const sectionRef = useRef<HTMLDivElement>(null);
+
+    const handleIntersection = useCallback(([entry]: IntersectionObserverEntry[]) => {
+        if (entry.isIntersecting) {
+            setIsVisible(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(handleIntersection, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        });
+
+        const currentRef = sectionRef.current;
+        if (currentRef) {
+            observer.observe(currentRef);
+        }
+
+        return () => {
+            if (currentRef) {
+                observer.unobserve(currentRef);
+            }
+        };
+    }, [handleIntersection]);
+
+    const securityFeatures = [
+        'Multi-signature wallet protection',
+        'Automated dispute resolution',
+        'Immutable transaction records',
+        'Time-locked fund release',
+    ];
+
+    const disputeFeatures = [
+        'Decentralized arbitration network',
+        'Evidence-based resolution system',
+        'Fair fee redistribution',
+        'Community-driven governance',
+    ];
+
+    return (
+        <Box
+            ref={sectionRef}
             id="escrow"
-            className="max-w-[1200px] mx-auto px-4 relative z-10"
-            ref={ref}
+            maxW="1200px"
+            mx="auto"
+            px={4}
+            position="relative"
+            zIndex={1}
         >
             {/* Typography Hierarchy - Section Header with Purple Theme */}
-            <motion.div
-                className="text-center mb-16 sm:mb-20 lg:mb-32"
-                initial={{ opacity: 0, y: 30 }}
-                animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
-                }
-                transition={{ duration: 0.8, ease: 'easeOut' }}
+            <Box
+                textAlign="center"
+                mb={{ base: 16, sm: 20, lg: 32 }}
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                transition="all 0.8s ease"
             >
                 {/* Overline */}
-                <div className="text-gray-500 text-xs sm:text-sm font-light tracking-[0.2em] uppercase mb-4 sm:mb-6">
+                <Text
+                    color="gray.500"
+                    fontSize={{ base: 'xs', sm: 'sm' }}
+                    fontWeight="300"
+                    letterSpacing="0.2em"
+                    textTransform="uppercase"
+                    mb={{ base: 4, sm: 6 }}
+                    fontFamily="Arial, Helvetica, sans-serif"
+                >
                     Security Framework
-                </div>
+                </Text>
 
-                {/* Primary heading - Mobile-optimized */}
-                <h2 className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-light text-white mb-6 sm:mb-8 tracking-tight leading-[1.1] px-2">
+                {/* Primary heading */}
+                <Text
+                    fontSize={{ base: '2xl', sm: '3xl', lg: '5xl', xl: '6xl' }}
+                    fontWeight="300"
+                    color="white"
+                    mb={{ base: 6, sm: 8 }}
+                    letterSpacing="tight"
+                    lineHeight="1.1"
+                    fontFamily="Arial, Helvetica, sans-serif"
+                    px={2}
+                >
                     What is{' '}
-                    <span className="text-purple-400 font-medium">Escrow</span>?
-                </h2>
+                    <Text as="span" color="purple.400" fontWeight="500">
+                        Escrow
+                    </Text>
+                    ?
+                </Text>
 
-                {/* Subtitle - Mobile-optimized */}
-                <div className="max-w-4xl mx-auto px-2">
-                    <p className="text-base sm:text-lg lg:text-2xl font-light leading-relaxed text-gray-300 tracking-wide">
+                {/* Subtitle */}
+                <Box maxW="4xl" mx="auto" px={2}>
+                    <Text
+                        fontSize={{ base: 'md', sm: 'lg', lg: '2xl' }}
+                        fontWeight="300"
+                        lineHeight="relaxed"
+                        color="gray.300"
+                        letterSpacing="wide"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                    >
                         Escrow is a secure financial arrangement where a third
                         party holds and regulates payment of funds required for
                         two parties involved in a given transaction.
-                    </p>
-                </div>
+                    </Text>
+                </Box>
 
                 {/* Visual separator */}
-                <div className="w-16 sm:w-24 h-px bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto mt-6 sm:mt-8"></div>
-            </motion.div>
+                <Box
+                    w={{ base: 16, sm: 24 }}
+                    h="1px"
+                    bg="linear-gradient(to right, transparent, #c084fc, transparent)"
+                    mx="auto"
+                    mt={{ base: 6, sm: 8 }}
+                />
+            </Box>
 
             {/* Process Flow Section */}
-            <div className="mb-20 sm:mb-24 lg:mb-40">
-                <motion.div
-                    className="text-center mb-12 sm:mb-16"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={
-                        isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                    }
-                    transition={{
-                        duration: 0.6,
-                        delay: 0.2,
-                        ease: [0.25, 0.46, 0.45, 0.94],
-                    }}
+            <Box mb={{ base: 20, sm: 24, lg: 40 }}>
+                <Box
+                    textAlign="center"
+                    mb={{ base: 12, sm: 16 }}
+                    opacity={isVisible ? 1 : 0}
+                    transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                    transition="all 0.6s ease 0.2s"
                 >
-                    {/* Section subheading */}
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-light text-white mb-3 sm:mb-4 tracking-wide">
-                        How Escrow Works
-                    </h3>
-                    <div className="text-gray-400 text-sm sm:text-base font-light tracking-wide">
-                        Four simple steps to secure transactions
-                    </div>
-                </motion.div>
-
-                {/* Desktop Flow - Hidden on mobile/tablet */}
-                <div className="hidden lg:block">
-                    <motion.div
-                        className="flex items-center justify-between max-w-5xl mx-auto mb-16"
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate={isInView ? 'visible' : 'hidden'}
+                    <Text
+                        fontSize={{ base: 'xl', sm: '2xl', lg: '3xl' }}
+                        fontWeight="300"
+                        color="white"
+                        mb={{ base: 3, sm: 4 }}
+                        letterSpacing="wide"
+                        fontFamily="Arial, Helvetica, sans-serif"
                     >
+                        How Escrow Works
+                    </Text>
+                    <Text
+                        color="gray.400"
+                        fontSize={{ base: 'sm', sm: 'md' }}
+                        fontWeight="300"
+                        letterSpacing="wide"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                    >
+                        Four simple steps to secure transactions
+                    </Text>
+                </Box>
+
+                {/* Desktop Flow */}
+                <Box display={{ base: 'none', lg: 'block' }} mb={16}>
+                    <HStack spacing={8} justify="space-between" maxW="5xl" mx="auto">
                         {escrowSteps.map((step, index) => (
-                            <motion.div
-                                key={step.id}
-                                className="flex items-center"
-                                variants={stepVariants}
-                            >
-                                <div className="flex flex-col items-center">
-                                    <motion.div
-                                        className="w-28 h-28 rounded-2xl bg-gradient-to-br from-purple-400/20 to-purple-500/20 flex items-center justify-center text-3xl mb-8"
-                                        whileHover={{
-                                            scale: 1.1,
-                                            background:
-                                                'linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(168, 85, 247, 0.4))',
-                                        }}
-                                        transition={{
-                                            type: 'spring',
-                                            stiffness: 400,
-                                            damping: 17,
-                                        }}
-                                    >
-                                        <step.icon className="h-14 w-14 text-purple-400" />
-                                    </motion.div>
-
-                                    <div className="text-center max-w-44 space-y-4">
-                                        {/* Step number */}
-                                        <div className="text-purple-400 text-sm font-medium tracking-[0.1em] uppercase">
-                                            Step {step.id}
-                                        </div>
-
-                                        {/* Step title */}
-                                        <h4 className="font-medium text-lg mb-3 text-white leading-tight tracking-wide">
-                                            {step.title}
-                                        </h4>
-
-                                        {/* Visual separator */}
-                                        <div className="w-8 h-px bg-gray-700 mx-auto"></div>
-
-                                        {/* Description */}
-                                        <p className="text-sm text-gray-400 leading-relaxed tracking-wide">
-                                            {step.description}
-                                        </p>
-                                    </div>
-                                </div>
-
+                            <HStack key={step.id} spacing={0}>
+                                <EscrowStepCard
+                                    step={step}
+                                    index={index}
+                                    isVisible={isVisible}
+                                    isLast={index === escrowSteps.length - 1}
+                                />
                                 {index < escrowSteps.length - 1 && (
-                                    <motion.div
-                                        className="flex items-center mx-8 min-w-20"
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={
-                                            isInView
-                                                ? { opacity: 1, x: 0 }
-                                                : { opacity: 0, x: -10 }
-                                        }
-                                        transition={{
-                                            duration: 0.5,
-                                            delay: 0.4 + index * 0.1,
-                                        }}
+                                    <Box
+                                        mx={8}
+                                        minW="20"
+                                        display="flex"
+                                        alignItems="center"
+                                        opacity={isVisible ? 1 : 0}
+                                        transform={isVisible ? 'translateX(0)' : 'translateX(-10px)'}
+                                        transition={`all 0.5s ease ${0.4 + (index * 0.1)}s`}
                                     >
-                                        <motion.div
-                                            animate={{ x: [0, 8, 0] }}
-                                            transition={{
-                                                duration: 2.5,
-                                                repeat: Number.POSITIVE_INFINITY,
-                                                ease: 'easeInOut',
-                                            }}
-                                        >
-                                            <ArrowRight className="h-6 w-6 text-gray-600" />
-                                        </motion.div>
-                                    </motion.div>
+                                        <Icon as={ArrowRight} w={6} h={6} color="gray.600" />
+                                    </Box>
                                 )}
-                            </motion.div>
+                            </HStack>
                         ))}
-                    </motion.div>
-                </div>
+                    </HStack>
+                </Box>
 
                 {/* Mobile & Tablet Flow */}
-                <motion.div
-                    className="lg:hidden space-y-6 sm:space-y-8 mb-12 sm:mb-16"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate={isInView ? 'visible' : 'hidden'}
-                >
+                <VStack spacing={{ base: 6, sm: 8 }} mb={{ base: 12, sm: 16 }} display={{ lg: 'none' }}>
                     {escrowSteps.map((step, index) => (
-                        <motion.div key={step.id} variants={stepVariants}>
-                            <motion.div
-                                className="flex items-center space-x-4 sm:space-x-6 lg:space-x-8 p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-purple-400/5 border border-purple-400/20"
-                                whileHover={{
-                                    scale: 1.02,
-                                    backgroundColor: 'rgba(168, 85, 247, 0.08)',
-                                }}
-                                transition={{
-                                    type: 'spring',
-                                    stiffness: 300,
-                                    damping: 30,
-                                }}
-                            >
-                                <motion.div
-                                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-400/20 to-purple-500/20 flex items-center justify-center flex-shrink-0"
-                                    whileHover={{ scale: 1.1 }}
-                                    transition={{
-                                        type: 'spring',
-                                        stiffness: 400,
-                                        damping: 17,
-                                    }}
-                                >
-                                    <step.icon className="h-8 w-8 sm:h-10 sm:w-10 text-purple-400" />
-                                </motion.div>
-
-                                <div className="flex-1 space-y-1 sm:space-y-2">
-                                    <div className="text-purple-400 text-xs sm:text-sm font-medium tracking-[0.1em] uppercase">
-                                        Step {step.id}
-                                    </div>
-                                    <h4 className="font-medium text-lg sm:text-xl leading-tight tracking-wide">
-                                        {step.title}
-                                    </h4>
-                                    <div className="w-8 sm:w-12 h-px bg-gray-700"></div>
-                                    <p className="text-sm sm:text-base text-gray-400 leading-relaxed tracking-wide pr-2">
-                                        {step.description}
-                                    </p>
-                                </div>
-                            </motion.div>
-
-                            {index < escrowSteps.length - 1 && (
-                                <motion.div
-                                    className="flex justify-center my-4 sm:my-6"
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={
-                                        isInView
-                                            ? { opacity: 1, y: 0 }
-                                            : { opacity: 0, y: -10 }
-                                    }
-                                    transition={{
-                                        duration: 0.5,
-                                        delay: 0.3 + index * 0.1,
-                                    }}
-                                >
-                                    <motion.div
-                                        animate={{ y: [0, 8, 0] }}
-                                        transition={{
-                                            duration: 2.5,
-                                            repeat: Number.POSITIVE_INFINITY,
-                                            ease: 'easeInOut',
-                                        }}
-                                    >
-                                        <ArrowDown className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
-                                    </motion.div>
-                                </motion.div>
-                            )}
-                        </motion.div>
+                        <MobileStepCard
+                            key={step.id}
+                            step={step}
+                            index={index}
+                            isVisible={isVisible}
+                            isLast={index === escrowSteps.length - 1}
+                        />
                     ))}
-                </motion.div>
-            </div>
+                </VStack>
+            </Box>
 
-            {/* Smart Contract Security Section - Mobile-optimized */}
-            <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }
-                }
-                transition={{
-                    duration: 0.8,
-                    delay: 0.6,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                }}
+            {/* Smart Contract Security Section */}
+            <Box
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(50px)'}
+                transition="all 0.8s ease 0.6s"
             >
-                <Card className="bg-black border-purple-400/30 rounded-2xl sm:rounded-3xl hover:border-purple-400/50 transition-colors duration-500">
-                    <CardContent className="p-8 sm:p-10 lg:p-16">
-                        {/* Section header - Mobile-optimized */}
-                        <motion.div
-                            className="text-center mb-12 sm:mb-16"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={
-                                isInView
-                                    ? { opacity: 1, y: 0 }
-                                    : { opacity: 0, y: 20 }
-                            }
-                            transition={{
-                                duration: 0.6,
-                                delay: 0.8,
-                                ease: [0.25, 0.46, 0.45, 0.94],
-                            }}
+                <Box
+                    bg="rgba(0, 0, 0, 0.5)"
+                    border="1px solid rgba(168, 85, 247, 0.3)"
+                    borderRadius={{ base: '2xl', sm: '3xl' }}
+                    p={{ base: 8, sm: 10, lg: 16 }}
+                    _hover={{
+                        borderColor: "rgba(168, 85, 247, 0.5)"
+                    }}
+                    transition="border-color 0.5s ease"
+                >
+                    {/* Section header */}
+                    <Box
+                        textAlign="center"
+                        mb={{ base: 12, sm: 16 }}
+                        opacity={isVisible ? 1 : 0}
+                        transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                        transition="all 0.6s ease 0.8s"
+                    >
+                        <Box display="flex" alignItems="center" justifyContent="center" mb={{ base: 4, sm: 6 }}>
+                            <Icon
+                                as={Shield}
+                                w={{ base: 10, sm: 12 }}
+                                h={{ base: 10, sm: 12 }}
+                                color="purple.400"
+                                _hover={{ transform: "rotate(360deg)" }}
+                                transition="transform 0.6s ease"
+                                cursor="pointer"
+                            />
+                        </Box>
+
+                        <Text
+                            fontSize={{ base: 'xl', sm: '2xl', lg: '3xl' }}
+                            fontWeight="300"
+                            color="white"
+                            mb={{ base: 4, sm: 6 }}
+                            letterSpacing="wide"
+                            fontFamily="Arial, Helvetica, sans-serif"
                         >
-                            <div className="flex items-center justify-center mb-4 sm:mb-6">
-                                <motion.div
-                                    whileHover={{ rotate: 360 }}
-                                    transition={{
-                                        duration: 0.6,
-                                        ease: 'easeInOut',
-                                    }}
-                                    className="inline-block"
-                                >
-                                    <Shield className="h-10 w-10 sm:h-12 sm:w-12 text-purple-400" />
-                                </motion.div>
-                            </div>
+                            Smart Contract Security
+                        </Text>
 
-                            <h3 className="text-xl sm:text-2xl lg:text-3xl font-light text-white mb-4 sm:mb-6 tracking-wide">
-                                Smart Contract Security
-                            </h3>
-
-                            <div className="max-w-3xl mx-auto px-2">
-                                <p className="text-white text-base sm:text-lg lg:text-xl font-light leading-relaxed tracking-wide">
-                                    Our escrow system is powered by audited
-                                    smart contracts that ensure complete
-                                    transparency and eliminate the need for
-                                    trust between parties.
-                                </p>
-                            </div>
-
-                            <div className="w-12 sm:w-16 h-px bg-purple-400 mx-auto mt-4 sm:mt-6"></div>
-                        </motion.div>
-
-                        <div className="grid md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
-                            {/* Security Features - Mobile-optimized */}
-                            <motion.div
-                                className="space-y-6 sm:space-y-8"
-                                variants={containerVariants}
-                                initial="hidden"
-                                animate={isInView ? 'visible' : 'hidden'}
+                        <Box maxW="3xl" mx="auto" px={2}>
+                            <Text
+                                color="white"
+                                fontSize={{ base: 'md', sm: 'lg', lg: 'xl' }}
+                                fontWeight="300"
+                                lineHeight="relaxed"
+                                letterSpacing="wide"
+                                fontFamily="Arial, Helvetica, sans-serif"
                             >
-                                <div className="space-y-2">
-                                    <h4 className="text-lg sm:text-xl lg:text-2xl font-medium text-white tracking-wide">
-                                        Security Features
-                                    </h4>
-                                    <div className="w-8 sm:w-12 h-px bg-purple-400"></div>
-                                </div>
+                                Our escrow system is powered by audited
+                                smart contracts that ensure complete
+                                transparency and eliminate the need for
+                                trust between parties.
+                            </Text>
+                        </Box>
 
-                                <ul className="space-y-4 sm:space-y-6">
-                                    {[
-                                        'Multi-signature wallet protection',
-                                        'Automated dispute resolution',
-                                        'Immutable transaction records',
-                                        'Time-locked fund release',
-                                    ].map((feature, index) => (
-                                        <motion.li
-                                            key={index}
-                                            className="flex items-start space-x-3 sm:space-x-4"
-                                            variants={featureVariants}
-                                            whileHover={{ x: 8 }}
-                                            transition={{
-                                                type: 'spring',
-                                                stiffness: 300,
-                                                damping: 30,
-                                            }}
-                                        >
-                                            <motion.div
-                                                className="mt-1 flex-shrink-0"
-                                                whileHover={{
-                                                    scale: 1.2,
-                                                    rotate: 360,
-                                                }}
-                                                transition={{
-                                                    type: 'spring',
-                                                    stiffness: 400,
-                                                    damping: 17,
-                                                }}
-                                            >
-                                                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
-                                            </motion.div>
-                                            <span className="text-white text-sm sm:text-base lg:text-lg font-light leading-relaxed tracking-wide">
-                                                {feature}
-                                            </span>
-                                        </motion.li>
-                                    ))}
-                                </ul>
-                            </motion.div>
+                        <Box w={{ base: 12, sm: 16 }} h="1px" bg="purple.400" mx="auto" mt={{ base: 4, sm: 6 }} />
+                    </Box>
 
-                            {/* Dispute Resolution - Mobile-optimized */}
-                            <motion.div
-                                className="space-y-6 sm:space-y-8"
-                                variants={containerVariants}
-                                initial="hidden"
-                                animate={isInView ? 'visible' : 'hidden'}
-                            >
-                                <div className="space-y-2">
-                                    <h4 className="text-lg sm:text-xl lg:text-2xl font-medium text-white tracking-wide">
-                                        Dispute Resolution
-                                    </h4>
-                                    <div className="w-8 sm:w-12 h-px bg-green-400"></div>
-                                </div>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 8, sm: 12, lg: 16 }}>
+                        <FeatureList
+                            title="Security Features"
+                            features={securityFeatures}
+                            icon={CheckCircle}
+                            colorScheme="green"
+                            isVisible={isVisible}
+                            delay={1.0}
+                        />
 
-                                <ul className="space-y-4 sm:space-y-6">
-                                    {[
-                                        'Decentralized arbitration network',
-                                        'Evidence-based resolution system',
-                                        'Fair fee redistribution',
-                                        'Community-driven governance',
-                                    ].map((feature, index) => (
-                                        <motion.li
-                                            key={index}
-                                            className="flex items-start space-x-3 sm:space-x-4"
-                                            variants={featureVariants}
-                                            whileHover={{ x: 8 }}
-                                            transition={{
-                                                type: 'spring',
-                                                stiffness: 300,
-                                                damping: 30,
-                                            }}
-                                        >
-                                            <motion.div
-                                                className="mt-1 flex-shrink-0"
-                                                whileHover={{
-                                                    scale: 1.2,
-                                                    rotate: 360,
-                                                }}
-                                                transition={{
-                                                    type: 'spring',
-                                                    stiffness: 400,
-                                                    damping: 17,
-                                                }}
-                                            >
-                                                <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
-                                            </motion.div>
-                                            <span className="text-white text-sm sm:text-base lg:text-lg font-light leading-relaxed tracking-wide">
-                                                {feature}
-                                            </span>
-                                        </motion.li>
-                                    ))}
-                                </ul>
-                            </motion.div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </motion.div>
-        </section>
+                        <FeatureList
+                            title="Dispute Resolution"
+                            features={disputeFeatures}
+                            icon={AlertTriangle}
+                            colorScheme="green"
+                            isVisible={isVisible}
+                            delay={1.2}
+                        />
+                    </SimpleGrid>
+                </Box>
+            </Box>
+        </Box>
     );
-}
+});
+
+EscrowExplanation.displayName = 'EscrowExplanation';
+
+export default EscrowExplanation;

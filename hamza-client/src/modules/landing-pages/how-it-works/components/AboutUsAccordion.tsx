@@ -1,21 +1,32 @@
-'use client';
+import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
 import {
+    Box,
+    Container,
+    VStack,
+    Text,
+    HStack,
+    Button,
+    SimpleGrid,
+    Icon,
     Accordion,
-    AccordionContent,
     AccordionItem,
-    AccordionTrigger,
-} from '@modules/landing-pages/how-it-works/components/ui/accordion';
-import {
-    Card,
-    CardContent,
-} from '@modules/landing-pages/how-it-works/components/ui/card';
+    AccordionButton,
+    AccordionPanel,
+    AccordionIcon,
+} from '@chakra-ui/react';
 import { Users, Target, Lightbulb, Rocket } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
 
 interface AboutUsAccordionProps {
     selectedLanguage: string;
+}
+
+interface AccordionItemProps {
+    value: string;
+    trigger: string;
+    icon: React.ElementType;
+    content: string;
+    index: number;
+    isVisible: boolean;
 }
 
 const accordionItems = [
@@ -49,237 +60,296 @@ const accordionItems = [
     },
 ];
 
-export default function AboutUsAccordion({
-    selectedLanguage,
-}: AboutUsAccordionProps) {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: '-100px' });
-
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.3,
-            },
-        },
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 30 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.6,
-                ease: 'easeOut',
-            },
-        },
-    };
-
+const CustomAccordionItem = memo(({ value, trigger, icon, content, index, isVisible }: AccordionItemProps) => {
     return (
-        <section
-            id="about-us"
-            className="max-w-[1200px] mx-auto px-4 relative z-10"
-            ref={ref}
+        <AccordionItem
+            border="1px solid rgba(255, 255, 255, 0.1)"
+            borderRadius="3xl"
+            bg="rgba(0, 0, 0, 0.5)"
+            backdropFilter="blur(10px)"
+            px={10}
+            py={4}
+            mb={8}
+            opacity={isVisible ? 1 : 0}
+            transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+            transition={`all 0.6s ease ${0.3 + (index * 0.1)}s`}
+            _hover={{
+                borderColor: "rgba(34, 197, 94, 0.3)"
+            }}
         >
-            {/* Typography Hierarchy - Section Header with Green Theme */}
-            <motion.div
-                className="text-center mb-24 lg:mb-32"
-                initial={{ opacity: 0, y: 30 }}
-                animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
-                }
-                transition={{ duration: 0.8, ease: 'easeOut' }}
+            <AccordionButton
+                py={10}
+                _hover={{ bg: 'transparent' }}
+                _focus={{ boxShadow: 'none' }}
             >
-                {/* Overline */}
-                <div className="text-gray-500 text-sm font-light tracking-[0.2em] uppercase mb-6">
-                    Our Foundation
-                </div>
-
-                {/* Primary heading */}
-                <h2 className="text-4xl lg:text-5xl xl:text-6xl font-light text-white mb-8 tracking-tight leading-[1.1]">
-                    Why{' '}
-                    <span className="text-green-400 font-medium">Hamza</span>?
-                </h2>
-
-                {/* Subtitle */}
-                <div className="max-w-3xl mx-auto">
-                    <p className="text-xl lg:text-2xl font-light leading-relaxed text-gray-300 tracking-wide">
-                        Learn more about the team and vision behind Hamza's
-                        revolutionary approach to decentralized commerce.
-                    </p>
-                </div>
-
-                {/* Visual separator */}
-                <div className="w-24 h-px bg-gradient-to-r from-transparent via-green-400 to-transparent mx-auto mt-8"></div>
-            </motion.div>
-
-            <div className="grid lg:grid-cols-2 gap-20 lg:gap-24 items-start">
-                {/* Left Side - Accordions with Enhanced Typography */}
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate={isInView ? 'visible' : 'hidden'}
-                >
-                    <Accordion
-                        type="single"
-                        collapsible
-                        className="w-full space-y-8"
-                    >
-                        {accordionItems.map((item, index) => (
-                            <motion.div
-                                key={item.value}
-                                variants={itemVariants}
-                            >
-                                <AccordionItem
-                                    value={item.value}
-                                    className="border border-gray-800 rounded-3xl bg-black/50 backdrop-blur-sm px-10 py-4 data-[state=open]:border-green-400/50 hover:border-green-400/30 transition-colors duration-300"
-                                >
-                                    <AccordionTrigger className="hover:no-underline text-xl lg:text-2xl text-white hover:text-green-400 py-10 transition-colors duration-300">
-                                        <motion.div
-                                            className="flex items-center space-x-6"
-                                            whileHover={{ x: 8 }}
-                                            transition={{
-                                                type: 'spring',
-                                                stiffness: 300,
-                                                damping: 30,
-                                            }}
-                                        >
-                                            <motion.div
-                                                className="w-16 h-16 bg-gradient-to-br from-green-400/20 to-green-500/20 rounded-2xl flex items-center justify-center"
-                                                whileHover={{
-                                                    scale: 1.1,
-                                                    background:
-                                                        'linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.4))',
-                                                }}
-                                                transition={{
-                                                    type: 'spring',
-                                                    stiffness: 400,
-                                                    damping: 17,
-                                                }}
-                                            >
-                                                <motion.div
-                                                    whileHover={{ rotate: 360 }}
-                                                    transition={{
-                                                        duration: 0.6,
-                                                        ease: 'easeInOut',
-                                                    }}
-                                                >
-                                                    <item.icon className="h-8 w-8 text-green-400" />
-                                                </motion.div>
-                                            </motion.div>
-
-                                            <div className="text-left">
-                                                <span className="font-light tracking-wide">
-                                                    {item.trigger}
-                                                </span>
-                                            </div>
-                                        </motion.div>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="text-white pb-10 leading-relaxed text-base lg:text-lg font-light tracking-wide">
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{
-                                                duration: 0.4,
-                                                ease: 'easeOut',
-                                            }}
-                                            className="pl-22"
-                                        >
-                                            {item.content}
-                                        </motion.div>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            </motion.div>
-                        ))}
-                    </Accordion>
-                </motion.div>
-
-                {/* Right Side - About Text & Stats with Enhanced Typography */}
-                <motion.div
-                    className="space-y-12"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={
-                        isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }
-                    }
-                    transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
-                >
-                    <motion.div
-                        whileHover={{ y: -8 }}
-                        transition={{
-                            type: 'spring',
-                            stiffness: 300,
-                            damping: 30,
+                <HStack spacing={6} flex="1" textAlign="left">
+                    <Box
+                        w={16}
+                        h={16}
+                        bg="rgba(34, 197, 94, 0.2)"
+                        borderRadius="2xl"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        transition="all 0.3s ease"
+                        _hover={{
+                            bg: "rgba(34, 197, 94, 0.3)",
+                            transform: "scale(1.1)"
                         }}
                     >
-                        <Card className="bg-black border-green-400/30 rounded-3xl hover:border-green-400/50 transition-colors duration-500">
-                            <CardContent className="p-12 lg:p-16">
-                                {/* Section header */}
-                                <motion.div
-                                    className="mb-10"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={
-                                        isInView
-                                            ? { opacity: 1, y: 0 }
-                                            : { opacity: 0, y: 20 }
-                                    }
-                                    transition={{
-                                        duration: 0.6,
-                                        delay: 0.6,
-                                        ease: 'easeOut',
-                                    }}
-                                >
-                                    <h3 className="text-2xl lg:text-3xl font-light text-white mb-4 tracking-wide">
-                                        Why Hamza?
-                                    </h3>
-                                    <div className="w-16 h-px bg-green-400"></div>
-                                </motion.div>
-
-                                {/* Content with proper typography */}
-                                <motion.div
-                                    className="space-y-8 text-white leading-relaxed text-base lg:text-lg font-light tracking-wide"
-                                    variants={containerVariants}
-                                    initial="hidden"
-                                    animate={isInView ? 'visible' : 'hidden'}
-                                >
-                                    <motion.p
-                                        variants={itemVariants}
-                                        className="leading-[1.7]"
-                                    >
-                                        Traditional e-commerce platforms have
-                                        dominated the market for decades, taking
-                                        substantial fees and controlling every
-                                        aspect of online trade. We believe it's
-                                        time for a change.
-                                    </motion.p>
-                                    <motion.p
-                                        variants={itemVariants}
-                                        className="leading-[1.7]"
-                                    >
-                                        Hamza represents a paradigm shift
-                                        towards true peer-to-peer commerce,
-                                        where blockchain technology eliminates
-                                        the need for centralized intermediaries
-                                        while ensuring security and trust
-                                        through smart contracts.
-                                    </motion.p>
-                                    <motion.p
-                                        variants={itemVariants}
-                                        className="leading-[1.7]"
-                                    >
-                                        Our platform empowers both buyers and
-                                        sellers with lower fees, faster
-                                        settlements, and complete transparency
-                                        in every transaction.
-                                    </motion.p>
-                                </motion.div>
-                            </CardContent>
-                        </Card>
-                    </motion.div>
-                </motion.div>
-            </div>
-        </section>
+                        <Icon as={icon} w={8} h={8} color="green.400" />
+                    </Box>
+                    <Text
+                        fontSize={{ base: 'xl', lg: '2xl' }}
+                        color="white"
+                        fontWeight="300"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                        letterSpacing="wide"
+                        _groupHover={{ color: "green.400" }}
+                        transition="color 0.3s ease"
+                    >
+                        {trigger}
+                    </Text>
+                </HStack>
+                <AccordionIcon color="green.400" />
+            </AccordionButton>
+            <AccordionPanel pb={10}>
+                <Box pl={22}>
+                    <Text
+                        color="white"
+                        lineHeight="relaxed"
+                        fontSize={{ base: 'md', lg: 'lg' }}
+                        fontWeight="300"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                        letterSpacing="wide"
+                    >
+                        {content}
+                    </Text>
+                </Box>
+            </AccordionPanel>
+        </AccordionItem>
     );
-}
+});
+
+CustomAccordionItem.displayName = 'CustomAccordionItem';
+
+const AboutUsAccordion = memo(({ selectedLanguage }: AboutUsAccordionProps) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const sectionRef = useRef<HTMLDivElement>(null);
+
+    const handleIntersection = useCallback(([entry]: IntersectionObserverEntry[]) => {
+        if (entry.isIntersecting) {
+            setIsVisible(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(handleIntersection, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        });
+
+        const currentRef = sectionRef.current;
+        if (currentRef) {
+            observer.observe(currentRef);
+        }
+
+        return () => {
+            if (currentRef) {
+                observer.unobserve(currentRef);
+            }
+        };
+    }, [handleIntersection]);
+
+    return (
+        <Box
+            ref={sectionRef}
+            id="about-us"
+            maxW="1200px"
+            mx="auto"
+            px={4}
+            position="relative"
+            zIndex={1}
+        >
+            {/* Typography Hierarchy - Section Header with Green Theme */}
+            <Box
+                textAlign="center"
+                mb={{ base: 24, lg: 32 }}
+                opacity={isVisible ? 1 : 0}
+                transform={isVisible ? 'translateY(0)' : 'translateY(30px)'}
+                transition="all 0.8s ease"
+            >
+                {/* Overline */}
+                <Text
+                    color="gray.500"
+                    fontSize="sm"
+                    fontWeight="300"
+                    letterSpacing="0.2em"
+                    textTransform="uppercase"
+                    mb={6}
+                    fontFamily="Arial, Helvetica, sans-serif"
+                >
+                    Our Foundation
+                </Text>
+
+                {/* Primary heading */}
+                <Text
+                    fontSize={{ base: '4xl', lg: '5xl', xl: '6xl' }}
+                    fontWeight="300"
+                    color="white"
+                    mb={8}
+                    letterSpacing="tight"
+                    lineHeight="1.1"
+                    fontFamily="Arial, Helvetica, sans-serif"
+                >
+                    Why{' '}
+                    <Text as="span" color="green.400" fontWeight="500">
+                        Hamza
+                    </Text>
+                    ?
+                </Text>
+
+                {/* Subtitle */}
+                <Box maxW="3xl" mx="auto">
+                    <Text
+                        fontSize={{ base: 'xl', lg: '2xl' }}
+                        fontWeight="300"
+                        lineHeight="relaxed"
+                        color="gray.300"
+                        letterSpacing="wide"
+                        fontFamily="Arial, Helvetica, sans-serif"
+                    >
+                        Learn more about the team and vision behind Hamza's
+                        revolutionary approach to decentralized commerce.
+                    </Text>
+                </Box>
+
+                {/* Visual separator */}
+                <Box
+                    w={24}
+                    h="1px"
+                    bg="linear-gradient(to right, transparent, #4ade80, transparent)"
+                    mx="auto"
+                    mt={8}
+                />
+            </Box>
+
+            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 20, lg: 24 }} alignItems="start">
+                {/* Left Side - Accordions */}
+                <Box>
+                    <Accordion allowToggle>
+                        {accordionItems.map((item, index) => (
+                            <CustomAccordionItem
+                                key={item.value}
+                                value={item.value}
+                                trigger={item.trigger}
+                                icon={item.icon}
+                                content={item.content}
+                                index={index}
+                                isVisible={isVisible}
+                            />
+                        ))}
+                    </Accordion>
+                </Box>
+
+                {/* Right Side - About Text & Stats */}
+                <Box
+                    opacity={isVisible ? 1 : 0}
+                    transform={isVisible ? 'translateX(0)' : 'translateX(50px)'}
+                    transition="all 0.8s ease 0.4s"
+                >
+                    <Box
+                        bg="rgba(0, 0, 0, 0.5)"
+                        border="1px solid rgba(34, 197, 94, 0.3)"
+                        borderRadius="3xl"
+                        p={{ base: 12, lg: 16 }}
+                        _hover={{
+                            borderColor: "rgba(34, 197, 94, 0.5)",
+                            transform: "translateY(-8px)"
+                        }}
+                        transition="all 0.5s ease"
+                    >
+                        {/* Section header */}
+                        <Box
+                            mb={10}
+                            opacity={isVisible ? 1 : 0}
+                            transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                            transition="all 0.6s ease 0.6s"
+                        >
+                            <Text
+                                fontSize={{ base: '2xl', lg: '3xl' }}
+                                fontWeight="300"
+                                color="white"
+                                mb={4}
+                                letterSpacing="wide"
+                                fontFamily="Arial, Helvetica, sans-serif"
+                            >
+                                Why Hamza?
+                            </Text>
+                            <Box w={16} h="1px" bg="green.400" />
+                        </Box>
+
+                        {/* Content */}
+                        <VStack spacing={8} align="start">
+                            <Text
+                                color="white"
+                                lineHeight="1.7"
+                                fontSize={{ base: 'md', lg: 'lg' }}
+                                fontWeight="300"
+                                letterSpacing="wide"
+                                fontFamily="Arial, Helvetica, sans-serif"
+                                opacity={isVisible ? 1 : 0}
+                                transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                                transition="all 0.6s ease 0.8s"
+                            >
+                                Traditional e-commerce platforms have
+                                dominated the market for decades, taking
+                                substantial fees and controlling every
+                                aspect of online trade. We believe it's
+                                time for a change.
+                            </Text>
+                            <Text
+                                color="white"
+                                lineHeight="1.7"
+                                fontSize={{ base: 'md', lg: 'lg' }}
+                                fontWeight="300"
+                                letterSpacing="wide"
+                                fontFamily="Arial, Helvetica, sans-serif"
+                                opacity={isVisible ? 1 : 0}
+                                transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                                transition="all 0.6s ease 1.0s"
+                            >
+                                Hamza represents a paradigm shift
+                                towards true peer-to-peer commerce,
+                                where blockchain technology eliminates
+                                the need for centralized intermediaries
+                                while ensuring security and trust
+                                through smart contracts.
+                            </Text>
+                            <Text
+                                color="white"
+                                lineHeight="1.7"
+                                fontSize={{ base: 'md', lg: 'lg' }}
+                                fontWeight="300"
+                                letterSpacing="wide"
+                                fontFamily="Arial, Helvetica, sans-serif"
+                                opacity={isVisible ? 1 : 0}
+                                transform={isVisible ? 'translateY(0)' : 'translateY(20px)'}
+                                transition="all 0.6s ease 1.2s"
+                            >
+                                Our platform empowers both buyers and
+                                sellers with lower fees, faster
+                                settlements, and complete transparency
+                                in every transaction.
+                            </Text>
+                        </VStack>
+                    </Box>
+                </Box>
+            </SimpleGrid>
+        </Box>
+    );
+});
+
+AboutUsAccordion.displayName = 'AboutUsAccordion';
+
+export default AboutUsAccordion;
