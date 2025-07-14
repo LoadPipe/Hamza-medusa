@@ -66,6 +66,7 @@ const OrderProcessing = ({
     cartId,
     paywith,
     openqrmodal,
+    paymentMode,
     fromCheckout,
 }: {
     cartId: string;
@@ -74,6 +75,7 @@ const OrderProcessing = ({
     paymentsData: PaymentsDataProps[];
     paywith?: string;
     openqrmodal?: boolean;
+    paymentMode?: string;
     fromCheckout?: boolean;
 }) => {
     const router = useRouter();
@@ -393,11 +395,21 @@ const OrderProcessing = ({
             <Box bg="gray.900" p={6} borderRadius="xl">
                 <VStack spacing={6} align="stretch">
                     {/* Payment Header */}
-                    <HStack justify="space-between">
+                    <Stack
+                        direction={{ base: 'column', md: 'row' }}
+                        justify={{ base: 'flex-start', md: 'space-between' }}
+                        align={{ base: 'flex-start', md: 'center' }}
+                        spacing={{ base: 4, md: 0 }}
+                    >
                         <Text fontSize="2xl" color="white" fontWeight="bold">
                             Payment Status
                         </Text>
-                        <HStack spacing={3}>
+                        <Stack
+                            direction={{ base: 'column', sm: 'row' }}
+                            spacing={3}
+                            align={{ base: 'flex-start', sm: 'center' }}
+                            w={{ base: 'full', md: 'auto' }}
+                        >
                             <Box
                                 bg={
                                     currentStatus === 'expired'
@@ -440,22 +452,27 @@ const OrderProcessing = ({
 
                             {/* Cancel Button - show if payment is waiting or partial */}
                             {(currentStatus === 'waiting' ||
-                                currentStatus === 'partial') && (
-                                <Button
-                                    size="sm"
-                                    bg="red.600"
-                                    color="white"
-                                    borderRadius="2rem"
-                                    leftIcon={<FaTimes />}
-                                    _hover={{ bg: 'red.700' }}
-                                    onClick={onCancelDialogOpen}
-                                    isDisabled={isCanceling || !cancelEnabled}
-                                >
-                                    Cancel Payment
-                                </Button>
-                            )}
-                        </HStack>
-                    </HStack>
+                                currentStatus === 'partial') &&
+                                paymentMode !== 'wallet' && (
+                                    <Button
+                                        size="sm"
+                                        bg="red.600"
+                                        color="white"
+                                        borderRadius="2rem"
+                                        leftIcon={<FaTimes />}
+                                        _hover={{ bg: 'red.700' }}
+                                        onClick={onCancelDialogOpen}
+                                        isDisabled={
+                                            isCanceling || !cancelEnabled
+                                        }
+                                        w={{ base: 'full', sm: 'auto' }}
+                                        maxW={{ base: '200px', sm: 'none' }}
+                                    >
+                                        Cancel Payment
+                                    </Button>
+                                )}
+                        </Stack>
+                    </Stack>
 
                     <Text color="gray.300">Cart ID: {cartId}</Text>
 

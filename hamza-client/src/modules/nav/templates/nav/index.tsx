@@ -2,7 +2,7 @@
 
 import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 // Images
 //import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
@@ -93,6 +93,23 @@ export default async function Nav() {
 
                         <Flex ml={'auto'} alignItems={'center'} gap={'12px'}>
                             <NavProfileCurrency />
+                            <LocalizedClientLink href="/seller">
+                                <Button
+                                    borderRadius="30px"
+                                    backgroundColor="transparent"
+                                    border="2px solid"
+                                    borderColor="primary.green.900"
+                                    color="primary.green.900"
+                                    height="48px"
+                                    fontSize="16px"
+                                    _hover={{
+                                        backgroundColor: "primary.green.900",
+                                        color: "white"
+                                    }}
+                                >
+                                    Become a Seller
+                                </Button>
+                            </LocalizedClientLink>
                             <WalletConnectButton />
                         </Flex>
 
