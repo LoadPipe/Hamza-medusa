@@ -93,7 +93,7 @@ export default async function Nav() {
 
                         <Flex ml={'auto'} alignItems={'center'} gap={'12px'}>
                             <NavProfileCurrency />
-                            <LocalizedClientLink href="/seller">
+                            <LocalizedClientLink href="/how-it-works">
                                 <Button
                                     borderRadius="30px"
                                     backgroundColor="transparent"
@@ -103,11 +103,11 @@ export default async function Nav() {
                                     height="48px"
                                     fontSize="16px"
                                     _hover={{
-                                        backgroundColor: "primary.green.900",
-                                        color: "white"
+                                        backgroundColor: 'primary.green.900',
+                                        color: 'white',
                                     }}
                                 >
-                                    Become a Seller
+                                    How it Works
                                 </Button>
                             </LocalizedClientLink>
                             <WalletConnectButton />
