@@ -5,10 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import TwitterX from '@/modules/common/icons/twitter-x';
 import { useQuery } from '@tanstack/react-query';
+import { useState, useRef, useEffect } from 'react';
 
 const TweetCard = ({ tweet }: { tweet: Tweet }) => {
     return (
-        <div className="flex-shrink-0 w-80 bg-[#E8E8E8] rounded-2xl p-4 text-black font-inter">
+        <div className="flex-shrink-0 w-80 bg-[#E8E8E8] rounded-2xl p-4 text-black font-inter mr-4">
             <div className="flex justify-between items-start">
                 <div className="flex items-start">
                     <Image
@@ -61,6 +62,14 @@ const TweetCard = ({ tweet }: { tweet: Tweet }) => {
 };
 
 const TwitterFeed = () => {
+    const [isPaused, setIsPaused] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState(0);
+    const [scrollPosition, setScrollPosition] = useState(0);
+    const [animationOffset, setAnimationOffset] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const animationRef = useRef<number>();
+
     const {
         data: tweets,
         isLoading,
@@ -108,19 +117,100 @@ const TwitterFeed = () => {
         refetchOnWindowFocus: false,
     });
 
-    if (isLoading) {
-        // You can return a loading skeleton here if you want
+    // Animate the scroll
+    useEffect(() => {
+        if (!isPaused && !isDragging && tweets && tweets.length > 0) {
+            const animate = () => {
+                setAnimationOffset(prev => {
+                    const cardWidth = 320 + 16; // 320px card + 16px margin
+                    const totalWidth = tweets.length * cardWidth;
+                    const newOffset = (prev + 0.5) % totalWidth;
+                    return newOffset;
+                });
+                animationRef.current = requestAnimationFrame(animate);
+            };
+            animationRef.current = requestAnimationFrame(animate);
+        }
+
+        return () => {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current);
+            }
+        };
+    }, [isPaused, isDragging, tweets]);
+
+    // Handle mouse events for dragging
+    const handleMouseDown = (e: React.MouseEvent) => {
+        setIsDragging(true);
+        setDragStart(e.clientX);
+        e.preventDefault();
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging) return;
+        const diff = e.clientX - dragStart;
+        setScrollPosition(diff);
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+        // Commit the dragged distance to the animation offset
+        setAnimationOffset(prev => {
+            const cardWidth = 320 + 16; // 320px card + 16px margin
+            const totalWidth = tweets!.length * cardWidth;
+            const newOffset = (prev - scrollPosition) % totalWidth;
+            return newOffset < 0 ? newOffset + totalWidth : newOffset;
+        });
+        setScrollPosition(0);
+    };
+
+    // Handle mouse leave to ensure dragging stops
+    const handleMouseLeave = () => {
+        if (isDragging) {
+            // Commit the dragged distance if we were dragging
+            setAnimationOffset(prev => {
+                const cardWidth = 320 + 16; 
+                const totalWidth = tweets!.length * cardWidth;
+                const newOffset = (prev - scrollPosition) % totalWidth;
+                return newOffset < 0 ? newOffset + totalWidth : newOffset;
+            });
+        }
+        setIsDragging(false);
+        setScrollPosition(0);
+        setIsPaused(false);
+    };
+
+    // Touch events for mobile
+    const handleTouchStart = (e: React.TouchEvent) => {
+        setIsDragging(true);
+        setDragStart(e.touches[0].clientX);
+        e.preventDefault();
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!isDragging) return;
+        const diff = e.touches[0].clientX - dragStart;
+        setScrollPosition(diff);
+    };
+
+    const handleTouchEnd = () => {
+        // Commit the dragged distance to the animation offset
+        setAnimationOffset(prev => {
+            const cardWidth = 320 + 16;
+            const totalWidth = tweets!.length * cardWidth;
+            const newOffset = (prev - scrollPosition) % totalWidth;
+            return newOffset < 0 ? newOffset + totalWidth : newOffset;
+        });
+        setIsDragging(false);
+        setScrollPosition(0);
+    };
+
+    if (isLoading || error || !tweets || tweets.length === 0) {
         return null;
     }
 
-    if (error) {
-        // You can return an error message here
-        return null;
-    }
-
-    if (!tweets || tweets.length === 0) {
-        return null;
-    }
+    const duplicatedTweets = [...tweets, ...tweets, ...tweets];
+    const totalTranslate = -animationOffset + scrollPosition;
 
     return (
         <div className="py-12">
@@ -133,10 +223,25 @@ const TwitterFeed = () => {
                 <h2 className="text-3xl font-bold mb-8 text-white">
                     Trusted Worldwide
                 </h2>
-                <div className="relative">
-                    <div className="flex space-x-4 overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-[#020202] [&::-webkit-scrollbar-thumb]:bg-[#6b7280] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#9ca3af]">
-                        {tweets.map((tweet) => (
-                            <TweetCard key={tweet.id} tweet={tweet} />
+                <div className="relative overflow-hidden">
+                    <div
+                        ref={containerRef}
+                        className={`flex cursor-grab ${isDragging ? 'cursor-grabbing' : ''} transition-none`}
+                        style={{
+                            transform: `translateX(${totalTranslate}px)`,
+                            willChange: 'transform',
+                        }}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseLeave}
+                        onMouseEnter={() => setIsPaused(true)}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                    >
+                        {duplicatedTweets.map((tweet, index) => (
+                            <TweetCard key={`${tweet.id}-${index}`} tweet={tweet} />
                         ))}
                     </div>
                     <div className="absolute top-0 right-0 h-full w-16 bg-gradient-to-l from-[#2C272D] to-transparent pointer-events-none" />
