@@ -45,6 +45,9 @@ interface UnifiedFilterState {
     setHasHydrated: (value: boolean) => void;
 
     clearFilters: () => void;
+
+    sortBy: string;
+    setSortBy: (sort: string) => void;
 }
 
 const useUnifiedFilterStore = create<UnifiedFilterState>()(
@@ -93,6 +96,9 @@ const useUnifiedFilterStore = create<UnifiedFilterState>()(
             hasHydrated: false,
             setHasHydrated: (value: boolean) => set({ hasHydrated: value }),
 
+            sortBy: 'featured',
+            setSortBy: (sort: string) => set({ sortBy: sort }),
+
             // Clear all filters (categories, range, review stars, and category items)
             clearFilters: () =>
                 set({
@@ -102,6 +108,7 @@ const useUnifiedFilterStore = create<UnifiedFilterState>()(
                     rangeLower: FILTER_PRICE_RANGE_MIN,
                     selectedReviewStars: null,
                     categoryItems: [],
+                    sortBy: 'featured'
                 }),
         }),
         {

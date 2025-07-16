@@ -1631,3 +1631,7 @@ export async function getFeaturedStores(
         return { stores: [] };
     }
 }
+
+export async function getSubcategories(parent_category_handle: string) {
+    return get('/custom/category/subcategories', { parent_category_handle });
+}

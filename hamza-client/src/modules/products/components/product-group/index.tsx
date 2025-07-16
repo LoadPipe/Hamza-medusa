@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import {
     Box,
     Skeleton,
@@ -27,7 +27,25 @@ interface ProductResponse {
     count: number;
 }
 
-const ProductCardGroup = ({
+interface CategoryData {
+    subcategories: any[];
+    totalProducts: number;
+    products: Product[];
+    count: number;
+}
+
+interface ProductCardGroupProps {
+    columns?: { base: number; lg: number };
+    gap?: { base: number; md: string };
+    skeletonCount?: number;
+    skeletonHeight?: { base: string; md: string };
+    productsPerPage?: number;
+    padding?: { base: string; md: string };
+    preloadedCategoryData?: CategoryData | null;
+    category?: string;
+}
+
+const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
     columns = { base: 2, lg: 4 },
     gap = { base: 4, md: '25.5px' },
     skeletonCount = 8,
@@ -36,6 +54,8 @@ const ProductCardGroup = ({
         process.env.NEXT_PUBLIC_PRODUCTS_PER_PAGE || '24'
     ),
     padding = { base: '1rem', md: '1rem' },
+    preloadedCategoryData = null,
+    category = null,
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const {
@@ -49,6 +69,7 @@ const ProductCardGroup = ({
         setRangeLower,
         hasHydrated,
         setHasHydrated,
+        sortBy,
     } = useUnifiedFilterStore();
 
     const router = useRouter();
@@ -59,132 +80,157 @@ const ProductCardGroup = ({
     const [offset, setOffset] = useState(0);
     const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [hasMore, setHasMore] = useState(true);
-    const [isUrlInitialized, setIsUrlInitialized] = useState(false);
-    const [loadingInitialBatches, setLoadingInitialBatches] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    // Refs for tracking state without triggering re-renders
+    // Refs for tracking state
     const isUpdatingUrl = useRef(false);
-    const currentFilters = useRef({
+    const filtersRef = useRef({
         categories: [] as string[],
         upperRange: 0,
         lowerRange: 0,
         offset: 0,
     });
 
-    function getFormattedProductPrice(
-        variant: any,
-        preferred_currency_code: string | null
-    ) {
-        const productPricing =
-            variant?.prices?.find(
-                (price: ProductPrice) =>
-                    price.currency_code === (preferred_currency_code ?? 'usdc')
-            )?.amount ||
-            variant?.prices?.[0]?.amount ||
-            0;
+    // Memoized values
+    const currentCurrency = preferred_currency_code ?? 'usdc';
+    const isOnCategoryPage = pathname.includes('/category/');
 
-        return formatCryptoPrice(
-            productPricing ?? 0,
-            preferred_currency_code as string
-        );
-    }
+    // Helper functions
+    const getFormattedProductPrice = useCallback(
+        (variant: any, currency: string) => {
+            const productPricing =
+                variant?.prices?.find(
+                    (price: ProductPrice) => price.currency_code === currency
+                )?.amount ||
+                variant?.prices?.[0]?.amount ||
+                0;
 
-    // Make sure store is hydrated
-    useEffect(() => {
-        if (!hasHydrated) {
-            setHasHydrated(true);
-        }
-    }, [hasHydrated, setHasHydrated]);
+            return formatCryptoPrice(productPricing ?? 0, currency);
+        },
+        []
+    );
 
-    // Load initial batches if starting with non-zero offset
-    const { data: initialBatchesData, isLoading: isLoadingInitialBatches } =
-        useQuery({
-            queryKey: [
-                'initialBatches',
-                selectedCategories,
-                rangeUpper,
-                rangeLower,
-                offset,
-            ],
-            queryFn: async () => {
-                if (offset === 0 || !loadingInitialBatches)
-                    return [] as ProductResponse[];
+    const sortProducts = useCallback(
+        (products: Product[], sortType: string, currency: string): Product[] => {
+            if (!products || products.length === 0) return [];
 
-                const batchCount = Math.ceil(offset / productsPerPage);
-                const batches: ProductResponse[] = [];
+            const productsCopy = [...products];
 
-                for (let i = 0; i < batchCount; i++) {
-                    const batchOffset = i * productsPerPage;
-                    const response = await getAllProducts(
-                        selectedCategories,
-                        rangeUpper,
-                        rangeLower,
-                        preferred_currency_code ?? 'usdc',
-                        productsPerPage,
-                        batchOffset
+            switch (sortType) {
+                case 'price-low':
+                    return productsCopy.sort((a, b) => {
+                        const priceA = a.variants[0]?.prices?.find(
+                            p => p.currency_code === currency
+                        )?.amount || 0;
+                        const priceB = b.variants[0]?.prices?.find(
+                            p => p.currency_code === currency
+                        )?.amount || 0;
+                        return priceA - priceB;
+                    });
+
+                case 'price-high':
+                    return productsCopy.sort((a, b) => {
+                        const priceA = a.variants[0]?.prices?.find(
+                            p => p.currency_code === currency
+                        )?.amount || 0;
+                        const priceB = b.variants[0]?.prices?.find(
+                            p => p.currency_code === currency
+                        )?.amount || 0;
+                        return priceB - priceA;
+                    });
+
+                case 'newest':
+                    return productsCopy.sort((a, b) =>
+                        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
                     );
-                    batches.push(response);
-                }
 
-                return batches;
-            },
-            enabled: loadingInitialBatches && isUrlInitialized,
+                case 'highest-rated':
+                    return productsCopy.sort((a, b) => {
+                        const avgRatingA = a.reviews?.length ?
+                            a.reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / a.reviews.length : 0;
+                        const avgRatingB = b.reviews?.length ?
+                            b.reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / b.reviews.length : 0;
+                        return avgRatingB - avgRatingA;
+                    });
+
+                case 'featured':
+                default:
+                    return productsCopy;
+            }
+        },
+        []
+    );
+
+    const canUsePreloadedData = useCallback(() => {
+        return offset === 0 &&
+            preloadedCategoryData &&
+            category &&
+            (
+                selectedCategories.includes(category) ||
+                selectedCategories.includes('all') ||
+                (selectedCategories.length === 1 &&
+                    preloadedCategoryData.subcategories.some(subcat =>
+                        subcat.handle.toLowerCase() === selectedCategories[0].toLowerCase()
+                    ))
+            );
+    }, [offset, preloadedCategoryData, category, selectedCategories]);
+
+    const getFilteredPreloadedProducts = useCallback(() => {
+        if (!preloadedCategoryData) return [];
+
+        let filteredProducts = preloadedCategoryData.products;
+
+        // Filter by subcategory if needed
+        if (selectedCategories.length === 1 &&
+            !selectedCategories.includes('all') &&
+            category && !selectedCategories.includes(category)) {
+
+            const selectedSubcategory = selectedCategories[0];
+            const subcategoryData = preloadedCategoryData.subcategories.find(
+                subcat => subcat.handle.toLowerCase() === selectedSubcategory.toLowerCase()
+            );
+
+            if (subcategoryData && subcategoryData.products) {
+                filteredProducts = subcategoryData.products;
+            }
+        }
+
+        // Apply price filtering
+        return filteredProducts.filter(product => {
+            const variant = product.variants[0];
+            if (!variant) return false;
+
+            const rawPrice = variant.prices?.find(
+                p => p.currency_code === currentCurrency
+            )?.amount || 0;
+
+            const formattedPrice = formatCryptoPrice(rawPrice, currentCurrency, false);
+            const price = typeof formattedPrice === 'string' ?
+                parseFloat(formattedPrice) : formattedPrice;
+
+            return price >= rangeLower && price <= rangeUpper;
         });
+    }, [preloadedCategoryData, selectedCategories, category, currentCurrency, rangeLower, rangeUpper]);
 
-    // Main product loading query
-    const { data, error, isLoading, isFetching } = useQuery<ProductResponse>({
-        queryKey: [
-            'products',
-            selectedCategories,
-            rangeUpper,
-            rangeLower,
-            offset,
-        ],
-        queryFn: () =>
-            getAllProducts(
-                selectedCategories,
-                rangeUpper,
-                rangeLower,
-                preferred_currency_code ?? 'usdc',
-                productsPerPage,
-                offset
-            ),
-        staleTime: 60 * 1000,
-        enabled: !loadingInitialBatches && isUrlInitialized,
-        retry: 1,
-    });
+    // Initialize from URL parameters
+    const initializeFromUrl = useCallback(() => {
+        if (!hasHydrated || isInitialized) return;
 
-    // 1. Initialize state from URL parameters (runs once)
-    useEffect(() => {
-        if (!hasHydrated) return;
-
-        // Skip if already initialized
-        if (isUrlInitialized) return;
-
-        // Get parameters from URL
         const offsetParam = searchParams.get('offset');
         const categoryParam = searchParams.get('category');
         const priceLow = searchParams.get('price_lo');
         const priceHigh = searchParams.get('price_hi');
 
-        // Set initial filter values
         let newOffset = 0;
         let newCategories = selectedCategories;
         let newLowerRange = rangeLower;
         let newUpperRange = rangeUpper;
 
-        // Apply offset if present
         if (offsetParam) {
             newOffset = parseInt(offsetParam, 10);
             setOffset(newOffset);
-
-            // If non-zero offset, we'll need to load previous batches
-            if (newOffset > 0) {
-                setLoadingInitialBatches(true);
-            }
         }
 
-        // Apply categories if present
         if (categoryParam) {
             newCategories = categoryParam
                 .split(',')
@@ -192,7 +238,6 @@ const ProductCardGroup = ({
             setSelectedCategories(newCategories);
         }
 
-        // Apply price filters if present
         if (priceLow) {
             newLowerRange = parseInt(priceLow, 10);
             setRangeLower(newLowerRange);
@@ -203,23 +248,20 @@ const ProductCardGroup = ({
             setRangeUpper(newUpperRange);
         }
 
-        // Update range array for consistency
         setRange([newLowerRange, newUpperRange]);
 
-        // Store current filter values for comparison
-        currentFilters.current = {
+        filtersRef.current = {
             categories: [...newCategories],
             upperRange: newUpperRange,
             lowerRange: newLowerRange,
             offset: newOffset,
         };
 
-        // Mark as initialized
-        setIsUrlInitialized(true);
+        setIsInitialized(true);
     }, [
         hasHydrated,
+        isInitialized,
         searchParams,
-        isUrlInitialized,
         selectedCategories,
         rangeLower,
         rangeUpper,
@@ -229,160 +271,31 @@ const ProductCardGroup = ({
         setRange,
     ]);
 
-    // 2. Handle initial batches loading
-    useEffect(() => {
-        if (
-            !initialBatchesData ||
-            !Array.isArray(initialBatchesData) ||
-            initialBatchesData.length === 0 ||
-            !loadingInitialBatches
-        ) {
-            return;
-        }
-
-        try {
-            // Combine all products from all batches
-            const allInitialProducts = initialBatchesData.flatMap(
-                (batch: ProductResponse) => batch.products || []
-            );
-
-            setAllProducts(allInitialProducts);
-        } catch (error) {
-            console.error('Error processing initial batches:', error);
-        } finally {
-            setLoadingInitialBatches(false);
-        }
-    }, [initialBatchesData, loadingInitialBatches]);
-
-    // 3. Update products when new data is loaded or filters change
-    useEffect(() => {
-        // Skip during initial loading
-        if (
-            !isUrlInitialized ||
-            loadingInitialBatches ||
-            isLoadingInitialBatches
-        )
-            return;
-
-        // Process new data when it arrives
-        if (data?.products) {
-            if (offset === 0) {
-                // When offset is 0, replace all products
-                setAllProducts(data.products);
-            } else {
-                // When loading more, append only new products
-                const currentProductIds = new Set(allProducts.map((p) => p.id));
-                const newProducts = data.products.filter(
-                    (p) => !currentProductIds.has(p.id)
-                );
-
-                if (newProducts.length > 0) {
-                    setAllProducts((prev) => [...prev, ...newProducts]);
-                }
-            }
-
-            // Update hasMore flag
-            setHasMore(data.products.length === productsPerPage);
-
-            // Update URL with current state
-            updateUrlWithCurrentState();
-        }
-    }, [
-        data,
-        offset,
-        isUrlInitialized,
-        loadingInitialBatches,
-        isLoadingInitialBatches,
-        allProducts,
-        productsPerPage,
-    ]);
-
-    // 4. Handle filter changes
-    useEffect(() => {
-        // Skip during initial loading or if filters haven't been initialized
-        if (
-            !isUrlInitialized ||
-            loadingInitialBatches ||
-            isLoadingInitialBatches
-        ) {
-            return;
-        }
-
-        // Check if filters have changed from their previously tracked values
-        const categoriesChanged =
-            JSON.stringify(currentFilters.current.categories) !==
-            JSON.stringify(selectedCategories);
-
-        const rangeChanged =
-            currentFilters.current.upperRange !== rangeUpper ||
-            currentFilters.current.lowerRange !== rangeLower;
-
-        // Only reset pagination if filters have changed
-        if (categoriesChanged || rangeChanged) {
-            setOffset(0);
-            setAllProducts([]);
-            setHasMore(true);
-
-            // Update tracked values
-            currentFilters.current = {
-                categories: [...selectedCategories],
-                upperRange: rangeUpper,
-                lowerRange: rangeLower,
-                offset: 0,
-            };
-        }
-    }, [
-        selectedCategories,
-        rangeUpper,
-        rangeLower,
-        isUrlInitialized,
-        loadingInitialBatches,
-        isLoadingInitialBatches,
-    ]);
-
-    // Helper function to update URL with current state
-    const updateUrlWithCurrentState = () => {
-        if (isUpdatingUrl.current) return;
-
-        const isOnCategoryPage = pathname.includes('/category/');
-        if (isOnCategoryPage) return;
+    // Update URL with current state
+    const updateUrl = useCallback(() => {
+        if (isUpdatingUrl.current || isOnCategoryPage) return;
 
         isUpdatingUrl.current = true;
 
         try {
-            if (!router || typeof router.replace !== 'function') {
-                console.error('Router not available for URL update');
-                return;
-            }
-
-            // Create URL params from current state
             const params = new URLSearchParams();
-
-            // Add offset
             params.set('offset', offset.toString());
 
-            // Add categories
             if (selectedCategories && selectedCategories.length > 0) {
-                if (
-                    selectedCategories.includes('all') ||
-                    selectedCategories[0] === 'all'
-                ) {
+                if (selectedCategories.includes('all') || selectedCategories[0] === 'all') {
                     params.set('category', 'all');
                 } else {
                     params.set('category', selectedCategories.join(','));
                 }
             }
 
-            // Add price range
             params.set('price_lo', rangeLower.toString());
             params.set('price_hi', rangeUpper.toString());
 
-            // Update URL without page refresh
             const newUrl = `${pathname}?${params.toString()}`;
             router.replace(newUrl, { scroll: false });
 
-            // Update current filters for future comparison
-            currentFilters.current = {
+            filtersRef.current = {
                 categories: [...selectedCategories],
                 upperRange: rangeUpper,
                 lowerRange: rangeLower,
@@ -393,28 +306,84 @@ const ProductCardGroup = ({
         } finally {
             isUpdatingUrl.current = false;
         }
-    };
+    }, [offset, selectedCategories, rangeLower, rangeUpper, pathname, router, isOnCategoryPage]);
 
-    // Load more products handler
-    const handleLoadMore = () => {
-        if (!isFetching) {
-            setOffset(offset + productsPerPage);
+    // Check if filters have changed
+    const filtersChanged = useMemo(() => {
+        const categoriesChanged =
+            JSON.stringify(filtersRef.current.categories) !== JSON.stringify(selectedCategories);
+        const rangeChanged =
+            filtersRef.current.upperRange !== rangeUpper ||
+            filtersRef.current.lowerRange !== rangeLower;
+
+        return categoriesChanged || rangeChanged;
+    }, [selectedCategories, rangeUpper, rangeLower]);
+
+    // Handle filter changes
+    const handleFilterChange = useCallback(() => {
+        if (!isInitialized) return;
+
+        if (filtersChanged) {
+            setOffset(0);
+            setAllProducts([]);
+            setHasMore(true);
+
+            filtersRef.current = {
+                categories: [...selectedCategories],
+                upperRange: rangeUpper,
+                lowerRange: rangeLower,
+                offset: 0,
+            };
         }
-    };
+    }, [isInitialized, filtersChanged, selectedCategories, rangeUpper, rangeLower]);
 
-    // Add schema generation function
-    const generateItemListSchema = (products: Product[]) => {
-        const categoryName =
-            selectedCategories.length > 0
-                ? selectedCategories.join(', ')
-                : 'All Products';
+    // Main product loading query
+    const { data, error, isLoading, isFetching } = useQuery<ProductResponse>({
+        queryKey: ['products', selectedCategories, rangeUpper, rangeLower, offset],
+        queryFn: async () => {
+            // Use preloaded data if available
+            if (canUsePreloadedData()) {
+                const filteredProducts = getFilteredPreloadedProducts();
+                return {
+                    products: filteredProducts,
+                    count: filteredProducts.length
+                };
+            }
+
+            console.log('query this api instead');
+            // Otherwise, fetch from API
+            return getAllProducts(
+                selectedCategories,
+                rangeUpper,
+                rangeLower,
+                currentCurrency,
+                productsPerPage,
+                offset
+            );
+        },
+        staleTime: 60 * 1000,
+        enabled: isInitialized,
+        retry: 1,
+    });
+
+    // Sorted products
+    const sortedProducts = useMemo(() => {
+        if (!allProducts || allProducts.length === 0) return [];
+        return sortProducts(allProducts, sortBy || 'featured', currentCurrency);
+    }, [allProducts, sortBy, currentCurrency, sortProducts]);
+
+    // Schema generation
+    const generateItemListSchema = useCallback((products: Product[]) => {
+        const categoryName = selectedCategories.length > 0
+            ? selectedCategories.join(', ')
+            : 'All Products';
 
         const currentPage = Math.floor(offset / productsPerPage) + 1;
 
         const schema = {
             '@context': 'https://schema.org',
             '@type': 'ItemList',
-            name: `Displaying products for ${categoryName} - in ${preferred_currency_code?.toUpperCase()} - Page ${currentPage}`,
+            name: `Displaying products for ${categoryName} - in ${currentCurrency.toUpperCase()} - Page ${currentPage}`,
             itemListElement: products.map((product, index) => ({
                 '@type': 'ListItem',
                 position: offset + index + 1,
@@ -425,29 +394,61 @@ const ProductCardGroup = ({
                     url: `${process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL}/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${product.handle}`,
                     offers: {
                         '@type': 'Offer',
-                        price: getFormattedProductPrice(
-                            product.variants[0],
-                            preferred_currency_code
-                        ),
-                        priceCurrency: preferred_currency_code || 'usdc',
-                        availability:
-                            product.variants[0]?.inventory_quantity > 0
-                                ? 'https://schema.org/InStock'
-                                : 'https://schema.org/OutOfStock',
+                        price: getFormattedProductPrice(product.variants[0], currentCurrency),
+                        priceCurrency: currentCurrency,
+                        availability: product.variants[0]?.inventory_quantity > 0
+                            ? 'https://schema.org/InStock'
+                            : 'https://schema.org/OutOfStock',
                     },
                 },
             })),
         };
 
         return JSON.stringify(schema);
-    };
+    }, [selectedCategories, offset, productsPerPage, currentCurrency, getFormattedProductPrice]);
+
+    // Load more handler
+    const handleLoadMore = useCallback(() => {
+        if (!isFetching && hasMore) {
+            setOffset(prev => prev + productsPerPage);
+        }
+    }, [isFetching, hasMore, productsPerPage]);
+
+    // Effects
+    useEffect(() => {
+        if (!hasHydrated) {
+            setHasHydrated(true);
+        }
+    }, [hasHydrated, setHasHydrated]);
+
+    useEffect(() => {
+        initializeFromUrl();
+    }, [initializeFromUrl]);
+
+    useEffect(() => {
+        handleFilterChange();
+    }, [handleFilterChange]);
+
+    useEffect(() => {
+        if (!isInitialized || !data?.products) return;
+
+        if (offset === 0) {
+            setAllProducts(data.products);
+        } else {
+            const currentProductIds = new Set(allProducts.map(p => p.id));
+            const newProducts = data.products.filter(p => !currentProductIds.has(p.id));
+            
+            if (newProducts.length > 0) {
+                setAllProducts(prev => [...prev, ...newProducts]);
+            }
+        }
+
+        setHasMore(data.products.length === productsPerPage);
+        updateUrl();
+    }, [data, offset, isInitialized, allProducts, productsPerPage, updateUrl]);
 
     // Loading UI
-    if (
-        (isLoading && offset === 0 && !loadingInitialBatches) ||
-        loadingInitialBatches ||
-        isLoadingInitialBatches
-    ) {
+    if (isLoading && offset === 0) {
         return (
             <Flex
                 mt={{ base: '0', md: '1rem' }}
@@ -458,11 +459,6 @@ const ProductCardGroup = ({
                 alignItems={'center'}
                 flexDirection="column"
             >
-                {(loadingInitialBatches || isLoadingInitialBatches) && (
-                    <Text mb={4} fontWeight="medium">
-                        Loading previous products...
-                    </Text>
-                )}
                 <Grid
                     maxWidth={'1256.52px'}
                     mx="1rem"
@@ -506,12 +502,12 @@ const ProductCardGroup = ({
 
     return (
         <>
-            {allProducts.length > 0 && (
+            {sortedProducts.length > 0 && (
                 <Script
                     id="product-list-schema"
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{
-                        __html: generateItemListSchema(allProducts),
+                        __html: generateItemListSchema(sortedProducts),
                     }}
                 />
             )}
@@ -535,18 +531,18 @@ const ProductCardGroup = ({
                     }}
                     gap={gap}
                 >
-                    {allProducts.map((product) => {
+                    {sortedProducts.map((product) => {
                         try {
                             const variant = product.variants[0];
                             const formattedPrice = getFormattedProductPrice(
                                 variant,
-                                preferred_currency_code
+                                currentCurrency
                             );
 
                             const usdcFormattedPrice =
                                 formatPriceBetweenCurrencies(
                                     variant?.prices,
-                                    preferred_currency_code ?? 'usdc',
+                                    currentCurrency,
                                     'usdc'
                                 );
 
@@ -581,9 +577,7 @@ const ProductCardGroup = ({
                                         productName={product.title}
                                         productPrice={formattedPrice}
                                         usdcProductPrice={usdcFormattedPrice}
-                                        currencyCode={
-                                            preferred_currency_code || 'usdc'
-                                        }
+                                        currencyCode={currentCurrency}
                                         imageSrc={product.thumbnail}
                                         hasDiscount={product.is_giftcard}
                                         discountValue={
@@ -606,17 +600,14 @@ const ProductCardGroup = ({
                 </Grid>
 
                 {/* No products message */}
-                {allProducts.length === 0 &&
-                    !isLoading &&
-                    !loadingInitialBatches &&
-                    !isLoadingInitialBatches && (
+                {sortedProducts.length === 0 && !isLoading && (
                         <Text textAlign="center" fontSize="lg" my={8} color="whiteAlpha.800">
                             No products found. Try adjusting your filters.
                         </Text>
                     )}
 
                 {/* Load More Button */}
-                {hasMore && allProducts.length > 0 && (
+                {hasMore && sortedProducts.length > 0 && (
                     <Flex justifyContent="center" width="100%" mt={8}>
                         <Flex
                             display={{ base: 'flex' }}
