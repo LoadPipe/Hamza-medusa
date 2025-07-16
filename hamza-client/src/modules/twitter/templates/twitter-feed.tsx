@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import TwitterX from '@/modules/common/icons/twitter-x';
 import { useQuery } from '@tanstack/react-query';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 
 const TweetCard = ({ tweet }: { tweet: Tweet }) => {
     return (
@@ -40,11 +40,10 @@ const TweetCard = ({ tweet }: { tweet: Tweet }) => {
                         word.startsWith('@') || word.startsWith('#') ? (
                             <Link
                                 key={index}
-                                href={`https://twitter.com/${
-                                    word.startsWith('@')
+                                href={`https://twitter.com/${word.startsWith('@')
                                         ? word.substring(1)
                                         : `hashtag/${word.substring(1)}`
-                                }`}
+                                    }`}
                                 className="text-purple-600"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -69,6 +68,7 @@ const TwitterFeed = () => {
     const [animationOffset, setAnimationOffset] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
     const animationRef = useRef<number>();
+    const lastUpdateTime = useRef<number>(0);
 
     const {
         data: tweets,
@@ -80,8 +80,6 @@ const TwitterFeed = () => {
             const response = await fetch('/api/twitter');
 
             if (!response.ok) {
-                // When the API fails, we can use the fallback logic.
-                // For now, just throwing an error is fine.
                 throw new Error('Network response was not ok');
             }
 
@@ -117,16 +115,21 @@ const TwitterFeed = () => {
         refetchOnWindowFocus: false,
     });
 
-    // Animate the scroll
+    const cardWidth = useMemo(() => 320 + 16, []); // 320px card + 16px margin
+    const totalWidth = useMemo(() => {
+        return tweets ? tweets.length * cardWidth : 0;
+    }, [tweets, cardWidth]);
+
     useEffect(() => {
         if (!isPaused && !isDragging && tweets && tweets.length > 0) {
-            const animate = () => {
-                setAnimationOffset(prev => {
-                    const cardWidth = 320 + 16; // 320px card + 16px margin
-                    const totalWidth = tweets.length * cardWidth;
-                    const newOffset = (prev + 0.5) % totalWidth;
-                    return newOffset;
-                });
+            const animate = (currentTime: number) => {
+                if (currentTime - lastUpdateTime.current > 33) {
+                    setAnimationOffset(prev => {
+                        const newOffset = (prev + 1) % totalWidth;
+                        return newOffset;
+                    });
+                    lastUpdateTime.current = currentTime;
+                }
                 animationRef.current = requestAnimationFrame(animate);
             };
             animationRef.current = requestAnimationFrame(animate);
@@ -137,40 +140,36 @@ const TwitterFeed = () => {
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, [isPaused, isDragging, tweets]);
+    }, [isPaused, isDragging, tweets, totalWidth]);
 
-    // Handle mouse events for dragging
-    const handleMouseDown = (e: React.MouseEvent) => {
+    const handleMouseDown = useCallback((e: React.MouseEvent) => {
         setIsDragging(true);
         setDragStart(e.clientX);
         e.preventDefault();
-    };
+    }, []);
 
-    const handleMouseMove = (e: React.MouseEvent) => {
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
         if (!isDragging) return;
         const diff = e.clientX - dragStart;
         setScrollPosition(diff);
-    };
+    }, [isDragging, dragStart]);
 
-    const handleMouseUp = () => {
+    const handleMouseUp = useCallback(() => {
+        if (!isDragging) return;
         setIsDragging(false);
+
         // Commit the dragged distance to the animation offset
         setAnimationOffset(prev => {
-            const cardWidth = 320 + 16; // 320px card + 16px margin
-            const totalWidth = tweets!.length * cardWidth;
             const newOffset = (prev - scrollPosition) % totalWidth;
             return newOffset < 0 ? newOffset + totalWidth : newOffset;
         });
         setScrollPosition(0);
-    };
+    }, [isDragging, scrollPosition, totalWidth]);
 
-    // Handle mouse leave to ensure dragging stops
-    const handleMouseLeave = () => {
+    const handleMouseLeave = useCallback(() => {
         if (isDragging) {
             // Commit the dragged distance if we were dragging
             setAnimationOffset(prev => {
-                const cardWidth = 320 + 16; 
-                const totalWidth = tweets!.length * cardWidth;
                 const newOffset = (prev - scrollPosition) % totalWidth;
                 return newOffset < 0 ? newOffset + totalWidth : newOffset;
             });
@@ -178,38 +177,43 @@ const TwitterFeed = () => {
         setIsDragging(false);
         setScrollPosition(0);
         setIsPaused(false);
-    };
+    }, [isDragging, scrollPosition, totalWidth]);
 
     // Touch events for mobile
-    const handleTouchStart = (e: React.TouchEvent) => {
+    const handleTouchStart = useCallback((e: React.TouchEvent) => {
         setIsDragging(true);
         setDragStart(e.touches[0].clientX);
         e.preventDefault();
-    };
+    }, []);
 
-    const handleTouchMove = (e: React.TouchEvent) => {
+    const handleTouchMove = useCallback((e: React.TouchEvent) => {
         if (!isDragging) return;
         const diff = e.touches[0].clientX - dragStart;
         setScrollPosition(diff);
-    };
+    }, [isDragging, dragStart]);
 
-    const handleTouchEnd = () => {
+    const handleTouchEnd = useCallback(() => {
+        if (!isDragging) return;
+
         // Commit the dragged distance to the animation offset
         setAnimationOffset(prev => {
-            const cardWidth = 320 + 16;
-            const totalWidth = tweets!.length * cardWidth;
             const newOffset = (prev - scrollPosition) % totalWidth;
             return newOffset < 0 ? newOffset + totalWidth : newOffset;
         });
         setIsDragging(false);
         setScrollPosition(0);
-    };
+    }, [isDragging, scrollPosition, totalWidth]);
+
+    // Memoize duplicated tweets to avoid recalculating
+    const duplicatedTweets = useMemo(() => {
+        if (!tweets) return [];
+        return [...tweets, ...tweets, ...tweets];
+    }, [tweets]);
 
     if (isLoading || error || !tweets || tweets.length === 0) {
         return null;
     }
 
-    const duplicatedTweets = [...tweets, ...tweets, ...tweets];
     const totalTranslate = -animationOffset + scrollPosition;
 
     return (
