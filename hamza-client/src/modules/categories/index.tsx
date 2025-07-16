@@ -11,6 +11,9 @@ import axios from 'axios';
 import useStorePage from '@/zustand/store-page/store-page';
 import { useSearchParams } from 'next/navigation';
 import SideFilter from '../shop/components/desktop-side-filter/side-filter';
+import CategorySidebar from './components/category-sidebar';
+import { getSubcategories, getAllProducts } from '@/lib/server';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 interface ShopTemplateProps {
     category?: string;
@@ -25,6 +28,13 @@ interface Category {
     };
 }
 
+interface CategoryData {
+    subcategories: any[];
+    totalProducts: number;
+    products: any[];
+    count: number;
+}
+
 const CategoryTemplate = ({ category }: ShopTemplateProps) => {
     const {
         setSelectedCategories,
@@ -36,6 +46,7 @@ const CategoryTemplate = ({ category }: ShopTemplateProps) => {
         clearFilters
     } = useUnifiedFilterStore();
 
+    const { preferred_currency_code } = useCustomerAuthStore();
     const storePageState = useStorePage();
     const searchParams = useSearchParams();
     const urlParamsApplied = useRef(false);
@@ -46,6 +57,40 @@ const CategoryTemplate = ({ category }: ShopTemplateProps) => {
             setHasHydrated(true);
         }
     }, [hasHydrated, setHasHydrated]);
+
+    // CENTRALIZED DATA FETCHING 
+    const {
+        data: categoryData,
+        isLoading: isCategoryDataLoading,
+        error: categoryDataError
+    } = useQuery({
+        queryKey: ['categoryData', category],
+        queryFn: async () => {
+            if (!category) return null;
+            const [subcategoriesResponse, productsResponse] = await Promise.all([
+                getSubcategories(category),
+                getAllProducts(
+                    [category],
+                    0, 
+                    0,
+                    preferred_currency_code ?? 'usdc',
+                    999999, 
+                    0
+                )
+            ]);
+
+            const categoryData: CategoryData = {
+                subcategories: subcategoriesResponse?.categories || [],
+                totalProducts: productsResponse?.count || 0,
+                products: productsResponse?.products || [],
+                count: productsResponse?.count || 0
+            };
+
+            return categoryData;
+        },
+        enabled: !!category && hasHydrated,
+        staleTime: 5 * 60 * 1000, 
+    });
 
     // Apply URL parameters to filters
     useEffect(() => {
@@ -152,7 +197,37 @@ const CategoryTemplate = ({ category }: ShopTemplateProps) => {
                     gap={'20px'}
                     justifyContent={category ? 'center' : 'flex-start'}
                 >
-                    {/* Only show filters on general shop page, */}
+                    {category && (
+                        <>
+                            {/* Mobile CategorySidebar - Full width, collapsible */}
+                            <Box 
+                                display={{ base: 'block', lg: 'none' }}
+                                w="100%"
+                                mb={4}
+                            >
+                                <CategorySidebar
+                                    category={category}
+                                    categoryData={categoryData}
+                                    isLoading={isCategoryDataLoading}
+                                    error={categoryDataError}
+                                    isMobile={true}
+                                />
+                            </Box>
+
+                            {/* Desktop CategorySidebar - Side layout */}
+                            <Box display={{ base: 'none', lg: 'block' }}>
+                                <CategorySidebar
+                                    category={category}
+                                    categoryData={categoryData}
+                                    isLoading={isCategoryDataLoading}
+                                    error={categoryDataError}
+                                    isMobile={false}
+                                />
+                            </Box>
+                        </>
+                    )}
+
+                    {/* Show filters only on general shop page */}
                     {!category && <MobileFilter />}
                     {!category && <SideFilter />}
 
@@ -172,6 +247,8 @@ const CategoryTemplate = ({ category }: ShopTemplateProps) => {
                                 skeletonCount={9}
                                 productsPerPage={24}
                                 padding={{ base: '1rem', md: '0' }}
+                                preloadedCategoryData={category ? categoryData : undefined}
+                                category={category}
                             />
                         </Box>
                     </Flex>

@@ -89,6 +89,7 @@ export interface Product {
     origin_country: string;
     store_id: string;
     countryCode?: string;
+    created_at: string;
 }
 
 export interface DiscountValidationResult {
