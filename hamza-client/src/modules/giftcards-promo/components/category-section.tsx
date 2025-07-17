@@ -23,6 +23,7 @@ interface CategoryCardProps {
     subtitle: string;
     color: string;
     bgGradient: string;
+    href: string;
     index: number;
     isVisible: boolean;
 }
@@ -34,20 +35,23 @@ const categories = [
         subtitle: 'Popular',
         color: 'purple',
         bgGradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.2))',
+        href: '/category/gift-cards?subcategory=gaming',
     },
     {
         icon: ShoppingBag,
-        title: 'E-commerce',
+        title: 'Home',
         subtitle: 'Popular',
         color: 'blue',
         bgGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2))',
+        href: '/category/gift-cards?subcategory=home',
     },
     {
         icon: Tv,
-        title: 'Streaming',
+        title: 'Entertainment',
         subtitle: 'Popular',
         color: 'red',
         bgGradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 127, 0.2))',
+        href: '/category/gift-cards?subcategory=entertainment',
     },
     {
         icon: Coffee,
@@ -55,6 +59,7 @@ const categories = [
         subtitle: 'Popular',
         color: 'orange',
         bgGradient: 'linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(249, 115, 22, 0.2))',
+        href: '/category/gift-cards?subcategory=restaurants',
     },
     {
         icon: Shirt,
@@ -62,17 +67,19 @@ const categories = [
         subtitle: 'Popular',
         color: 'pink',
         bgGradient: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(219, 39, 119, 0.2))',
+        href: '/category/gift-cards?subcategory=fashion',
     },
     {
         icon: Smartphone,
-        title: 'Technology',
+        title: 'Digital Goods',
         subtitle: 'Popular',
         color: 'green',
         bgGradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.2))',
+        href: '/category/gift-cards?subcategory=digital-goods',
     },
 ];
 
-const CategoryCard = memo(({ icon, title, subtitle, color, index, isVisible }: CategoryCardProps) => {
+const CategoryCard = memo(({ icon, title, subtitle, color, href, index, isVisible }: CategoryCardProps) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isIconHovered, setIsIconHovered] = useState(false);
     const [hasInitialAnimationCompleted, setHasInitialAnimationCompleted] = useState(false);
@@ -92,7 +99,7 @@ const CategoryCard = memo(({ icon, title, subtitle, color, index, isVisible }: C
     }, [isVisible, index]);
 
     return (
-        <Link href="/en/category/gift-cards" passHref>
+        <Link href={href} passHref>
             <VStack
                 spacing={2}
                 align="center"
@@ -326,6 +333,7 @@ const CategorySection = memo(() => {
                                 subtitle={category.subtitle}
                                 color={category.color}
                                 bgGradient={category.bgGradient}
+                                href={category.href}
                                 index={index}
                                 isVisible={isVisible}
                             />
