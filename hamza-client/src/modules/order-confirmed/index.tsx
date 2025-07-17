@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -11,8 +11,10 @@ import {
     Icon,
     Text,
     VStack,
+    useToast,
+    IconButton,
 } from '@chakra-ui/react';
-import { MdCheckCircle } from 'react-icons/md';
+import { MdCheckCircle, MdContentCopy, MdCheck } from 'react-icons/md';
 import { BsBox } from 'react-icons/bs';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import { EscrowStatusString } from '@/lib/server/enums';
@@ -20,6 +22,8 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { FaBitcoin } from 'react-icons/fa';
 import chatIcon from '@/images/icon/chat.png';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import { useAccount } from 'wagmi';
 
 // Define types for the component
 interface LineItem {
@@ -80,7 +84,23 @@ interface OrderConfirmedProps {
     orders: ExtendedOrder[];
 }
 
-const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
+const OrderConfirmed: React.FC<OrderConfirmedProps> = ({
+    params,
+    orders
+}) => {
+    const [copied, setCopied] = useState(false);
+    const toast = useToast();
+
+    // Get authentication state
+    const { authData, walletAddress } = useCustomerAuthStore();
+    const { address: connectedWalletAddress } = useAccount();
+
+    // Determine if user is anonymous
+    const isAnonymous =
+        authData.anonymous ||
+        authData.status === 'unauthenticated' ||
+        (!walletAddress && !connectedWalletAddress);
+
     // calculate totals
     const cartOrderTotal = orders.reduce(
         (total: number, order: ExtendedOrder) =>
@@ -164,6 +184,34 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
         return false;
     };
 
+    const copyCartId = async () => {
+        const cartId = orders[0].cart?.id;
+        if (!cartId) return;
+
+        try {
+            await navigator.clipboard.writeText(cartId);
+            setCopied(true);
+            toast({
+                title: "Cart ID Copied!",
+                description: "Cart ID has been copied to your clipboard",
+                status: "success",
+                duration: 2000,
+                isClosable: true,
+            });
+
+            // Reset the copied state after 2 seconds
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            toast({
+                title: "Copy Failed",
+                description: "Failed to copy Cart ID. Please copy it manually.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
     const { hasBitcoinPayment, bitcoinAmount } = getBitcoinPaymentInfo();
 
     return (
@@ -191,35 +239,87 @@ const OrderConfirmed: React.FC<OrderConfirmedProps> = ({ params, orders }) => {
                 </Text>
             </Flex>
 
-            {/* Payment ID */}
-            <Flex justify="space-between" align="center">
-                <Text
-                    fontSize="18px"
-                    fontWeight="500"
-                    display={{ base: 'none', md: 'block' }}
-                >
-                    Cart ID: {orders[0].cart?.id}
-                </Text>
-                <Text
-                    fontSize="18px"
-                    fontWeight="500"
-                    display={{ base: 'block', md: 'none' }}
-                >
-                    #...{orders[0].cart?.id.slice(-10)}
-                </Text>
+            {/* Anonymous User Warning */}
+            {isAnonymous && (
                 <Box
-                    bg="green.900"
-                    px={3}
-                    py={1}
-                    borderRadius="3xl"
-                    border="2px"
-                    borderStyle="solid"
-                    borderColor="primary.green.900"
+                    bg="rgba(255, 193, 7, 0.1)"
+                    border="1px solid"
+                    borderColor="rgba(255, 193, 7, 0.3)"
+                    borderRadius="12px"
+                    p={4}
+                    position="relative"
+                    _before={{
+                        content: '"⚠️"',
+                        position: "absolute",
+                        top: "16px",
+                        left: "16px",
+                        fontSize: "20px",
+                    }}
+                    pl={12}
                 >
-                    <Text color="white" fontWeight="bold">
-                        Completed
+                    <Text fontSize="18px" fontWeight="600" mb={3}>
+                        <Text as="span" color="#FFC107">IMPORTANT:</Text>
+                        <Text as="span" color="white"> Since you have checked out anonymously </Text>
+                        <Text as="span" color="gray.400" fontSize="14px">(without connecting your wallet)</Text>
+                    </Text>
+                    <Text color="white" fontSize="14px" lineHeight="1.5">
+                        Please <Text as="span" fontWeight="bold" color="#FFC107">COPY your CART ID</Text> and save it somewhere safe.
+                        You'll need this ID to track your order status and for any support requests.
                     </Text>
                 </Box>
+            )}
+
+
+            {/* Payment ID */}
+            <Flex justify="space-between" align="center" gap={4}>
+                <Box flex={1}>
+                    <Text
+                        fontSize="18px"
+                        fontWeight="500"
+                        display={{ base: 'none', md: 'block' }}
+                    >
+                        Cart ID: {orders[0].cart?.id}
+                    </Text>
+                    <Text
+                        fontSize="16px"
+                        fontWeight="500"
+                        display={{ base: 'block', md: 'none' }}
+                    >
+                        #...{orders[0].cart?.id.slice(-10)}
+                    </Text>
+                </Box>
+
+                <HStack spacing={2}>
+                    {/* Copy Button */}
+                    <IconButton
+                        aria-label="Copy Cart ID"
+                        icon={copied ? <MdCheck /> : <MdContentCopy />}
+                        size="sm"
+                        bg={copied ? "green.600" : "gray.700"}
+                        color="white"
+                        borderRadius="8px"
+                        _hover={{
+                            bg: copied ? "green.500" : "gray.600"
+                        }}
+                        onClick={copyCartId}
+                        transition="all 0.2s"
+                    />
+
+                    {/* Status Badge */}
+                    <Box
+                        bg="green.900"
+                        px={3}
+                        py={1}
+                        borderRadius="3xl"
+                        border="2px"
+                        borderStyle="solid"
+                        borderColor="primary.green.900"
+                    >
+                        <Text color="white" fontWeight="bold">
+                            Completed
+                        </Text>
+                    </Box>
+                </HStack>
             </Flex>
 
             {/* Special Note */}
