@@ -1,11 +1,22 @@
+'use client';
+
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import CartTotals from '@modules/common/components/cart-totals';
 import DiscountCode from '@modules/checkout/components/discount-code';
 import PaymentButton from '@modules/checkout/components/payment/components/payment-button';
 import { CartWithCheckoutStep } from '@/types/global';
+import ProfileCurrency from '@/modules/account/components/profile/components/profile-form/components/profile-currency';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
-const PaymentSummary = async ({ cart }: { cart: CartWithCheckoutStep }) => {
+const PaymentSummary = ({ cart }: { cart: CartWithCheckoutStep }) => {
+    const preferred_currency_code = useCustomerAuthStore(
+        (state) => state.preferred_currency_code
+    );
+    const setCustomerPreferredCurrency = useCustomerAuthStore(
+        (state) => state.setCustomerPreferredCurrency
+    );
+
     if (!cart) {
         console.log('cart not found');
         return (
@@ -42,7 +53,7 @@ const PaymentSummary = async ({ cart }: { cart: CartWithCheckoutStep }) => {
             maxW={{ base: '100%', md: '401px' }}
             width={'100%'}
             minHeight={{ base: 'auto', md: '400px' }}
-            maxHeight={{ base: 'auto', md: '680px' }}
+            maxHeight={{ base: 'auto', md: '750px' }}
             flexDir={'column'}
             borderRadius={'16px'}
             p={{ base: '16px', md: '40px' }}
@@ -51,13 +62,19 @@ const PaymentSummary = async ({ cart }: { cart: CartWithCheckoutStep }) => {
                 color={'primary.green.900'}
                 fontSize={'18px'}
                 fontWeight={600}
+                mb="1rem"
             >
                 Payment Summary
             </Text>
 
+            <ProfileCurrency
+                preferredCurrencyCode={preferred_currency_code}
+                setCustomerPreferredCurrency={setCustomerPreferredCurrency}
+            />
+
             {cart && <CartTotals cart={cart} useCartStyle={true} />}
 
-            <Flex mt="auto" flexDir={'column'} gap={2}>
+            <Flex mt="auto" flexDir={'column'} gap={2} width="100%">
                 <DiscountCode cart={cart} />
                 <PaymentButton cart={cart} />
                 {/* <Text
