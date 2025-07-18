@@ -4,7 +4,7 @@ import { Region } from '@medusajs/medusa';
 import React, { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { notFound } from 'next/navigation';
-import { Flex, Divider, Text } from '@chakra-ui/react';
+import { Flex, Divider, Text, Box } from '@chakra-ui/react';
 import PreviewGallery from '../components/product-preview/components/image-gallery/image-display/preview-gallery';
 import ProductInfo from '../components/product-preview/components/product-info/product-info';
 import PreviewCheckout from '../components/product-preview/components/summary/preview-checkout';
@@ -312,6 +312,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             maxW="1280px"
             width={'100%'}
             mx="auto"
+            px={{ base: 4, md: 0 }}
         >
             {product && (
                 <script
@@ -325,11 +326,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     }}
                 />
             )}
-            <Flex
+            <Box
                 maxW="1280px"
-                width={'calc(100% - 2rem)'}
-                mx="rem"
-                flexDirection="column"
+                width={'100%'}
+                px={{ base: 0, md: 4 }}
             >
                 <Flex
                     mt={{ base: '0', md: '1rem' }}
@@ -372,15 +372,16 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         <Text>Back to results</Text>
                     </LocalizedClientLink>
                 </Flex>
-                <Flex
-                    mt={{ base: '1rem', md: '2rem' }}
-                    mb={{ base: '-1rem', md: '0' }}
+                <Box
+                    mt={{ base: '0', md: '2rem' }}
+                    mb={{ base: '0', md: '0' }}
+                    width="100%"
                 >
                     <PreviewGallery
                         handle={handle}
                         selectedVariantImage={selectedVariantImage}
                     />
-                </Flex>
+                </Box>
                 <Flex
                     maxWidth="1280px"
                     width="100%"
@@ -388,9 +389,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     gap="26px"
                     justifyContent="center"
                     flexDirection={{ base: 'column', md: 'row' }}
+                    px={{ base: 0, md: 0 }} 
                 >
                     <Flex flex="1" order={{ base: 2, md: 1 }}>
-                        <Flex flexDirection="column">
+                        <Flex flexDirection="column" width="100%">
                             <ProductInfo handle={handle} />
                             {/*<Box mt="1.5rem">*/}
                             {/*    <Tweet*/}
@@ -433,7 +435,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     mt="2rem"
                 />
                 <ProductReview />
-            </Flex>
+            </Box>
         </Flex>
     );
 };
