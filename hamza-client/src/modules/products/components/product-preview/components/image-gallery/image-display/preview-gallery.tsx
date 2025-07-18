@@ -97,35 +97,36 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     });
 
     return (
-        <Flex
+        <Box
             maxW={'1280px'}
             width={'100%'}
-            flexDirection={'column'}
             className="preview-gallery"
+            px={{ base: 0, md: 0 }}
         >
             <Grid
                 templateColumns={gridTemplateColumns}
                 templateRows={gridTemplateRows}
-                gap={2}
+                gap={{ base: 2, md: 2 }}
+                width="100%"
             >
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
-                <GridItem position="relative">
-                    <Box position="relative" overflow="hidden">
+                <GridItem position="relative" width="100%">
+                    <Box position="relative" overflow="hidden" width="100%">
                         {selectedVariantImage.includes('globetopper.com') ||
-                        selectedVariantImage.includes(
-                            'images.hamza.market/GiftCards/'
-                        ) ? (
+                            selectedVariantImage.includes(
+                                'images.hamza.market/GiftCards/'
+                            ) ? (
                             <Flex
                                 justifyContent={'center'}
                                 alignItems={'center'}
-                                width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
-                                maxH="600px"
-                                minH="312px"
+                                width="100%"
+                                maxH={{ base: "400px", md: "600px" }}
+                                minH={{ base: "250px", md: "312px" }}
                                 height="100%"
                                 overflow="hidden"
                                 borderRadius={{
                                     base: '16px',
-                                    md: '16px 16px 16px 16px',
+                                    md: '16px 0 0 16px',
                                 }}
                                 onClick={() => openGallery(0)}
                                 cursor="pointer"
@@ -142,10 +143,9 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                         ) : (
                             <AspectRatio
                                 ratio={1}
-                                width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
-                                maxH="600px"
-                                minH="312px"
-                                height="100%"
+                                width="100%"
+                                maxH={{ base: "400px", md: "600px" }}
+                                minH={{ base: "250px", md: "312px" }}
                                 overflow="hidden"
                                 borderRadius={{
                                     base: '16px',
@@ -167,36 +167,36 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                         <Flex
                             display={{ base: 'flex', md: 'none' }}
                             flexDir={'row'}
-                            flex={1}
                             width={'100%'}
                             height={'32px'}
                             position="absolute"
                             zIndex="1"
                             top="10px"
+                            px="10px"
                         >
                             <Flex
                                 height={'32px'}
                                 width={'32px'}
                                 borderRadius={'full'}
                                 justifyContent={'center'}
-                                backgroundColor={'#3E3E3E80'}
+                                alignItems={'center'}
+                                backgroundColor={'rgba(62, 62, 62, 0.8)'}
                                 onClick={goBackToShop}
+                                cursor="pointer"
                             >
-                                <Flex alignSelf={'center'}>
-                                    <FaChevronLeft color="white" />
-                                </Flex>
+                                <FaChevronLeft color="white" size="14px" />
                             </Flex>
 
                             {/* 3-Dot Menu Button (Top Right) */}
-                            <Flex ml="auto">
+                            <Box ml="auto">
                                 <ProductDetailsMobileMenu />
-                            </Flex>
+                            </Box>
                         </Flex>
                     </Box>
                 </GridItem>
 
                 {/* 4 Square Images below (mobile) or to the right (desktop) */}
-                <GridItem>
+                <GridItem width="100%">
                     <Grid
                         templateColumns={{
                             base: 'repeat(4, 1fr)', // 4 columns on mobile
@@ -206,19 +206,19 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                             base: 'repeat(1, 1fr)', // 1 row on mobile
                             md: 'repeat(2, 1fr)', // 2 rows on desktop
                         }}
-                        gap={2}
+                        gap={{ base: 1, md: 2 }}
+                        width="100%"
                     >
                         {images.slice(1, 5).map((image, index) => (
-                            <GridItem key={index}>
-                                <Box
-                                    width={{ base: '100%', md: '100%' }} // Full width on mobile, fixed on desktop
-                                    maxH={'296px'}
-                                    minH={'80px'}
-                                    height="100%"
-                                    aspectRatio="1"
+                            <GridItem key={index} width="100%">
+                                <AspectRatio
+                                    ratio={1}
+                                    width="100%"
+                                    maxH={{ base: '80px', md: '296px' }}
+                                    minH={{ base: '60px', md: '140px' }}
                                     overflow="hidden"
                                     borderRadius={{
-                                        base: '16px',
+                                        base: '8px',
                                         md: 'none',
                                     }}
                                     borderTopRightRadius={{
@@ -237,7 +237,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                                         height="100%"
                                         objectFit={'cover'}
                                     />
-                                </Box>
+                                </AspectRatio>
                             </GridItem>
                         ))}
                     </Grid>
@@ -253,7 +253,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                     selectedImageIndex={selectedImageIndex}
                 />
             )}
-        </Flex>
+        </Box>
     );
 };
 
