@@ -205,20 +205,9 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
         );
     }
 
-    // Empty state
+    // Empty state - hide sidebar if no subcategories
     if (!subcategories || subcategories.length === 0) {
-        return (
-            <Box {...containerStyles}>
-                <VStack spacing={4} align="stretch">
-                    <Text fontSize="lg" fontWeight="bold" color="white" mb={2}>
-                        Categories
-                    </Text>
-                    <Text color="gray.400" textAlign="center">
-                        No subcategories found for "{category}"
-                    </Text>
-                </VStack>
-            </Box>
-        );
+        return null;
     }
 
     return (
