@@ -14,7 +14,7 @@ const HeroBanner = () => {
             >
                 <Flex
                     w="100%"
-                    bg="#181129"
+                    bg="linear-gradient(90deg, #667eea 0%, #764ba2 100%)"
                     color="white"
                     py={2}
                     px={4}
