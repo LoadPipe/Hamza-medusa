@@ -139,10 +139,18 @@ const CartTotals: React.FC<CartTotalsProps> = ({
             0
         );
         const taxTotal = cart.tax_total ?? 0;
-        const discount = cart.items.reduce(
-            (total, item) => total + (item.discount_total ?? 0),
-            0
-        );
+        // Calculate discount correctly based on discount rules
+        let discount = 0;
+        if (cart.discounts && cart.discounts.length > 0) {
+            const discountRule = cart.discounts[0].rule;
+            if (discountRule.type === 'percentage') {
+                // Calculate percentage discount correctly from subtotal
+                discount = Math.round((subtotal * discountRule.value) / 100);
+            } else if (discountRule.type === 'fixed') {
+                // For fixed discounts, use the rule value directly
+                discount = discountRule.value;
+            }
+        }
         const shippingFee = shippingCostData.cost;
         const total = subtotal - discount + shippingFee + taxTotal;
 
