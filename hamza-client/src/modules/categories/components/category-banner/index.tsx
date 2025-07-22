@@ -23,6 +23,7 @@ const currencies = ['usdc', 'usdt', 'eth', 'btc'];
 const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
 
     // Fetch hero products for the category
     const { data: categoryData, isLoading: isCategoryLoading, isError: isCategoryError } = useQuery({
@@ -44,15 +45,24 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
         ? categoryData.products
         : fallbackData?.products || [];
 
-    // For auto-rotation
+    // Reset index when products change
     useEffect(() => {
-        if (!products.length) return;
+        if (!products.length) {
+            setIsPaused(false);
+            return;
+        }
         setCurrentIndex(0);
+    }, [products.length]);
+
+    // Auto-rotation with pause functionality
+    useEffect(() => {
+        if (!products.length || isPaused) return;
+        
         const timer = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % products.length);
         }, 5000);
         return () => clearInterval(timer);
-    }, [products.length]);
+    }, [products.length, isPaused]);
 
     // Loading state (show skeleton)
     if (isCategoryLoading || (isFallbackLoading && !products.length)) {
@@ -259,7 +269,12 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
                             border={`2px solid #676767`}
                             bg={currentIndex === index ? '#94D42A' : 'transparent'}
                             transition="background-color 0.3s"
-                            onClick={() => setCurrentIndex(index)}
+                            onClick={() => {
+                                if (!products.length) return;
+                                setCurrentIndex(index);
+                                setIsPaused(true);
+                                setTimeout(() => setIsPaused(false), 3000);
+                            }}
                             cursor="pointer"
                         />
                     ))}

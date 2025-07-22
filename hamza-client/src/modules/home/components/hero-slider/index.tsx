@@ -13,6 +13,7 @@ const HeroSlider: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [usdPrice, setUsdPrice] = useState('');
+    const [isPaused, setIsPaused] = useState(false);
 
     // Fetch product collection using react-query
     const { data, error, isLoading } = useQuery({
@@ -22,18 +23,18 @@ const HeroSlider: React.FC = () => {
         staleTime: 60 * 1000,
     });
 
-    // Automatic carousel timer
+    // Automatic carousel timer with pause functionality
     useEffect(() => {
+        if (isPaused || !data?.products?.length) return;
+
         const timer = setInterval(() => {
-            if (data?.products?.length) {
-                setCurrentIndex(
-                    (prevIndex) => (prevIndex + 1) % data.products.length,
-                );
-            }
+            setCurrentIndex(
+                (prevIndex) => (prevIndex + 1) % data.products.length,
+            );
         }, 5000); // Change slide every 5 seconds
 
         return () => clearInterval(timer); // Cleanup interval on component unmount
-    }, [data?.products?.length]);
+    }, [data?.products?.length, isPaused]);
 
     if (isLoading) {
         return (
@@ -254,7 +255,11 @@ const HeroSlider: React.FC = () => {
                                     : 'transparent'
                             }
                             transition="background-color 0.3s"
-                            onClick={() => setCurrentIndex(index)}
+                            onClick={() => {
+                                setCurrentIndex(index);
+                                setIsPaused(true);
+                                setTimeout(() => setIsPaused(false), 3000);
+                            }}
                             cursor="pointer"
                         />
                     ))}
