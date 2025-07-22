@@ -14,7 +14,7 @@ const HeroBanner = () => {
             >
                 <Flex
                     w="100%"
-                    bg="#181129"
+                    bg="linear-gradient(90deg, #667eea 0%, #764ba2 100%)"
                     color="white"
                     py={2}
                     px={4}
@@ -23,8 +23,7 @@ const HeroBanner = () => {
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
                 >
                     <Link
-                        href="https://blog.hamza.market/multichain-feature/"
-                        isExternal
+                        href="/seller"
                     >
                         <Text
                             fontSize={{ base: '12px', md: '16px' }}
@@ -32,14 +31,13 @@ const HeroBanner = () => {
                             fontWeight="semi-bold"
                             textColor={'white'}
                         >
-                            Shop Smarter with Hamza! Use Bitcoin, stablecoins,
-                            and more — instantly. —{' '}
+                            Start selling on Hamza — reach global buyers and get paid in crypto. Be part of the future of decentralized commerce.{' '}
                             <Text
                                 as="span"
                                 color="cyan.300"
                                 textDecoration="underline"
                             >
-                                Learn more!
+                                Become a seller!
                             </Text>
                         </Text>
                     </Link>
