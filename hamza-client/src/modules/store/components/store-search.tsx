@@ -57,13 +57,36 @@ const StoreSearch = ({ storeName }: Props) => {
     return (
         <Flex flexDir={'column'} width={'100%'}>
             <Flex
-                mx={'1rem'}
-                flexDir={'row'}
-                maxWidth={'1256.52px'}
-                width={'100%'}
-                my={{ base: '1rem', md: '3rem' }}
-                gap={'1rem'}
+                position="relative"
+                mx={{ base: '1rem', md: '2rem' }}
+                flexDir="row"
+                maxWidth="1256.52px"
+                width="100%"
+                my={{ base: '1.5rem', md: '3rem' }}
+                gap="0.75rem"
                 className="store-filters"
+                overflowX="auto"
+                flexWrap="nowrap"
+                pb="0.5rem" 
+                sx={{
+                    '&::-webkit-scrollbar': {
+                        height: '6px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                        borderRadius: '10px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        background: 'rgba(255, 255, 255, 0.3)',
+                        borderRadius: '10px',
+                        '&:hover': {
+                            background: 'rgba(255, 255, 255, 0.5)',
+                        },
+                    },
+                    scrollBehavior: 'smooth',
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: 'rgba(255, 255, 255, 0.3) transparent',
+                }}
             >
                 <StoreCatButton categoryName={'All'} />
 
