@@ -1,5 +1,5 @@
 import { clx } from '@medusajs/ui';
-import { Flex, Container, Text, Box, Divider } from '@chakra-ui/react';
+import { Flex, Container, Text, Box, Divider, Tooltip } from '@chakra-ui/react';
 import { getCategoriesList, getCollectionsList } from '@/lib/server';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { FaDiscord, FaTelegram, FaYoutube } from 'react-icons/fa6';
@@ -241,35 +241,118 @@ export default async function Footer() {
                         <Text className="text-base font-bold">
                             Follow us on:{' '}
                         </Text>
-                        <Link href="https://x.com/hamzadecom1" target="_blank">
-                            <FaTwitter size={24} />
-                        </Link>
-                        <Link
-                            href="https://discord.gg/W7qu9gb3Yz"
-                            target="_blank"
-                        >
-                            <FaDiscord size={24} />
-                        </Link>
-                        <Link
-                            href="https://t.me/decomnetwork"
-                            target="_blank"
-                            title="English Telegram"
-                        >
-                            <FaTelegram size={24} />
-                        </Link>
-                        <Link
-                            href="https://t.me/hamza_espanol"
-                            target="_blank"
-                            title="Spanish Telegram"
-                        >
-                            <FaTelegram size={24} />
-                        </Link>
-                        <Link
-                            href="https://www.youtube.com/@HamzaMarket"
-                            target="_blank"
-                        >
-                            <FaYoutube size={24} />
-                        </Link>
+                        <Tooltip label="Follow us on X (Twitter)" placement="top" hasArrow>
+                            <Link href="https://x.com/hamzadecom1" target="_blank">
+                                <Box 
+                                    color="#1DA1F2" 
+                                    borderRadius="lg"
+                                    p="8px"
+                                    _hover={{ 
+                                        color: "#ffffff", 
+                                        bg: "#1DA1F2",
+                                        transform: "scale(1.2) rotate(5deg)", 
+                                        boxShadow: "0 0 20px rgba(29, 161, 242, 0.6)",
+                                        borderRadius: "xl"
+                                    }}
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                                    cursor="pointer"
+                                >
+                                    <FaTwitter size={28} />
+                                </Box>
+                            </Link>
+                        </Tooltip>
+                        <Tooltip label="Join our Discord" placement="top" hasArrow>
+                            <Link
+                                href="https://discord.gg/W7qu9gb3Yz"
+                                target="_blank"
+                            >
+                                <Box 
+                                    color="#5865F2" 
+                                    borderRadius="lg"
+                                    p="8px"
+                                    _hover={{ 
+                                        color: "#ffffff", 
+                                        bg: "#5865F2",
+                                        transform: "scale(1.2) rotate(-5deg)", 
+                                        boxShadow: "0 0 20px rgba(88, 101, 242, 0.6)",
+                                        borderRadius: "xl"
+                                    }}
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                                    cursor="pointer"
+                                >
+                                    <FaDiscord size={28} />
+                                </Box>
+                            </Link>
+                        </Tooltip>
+                        <Tooltip label="English Telegram" placement="top" hasArrow>
+                            <Link
+                                href="https://t.me/decomnetwork"
+                                target="_blank"
+                            >
+                                <Box 
+                                    color="#0088cc" 
+                                    borderRadius="lg"
+                                    p="8px"
+                                    _hover={{ 
+                                        color: "#ffffff", 
+                                        bg: "#0088cc",
+                                        transform: "scale(1.2) rotate(5deg)", 
+                                        boxShadow: "0 0 20px rgba(0, 136, 204, 0.6)",
+                                        borderRadius: "xl"
+                                    }}
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                                    cursor="pointer"
+                                >
+                                    <FaTelegram size={28} />
+                                </Box>
+                            </Link>
+                        </Tooltip>
+                        <Tooltip label="Spanish Telegram" placement="top" hasArrow>
+                            <Link
+                                href="https://t.me/hamza_espanol"
+                                target="_blank"
+                            >
+                                <Box 
+                                    color="#0088cc" 
+                                    borderRadius="lg"
+                                    p="8px"
+                                    _hover={{ 
+                                        color: "#ffffff", 
+                                        bg: "#0088cc",
+                                        transform: "scale(1.2) rotate(-5deg)", 
+                                        boxShadow: "0 0 20px rgba(0, 136, 204, 0.6)",
+                                        borderRadius: "xl"
+                                    }}
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                                    cursor="pointer"
+                                >
+                                    <FaTelegram size={28} />
+                                </Box>
+                            </Link>
+                        </Tooltip>
+                        <Tooltip label="Subscribe to our YouTube" placement="top" hasArrow>
+                            <Link
+                                href="https://www.youtube.com/@HamzaMarket"
+                                target="_blank"
+                            >
+                                <Box 
+                                    color="#FF0000" 
+                                    borderRadius="lg"
+                                    p="8px"
+                                    _hover={{ 
+                                        color: "#ffffff", 
+                                        bg: "#FF0000",
+                                        transform: "scale(1.2) rotate(5deg)", 
+                                        boxShadow: "0 0 20px rgba(255, 0, 0, 0.6)",
+                                        borderRadius: "xl"
+                                    }}
+                                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                                    cursor="pointer"
+                                >
+                                    <FaYoutube size={28} />
+                                </Box>
+                            </Link>
+                        </Tooltip>
                     </Flex>
 
                     <Flex
