@@ -11,7 +11,6 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import bitcoinIcon from '@/images/icon/bitcoin.png';
-import dollarIcon from '@/images/icon/dollar.png';
 import safeIcon from '@/images/icon/safe.png';
 
 type CategoryHeroProps = {
@@ -212,10 +211,6 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
                                 Escrow
                             </Text>
                         </Box>
-                    </Box>
-                    <Box display="flex" alignItems="center" gap={2} mb={2}>
-                        <Image src={dollarIcon} alt="Dollar" width={16} height={16} />
-                        <Box as="span">Save Up to xx% on Fees</Box>
                     </Box>
                     <Box display="flex" alignItems="center" gap={2}>
                         <Image src={bitcoinIcon} alt="Bitcoin" width={16} height={16} />
