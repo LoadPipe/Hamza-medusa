@@ -94,7 +94,7 @@ const ShopTemplate = ({ category }: ShopTemplateProps) => {
         const priceLo = searchParams.get('price_lo');
 
         const lowerValue = priceLo ? parseInt(priceLo, 10) : 0;
-        const upperValue = priceHi ? parseInt(priceHi, 10) : 5000000;
+        const upperValue = priceHi ? parseInt(priceHi, 10) : 30000;
 
         setRangeLower(lowerValue);
         setRangeUpper(upperValue);
