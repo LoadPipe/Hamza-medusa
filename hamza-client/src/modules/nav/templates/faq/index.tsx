@@ -35,7 +35,7 @@ const faqData = [
     },
     {
         question: 'Do I need an account to place an order?',
-        answer: 'You do not need to create a traditional account with an email and password. Instead, you will connect your crypto wallet, such as MetaMask, to place an order. Your wallet acts as your account.',
+        answer: 'No, you can place an order as a guest without connecting a wallet. However, connecting your crypto wallet, such as MetaMask, is recommended for a better experience and account management.',
     },
     {
         question: 'How can I contact customer support?',
