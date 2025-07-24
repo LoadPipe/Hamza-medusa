@@ -14,7 +14,7 @@ type AccountInfoProps = {
     children?: React.ReactNode;
 };
 
-const AccountInfo = ({
+const AccountInfo: React.FC<AccountInfoProps> = ({
     label,
     currentInfo,
     isSuccess,
@@ -22,7 +22,7 @@ const AccountInfo = ({
     clearState,
     errorMessage = 'An error occurred, please try again',
     children,
-}: AccountInfoProps) => {
+}) => {
     const { state, close, toggle } = useToggleState();
 
     const { pending } = useFormStatus();

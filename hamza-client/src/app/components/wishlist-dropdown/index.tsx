@@ -8,7 +8,7 @@ import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { Popover, Transition } from '@headlessui/react';
 import { WishlistType } from '@/zustand/wishlist/types/wishlist-types';
 import Image from 'next/image';
-import { Button } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 interface WishlistPopoverItemProps {
