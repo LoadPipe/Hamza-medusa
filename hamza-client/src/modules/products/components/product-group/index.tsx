@@ -10,6 +10,8 @@ import {
     Flex,
     Text,
     Spinner,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
@@ -81,6 +83,7 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
     const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [invalidSubcategory, setInvalidSubcategory] = useState<string | null>(null);
 
     // Refs for tracking state
     const isUpdatingUrl = useRef(false);
@@ -171,7 +174,11 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
                 (selectedCategories.length === 1 &&
                     preloadedCategoryData.subcategories.some(subcat =>
                         subcat.handle.toLowerCase() === selectedCategories[0].toLowerCase()
-                    ))
+                    )) ||
+                // Also use preloaded data for invalid subcategories (to show fallback)
+                (selectedCategories.length === 1 &&
+                    !selectedCategories.includes(category) &&
+                    !selectedCategories.includes('all'))
             );
     }, [offset, preloadedCategoryData, category, selectedCategories]);
 
@@ -179,6 +186,7 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
         if (!preloadedCategoryData) return [];
 
         let filteredProducts = preloadedCategoryData.products;
+        let foundInvalidSubcategory: string | null = null;
 
         // Filter by subcategory if needed
         if (selectedCategories.length === 1 &&
@@ -192,11 +200,17 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
 
             if (subcategoryData && subcategoryData.products) {
                 filteredProducts = subcategoryData.products;
+            } else {
+                foundInvalidSubcategory = selectedSubcategory;
+                filteredProducts = preloadedCategoryData.products;
             }
         }
 
+        // Update invalid subcategory state
+        setInvalidSubcategory(foundInvalidSubcategory);
+
         // Apply price filtering
-        return filteredProducts.filter(product => {
+        const finalProducts = filteredProducts.filter(product => {
             const variant = product.variants[0];
             if (!variant) return false;
 
@@ -210,6 +224,8 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
 
             return price >= rangeLower && price <= rangeUpper;
         });
+
+        return finalProducts;
     }, [preloadedCategoryData, selectedCategories, category, currentCurrency, rangeLower, rangeUpper]);
 
     // Initialize from URL parameters
@@ -218,6 +234,7 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
 
         const offsetParam = searchParams.get('offset');
         const categoryParam = searchParams.get('category');
+        const subcategoryParam = searchParams.get('subcategory');
         const priceLow = searchParams.get('price_lo');
         const priceHigh = searchParams.get('price_hi');
 
@@ -231,7 +248,11 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
             setOffset(newOffset);
         }
 
-        if (categoryParam) {
+        // Handle subcategory parameter
+        if (subcategoryParam) {
+            newCategories = [subcategoryParam.trim().toLowerCase()];
+            setSelectedCategories(newCategories);
+        } else if (categoryParam) {
             newCategories = categoryParam
                 .split(',')
                 .map((cat) => cat.trim().toLowerCase());
@@ -350,10 +371,19 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
                 };
             }
 
-            console.log('query this api instead');
+            // For invalid subcategories when no preloaded data, fall back to main category
+            let categoriesToQuery = selectedCategories;
+            if (selectedCategories.length === 1 &&
+                category &&
+                !selectedCategories.includes(category) &&
+                !selectedCategories.includes('all')) {
+                categoriesToQuery = [category];
+                setInvalidSubcategory(selectedCategories[0]);
+            }
+
             // Otherwise, fetch from API
             return getAllProducts(
-                selectedCategories,
+                categoriesToQuery,
                 rangeUpper,
                 rangeLower,
                 currentCurrency,
@@ -522,6 +552,16 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
                 className="product-cards"
                 px={{ base: padding.base, md: padding.md }}
             >
+                {/* Invalid subcategory message */}
+                {invalidSubcategory && (
+                    <Alert status="info" mb={6} borderRadius="md" maxWidth={'1256.52px'}>
+                        <AlertIcon />
+                        <Text>
+                            Subcategory '{invalidSubcategory}' not found. Showing all products from the '{category}' category instead.
+                        </Text>
+                    </Alert>
+                )}
+
                 <Grid
                     maxWidth={'1256.52px'}
                     width="100%"
@@ -601,10 +641,13 @@ const ProductCardGroup: React.FC<ProductCardGroupProps> = ({
 
                 {/* No products message */}
                 {sortedProducts.length === 0 && !isLoading && (
-                        <Text textAlign="center" fontSize="lg" my={8} color="whiteAlpha.800">
-                            No products found. Try adjusting your filters.
-                        </Text>
-                    )}
+                    <Text textAlign="center" fontSize="lg" my={8} color="whiteAlpha.800">
+                        {invalidSubcategory
+                            ? `No products found in the ${category} category. Try adjusting your filters.`
+                            : "No products found. Try adjusting your filters."
+                        }
+                    </Text>
+                )}
 
                 {/* Load More Button */}
                 {hasMore && sortedProducts.length > 0 && (
