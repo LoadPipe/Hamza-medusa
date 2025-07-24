@@ -145,17 +145,14 @@ export default async function Footer() {
                         color={'white'}
                         gap={'8px'}
                     >
-                        <a
-                            href="https://blog.hamza.market/merchant/"
-                            target="_blank"
-                        >
+                        <Link href="/seller">
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 className="text-base font-bold"
                             >
                                 Merchant
                             </Text>
-                        </a>
+                        </Link>
 
                         <a href="https://support.hamza.market/" target="_blank">
                             <Text
