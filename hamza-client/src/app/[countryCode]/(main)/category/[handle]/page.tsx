@@ -16,6 +16,10 @@ type Params = {
 export default function CategoryShopPage({ params }: Params) {
     const { handle, countryCode } = params;
 
+    if (handle?.toLowerCase() === 'giftcards') {
+        redirect(`/${countryCode}/category/gift-cards`);
+    }
+
     const decodedHandle = decodeURIComponent(handle);
     const normalizedHandle = decodedHandle.trim().replace(/[\s_]+/g, '-').toLowerCase();
 
