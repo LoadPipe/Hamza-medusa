@@ -87,7 +87,7 @@ const RangeSliderModal: React.FC<RangeSliderProps> = ({ range, setRange }) => {
                         color="white"
                         lineHeight="1"
                     >
-                        USD {range[0]}
+                        USD {range[0].toLocaleString()}
                     </Text>
                 </Flex>
                 <Divider
@@ -125,7 +125,7 @@ const RangeSliderModal: React.FC<RangeSliderProps> = ({ range, setRange }) => {
                         color="white"
                         lineHeight="1"
                     >
-                        USD {range[1]}
+                        USD {range[1].toLocaleString()}
                     </Text>
                 </Flex>
             </Flex>

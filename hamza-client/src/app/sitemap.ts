@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // Fetch all data 
         const [stores, productsData, categories] = await Promise.all([
             getStores(),
-            getAllProducts(['all'], 5000000, 0, 'usdc', 1000, 0), 
+            getAllProducts(['all'], 30000, 0, 'usdc', 1000, 0), 
             listCategories()
         ])
 

@@ -78,7 +78,7 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
                         Minimum
                     </Text>
                     <Text fontSize="18px" color="white" lineHeight="1">
-                        USD {range[0]}
+                        USD {range[0].toLocaleString()}
                     </Text>
                 </Flex>
                 <Divider
@@ -103,7 +103,7 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
                         Maximum
                     </Text>
                     <Text fontSize="18px" color="white" lineHeight="1">
-                        USD {range[1]}
+                        USD {range[1].toLocaleString()}
                     </Text>
                 </Flex>
             </Flex>
