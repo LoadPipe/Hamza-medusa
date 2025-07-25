@@ -21,62 +21,62 @@ const brands = [
     {
         name: 'Amazon',
         category: 'E-commerce',
-        href: '/category/gift-cards?subcategory=amazon',
+        href: '/category/gift-cards?subcategory=amazon-giftcards',
     },
     {
         name: 'Apple',
         category: 'Technology',
-        href: '/category/gift-cards?subcategory=apple',
+        href: '/category/gift-cards?subcategory=apple-giftcards',
     },
     {
         name: 'Steam',
         category: 'Gaming',
-        href: '/category/gift-cards?subcategory=steam',
+        href: '/category/gift-cards?subcategory=steam-giftcards',
     },
     {
         name: 'Netflix',
         category: 'Streaming',
-        href: '/category/gift-cards?subcategory=netflix',
+        href: '/category/gift-cards?subcategory=netflix-giftcards',
     },
     {
         name: 'Spotify',
         category: 'Music',
-        href: '/category/gift-cards?subcategory=spotify',
+        href: '/category/gift-cards?subcategory=spotify-giftcards',
     },
     {
         name: 'Google',
         category: 'Apps & Games',
-        href: '/category/gift-cards?subcategory=google',
+        href: '/category/gift-cards?subcategory=google-giftcards',
     },
     {
         name: 'PlayStation',
         category: 'Gaming',
-        href: '/category/gift-cards?subcategory=playstation',
+        href: '/category/gift-cards?subcategory=playstation-giftcards',
     },
     {
         name: 'Uber',
         category: 'Transportation',
-        href: '/category/gift-cards?subcategory=uber',
+        href: '/category/gift-cards?subcategory=uber-giftcards',
     },
     {
         name: 'Starbucks',
         category: 'Food & Drink',
-        href: '/category/gift-cards?subcategory=starbucks',
+        href: '/category/gift-cards?subcategory=starbucks-giftcards',
     },
     {
         name: 'Nike',
         category: 'Fashion',
-        href: '/category/gift-cards?subcategory=nike',
+        href: '/category/gift-cards?subcategory=nike-giftcards',
     },
     {
         name: 'Walmart',
         category: 'Retail',
-        href: '/category/gift-cards?subcategory=walmart',
+        href: '/category/gift-cards?subcategory=walmart-giftcards',
     },
     {
         name: 'eBay',
         category: 'Marketplace',
-        href: '/category/gift-cards?subcategory=ebay',
+        href: '/category/gift-cards?subcategory=ebay-giftcards',
     },
 ];
 
