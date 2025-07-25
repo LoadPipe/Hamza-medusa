@@ -57,6 +57,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
                 console.log(err);
             });
         }
+
         setCustomerPreferredCurrency(currencyCode);
         await setCurrency(currencyCode, customerId);
 
