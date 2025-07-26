@@ -43,7 +43,8 @@ export async function getOrSetCart(countryCode: string) {
     const region_id = region.id;
 
     if (!cart) {
-        cart = await createCart({ region_id }).then((res) => res);
+        const timezone = cookies().get('_timezone')?.value;
+        cart = await createCart({ region_id, timezone }).then((res) => res);
         cart && cookies().set('_medusa_cart_id', cart.id);
         revalidateTag('cart');
         if (cart) await createPaymentSessions(cart?.id);
