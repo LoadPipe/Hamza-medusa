@@ -164,6 +164,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         console.log(authData.wallet_address);
     }, [authData.wallet_address]);
 
+    useEffect(() => {
+        //get timezone
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        Cookies.set('_timezone', timezone);
+    }, []);
+
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
             const nonce = await getNonce();
