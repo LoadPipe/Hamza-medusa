@@ -1637,6 +1637,15 @@ export async function getFeaturedStores(
     }
 }
 
-export async function getSubcategories(parent_category_handle: string) {
-    return get('/custom/category/subcategories', { parent_category_handle });
+export async function getSubcategories(
+    parent_category_handle: string,
+    sortBy?: string,
+    sortDirection?: string
+) {
+    const params: any = { parent_category_handle };
+    if (sortBy) params.sortBy = sortBy;
+    if (sortDirection) params.sortDirection = sortDirection;
+    
+    return get('/custom/category/subcategories', params);
 }
+
