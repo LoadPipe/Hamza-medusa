@@ -68,7 +68,7 @@ const CategoryTemplate = ({ category }: ShopTemplateProps) => {
         queryFn: async () => {
             if (!category) return null;
             const [subcategoriesResponse, productsResponse] = await Promise.all([
-                getSubcategories(category),
+                getSubcategories(category, 'productCount', 'desc'),
                 getAllProducts(
                     [category],
                     0, 
