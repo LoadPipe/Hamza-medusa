@@ -255,7 +255,7 @@ export async function getWishlist(customer_id: string) {
 // Get all home products by default
 export async function getAllProducts(
     categorySelect: string[] | null = ['all'],
-    priceHigh: number = 5000000,
+    priceHigh: number = 30000,
     priceLow: number = 0,
     currencyCode: string = 'usdc',
     limit: number = 24,

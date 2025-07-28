@@ -12,27 +12,76 @@ import Link from 'next/link';
 interface BrandCardProps {
     name: string;
     category: string;
+    href: string;
     index: number;
     isVisible: boolean;
 }
 
 const brands = [
-    { name: 'Amazon', category: 'E-commerce' },
-    { name: 'Apple', category: 'Technology' },
-    { name: 'Steam', category: 'Gaming' },
-    { name: 'Netflix', category: 'Streaming' },
-    { name: 'Spotify', category: 'Music' },
-    { name: 'Google Play', category: 'Apps & Games' },
-    { name: 'PlayStation', category: 'Gaming' },
-    { name: 'Uber', category: 'Transportation' },
-    { name: 'Starbucks', category: 'Food & Drink' },
-    { name: 'Nike', category: 'Fashion' },
-    { name: 'Walmart', category: 'Retail' },
-    { name: 'eBay', category: 'Marketplace' },
+    {
+        name: 'Amazon',
+        category: 'E-commerce',
+        href: '/category/gift-cards?subcategory=amazon-giftcards',
+    },
+    {
+        name: 'Apple',
+        category: 'Technology',
+        href: '/category/gift-cards?subcategory=apple-giftcards',
+    },
+    {
+        name: 'Steam',
+        category: 'Gaming',
+        href: '/category/gift-cards?subcategory=steam-giftcards',
+    },
+    {
+        name: 'Netflix',
+        category: 'Streaming',
+        href: '/category/gift-cards?subcategory=netflix-giftcards',
+    },
+    {
+        name: 'Spotify',
+        category: 'Music',
+        href: '/category/gift-cards?subcategory=spotify-giftcards',
+    },
+    {
+        name: 'Google',
+        category: 'Apps & Games',
+        href: '/category/gift-cards?subcategory=google-giftcards',
+    },
+    {
+        name: 'PlayStation',
+        category: 'Gaming',
+        href: '/category/gift-cards?subcategory=playstation-giftcards',
+    },
+    {
+        name: 'Uber',
+        category: 'Transportation',
+        href: '/category/gift-cards?subcategory=uber-giftcards',
+    },
+    {
+        name: 'Starbucks',
+        category: 'Food & Drink',
+        href: '/category/gift-cards?subcategory=starbucks-giftcards',
+    },
+    {
+        name: 'Nike',
+        category: 'Fashion',
+        href: '/category/gift-cards?subcategory=nike-giftcards',
+    },
+    {
+        name: 'Walmart',
+        category: 'Retail',
+        href: '/category/gift-cards?subcategory=walmart-giftcards',
+    },
+    {
+        name: 'eBay',
+        category: 'Marketplace',
+        href: '/category/gift-cards?subcategory=ebay-giftcards',
+    },
 ];
 
 const BrandCard = memo(
-    ({ name, category, index, isVisible }: BrandCardProps) => {
+    ({ name, category, index, isVisible, href }: BrandCardProps) => {
         return (
             <Box
                 bg="rgba(255, 255, 255, 0.02)"
@@ -65,42 +114,44 @@ const BrandCard = memo(
                     transition="opacity 0.3s ease"
                 />
 
-                <VStack
-                    spacing={3}
-                    align="center"
-                    justify="center"
-                    position="relative"
-                    zIndex={1}
-                    h="100%"
-                >
-                    <Text
-                        fontSize={{ base: 'lg', md: 'xl' }}
-                        fontWeight="bold"
-                        color="white"
-                        textAlign="center"
-                        _groupHover={{ color: 'green.300' }}
-                        transition="color 0.3s ease"
+                <Link href={href} passHref>
+                    <VStack
+                        spacing={3}
+                        align="center"
+                        justify="center"
+                        position="relative"
+                        zIndex={1}
+                        h="100%"
                     >
-                        {name}
-                    </Text>
+                        <Text
+                            fontSize={{ base: 'lg', md: 'xl' }}
+                            fontWeight="bold"
+                            color="white"
+                            textAlign="center"
+                            _groupHover={{ color: 'green.300' }}
+                            transition="color 0.3s ease"
+                        >
+                            {name}
+                        </Text>
 
-                    <Box
-                        w="40px"
-                        h="1px"
-                        bg="gray.700"
-                        _groupHover={{ bg: 'green.400' }}
-                        transition="background-color 0.3s ease"
-                    />
+                        <Box
+                            w="40px"
+                            h="1px"
+                            bg="gray.700"
+                            _groupHover={{ bg: 'green.400' }}
+                            transition="background-color 0.3s ease"
+                        />
 
-                    <Text
-                        fontSize="sm"
-                        color="gray.400"
-                        fontWeight="medium"
-                        textAlign="center"
-                    >
-                        {category}
-                    </Text>
-                </VStack>
+                        <Text
+                            fontSize="sm"
+                            color="gray.400"
+                            fontWeight="medium"
+                            textAlign="center"
+                        >
+                            {category}
+                        </Text>
+                    </VStack>
+                </Link>
             </Box>
         );
     }
@@ -191,6 +242,7 @@ const PopularBrandsSection = memo(() => {
                             <BrandCard
                                 key={brand.name}
                                 name={brand.name}
+                                href={brand.href}
                                 category={brand.category}
                                 index={index}
                                 isVisible={isVisible}

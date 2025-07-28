@@ -353,7 +353,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
                                         value={rangeUpper}
                                         onChange={handlePriceChange}
                                         min={0}
-                                        max={5000}
+                                        max={30000}
                                         step={1}
                                         colorScheme="green"
                                     >
