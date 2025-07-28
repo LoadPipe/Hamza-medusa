@@ -542,11 +542,16 @@ export async function getStoreIdByName(store_name: string) {
 
 export async function setCurrency(
     preferred_currency: string,
-    customer_id: string
+    customer_id: string,
+    cart_id?: string
 ) {
+    if (!cart_id) {
+        cart_id = cookies().get('_medusa_cart_id')?.value;
+    }
     return putSecure('/custom/customer/preferred-currency', {
         customer_id,
         preferred_currency,
+        cart_id,
     });
 }
 
@@ -1643,3 +1648,4 @@ export async function getSubcategories(
     
     return get('/custom/category/subcategories', params);
 }
+

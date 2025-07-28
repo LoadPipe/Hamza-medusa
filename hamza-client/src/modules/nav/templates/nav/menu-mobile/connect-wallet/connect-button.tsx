@@ -68,7 +68,12 @@ export const WalletConnectButton = () => {
                                         justifyContent={'center'}
                                         alignItems={'center'}
                                     >
-                                        <Image src={walletIconUrl} alt="Wallet Icon" width={48} height={48} />
+                                        <Image
+                                            src={walletIconUrl}
+                                            alt="Wallet Icon"
+                                            width={48}
+                                            height={48}
+                                        />
                                     </Flex>
                                 );
                             }
@@ -82,6 +87,7 @@ export const WalletConnectButton = () => {
                                     ml="1rem"
                                     flexDirection={'row'}
                                     alignItems={'center'}
+                                    className="wallet-connect-buttons-mobile"
                                 >
                                     <WalletInfoMobile />
                                     <MobileAccountMenu />

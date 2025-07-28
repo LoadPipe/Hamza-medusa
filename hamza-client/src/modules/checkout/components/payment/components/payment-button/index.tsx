@@ -415,7 +415,7 @@ const CryptoPaymentButton = ({
     const switchToBitcoin = async () => {
         try {
             setCustomerPreferredCurrency('btc');
-            await setCurrency('btc', authData.customer_id);
+            await setCurrency('btc', authData.customer_id, cart.id);
         } catch (error) {
             console.error('Error updating currency:', error);
         }
