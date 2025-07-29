@@ -12,6 +12,24 @@ describe('Homepage header', () => {
             cy.get('.desktop-nav').should('exist');
         });
     });
+
+    it('should have "How it Works" button with correct link', () => {
+        cy.get('.nav-container').within(() => {
+            cy.contains('button', 'How it Works')
+                .should('exist')
+                .should('be.visible')
+                .parent()
+                .should('have.attr', 'href', '/en/how-it-works');
+        });
+    });
+
+    it('should navigate to "How it Works" page with correct text', () => {
+        cy.get('.nav-container').within(() => {
+            cy.contains('button', 'How it Works').click();
+        });
+
+        cy.contains('The Future of Commerce').should('exist');
+    });
 });
 
 // test for filter bar
@@ -46,5 +64,18 @@ describe('Footer', () => {
 
     it('should have footer', () => {
         cy.get('.footer').should('exist');
+    });
+
+    it('should have Merchant link in footer', () => {
+        cy.get('.footer')
+            .contains('Merchant')
+            .should('exist')
+            .should('have.attr', 'href', '/seller');
+    });
+
+    it('should navigate to seller page with "Join the Revolution" text when clicking Merchant link', () => {
+        cy.get('.footer').contains('Merchant').click();
+
+        cy.contains('Join the Revolution').should('exist');
     });
 });
