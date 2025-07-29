@@ -1,3 +1,5 @@
+import { elementCheckByElementClass } from '../../../support/utils/element-check-by-element-class';
+
 // test for header
 describe('Homepage header', () => {
     beforeEach(() => {
@@ -11,7 +13,6 @@ describe('Homepage header', () => {
         });
     });
 });
-
 
 // test for filter bar
 describe('Filter bar', () => {
@@ -31,9 +32,9 @@ describe('Product cards', () => {
     });
 
     it('should have at least 4 product cards', () => {
-        cy.get('.product-cards').should('exist').within(() => {
-            cy.get('.product-card').should('have.length.at.least', 4);
-        });
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length.at.least', 4);
     });
 });
 
