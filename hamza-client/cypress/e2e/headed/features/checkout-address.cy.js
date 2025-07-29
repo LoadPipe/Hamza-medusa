@@ -139,7 +139,7 @@ describe('Checkout Address', () => {
         elementCheckByElementText('California');
         elementCheckByElementText('90038');
         elementCheckByElementText('1234567890');
-        elementCheckByElementText('US');
+        elementCheckByElementText('US', { beVisible: false });
         elementCheckByElementText('test2@whatever.com');
     });
 
