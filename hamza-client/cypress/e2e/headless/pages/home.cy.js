@@ -32,6 +32,33 @@ describe('Homepage header', () => {
     });
 });
 
+describe('Shop by category', () => {
+    beforeEach(() => {
+        cy.visit('/en');
+    });
+
+    it('should have "Shop By Category" heading', () => {
+        cy.get('h2')
+            .contains('Shop By Category')
+            .should('exist')
+            .should('be.visible');
+    });
+
+    it('should have "Electronics" link with correct href', () => {
+        cy.get('a[href="/category/electronics"]')
+            .should('exist')
+            .should('be.visible')
+            .within(() => {
+                cy.contains('Electronics').should('exist');
+            });
+    });
+
+    it('should navigate to Electronics page and display correct content', () => {
+        cy.get('a[href="/category/electronics"]').click();
+        cy.contains('Buy Electronics With Crypto Online').should('exist');
+    });
+});
+
 // test for filter bar
 describe('Filter bar', () => {
     beforeEach(() => {
