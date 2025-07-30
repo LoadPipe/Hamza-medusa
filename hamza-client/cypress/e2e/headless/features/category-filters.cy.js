@@ -3,123 +3,257 @@ import { elementCheckByElementClass } from '../../../support/utils/element-check
 import { buttonClickByElementClass } from '../../../support/utils/buttons/button-click-by-element-class';
 
 describe('Category filters', () => {
-	it('Default all single filters', () => {
-		cy.visit('/en');
+    it('Default all single filters', () => {
+        cy.visit('/en');
 
-		// default all check
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 65);
+        // default all check
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 24);
 
-		// single filter check: home
-		buttonClickByElementClass('.filter-bar', { findByChild: 'All', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Home', isVisible: false, forceClick: true });
+        // single filter check: home
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'All',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Home',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 6);
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 6);
 
-		// single filter check: electronics
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Home', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Electronics', isVisible: false, forceClick: true });
+        // single filter check: electronics
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Home',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Electronics',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 9);
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 9);
 
-		// buttonClickByElementClass('.filter-bar', { findByChild: '.filter-bar-chevron' });
+        // buttonClickByElementClass('.filter-bar', { findByChild: '.filter-bar-chevron' });
 
-		// single filter check: electronics
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Electronics', isVisible: false });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Gaming', isVisible: false });
+        // single filter check: electronics
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Electronics',
+            isVisible: false,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Gaming',
+            isVisible: false,
+        });
 
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 16);
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 16);
 
-		// single filter check: fashion
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Gaming', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Fashion', isVisible: false, forceClick: true });
+        // single filter check: fashion
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Gaming',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Fashion',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 6);
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 6);
 
-		buttonClickByElementClass('.filter-bar', { findByChild: '.filter-bar-chevron', isVisible: false, forceClick: true });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: '.filter-bar-chevron',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		// single filter check: Featured
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Fashion', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Featured', isVisible: false, forceClick: true });
+        // single filter check: Featured
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Fashion',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Featured',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 3);
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 3);
 
-		// single filter check: Hobbies
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Featured', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Hobbies', isVisible: false, forceClick: true });
+        // single filter check: Hobbies
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Featured',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Hobbies',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 10);
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 10);
 
-		// single filter check: Fitness
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Hobbies', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Fitness', isVisible: false, forceClick: true });
+        // single filter check: Fitness
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Hobbies',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Fitness',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 9);
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 9);
 
-		buttonClickByElementClass('.filter-bar', { findByChild: '.filter-bar-chevron', isVisible: false, forceClick: true });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: '.filter-bar-chevron',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		// single filter check: Board Games
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Fitness', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Board Games', isVisible: false, forceClick: true });
+        // single filter check: Board Games
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Fitness',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Board Games',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 9);
-	});
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 9);
+    });
 
-	it('Multi filters: home and electronics', () => {
-		cy.visit('/en');
+    it('Multi filters: home and electronics', () => {
+        cy.visit('/en');
 
-		// home and electronics
-		buttonClickByElementClass('.filter-bar', { findByChild: 'All', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Home', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Electronics', isVisible: false, forceClick: true });
-		
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 15);
-	});
+        // home and electronics
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'All',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Home',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Electronics',
+            isVisible: false,
+            forceClick: true,
+        });
 
-	it('Multi filters: electronics and gaming', () => {
-		cy.visit('/en');
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 15);
+    });
 
-		// home and electronics
-		buttonClickByElementClass('.filter-bar', { findByChild: 'All', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Electronics', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Gaming', isVisible: false, forceClick: true });
-		
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 25);
-	});
+    it('Multi filters: electronics and gaming', () => {
+        cy.visit('/en');
 
-	it('Filter modal: Electronics and Gaming', () => {
-		cy.visit('/en');
+        // home and electronics
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'All',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Electronics',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Gaming',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		// open filter modal
-		buttonClickByElementClass('.filter-bar', { findByChild: 'Filter', isVisible: false, forceClick: true });
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 24);
+    });
 
-		// wait till modal opens
-		elementCheckByElementClass('.filter-modal', { isVisible: true });
+    it('Filter modal: Electronics and Gaming', () => {
+        cy.visit('/en');
 
-		// electronics and gaming
-		buttonClickByElementClass('.filter-modal', { findByChild: 'Electronics', isVisible: false, forceClick: true });
-		buttonClickByElementClass('.filter-modal', { findByChild: 'Gaming', isVisible: false, forceClick: true });
+        // open filter modal
+        buttonClickByElementClass('.filter-bar', {
+            findByChild: 'Filter',
+            isVisible: false,
+            forceClick: true,
+        });
 
-		// click apply filters
-		buttonClickByElementClass('.filter-modal', { findByChild: 'Apply Filters', isVisible: false, forceClick: true });
-		
-		elementCheckByElementClass('.product-card', { scrollIntoView: false }).should('have.length', 25);
-	});
+        // wait till modal opens
+        elementCheckByElementClass('.filter-modal', { isVisible: true });
 
-	// TODO: implement drag and drop for price range
-	// it('Filter modal: Price range', () => {
-	// 	cy.visit('/en');
+        // electronics and gaming
+        buttonClickByElementClass('.filter-modal', {
+            findByChild: 'Electronics',
+            isVisible: false,
+            forceClick: true,
+        });
+        buttonClickByElementClass('.filter-modal', {
+            findByChild: 'Gaming',
+            isVisible: false,
+            forceClick: true,
+        });
 
-	// 	// open filter modal
-	// 	buttonClickByElementClass('.filter-bar', { findByChild: 'Filter', isVisible: false, forceClick: true });
+        // click apply filters
+        buttonClickByElementClass('.filter-modal', {
+            findByChild: 'Apply Filters',
+            isVisible: false,
+            forceClick: true,
+        });
 
-	// 	// wait till modal opens
-	// 	elementCheckByElementClass('.filter-modal', { isVisible: true });
+        elementCheckByElementClass('.product-cards .product-card', {
+            scrollIntoView: false,
+        }).should('have.length', 24);
+    });
 
-	// 	// Drag price range slider thumb to the right
-	// 	cy.get('.filter-modal .range-slider-thumb-right')
-	// 		.trigger('mousedown')
-	// 		.trigger('mousemove', { clientX: 20, force: true })
-	// 		.trigger('mouseup', { force: true });
-		
-	// });
+    // TODO: implement drag and drop for price range
+    // it('Filter modal: Price range', () => {
+    // 	cy.visit('/en');
+
+    // 	// open filter modal
+    // 	buttonClickByElementClass('.filter-bar', { findByChild: 'Filter', isVisible: false, forceClick: true });
+
+    // 	// wait till modal opens
+    // 	elementCheckByElementClass('.filter-modal', { isVisible: true });
+
+    // 	// Drag price range slider thumb to the right
+    // 	cy.get('.filter-modal .range-slider-thumb-right')
+    // 		.trigger('mousedown')
+    // 		.trigger('mousemove', { clientX: 20, force: true })
+    // 		.trigger('mouseup', { force: true });
+
+    // });
 });

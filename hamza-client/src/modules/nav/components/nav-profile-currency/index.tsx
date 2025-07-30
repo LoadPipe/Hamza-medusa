@@ -35,7 +35,11 @@ const NavProfileCurrency: React.FC<NavProfileCurrencyProps> = ({
             preferredCurrencyCode={preferred_currency_code}
             setCustomerPreferredCurrency={setCustomerPreferredCurrency}
             iconOnly={iconOnly}
-            className="nav-currency-selector"
+            className={
+                iconOnly
+                    ? 'nav-currency-selector-mobile'
+                    : 'nav-currency-selector-desktop'
+            }
         />
     );
 };

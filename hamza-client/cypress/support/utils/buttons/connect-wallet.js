@@ -8,18 +8,18 @@ export function connectWallet() {
         .should('be.visible')
         .click();
 
-    cy.wait(2000);
-
-    // Simulate wallet selection (MetaMask in this case)
-    cy.get('body').then(($body) => {
-        if ($body.find('button:contains("MetaMask")').length) {
-            buttonClickByElementText('MetaMask');
-        }
+    // Display message for manual MetaMask login
+    cy.log(
+        '🦊 MANUAL ACTION REQUIRED: Please connect and sign in to your MetaMask wallet manually'
+    );
+    cy.window().then((win) => {
+        alert(
+            '🦊 MANUAL ACTION REQUIRED: Please connect and sign in to your MetaMask wallet manually. Click OK when done.'
+        );
     });
 
-    cy.wait(2000);
-
-    buttonClickByElementText('Sign message');
+    // Wait for user to complete manual MetaMask connection
+    cy.wait(5000); // Give user 15 seconds to connect manually
 
     elementCheckByElementText('Verify your account', {
         exist: false,

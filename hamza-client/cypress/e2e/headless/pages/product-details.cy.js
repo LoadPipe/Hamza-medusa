@@ -61,8 +61,8 @@ describe('Increment and decrement Quantity', () => {
             findByChild: '.quantity-button-increment',
         });
 
-        elementCheckByElementClass('.preview-checkout', {
-            findByChild: '.quantity-display',
+        elementCheckByElementClass('.preview-checkout .quantity-display', {
+            scrollIntoView: false,
         }).should('have.text', '2');
 
         buttonClickByElementClass('.preview-checkout', {
@@ -76,6 +76,8 @@ describe('Increment and decrement Quantity', () => {
         buttonClickByElementClass('.preview-checkout', {
             findByChild: '.quantity-button-decrement',
         });
+
+        cy.wait(1000);
 
         elementCheckByElementClass('.preview-checkout', {
             findByChild: '.quantity-display',
