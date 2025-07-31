@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 import { CartWithCheckoutStep } from '@/types/global';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
+import { isShippingAddressRequired } from '@/modules/checkout/utils';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -77,6 +78,11 @@ const Addresses = ({
         setShippingAddressType('edit');
         onOpen();
     };
+
+    const shippingRequired = isShippingAddressRequired(cart);
+    
+    const addButtonText = shippingRequired ? 'Add Shipping Address' : 'Add Email Address';
+    const editButtonText = shippingRequired ? 'Edit Shipping Address' : 'Edit Email Address';
 
     // useEffect(() => {
     //     const updateShippingMethod = async () => {
@@ -191,7 +197,7 @@ const Addresses = ({
                                 }}
                                 onClick={handleEditAddress}
                             >
-                                Edit Shipping Address
+                                {editButtonText}
                             </Button>
                         </Flex>
                     </Flex>
@@ -216,7 +222,7 @@ const Addresses = ({
                             }}
                             onClick={handleAddAddress}
                         >
-                            Add Shipping Address
+                            {addButtonText}
                         </Button>
                     </Flex>
                 )}

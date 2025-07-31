@@ -52,9 +52,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
 }) => {
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
-    const [saveAddressButtonText, setSaveAddressButtonText] = useState(
-        addressType === 'add' ? 'Add Address' : 'Edit Address'
-    );
     const [overwriteAddress, setOverwriteAddress] = useState(false);
     const [savedAddressID, setSavedAddressId] = useState('');
     const [selectedAddressId, setSelectedAddressId] = useState<string>('');
@@ -118,9 +115,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
             }
             setSaveAddress(false);
             setOverwriteAddress(false);
-            setSaveAddressButtonText(
-                addressType === 'add' ? 'Add Address' : 'Edit Address'
-            );
         }
     }, [isOpen, cart]);
 
@@ -241,8 +235,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
     ) => {
         setSaveAddress(e.target.checked);
         console.log('saved clicked', e.target.checked);
-        if (e.target.checked) setSaveAddressButtonText('Save Address');
-        else setSaveAddressButtonText('Edit Address');
     };
 
     const handleOverwriteAddressChange = (
@@ -250,8 +242,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
     ) => {
         setOverwriteAddress(e.target.checked);
         console.log('overwrite clicked', e.target.checked);
-        if (e.target.checked) setSaveAddressButtonText('Overwrite');
-        else setSaveAddressButtonText('Save Address');
     };
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -722,7 +712,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 _hover={{ opacity: 0.5 }}
                                 type="submit"
                             >
-                                {saveAddressButtonText}
+                                Submit
                             </Button>
                         </Flex>
                     </ModalFooter>
