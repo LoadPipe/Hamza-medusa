@@ -1,6 +1,7 @@
 'use client';
 
-import { Cart } from '@medusajs/medusa';
+import { Cart, Customer } from '@medusajs/medusa';
+import { useToggleState } from '@medusajs/ui';
 import {
     IWalletPaymentHandler,
     FakeWalletPaymentHandler,
@@ -20,10 +21,9 @@ import {
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import { useAccount, WindowProvider, useWalletClient } from 'wagmi';
 import { ethers } from 'ethers';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { clearCart, finalizeCheckout, setCurrency } from '@/lib/server';
 import toast from 'react-hot-toast';
@@ -42,6 +42,8 @@ import ChainSelectionInterstitial from '../chain-selector';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { getCurrencyPrecision } from '@/currency.config';
 import { isShippingAddressRequired } from '@/modules/checkout/utils';
+import AddressModal from '@/modules/checkout/components/address-modal';
+import compareAddresses from '@lib/util/compare-addresses';
 
 //TODO: we need a global common function to replace this
 
@@ -60,22 +62,14 @@ declare global {
 }
 
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
-    const notReady =
-        !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        (cart.shipping_methods?.length ?? 0) > 0;
 
-    return <CryptoPaymentButton notReady={notReady} cart={cart} />;
+    return <CryptoPaymentButton cart={cart} />;
 };
 
 const CryptoPaymentButton = ({
     cart,
-    notReady,
 }: {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
-    notReady: boolean;
 }) => {
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -85,15 +79,14 @@ const CryptoPaymentButton = ({
         name: string;
     } | null>(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isAddressModalOpen, onOpen: onAddressModalOpen, onClose: onAddressModalClose } = useDisclosure();
+    const [addressType, setAddressType] = useState<'add' | 'edit'>('add');
     const { openConnectModal } = useConnectModal();
-    const { connector: activeConnector, isConnected } = useAccount();
-    const { data: walletClient, isError } = useWalletClient();
+    const { isConnected } = useAccount();
+    const { data: walletClient } = useWalletClient();
     const { isUpdatingCart } = useCartStore();
     const { setIsProcessingOrder } = useCartStore();
     const router = useRouter();
-    const { connect, connectors } = useConnect({
-        connector: new InjectedConnector(),
-    });
 
     const {
         preferred_currency_code,
@@ -102,11 +95,17 @@ const CryptoPaymentButton = ({
         setCustomerAuthData,
     } = useCustomerAuthStore();
 
+    const { toggle: toggleSameAsBilling } = useToggleState(
+        cart?.shipping_address && cart?.billing_address
+            ? compareAddresses(cart?.shipping_address, cart?.billing_address)
+            : true
+    );
+
     useEffect(() => {
         const fetchChainId = async () => {
             if (walletClient) {
                 try {
-                    const chainId = await walletClient.getChainId();
+                    await walletClient.getChainId();
                 } catch (error) {
                     console.error('Error fetching chain ID:', error);
                 }
@@ -128,7 +127,7 @@ const CryptoPaymentButton = ({
      * @param data
      * @returns {transaction_id, payer_address, escrow_contract_address, success }
      */
-    const doWalletPayment = async (data: any) => {
+    const doWalletPayment = async (data: any): Promise<WalletPaymentResponse | undefined> => {
         const checkoutMode = data?.checkout_mode;
 
         //select the right handler based on payment mode
@@ -256,7 +255,7 @@ const CryptoPaymentButton = ({
             let output: WalletPaymentResponse | undefined = {
                 chain_id: parseInt(chainId),
                 transaction_id: '',
-                payer_address: (await walletClient?.account.address) ?? '',
+                payer_address: walletClient?.account.address ?? '',
                 success: true,
             };
 
@@ -270,7 +269,7 @@ const CryptoPaymentButton = ({
                 // Finalize the checkout, if wallet payment was successful
                 if (output?.success) {
                     console.log('finalizing checkout');
-                    const response = await finalizeCheckout(
+                    await finalizeCheckout(
                         cartId,
                         output.transaction_id,
                         output.payer_address,
@@ -423,7 +422,23 @@ const CryptoPaymentButton = ({
 
     const handleDirectBitcoinPayment = async () => {
         await switchToBitcoin();
-        await handlePayment('direct', 'bitcoin');
+        await handlePaymentOrAddress('direct', 'bitcoin');
+    };
+
+    const handleAddAddress = () => {
+        setAddressType('add');
+        onAddressModalOpen();
+    };
+
+    const handlePaymentOrAddress = async (paymentMode: string, chainType: string) => {
+        // If missing address, open address modal instead of processing payment
+        if (isMissingAddress) {
+            handleAddAddress();
+            return;
+        }
+
+        // Otherwise, proceed with normal payment flow
+        await handlePayment(paymentMode, chainType);
     };
 
     const handlePayment = async (paymentMode: string, chainType: string) => {
@@ -475,16 +490,13 @@ const CryptoPaymentButton = ({
         return cart.email?.length ? false : true;
     };
 
-    const searchParams = useSearchParams();
-    const step = searchParams.get('step');
     const isCartEmpty = cart?.items.length === 0;
     const isMissingAddress = isMissingShippingAddress(cart);
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
         isCartEmpty ||
         isUpdatingCart ||
-        isMissingAddress ||
-        isMissingShippingMethod;
+        (isMissingShippingMethod && !isMissingAddress);
 
     const getButtonText = () => {
         if (isCartEmpty) return 'Add products to order';
@@ -510,22 +522,22 @@ const CryptoPaymentButton = ({
             {(preferred_currency_code === 'btc'
                 ? getButtonText() !== 'Pay with Browser Wallet'
                 : true) && (
-                <>
-                    <Button
-                        borderRadius={'full'}
-                        height={{ base: '42px', md: '58px' }}
-                        opacity={1}
-                        color={'black'}
-                        _hover={{ opacity: 0.5 }}
-                        backgroundColor={'primary.green.900'}
-                        isLoading={submitting}
-                        isDisabled={disableButton}
-                        onClick={() => handlePayment('wallet', 'evm')}
-                    >
-                        {getButtonText()}
-                    </Button>
-                </>
-            )}
+                    <>
+                        <Button
+                            borderRadius={'full'}
+                            height={{ base: '42px', md: '58px' }}
+                            opacity={1}
+                            color={'black'}
+                            _hover={{ opacity: 0.5 }}
+                            backgroundColor={'primary.green.900'}
+                            isLoading={submitting}
+                            isDisabled={disableButton}
+                            onClick={() => handlePaymentOrAddress('wallet', 'evm')}
+                        >
+                            {getButtonText()}
+                        </Button>
+                    </>
+                )}
 
             {payWithBitcoinEnabled && preferred_currency_code === 'btc' && (
                 <Button
@@ -572,7 +584,7 @@ const CryptoPaymentButton = ({
                     backgroundColor={'#242424'}
                     isLoading={submitting}
                     isDisabled={disableButton}
-                    onClick={() => handlePayment('direct', 'evm')}
+                    onClick={() => handlePaymentOrAddress('direct', 'evm')}
                 >
                     <Flex alignItems="center" gap={2}>
                         <Icon as={FaWallet} boxSize={5} color="white" />
@@ -599,6 +611,16 @@ const CryptoPaymentButton = ({
                     </Flex>
                 </Button>
             )}
+
+            <AddressModal
+                customer={null}
+                countryCode={process.env.NEXT_PUBLIC_FORCE_COUNTRY || 'us'}
+                toggleSameAsBilling={toggleSameAsBilling}
+                cart={cart}
+                isOpen={isAddressModalOpen}
+                onClose={onAddressModalClose}
+                addressType={addressType}
+            />
         </>
     );
 };
