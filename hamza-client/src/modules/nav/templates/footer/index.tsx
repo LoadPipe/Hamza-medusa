@@ -10,7 +10,7 @@ import Reputation from '@modules/home/components/reputation';
 //import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import React from 'react';
-import { FaTwitter } from 'react-icons/fa6';
+import { FaXTwitter } from 'react-icons/fa6';
 
 export default async function Footer() {
     return (
@@ -238,41 +238,54 @@ export default async function Footer() {
                         <Text className="text-base font-bold">
                             Follow us on:{' '}
                         </Text>
-                        <Tooltip label="Follow us on X (Twitter)" placement="top" hasArrow>
-                            <Link href="https://x.com/hamzadecom1" target="_blank">
-                                <Box 
-                                    color="#1DA1F2" 
+                        <Tooltip
+                            label="Follow us on X (Twitter)"
+                            placement="top"
+                            hasArrow
+                        >
+                            <Link
+                                href="https://x.com/hamzadecom1"
+                                target="_blank"
+                            >
+                                <Box
+                                    color="#1DA1F2"
                                     borderRadius="lg"
                                     p="8px"
-                                    _hover={{ 
-                                        color: "#ffffff", 
-                                        bg: "#1DA1F2",
-                                        transform: "scale(1.2) rotate(5deg)", 
-                                        boxShadow: "0 0 20px rgba(29, 161, 242, 0.6)",
-                                        borderRadius: "xl"
+                                    _hover={{
+                                        color: '#ffffff',
+                                        bg: '#1DA1F2',
+                                        transform: 'scale(1.2) rotate(5deg)',
+                                        boxShadow:
+                                            '0 0 20px rgba(29, 161, 242, 0.6)',
+                                        borderRadius: 'xl',
                                     }}
                                     transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                                     cursor="pointer"
                                 >
-                                    <FaTwitter size={28} />
+                                    <FaXTwitter size={28} />
                                 </Box>
                             </Link>
                         </Tooltip>
-                        <Tooltip label="Join our Discord" placement="top" hasArrow>
+                        <Tooltip
+                            label="Join our Discord"
+                            placement="top"
+                            hasArrow
+                        >
                             <Link
                                 href="https://discord.gg/W7qu9gb3Yz"
                                 target="_blank"
                             >
-                                <Box 
-                                    color="#5865F2" 
+                                <Box
+                                    color="#5865F2"
                                     borderRadius="lg"
                                     p="8px"
-                                    _hover={{ 
-                                        color: "#ffffff", 
-                                        bg: "#5865F2",
-                                        transform: "scale(1.2) rotate(-5deg)", 
-                                        boxShadow: "0 0 20px rgba(88, 101, 242, 0.6)",
-                                        borderRadius: "xl"
+                                    _hover={{
+                                        color: '#ffffff',
+                                        bg: '#5865F2',
+                                        transform: 'scale(1.2) rotate(-5deg)',
+                                        boxShadow:
+                                            '0 0 20px rgba(88, 101, 242, 0.6)',
+                                        borderRadius: 'xl',
                                     }}
                                     transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                                     cursor="pointer"
@@ -281,21 +294,26 @@ export default async function Footer() {
                                 </Box>
                             </Link>
                         </Tooltip>
-                        <Tooltip label="English Telegram" placement="top" hasArrow>
+                        <Tooltip
+                            label="English Telegram"
+                            placement="top"
+                            hasArrow
+                        >
                             <Link
                                 href="https://t.me/decomnetwork"
                                 target="_blank"
                             >
-                                <Box 
-                                    color="#0088cc" 
+                                <Box
+                                    color="#0088cc"
                                     borderRadius="lg"
                                     p="8px"
-                                    _hover={{ 
-                                        color: "#ffffff", 
-                                        bg: "#0088cc",
-                                        transform: "scale(1.2) rotate(5deg)", 
-                                        boxShadow: "0 0 20px rgba(0, 136, 204, 0.6)",
-                                        borderRadius: "xl"
+                                    _hover={{
+                                        color: '#ffffff',
+                                        bg: '#0088cc',
+                                        transform: 'scale(1.2) rotate(5deg)',
+                                        boxShadow:
+                                            '0 0 20px rgba(0, 136, 204, 0.6)',
+                                        borderRadius: 'xl',
                                     }}
                                     transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                                     cursor="pointer"
@@ -304,21 +322,26 @@ export default async function Footer() {
                                 </Box>
                             </Link>
                         </Tooltip>
-                        <Tooltip label="Spanish Telegram" placement="top" hasArrow>
+                        <Tooltip
+                            label="Spanish Telegram"
+                            placement="top"
+                            hasArrow
+                        >
                             <Link
                                 href="https://t.me/hamza_espanol"
                                 target="_blank"
                             >
-                                <Box 
-                                    color="#0088cc" 
+                                <Box
+                                    color="#0088cc"
                                     borderRadius="lg"
                                     p="8px"
-                                    _hover={{ 
-                                        color: "#ffffff", 
-                                        bg: "#0088cc",
-                                        transform: "scale(1.2) rotate(-5deg)", 
-                                        boxShadow: "0 0 20px rgba(0, 136, 204, 0.6)",
-                                        borderRadius: "xl"
+                                    _hover={{
+                                        color: '#ffffff',
+                                        bg: '#0088cc',
+                                        transform: 'scale(1.2) rotate(-5deg)',
+                                        boxShadow:
+                                            '0 0 20px rgba(0, 136, 204, 0.6)',
+                                        borderRadius: 'xl',
                                     }}
                                     transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                                     cursor="pointer"
@@ -327,21 +350,26 @@ export default async function Footer() {
                                 </Box>
                             </Link>
                         </Tooltip>
-                        <Tooltip label="Subscribe to our YouTube" placement="top" hasArrow>
+                        <Tooltip
+                            label="Subscribe to our YouTube"
+                            placement="top"
+                            hasArrow
+                        >
                             <Link
                                 href="https://www.youtube.com/@HamzaMarket"
                                 target="_blank"
                             >
-                                <Box 
-                                    color="#FF0000" 
+                                <Box
+                                    color="#FF0000"
                                     borderRadius="lg"
                                     p="8px"
-                                    _hover={{ 
-                                        color: "#ffffff", 
-                                        bg: "#FF0000",
-                                        transform: "scale(1.2) rotate(5deg)", 
-                                        boxShadow: "0 0 20px rgba(255, 0, 0, 0.6)",
-                                        borderRadius: "xl"
+                                    _hover={{
+                                        color: '#ffffff',
+                                        bg: '#FF0000',
+                                        transform: 'scale(1.2) rotate(5deg)',
+                                        boxShadow:
+                                            '0 0 20px rgba(255, 0, 0, 0.6)',
+                                        borderRadius: 'xl',
                                     }}
                                     transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                                     cursor="pointer"
