@@ -65,7 +65,11 @@ export default function Error({ error, reset }: ErrorPageProps) {
 
                     <Flex flexDir={'column'}>
                         <Text fontSize={'32px'} fontWeight="bold">
-                            {error ? error : 'Something went wrong'}
+                            {error
+                                ? typeof error === 'object'
+                                    ? 'Something went wrong'
+                                    : error
+                                : 'Something went wrong'}
                         </Text>
                     </Flex>
 
