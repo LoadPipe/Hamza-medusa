@@ -287,9 +287,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
             //HERE, DO SOMETHING
             console.log('LAFAYEETTE WE HERE 2');
             if (saveAddress) {
-                console.log('LAFAYEETTE WE HERE 3');
-                await callCreateAnonymousCustomer();
-
                 const shippingAddressData = new FormData();
                 shippingAddressData.append(
                     'first_name',
@@ -344,6 +341,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     await addCustomerShippingAddress({}, shippingAddressData);
                 }
             }
+
+            await callCreateAnonymousCustomer();
         } catch (error) {
             console.error('Failed to save shipping address:', error);
         } finally {
