@@ -228,7 +228,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             });
             const customer = response.data;
 
+            console.log('GOT CUSTOMER...', customer);
             if (customer) {
+                console.log('SETTING MEDUSA JWT');
                 Cookies.set('_medusa_jwt', tokenResponse ?? '');
 
                 console.log('customer wallet: ', customer.wallet_address);
