@@ -350,6 +350,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     }, [product, variantId, preferred_currency_code]); // Adding preferred_currency_code to dependencies if it can change
 
     const handleAddToCart = async (showPopup: boolean = true) => {
+        console.log('HANDLE ADD TO CART--------------------------------');
         if (!selectedVariant) {
             console.error('Selected variant is null or undefined.');
             return;
