@@ -29,6 +29,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
 import { isShippingAddressRequired } from '../../utils';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -244,6 +246,27 @@ const AddressModal: React.FC<AddressModalProps> = ({
         console.log('overwrite clicked', e.target.checked);
     };
 
+    /**
+     * Call the API method to create an anonymous customer.
+     * @param cartId Optional; associates that new customer with the current cart.
+     * @returns
+     */
+    async function callCreateAnonymousCustomer() {
+        const cartId = Cookies.get('_medusa_cart_id');
+        console.log('Calling createAnonymousCustomer with cart', cartId);
+        return await axios.post(
+            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/customer/anonymous`,
+            { cart_id: cartId },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-control': 'no-cache, no-store',
+                    Accept: 'application/json',
+                },
+            }
+        );
+    }
+
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -259,7 +282,12 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
         try {
             setIsUpdatingCart(true);
+
+            //HERE, DO SOMETHING
             if (saveAddress) {
+                console.log('LAFAYEETTE WE HERE');
+                await callCreateAnonymousCustomer();
+
                 const shippingAddressData = new FormData();
                 shippingAddressData.append(
                     'first_name',
