@@ -269,6 +269,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log('LAFAYEETTE WE HERE 1');
 
         // Validate email and phone before submission
         if (
@@ -284,8 +285,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
             setIsUpdatingCart(true);
 
             //HERE, DO SOMETHING
+            console.log('LAFAYEETTE WE HERE 2');
             if (saveAddress) {
-                console.log('LAFAYEETTE WE HERE');
+                console.log('LAFAYEETTE WE HERE 3');
                 await callCreateAnonymousCustomer();
 
                 const shippingAddressData = new FormData();
