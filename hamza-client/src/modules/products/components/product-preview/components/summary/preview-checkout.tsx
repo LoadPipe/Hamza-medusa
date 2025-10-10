@@ -355,7 +355,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
         try {
             //Here create a new anonymous customer if nobody is currently logged in
-            if (!authData.customer_id?.length) {
+            if (
+                !authData.customer_id?.length ||
+                !Cookies.get('_medusa_jwt')?.length
+            ) {
                 await createAnonymousCustomer();
             }
 
